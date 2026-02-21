@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マルチ・キッチンタイマー / Multi-Kitchen Timer</title>
+  <meta name="description" content="3つの独立したキッチンタイマーを同時に使えるWebアプリ。アラーム音と画面点滅でお知らせします。">
+
+  <!-- ファビコン: ⏱️ 絵文字をSVG Data URIで表示 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>⏱️</text></svg>">
+
+  <!-- Google Fonts: Inter（モダンで読みやすいフォント） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- スタイルシート読み込み -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== ヘッダー ===== -->
+  <header class="app-header">
+    <h1 class="app-title">
+      <span class="title-icon">⏱️</span>
+      マルチ・キッチンタイマー
+      <span class="title-sub">Multi-Kitchen Timer</span>
+    </h1>
+  </header>
+
+  <!-- ===== 設定パネル ===== -->
+  <section class="settings-panel">
+    <div class="settings-inner">
+
+      <!-- 音のON/OFFトグル -->
+      <div class="setting-item">
+        <span class="setting-label">🔔 音 / Sound</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="sound-toggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- 画面点滅のON/OFFトグル -->
+      <div class="setting-item">
+        <span class="setting-label">💡 点滅 / Flash</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="flash-toggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== タイマーカード一覧 ===== -->
+  <main class="timers-container">
+
+    <!-- タイマー1 -->
+    <div class="timer-card" id="timer-card-1">
+      <div class="timer-header">
+        <span class="timer-number">Timer 1</span>
+        <span class="timer-status-badge" id="status-badge-1">待機中 / Ready</span>
+      </div>
+
+      <!-- 時間入力エリア -->
+      <div class="time-input-area" id="input-area-1">
+        <div class="input-group">
+          <input type="number" id="min-1" class="time-input" min="0" max="99" value="0" placeholder="0">
+          <label class="input-label">分 / Min</label>
+        </div>
+        <span class="time-separator">:</span>
+        <div class="input-group">
+          <input type="number" id="sec-1" class="time-input" min="0" max="59" value="0" placeholder="0">
+          <label class="input-label">秒 / Sec</label>
+        </div>
+      </div>
+
+      <!-- カウントダウン表示 -->
+      <div class="countdown-display" id="countdown-1">00:00</div>
+
+      <!-- 操作ボタン -->
+      <div class="timer-controls">
+        <button class="btn btn-start" id="start-btn-1" onclick="startTimer(1)">
+          ▶ 開始 / Start
+        </button>
+        <button class="btn btn-stop" id="stop-btn-1" onclick="stopTimer(1)" disabled>
+          ⏸ 停止 / Stop
+        </button>
+        <button class="btn btn-reset" id="reset-btn-1" onclick="resetTimer(1)">
+          ↻ リセット / Reset
+        </button>
+      </div>
+
+      <!-- アラート停止ボタン（タイマー完了時に表示） -->
+      <button class="btn btn-dismiss" id="dismiss-btn-1" onclick="dismissAlert(1)" style="display: none;">
+        🔕 アラートを止める / Dismiss Alert
+      </button>
+    </div>
+
+    <!-- タイマー2 -->
+    <div class="timer-card" id="timer-card-2">
+      <div class="timer-header">
+        <span class="timer-number">Timer 2</span>
+        <span class="timer-status-badge" id="status-badge-2">待機中 / Ready</span>
+      </div>
+
+      <div class="time-input-area" id="input-area-2">
+        <div class="input-group">
+          <input type="number" id="min-2" class="time-input" min="0" max="99" value="0" placeholder="0">
+          <label class="input-label">分 / Min</label>
+        </div>
+        <span class="time-separator">:</span>
+        <div class="input-group">
+          <input type="number" id="sec-2" class="time-input" min="0" max="59" value="0" placeholder="0">
+          <label class="input-label">秒 / Sec</label>
+        </div>
+      </div>
+
+      <div class="countdown-display" id="countdown-2">00:00</div>
+
+      <div class="timer-controls">
+        <button class="btn btn-start" id="start-btn-2" onclick="startTimer(2)">
+          ▶ 開始 / Start
+        </button>
+        <button class="btn btn-stop" id="stop-btn-2" onclick="stopTimer(2)" disabled>
+          ⏸ 停止 / Stop
+        </button>
+        <button class="btn btn-reset" id="reset-btn-2" onclick="resetTimer(2)">
+          ↻ リセット / Reset
+        </button>
+      </div>
+
+      <button class="btn btn-dismiss" id="dismiss-btn-2" onclick="dismissAlert(2)" style="display: none;">
+        🔕 アラートを止める / Dismiss Alert
+      </button>
+    </div>
+
+    <!-- タイマー3 -->
+    <div class="timer-card" id="timer-card-3">
+      <div class="timer-header">
+        <span class="timer-number">Timer 3</span>
+        <span class="timer-status-badge" id="status-badge-3">待機中 / Ready</span>
+      </div>
+
+      <div class="time-input-area" id="input-area-3">
+        <div class="input-group">
+          <input type="number" id="min-3" class="time-input" min="0" max="99" value="0" placeholder="0">
+          <label class="input-label">分 / Min</label>
+        </div>
+        <span class="time-separator">:</span>
+        <div class="input-group">
+          <input type="number" id="sec-3" class="time-input" min="0" max="59" value="0" placeholder="0">
+          <label class="input-label">秒 / Sec</label>
+        </div>
+      </div>
+
+      <div class="countdown-display" id="countdown-3">00:00</div>
+
+      <div class="timer-controls">
+        <button class="btn btn-start" id="start-btn-3" onclick="startTimer(3)">
+          ▶ 開始 / Start
+        </button>
+        <button class="btn btn-stop" id="stop-btn-3" onclick="stopTimer(3)" disabled>
+          ⏸ 停止 / Stop
+        </button>
+        <button class="btn btn-reset" id="reset-btn-3" onclick="resetTimer(3)">
+          ↻ リセット / Reset
+        </button>
+      </div>
+
+      <button class="btn btn-dismiss" id="dismiss-btn-3" onclick="dismissAlert(3)" style="display: none;">
+        🔕 アラートを止める / Dismiss Alert
+      </button>
+    </div>
+
+  </main>
+
+  <!-- ===== すべてリセットボタン ===== -->
+  <section class="all-reset-section">
+    <button class="btn btn-all-reset" onclick="resetAllTimers()">
+      🔄 すべてリセット / All Reset
+    </button>
+  </section>
+
+  <!-- ===== フッター ===== -->
+  <footer class="app-footer">
+    <p>Multi-Kitchen Timer &copy; 2026</p>
+  </footer>
+
+  <!-- 画面点滅用のオーバーレイ -->
+  <div class="flash-overlay" id="flash-overlay"></div>
+
+  <!-- スクリプト読み込み -->
+  <script src="script.js"></script>
+</body>
+</html>
