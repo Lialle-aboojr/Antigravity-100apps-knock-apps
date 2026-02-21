@@ -1,0 +1,685 @@
+/* ============================================
+   マルチ・キッチンタイマー / Multi-Kitchen Timer
+   スタイルシート（v2）
+   
+   デザインコンセプト:
+   無印良品風の白とグレー基調のミニマルデザイン。
+   3つのタイマーにそれぞれ独立したアクセントカラーを適用。
+   ・Timer 1: コーラル系（暖かいオレンジ）
+   ・Timer 2: ダスティブルー系（落ち着いた青）
+   ・Timer 3: ラベンダー系（柔らかい紫）
+   ============================================ */
+
+/* --- CSS変数（デザイントークン） --- */
+:root {
+    /* ベースカラー */
+    --color-white: #FFFFFF;
+    --color-bg: #F7F7F5;
+    /* 温かみのあるオフホワイト */
+    --color-surface: #FFFFFF;
+    /* カード背景 */
+    --color-border: #E8E6E3;
+    /* ボーダー */
+    --color-text-primary: #2C2C2C;
+    /* メインテキスト */
+    --color-text-secondary: #8C8C8C;
+    /* サブテキスト */
+    --color-text-muted: #B0AEA9;
+    /* 薄いテキスト */
+
+    /* タイマー1: コーラル系（暖かいオレンジ） */
+    --color-coral: #E8633B;
+    --color-coral-light: #FFF0EB;
+    --color-coral-dark: #C9512E;
+    --color-coral-glow: rgba(232, 99, 59, 0.2);
+
+    /* タイマー2: ダスティブルー系（落ち着いた青） */
+    --color-blue: #5B8FB9;
+    --color-blue-light: #EBF3F9;
+    --color-blue-dark: #497BA2;
+    --color-blue-glow: rgba(91, 143, 185, 0.2);
+
+    /* タイマー3: ラベンダー系（柔らかい紫） */
+    --color-lavender: #9B7FB8;
+    --color-lavender-light: #F3EFF8;
+    --color-lavender-dark: #846BA0;
+    --color-lavender-glow: rgba(155, 127, 184, 0.2);
+
+    /* ステータスカラー（共通） */
+    --color-ready: #B0AEA9;
+    /* 待機中 */
+    --color-paused: #D4A853;
+    /* 一時停止 */
+
+    /* フォント */
+    --font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    /* 影 */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+    /* 角丸 */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+
+    /* トランジション */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- リセット・ベーススタイル --- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- ヘッダー --- */
+.app-header {
+    text-align: center;
+    padding: 32px 20px 16px;
+}
+
+.app-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.title-icon {
+    font-size: 1.8rem;
+}
+
+.title-sub {
+    font-size: 0.85rem;
+    font-weight: 400;
+    color: var(--color-text-muted);
+    display: block;
+    width: 100%;
+    margin-top: 2px;
+}
+
+/* --- 設定パネル --- */
+.settings-panel {
+    padding: 0 20px 16px;
+    display: flex;
+    justify-content: center;
+}
+
+.settings-inner {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: var(--color-surface);
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.setting-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+}
+
+/* --- iOS風トグルスイッチ --- */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 26px;
+    cursor: pointer;
+}
+
+/* 実際のチェックボックスを非表示 */
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* トグルの外枠（スライダー） */
+.toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-border);
+    border-radius: 26px;
+    transition: var(--transition);
+}
+
+/* トグルの丸ボタン */
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--color-white);
+    border-radius: 50%;
+    transition: var(--transition);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+/* チェック時: スライダーの色を変更 */
+.toggle-switch input:checked+.toggle-slider {
+    background-color: var(--color-coral);
+}
+
+/* チェック時: 丸ボタンを右に移動 */
+.toggle-switch input:checked+.toggle-slider::before {
+    transform: translateX(20px);
+}
+
+/* --- タイマーカード一覧 --- */
+.timers-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 12px 20px 20px;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+/* --- 個別タイマーカード --- */
+.timer-card {
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    width: 280px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+/* タイマーカードのホバー効果 */
+.timer-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   テーマ別カラーリング
+   各タイマーにCSS変数を設定し、
+   動作中・完了時の色を個別に切り替える
+   ============================================ */
+
+/* --- Timer 1: コーラル系 --- */
+.timer-theme-coral {
+    --theme-accent: var(--color-coral);
+    --theme-accent-light: var(--color-coral-light);
+    --theme-accent-dark: var(--color-coral-dark);
+    --theme-accent-glow: var(--color-coral-glow);
+}
+
+/* --- Timer 2: ダスティブルー系 --- */
+.timer-theme-blue {
+    --theme-accent: var(--color-blue);
+    --theme-accent-light: var(--color-blue-light);
+    --theme-accent-dark: var(--color-blue-dark);
+    --theme-accent-glow: var(--color-blue-glow);
+}
+
+/* --- Timer 3: ラベンダー系 --- */
+.timer-theme-lavender {
+    --theme-accent: var(--color-lavender);
+    --theme-accent-light: var(--color-lavender-light);
+    --theme-accent-dark: var(--color-lavender-dark);
+    --theme-accent-glow: var(--color-lavender-glow);
+}
+
+/* --- タイマー動作中: テーマカラーのボーダー --- */
+.timer-card.is-running {
+    border-color: var(--theme-accent);
+    box-shadow: 0 0 0 1px var(--theme-accent), var(--shadow-lg);
+}
+
+/* タイマー動作中: 上部にテーマカラーラインを追加 */
+.timer-card.is-running::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--theme-accent), var(--theme-accent-dark));
+    animation: running-bar 2s ease-in-out infinite;
+}
+
+/* 動作中バーのアニメーション */
+@keyframes running-bar {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* タイマー一時停止中 */
+.timer-card.is-paused {
+    border-color: var(--color-paused);
+}
+
+/* タイマー完了（アラート中）: テーマカラーで点滅 */
+.timer-card.is-finished {
+    border-color: var(--theme-accent);
+    animation: card-pulse-themed 0.6s ease-in-out infinite alternate;
+}
+
+/* カード完了時のパルスアニメーション（テーマ色対応） */
+@keyframes card-pulse-themed {
+    from {
+        box-shadow: 0 0 0 2px var(--theme-accent), var(--shadow-md);
+    }
+
+    to {
+        box-shadow: 0 0 0 6px var(--theme-accent-glow), var(--shadow-lg);
+    }
+}
+
+/* --- タイマーヘッダー --- */
+.timer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.timer-number {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+/* ステータスバッジ */
+.timer-status-badge {
+    font-size: 0.65rem;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background-color: #F0EFED;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.03em;
+}
+
+/* 動作中バッジ: テーマカラーで表示 */
+.timer-status-badge.badge-running {
+    background-color: var(--theme-accent-light);
+    color: var(--theme-accent);
+}
+
+/* 一時停止中バッジ */
+.timer-status-badge.badge-paused {
+    background-color: #FFF8E8;
+    color: var(--color-paused);
+}
+
+/* 完了バッジ: テーマカラーで表示 */
+.timer-status-badge.badge-finished {
+    background-color: var(--theme-accent-light);
+    color: var(--theme-accent);
+    animation: badge-blink 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes badge-blink {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0.5;
+    }
+}
+
+/* --- 時間入力エリア --- */
+.time-input-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+/* 数値入力フィールド: スピンボタン常時表示 */
+.time-input {
+    width: 80px;
+    height: 56px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-family: var(--font-family);
+    color: var(--color-text-primary);
+    background: var(--color-bg);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    transition: var(--transition);
+    /* スピンボタンを見やすくするためappearanceは維持 */
+}
+
+/* --- スピンボタン（上下矢印）のカスタマイズ --- */
+
+/* Webkit系ブラウザ（Chrome, Safari, Edge）: スピンボタンを常に表示 */
+.time-input::-webkit-inner-spin-button,
+.time-input::-webkit-outer-spin-button {
+    -webkit-appearance: inner-spin-button;
+    opacity: 1;
+    /* 常に表示 */
+    height: 48px;
+    /* ボタンの高さを入力欄に合わせる */
+    width: 24px;
+    /* ボタンの幅を広げてクリックしやすく */
+    cursor: pointer;
+    margin-left: 4px;
+}
+
+/* 入力フィールドのフォーカス時 */
+.time-input:focus {
+    border-color: var(--theme-accent, var(--color-coral));
+    box-shadow: 0 0 0 3px var(--theme-accent-glow, rgba(232, 99, 59, 0.12));
+}
+
+/* 入力ラベル */
+.input-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+}
+
+/* 時間のコロンセパレータ */
+.time-separator {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    margin-bottom: 18px;
+}
+
+/* --- カウントダウン表示 --- */
+.countdown-display {
+    font-size: 3.2rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: 0.04em;
+    margin-bottom: 20px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    padding: 8px 0;
+}
+
+/* 動作中のカウントダウン表示: テーマカラー */
+.timer-card.is-running .countdown-display {
+    color: var(--theme-accent);
+}
+
+/* 完了時のカウントダウン表示: テーマカラー */
+.timer-card.is-finished .countdown-display {
+    color: var(--theme-accent);
+}
+
+/* --- 操作ボタン --- */
+.timer-controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ボタン共通スタイル */
+.btn {
+    font-family: var(--font-family);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 10px 16px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.btn:active {
+    transform: scale(0.96);
+}
+
+/* 開始ボタン: テーマカラーで色付け */
+.btn-start {
+    background-color: var(--theme-accent, var(--color-coral));
+    color: var(--color-white);
+}
+
+.btn-start:hover:not(:disabled) {
+    background-color: var(--theme-accent-dark, var(--color-coral-dark));
+}
+
+/* 停止ボタン */
+.btn-stop {
+    background-color: #F0EFED;
+    color: var(--color-text-primary);
+}
+
+.btn-stop:hover:not(:disabled) {
+    background-color: #E8E6E3;
+}
+
+/* リセットボタン */
+.btn-reset {
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border: 1.5px solid var(--color-border);
+}
+
+.btn-reset:hover {
+    background-color: var(--color-bg);
+    border-color: var(--color-text-muted);
+}
+
+/* 無効化ボタン */
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* --- アラート停止ボタン: テキスト見切れ修正 --- */
+.btn-dismiss {
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px 16px;
+    background-color: var(--theme-accent, var(--color-coral));
+    color: var(--color-white);
+    font-size: 0.82rem;
+    /* テキストの折り返しを許可してはみ出しを防止 */
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.4;
+    text-align: center;
+    animation: dismiss-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes dismiss-pulse {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0.75;
+    }
+}
+
+.btn-dismiss:hover {
+    background-color: var(--theme-accent-dark, var(--color-coral-dark));
+}
+
+/* --- すべてリセットセクション --- */
+.all-reset-section {
+    text-align: center;
+    padding: 8px 20px 24px;
+}
+
+.btn-all-reset {
+    background-color: transparent;
+    color: var(--color-text-secondary);
+    border: 1.5px solid var(--color-border);
+    padding: 12px 32px;
+    font-size: 0.85rem;
+}
+
+.btn-all-reset:hover {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    border-color: var(--color-text-muted);
+}
+
+/* --- フッター --- */
+.app-footer {
+    text-align: center;
+    padding: 16px 20px 24px;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+/* --- 画面点滅オーバーレイ --- */
+.flash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+/* 点滅アクティブ時 */
+.flash-overlay.is-flashing {
+    animation: screen-flash 0.8s ease-in-out infinite;
+}
+
+/* 画面点滅アニメーション */
+@keyframes screen-flash {
+
+    0%,
+    100% {
+        background-color: transparent;
+        opacity: 0;
+    }
+
+    50% {
+        background-color: rgba(155, 127, 184, 0.12);
+        opacity: 1;
+    }
+}
+
+/* --- レスポンシブデザイン --- */
+
+/* タブレット以下 */
+@media (max-width: 900px) {
+    .timers-container {
+        gap: 16px;
+    }
+
+    .timer-card {
+        width: 260px;
+    }
+}
+
+/* モバイル */
+@media (max-width: 640px) {
+    .app-header {
+        padding: 24px 16px 12px;
+    }
+
+    .app-title {
+        font-size: 1.25rem;
+    }
+
+    .settings-inner {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px 20px;
+    }
+
+    .timers-container {
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 16px 16px;
+    }
+
+    .timer-card {
+        width: 100%;
+        max-width: 340px;
+    }
+
+    .countdown-display {
+        font-size: 2.6rem;
+    }
+
+    /* スマホ: 入力欄はネイティブUIに任せる */
+    .time-input {
+        width: 72px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+
+    /* スマホ: Dismissボタンを小さめに */
+    .btn-dismiss {
+        font-size: 0.78rem;
+        padding: 10px 12px;
+    }
+}
