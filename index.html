@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 Challenge Kanban V5 (Honwaka)</title>
+    <!-- Favicon -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧸</text></svg>">
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;700&family=Nunito:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ■ Honwaka Theme & CSS Reset ■ */
+        :root {
+            /* Palette: Pastel & Soft */
+            --bg-gradient: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+
+            --text-main: #4a5568;
+            /* Soft Slate */
+            --text-sub: #718096;
+
+            --accent-color: #ffb7b2;
+            /* Pastel Red/Pink */
+            --accent-hover: #ff9e99;
+            --success-color: #98ddca;
+            /* Pastel Green */
+            --warn-color: #ffdac1;
+            /* Pastel Orange */
+            --info-color: #b5ead7;
+            /* Pastel Teal */
+            --purple-color: #e2f0cb;
+            /* Soft Lavender */
+            --lavender: #dec9e9;
+
+            --card-radius: 20px;
+            --btn-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', 'M PLUS Rounded 1c', sans-serif;
+            color: var(--text-main);
+            background: #f6f9fc;
+            /* Fallback */
+            /* Honwaka Gradient Background */
+            background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-weight: 700;
+            font-size: 2rem;
+            color: #555;
+            text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+        }
+
+        p.subtitle {
+            color: #888;
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr 1fr;
+            gap: 24px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Panels: Frosted Glass */
+        .panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2px solid white;
+            border-radius: var(--card-radius);
+            padding: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            min-height: 80vh;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px dashed rgba(0, 0, 0, 0.05);
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #555;
+        }
+
+        .count-badge {
+            background: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #888;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .list-area {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 75vh;
+            padding-right: 8px;
+        }
+
+        /* Soft Scrollbar */
+        .list-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .list-area::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+        }
+
+        .list-area::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid transparent;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+            border-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .card-id {
+            font-size: 0.85rem;
+            color: #ffb7b2;
+            font-weight: 800;
+            background: #fff0f0;
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: #444;
+            margin-right: 8px;
+            line-height: 1.4;
+        }
+
+        /* Buttons */
+        .btn {
+            background: white;
+            color: #666;
+            border: 1px solid #eee;
+            padding: 8px 16px;
+            border-radius: var(--btn-radius);
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background: #84cfbc;
+        }
+
+        .btn-warn {
+            background: var(--warn-color);
+            color: #555;
+            border: none;
+        }
+
+        .btn-posted {
+            background: #a0c4ff;
+            color: white;
+            border: none;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .btn-small {
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            border-radius: 8px;
+        }
+
+        .icon-btn {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            color: #ccc;
+            font-size: 1.1rem;
+            padding: 0 5px;
+        }
+
+        .icon-btn:hover {
+            color: #888;
+        }
+
+        /* Battlefield */
+        .battlefield {
+            border: 3px solid #fff5f5;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .battle-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #888;
+            margin-left: 5px;
+        }
+
+        .form-input,
+        .form-textarea {
+            background: #f9f9f9;
+            border: 2px solid #eee;
+            color: #555;
+            padding: 12px;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: 0.2s;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background: white;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            background: #eee;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ccc;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 0;
+            color: #bbb;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.3;
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 64px;
+            height: 64px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--accent-color);
+            box-shadow: 0 10px 25px rgba(255, 183, 178, 0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 100;
+            border: 2px solid #fff0f0;
+        }
+
+        .fab:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-card {
+            background: white;
+            padding: 30px;
+            border-radius: 24px;
+            width: 95%;
+            max-width: 650px;
+            /* Widened from 550px */
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* Post Date display */
+        .post-date-display {
+            font-size: 0.75rem;
+            color: #666;
+            background: #f0f4f8;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-top: 4px;
+            display: inline-block;
+        }
+
+        /* Loading */
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <header>
+        <h1>100 Challenge Kanban</h1>
+        <p class="subtitle">Complete it. Ship it. Relax.</p>
+    </header>
+
+    <div class="container">
+
+        <!-- Left: Idea Pool -->
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">🥚 Idea Pool</span>
+                <span class="count-badge" id="count-todo">0</span>
+            </div>
+            <div class="list-area" id="list-todo"></div>
+        </div>
+
+        <!-- Center: Battle Field -->
+        <div class="panel battlefield">
+            <div class="panel-header">
+                <span class="panel-title">🐣 Growing...</span>
+                <span style="font-size: 0.8rem; color: #888;">Focus Area</span>
+            </div>
+            <div class="list-area" id="battle-area"></div>
+        </div>
+
+        <!-- Right: Hall of Fame -->
+        <div class="panel">
+            <div class="panel-header">
+                <span class="panel-title">🕊️ Hall of Fame</span>
+                <span class="count-badge" id="count-done">0</span>
+            </div>
+            <div class="list-area" id="list-done"></div>
+        </div>
+    </div>
+
+    <!-- FAB -->
+    <div class="fab" onclick="openNewModal()">＋</div>
+
+    <!-- New Idea Modal -->
+    <div class="modal-overlay" id="new-modal">
+        <div class="modal-card">
+            <h2 style="margin-bottom: 20px; color:#555;">New Idea</h2>
+            <input type="text" id="new-app-name" class="form-input" placeholder="What keeps you excited?"
+                style="margin-bottom: 20px; width: 100%;">
+            <div style="display: flex; gap: 10px;">
+                <button class="btn" style="flex:1;" onclick="closeNewModal()">Cancel</button>
+                <button class="btn btn-primary" style="flex:1;" onclick="submitNewIdea()">Plant Idea 🌱</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit/Post Modal (For Done Items) -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal-card">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <h2 style="color:#555;">Edit & Post</h2>
+                <span class="card-id" id="edit-display-id" style="font-size:1.2rem;">#00</span>
+            </div>
+            <input type="hidden" id="edit-uuid">
+
+            <div class="battle-form">
+                <div class="form-group">
+                    <label class="form-label">App Name</label>
+                    <input type="text" id="edit-name" class="form-input">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div class="form-group">
+                        <label class="form-label">Completed Date</label>
+                        <input type="date" id="edit-date" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Post Date (Schedule)</label>
+                        <input type="date" id="edit-post-date" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Memo</label>
+                    <textarea id="edit-memo" class="form-textarea" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Links</label>
+                    <input type="text" id="edit-demo" class="form-input" placeholder="Demo URL">
+                    <input type="text" id="edit-github" class="form-input" placeholder="GitHub URL"
+                        style="margin-top:5px;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Image URL</label>
+                    <input type="text" id="edit-image" class="form-input">
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top:10px;">
+                    <button class="btn btn-warn" onclick="deleteApp()">Delete</button>
+                    <span style="flex:1"></span>
+                    <button class="btn" onclick="closeEditModal()">Cancel</button>
+                    <button class="btn btn-success" onclick="saveEditApp()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Post Date Picker Modal (Simplified) -->
+    <div class="modal-overlay" id="post-picker-modal">
+        <div class="modal-card" style="max-width:350px; text-align:center;">
+            <h3>When to post?</h3>
+            <p style="margin:10px 0; color:#888;">Select the schedule date.</p>
+            <input type="hidden" id="post-target-uuid">
+            <input type="date" id="post-picker-date" class="form-input" style="margin-bottom:20px;">
+            <button class="btn btn-primary" style="width:100%;" onclick="submitPostDate()">Mark as Posted</button>
+            <button class="btn" style="width:100%; margin-top:10px; border:none;"
+                onclick="document.getElementById('post-picker-modal').style.display='none'">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbySZUcnFt27nWGW8UnSxp1PnmjP3sjrdGbWzWxSpbpGPfj4zg3To9tyGRnYWPPgtiQD/exec"; // Updated URL from user
+
+        let allTasks = [];
+        document.addEventListener('DOMContentLoaded', fetchTasks);
+
+        async function fetchTasks() {
+            showLoading(true);
+            try {
+                const res = await fetch(GAS_API_URL);
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                allTasks = data;
+                renderAll();
+            } catch (e) {
+                console.error(e);
+                alert("データの取得に失敗しました。URLを確認してください。\nConnection Error. Please check your URL.");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        async function postData(payload) {
+            showLoading(true);
+            try {
+                // GASのCORSを回避するため、あえてtext/plainで送信
+                const res = await fetch(GAS_API_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                return data;
+            } catch (e) {
+                console.error(e);
+                alert("通信エラーが発生しました / Fail: " + e.message);
+                return null;
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function renderAll() {
+            const listTodo = document.getElementById('list-todo');
+            const battleArea = document.getElementById('battle-area');
+            const listDone = document.getElementById('list-done');
+
+            listTodo.innerHTML = '';
+            battleArea.innerHTML = '';
+            listDone.innerHTML = '';
+
+            const todos = allTasks.filter(t => t.status === "未着手");
+            const doing = allTasks.filter(t => t.status === "作成中");
+            const dones = allTasks.filter(t => t.status === "完成" || t.status === "LinkedIn投稿済");
+
+            document.getElementById('count-todo').textContent = todos.length;
+            document.getElementById('count-done').textContent = dones.length;
+
+            const isBusy = doing.length > 0;
+
+            // To Do
+            todos.forEach(task => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="card-title">${escapeHtml(task.appName)}</span>
+                    </div>
+                    <button class="btn btn-small btn-primary ${isBusy ? 'disabled' : ''}" 
+                         style="width:100%" onclick="startTask('${task.uuid}')">
+                        ${isBusy ? 'System Busy' : 'Start'}
+                    </button>
+                `;
+                listTodo.appendChild(card);
+            });
+
+            // Battle
+            if (isBusy) {
+                const active = doing[0];
+                const form = document.createElement('div');
+                form.className = 'battle-form';
+                form.innerHTML = `
+                    <div style="display:flex; justify-content:space-between;">
+                         <h2 style="color:#444;">${escapeHtml(active.appName)}</h2>
+                         <span class="card-id" style="font-size:1.2rem; align-self:center;">#${active.displayId}</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Memo</label>
+                        <textarea id="input-memo" class="form-textarea" rows="4">${escapeHtml(active.memo || '')}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Links</label>
+                        <input type="text" id="input-demo" class="form-input" placeholder="Demo URL" value="${escapeHtml(active.demoUrl || '')}">
+                        <input type="text" id="input-github" class="form-input" placeholder="GitHub URL" value="${escapeHtml(active.githubUrl || '')}" style="margin-top:5px;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Image URL</label>
+                        <input type="text" id="input-image" class="form-input" value="${escapeHtml(active.imageUrl || '')}" oninput="updatePreview(this.value)">
+                        <div id="image-preview-container">
+                            ${active.imageUrl ? `<img src="${active.imageUrl}" class="preview-image">` : ''}
+                        </div>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:10px;">
+                        <button class="btn btn-warn" onclick="retreatTask('${active.uuid}')">Retreat</button>
+                        <button class="btn" onclick="saveTask('${active.uuid}')">Save</button>
+                    </div>
+                    <button class="btn btn-success" style="width:100%; padding:14px;" onclick="completeTask('${active.uuid}')">Complete! 🎉</button>
+                `;
+                battleArea.appendChild(form);
+            } else {
+                battleArea.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">☕</div>
+                        <p>No active tasks.<br>Pick one from the pool!</p>
+                    </div>
+                `;
+            }
+
+            // Hall of Fame
+            dones.forEach(task => {
+                const isPosted = task.status === "LinkedIn投稿済";
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.style.borderLeft = isPosted ? '4px solid #a0c4ff' : '4px solid transparent';
+
+                // Links Construction
+                let linksHtml = '';
+                if (task.demoUrl) linksHtml += `<a href="${task.demoUrl}" target="_blank" style="text-decoration:none; color:var(--accent-color); font-weight:bold;">🔗 Demo</a>`;
+                if (task.githubUrl) linksHtml += `<a href="${task.githubUrl}" target="_blank" style="text-decoration:none; color:#555; font-weight:bold;">🐙 GitHub</a>`;
+                if (task.imageUrl) linksHtml += `<a href="${task.imageUrl}" target="_blank" style="text-decoration:none; color:#888; font-weight:bold;">🖼️ Image</a>`;
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="card-title">${escapeHtml(task.appName)}</span>
+                        <div style="display:flex; align-items:center;">
+                            <span class="card-id">#${task.displayId}</span>
+                            <button class="icon-btn" onclick="openEditModal('${task.uuid}')">•••</button>
+                        </div>
+                    </div>
+                    
+                    ${linksHtml ? `<div style="display:flex; gap:12px; font-size:0.8rem; flex-wrap:wrap; margin:4px 0 8px 0;">${linksHtml}</div>` : ''}
+                    
+                    ${task.postDate ? `<div class="post-date-display" style="font-weight:600;">Posted: ${task.postDate}</div>` : ''}
+                    
+                    ${!isPosted ? `
+                        <button class="btn btn-small btn-posted" onclick="openPostPicker('${task.uuid}')">
+                           Mark as Posted
+                        </button>
+                    ` : ''}
+                `;
+                listDone.appendChild(card);
+            });
+        }
+
+        /* --- Actions --- */
+        async function submitNewIdea() {
+            const name = document.getElementById('new-app-name').value.trim();
+            if (!name) return;
+            closeNewModal();
+            const res = await postData({ action: "create", appName: name });
+            if (res && res.success) {
+                document.getElementById('new-app-name').value = '';
+                await fetchTasks();
+            }
+        }
+
+        async function startTask(uuid) {
+            const res = await postData({ action: "start", uuid: uuid });
+            if (res && res.success) await fetchTasks();
+        }
+
+        async function retreatTask(uuid) {
+            if (!confirm("Give up on this challenge?")) return;
+            const res = await postData({ action: "retreat", uuid: uuid });
+            if (res && res.success) await fetchTasks();
+        }
+
+        async function saveTask(uuid) {
+            const payload = getBattleInputs();
+            payload.uuid = uuid;
+            payload.action = "update";
+            const res = await postData(payload);
+            if (res && res.success) alert("Saved!");
+        }
+
+        async function completeTask(uuid) {
+            if (!confirm("Did you really finish it?")) return;
+            const payload = getBattleInputs();
+            payload.uuid = uuid;
+            payload.action = "complete";
+            payload.date = getTodayStr(); // Send today
+            const res = await postData(payload);
+            if (res && res.success) await fetchTasks();
+        }
+
+        /* --- Post Logic --- */
+        function openPostPicker(uuid) {
+            document.getElementById('post-target-uuid').value = uuid;
+            document.getElementById('post-picker-date').value = getTodayStr();
+            document.getElementById('post-picker-modal').style.display = 'flex';
+        }
+
+        async function submitPostDate() {
+            const uuid = document.getElementById('post-target-uuid').value;
+            const date = document.getElementById('post-picker-date').value;
+            document.getElementById('post-picker-modal').style.display = 'none';
+
+            const res = await postData({ action: "post", uuid: uuid, postDate: date });
+            if (res && res.success) await fetchTasks();
+        }
+
+        /* --- Full Edit Modal --- */
+        function openEditModal(uuid) {
+            const task = allTasks.find(t => t.uuid === uuid);
+            if (!task) return;
+            document.getElementById('edit-uuid').value = uuid;
+            document.getElementById('edit-display-id').textContent = "#" + task.displayId;
+            document.getElementById('edit-name').value = task.appName;
+            document.getElementById('edit-date').value = task.date;
+            document.getElementById('edit-post-date').value = task.postDate;
+            document.getElementById('edit-memo').value = task.memo;
+            document.getElementById('edit-demo').value = task.demoUrl;
+            document.getElementById('edit-github').value = task.githubUrl;
+            document.getElementById('edit-image').value = task.imageUrl;
+
+            document.getElementById('edit-modal').style.display = 'flex';
+        }
+
+        async function saveEditApp() {
+            const uuid = document.getElementById('edit-uuid').value;
+            const res = await postData({
+                action: "update",
+                uuid: uuid,
+                appName: document.getElementById('edit-name').value,
+                date: document.getElementById('edit-date').value,
+                postDate: document.getElementById('edit-post-date').value,
+                memo: document.getElementById('edit-memo').value,
+                demoUrl: document.getElementById('edit-demo').value,
+                githubUrl: document.getElementById('edit-github').value,
+                imageUrl: document.getElementById('edit-image').value
+            });
+            if (res && res.success) {
+                closeEditModal();
+                await fetchTasks();
+            }
+        }
+
+        async function deleteApp() {
+            if (!confirm("Delete forever?")) return;
+            const uuid = document.getElementById('edit-uuid').value;
+            const res = await postData({ action: "delete", uuid: uuid });
+            if (res && res.success) { closeEditModal(); await fetchTasks(); }
+        }
+
+        /* --- Helpers --- */
+        function getBattleInputs() {
+            return {
+                appName: document.getElementById('input-name') ? document.getElementById('input-name').innerText : null,
+                memo: document.getElementById('input-memo').value,
+                demoUrl: document.getElementById('input-demo').value,
+                githubUrl: document.getElementById('input-github').value,
+                imageUrl: document.getElementById('input-image').value
+            };
+        }
+        function showLoading(b) { document.getElementById('loading').style.display = b ? 'flex' : 'none'; }
+        function openNewModal() { document.getElementById('new-modal').style.display = 'flex'; document.getElementById('new-app-name').focus(); }
+        function closeNewModal() { document.getElementById('new-modal').style.display = 'none'; }
+        function closeEditModal() { document.getElementById('edit-modal').style.display = 'none'; }
+        function updatePreview(u) { const c = document.getElementById('image-preview-container'); c.innerHTML = u ? `<img src="${u}" class="preview-image">` : ''; }
+        function escapeHtml(s) { if (!s) return ''; return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+        function getTodayStr() { return new Date().toISOString().slice(0, 10); }
+    </script>
+</body>
+
+</html>
