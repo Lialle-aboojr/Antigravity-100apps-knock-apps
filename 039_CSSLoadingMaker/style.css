@@ -1,0 +1,814 @@
+/* ============================================
+   CSS Loading Maker - スタイルシート
+   VS Code風ダークテーマデザイン（複数色対応版）
+   ============================================ */
+
+/* --- CSS変数（カラーパレット） --- */
+:root {
+    /* VS Code風 背景・テキスト色 */
+    --bg-editor: #1e1e2e;
+    --bg-sidebar: #181825;
+    --bg-titlebar: #11111b;
+    --bg-panel: #252536;
+    --bg-input: #313244;
+    --bg-hover: #45475a;
+    --border-color: #313244;
+    --text-primary: #cdd6f4;
+    --text-secondary: #a6adc8;
+    --text-muted: #6c7086;
+
+    /* シンタックスハイライト風アクセントカラー */
+    --accent-blue: #89b4fa;
+    --accent-green: #a6e3a1;
+    --accent-pink: #f38ba8;
+    --accent-orange: #fab387;
+    --accent-purple: #cba6f7;
+    --accent-yellow: #f9e2af;
+
+    /* レイアウト */
+    --titlebar-height: 40px;
+    --sidebar-width: 320px;
+}
+
+/* --- リセット＆ベース --- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 14px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, 'Noto Sans JP', sans-serif;
+    background: var(--bg-editor);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* --- タイトルバー --- */
+.titlebar {
+    height: var(--titlebar-height);
+    background: var(--bg-titlebar);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--border-color);
+    user-select: none;
+}
+
+.titlebar-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.titlebar-icon {
+    font-size: 18px;
+    animation: spin-favicon 3s linear infinite;
+}
+
+@keyframes spin-favicon {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.titlebar-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* macOS風ウィンドウボタン */
+.titlebar-dots {
+    display: flex;
+    gap: 8px;
+}
+
+.titlebar>.dot,
+.titlebar-dots>.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: none;
+    animation: none;
+    border: none;
+}
+
+.dot-red {
+    background: #ed8796 !important;
+}
+
+.dot-yellow {
+    background: #eed49f !important;
+}
+
+.dot-green {
+    background: #a6da95 !important;
+}
+
+/* --- アプリコンテナ（2カラム） --- */
+.app-container {
+    display: flex;
+    height: calc(100vh - var(--titlebar-height));
+}
+
+/* --- サイドバー --- */
+.sidebar {
+    width: var(--sidebar-width);
+    min-width: var(--sidebar-width);
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* スクロールバーのカスタマイズ */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: var(--bg-hover);
+    border-radius: 3px;
+}
+
+/* --- セクションタイトル --- */
+.section-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.icon-bracket {
+    color: var(--accent-yellow);
+    font-weight: bold;
+}
+
+/* --- アニメーション選択グリッド --- */
+.animation-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.anim-btn {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 14px 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    color: var(--text-secondary);
+}
+
+.anim-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent-blue);
+    transform: translateY(-1px);
+}
+
+.anim-btn.active {
+    background: rgba(137, 180, 250, 0.1);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    box-shadow: 0 0 12px rgba(137, 180, 250, 0.15);
+}
+
+.anim-btn-icon {
+    font-size: 16px;
+    letter-spacing: -2px;
+}
+
+.anim-btn-label {
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* --- コントロールグループ --- */
+.control-group {
+    margin-bottom: 18px;
+}
+
+.control-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.label-keyword {
+    color: var(--accent-pink);
+    font-weight: 600;
+}
+
+.control-value {
+    margin-left: auto;
+    color: var(--accent-orange);
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 12px;
+    background: var(--bg-input);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+/* --- スライダー --- */
+.control-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--bg-input);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+.control-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--accent-blue);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(137, 180, 250, 0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.control-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 14px rgba(137, 180, 250, 0.5);
+}
+
+.control-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: var(--accent-blue);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(137, 180, 250, 0.3);
+}
+
+/* --- 色数選択ボタン群 --- */
+.color-count-group {
+    display: flex;
+    gap: 6px;
+}
+
+.color-count-btn {
+    flex: 1;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 8px 4px;
+    color: var(--text-secondary);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.color-count-btn:hover {
+    background: var(--bg-hover);
+    border-color: var(--accent-purple);
+}
+
+.color-count-btn.active {
+    background: rgba(203, 166, 247, 0.15);
+    border-color: var(--accent-purple);
+    color: var(--accent-purple);
+    font-weight: 600;
+}
+
+/* --- カラーピッカー群 --- */
+.color-pickers-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.color-picker-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.color-picker-index {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    min-width: 14px;
+    text-align: right;
+}
+
+.color-picker-input {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 40px;
+    height: 32px;
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+    padding: 2px;
+    flex-shrink: 0;
+}
+
+.color-picker-input::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-picker-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 4px;
+}
+
+.color-picker-swatch {
+    flex: 1;
+    height: 32px;
+    border-radius: 6px;
+    opacity: 0.35;
+    transition: background 0.3s ease;
+}
+
+.color-picker-hex {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--accent-orange);
+    min-width: 60px;
+    text-align: right;
+}
+
+/* --- メインエリア --- */
+.main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* --- プレビューセクション --- */
+.preview-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.preview-tab-bar {
+    display: flex;
+    background: var(--bg-titlebar);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0;
+}
+
+.preview-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    background: var(--bg-sidebar);
+    border-right: 1px solid var(--border-color);
+}
+
+.preview-tab.active {
+    background: var(--bg-editor);
+    color: var(--text-primary);
+    border-top: 2px solid var(--accent-blue);
+}
+
+.tab-icon {
+    color: var(--accent-green);
+    font-size: 10px;
+}
+
+/* プレビューコンテナ（チェッカーパターン背景） */
+.preview-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        linear-gradient(45deg, #1a1a2e 25%, transparent 25%),
+        linear-gradient(-45deg, #1a1a2e 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #1a1a2e 75%),
+        linear-gradient(-45deg, transparent 75%, #1a1a2e 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+    background-color: #16162a;
+    position: relative;
+    min-height: 250px;
+}
+
+/* --- コードセクション --- */
+.code-section {
+    display: flex;
+    gap: 0;
+    border-top: 1px solid var(--border-color);
+    max-height: 40%;
+    min-height: 180px;
+}
+
+.code-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.code-block:first-child {
+    border-right: 1px solid var(--border-color);
+}
+
+.code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: var(--bg-titlebar);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.code-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.tab-icon-html {
+    color: var(--accent-orange);
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-weight: bold;
+}
+
+.tab-icon-css {
+    color: var(--accent-blue);
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-weight: bold;
+}
+
+/* --- コピーボタン --- */
+.copy-btn {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-size: 11px;
+    padding: 4px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.copy-btn:hover {
+    background: var(--accent-blue);
+    color: var(--bg-titlebar);
+    border-color: var(--accent-blue);
+}
+
+.copy-btn.copied {
+    background: var(--accent-green);
+    color: var(--bg-titlebar);
+    border-color: var(--accent-green);
+}
+
+/* --- コード表示エリア --- */
+.code-content {
+    flex: 1;
+    overflow: auto;
+    padding: 12px 16px;
+    background: var(--bg-editor);
+    font-family: 'Consolas', 'Courier New', 'Fira Code', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--accent-green);
+    white-space: pre;
+    tab-size: 2;
+}
+
+.code-content::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.code-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.code-content::-webkit-scrollbar-thumb {
+    background: var(--bg-hover);
+    border-radius: 3px;
+}
+
+/* ==================================================
+   ローディングアニメーション - プレビュー用スタイル
+   ================================================== */
+
+/* --- 1. Spinner --- */
+.loader-spinner {
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-top-color: var(--c1, #89b4fa);
+    border-right-color: var(--c2, rgba(255, 255, 255, 0.1));
+    border-bottom-color: var(--c3, rgba(255, 255, 255, 0.1));
+    border-left-color: var(--c4, rgba(255, 255, 255, 0.1));
+    width: var(--loader-size, 60px);
+    height: var(--loader-size, 60px);
+    animation: spin var(--loader-speed, 1s) linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* --- 2. Bouncing Dots --- */
+.loader-bouncing-dots {
+    display: flex;
+    gap: calc(var(--loader-size, 60px) * 0.2);
+    align-items: center;
+}
+
+.loader-bouncing-dots .dot {
+    width: calc(var(--loader-size, 60px) * 0.25);
+    height: calc(var(--loader-size, 60px) * 0.25);
+    background: var(--c1, #89b4fa);
+    border-radius: 50%;
+    animation: bounce var(--loader-speed, 1s) ease-in-out infinite;
+}
+
+.loader-bouncing-dots .dot:nth-child(2) {
+    animation-delay: calc(var(--loader-speed, 1s) * 0.16);
+    background: var(--c2, var(--c1, #89b4fa));
+}
+
+.loader-bouncing-dots .dot:nth-child(3) {
+    animation-delay: calc(var(--loader-speed, 1s) * 0.32);
+    background: var(--c3, var(--c1, #89b4fa));
+}
+
+@keyframes bounce {
+
+    0%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(calc(var(--loader-size, 60px) * -0.5));
+    }
+}
+
+/* --- 3. Pulse --- */
+.loader-pulse {
+    width: var(--loader-size, 60px);
+    height: var(--loader-size, 60px);
+    background: var(--c1, #89b4fa);
+    border-radius: 50%;
+    animation: pulse var(--loader-speed, 1s) ease-in-out infinite;
+    box-shadow: 0 0 0 0 var(--c2, var(--c1, #89b4fa));
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.5;
+        box-shadow: 0 0 0 0 currentColor;
+    }
+
+    50% {
+        transform: scale(1);
+        opacity: 1;
+        box-shadow: 0 0 20px 5px currentColor;
+    }
+
+    100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+        box-shadow: 0 0 0 0 currentColor;
+    }
+}
+
+/* --- 4. Wave --- */
+.loader-wave {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--loader-size, 60px) * 0.07);
+    height: var(--loader-size, 60px);
+}
+
+.loader-wave .bar {
+    width: calc(var(--loader-size, 60px) * 0.1);
+    height: 100%;
+    background: var(--c1, #89b4fa);
+    border-radius: 4px;
+    animation: wave var(--loader-speed, 1s) ease-in-out infinite;
+}
+
+.loader-wave .bar:nth-child(2) {
+    animation-delay: calc(var(--loader-speed, 1s) * -0.4);
+    background: var(--c2, var(--c1, #89b4fa));
+}
+
+.loader-wave .bar:nth-child(3) {
+    animation-delay: calc(var(--loader-speed, 1s) * -0.3);
+    background: var(--c3, var(--c1, #89b4fa));
+}
+
+.loader-wave .bar:nth-child(4) {
+    animation-delay: calc(var(--loader-speed, 1s) * -0.2);
+    background: var(--c4, var(--c1, #89b4fa));
+}
+
+.loader-wave .bar:nth-child(5) {
+    animation-delay: calc(var(--loader-speed, 1s) * -0.1);
+    background: var(--c5, var(--c1, #89b4fa));
+}
+
+@keyframes wave {
+
+    0%,
+    40%,
+    100% {
+        transform: scaleY(0.4);
+    }
+
+    20% {
+        transform: scaleY(1);
+    }
+}
+
+/* --- 5. Flipping Square --- */
+.loader-flipping-square {
+    width: var(--loader-size, 60px);
+    height: var(--loader-size, 60px);
+    background: var(--c1, #89b4fa);
+    border-radius: 6px;
+    animation: flip var(--loader-speed, 1s) ease-in-out infinite;
+}
+
+@keyframes flip {
+    0% {
+        transform: perspective(400px) rotateY(0);
+        background: var(--c1, #89b4fa);
+    }
+
+    33% {
+        background: var(--c2, var(--c1, #89b4fa));
+    }
+
+    50% {
+        transform: perspective(400px) rotateY(180deg);
+        background: var(--c3, var(--c1, #89b4fa));
+    }
+
+    66% {
+        background: var(--c4, var(--c1, #89b4fa));
+    }
+
+    100% {
+        transform: perspective(400px) rotateY(360deg);
+        background: var(--c5, var(--c1, #89b4fa));
+    }
+}
+
+/* --- 6. Double Ring --- */
+.loader-double-ring {
+    width: var(--loader-size, 60px);
+    height: var(--loader-size, 60px);
+    position: relative;
+}
+
+.loader-double-ring .ring {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid transparent;
+}
+
+.loader-double-ring .ring:nth-child(1) {
+    border-top-color: var(--c1, #89b4fa);
+    border-bottom-color: var(--c3, var(--c1, #89b4fa));
+    animation: ring-spin var(--loader-speed, 1s) linear infinite;
+}
+
+.loader-double-ring .ring:nth-child(2) {
+    border-left-color: var(--c2, var(--c1, #89b4fa));
+    border-right-color: var(--c4, var(--c1, #89b4fa));
+    animation: ring-spin var(--loader-speed, 1s) linear infinite reverse;
+}
+
+@keyframes ring-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================================================
+   レスポンシブデザイン
+   ================================================== */
+
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .sidebar {
+        width: 100%;
+        min-width: unset;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        max-height: none;
+    }
+
+    .main-area {
+        min-height: 500px;
+    }
+
+    .preview-container {
+        min-height: 200px;
+    }
+
+    .code-section {
+        flex-direction: column;
+        max-height: none;
+        min-height: auto;
+    }
+
+    .code-block:first-child {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .code-content {
+        min-height: 120px;
+        max-height: 200px;
+    }
+
+    body {
+        overflow: auto;
+    }
+
+    .color-count-group {
+        flex-wrap: wrap;
+    }
+}

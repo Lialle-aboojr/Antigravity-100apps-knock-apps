@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Loading Maker</title>
+    <!-- 説明: SEO用メタタグ -->
+    <meta name="description" content="CSS Loading Maker - 6種類のCSSローディングアニメーションをカスタマイズ＆コード生成。複数色対応。">
+    <!-- ファビコン: くるくる回るマーク絵文字をSVG Data URIで設定 -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== タイトルバー（VS Code風ウィンドウタイトル） ===== -->
+    <header class="titlebar" id="titlebar">
+        <div class="titlebar-left">
+            <span class="titlebar-icon">🌀</span>
+            <span class="titlebar-text">CSS Loading Maker</span>
+        </div>
+        <div class="titlebar-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+        </div>
+    </header>
+
+    <!-- ===== メインコンテンツ（2カラム構成） ===== -->
+    <div class="app-container" id="appContainer">
+
+        <!-- ===== 左サイドバー: コントロールパネル ===== -->
+        <aside class="sidebar" id="sidebar">
+
+            <!-- セクション: アニメーション選択 -->
+            <div class="sidebar-section">
+                <h2 class="section-title">
+                    <span class="icon-bracket">{</span>
+                    アニメーション / Animation
+                    <span class="icon-bracket">}</span>
+                </h2>
+                <div class="animation-grid" id="animationGrid">
+                    <!-- 6種類のアニメーション選択ボタン -->
+                    <button class="anim-btn active" data-type="spinner" id="btnSpinner">
+                        <span class="anim-btn-icon">◎</span>
+                        <span class="anim-btn-label">Spinner</span>
+                    </button>
+                    <button class="anim-btn" data-type="bouncing-dots" id="btnBouncingDots">
+                        <span class="anim-btn-icon">●●●</span>
+                        <span class="anim-btn-label">Bouncing Dots</span>
+                    </button>
+                    <button class="anim-btn" data-type="pulse" id="btnPulse">
+                        <span class="anim-btn-icon">○</span>
+                        <span class="anim-btn-label">Pulse</span>
+                    </button>
+                    <button class="anim-btn" data-type="wave" id="btnWave">
+                        <span class="anim-btn-icon">▮▮▮</span>
+                        <span class="anim-btn-label">Wave</span>
+                    </button>
+                    <button class="anim-btn" data-type="flipping-square" id="btnFlippingSquare">
+                        <span class="anim-btn-icon">◇</span>
+                        <span class="anim-btn-label">Flipping Square</span>
+                    </button>
+                    <button class="anim-btn" data-type="double-ring" id="btnDoubleRing">
+                        <span class="anim-btn-icon">◎◎</span>
+                        <span class="anim-btn-label">Double Ring</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- セクション: カスタマイズ -->
+            <div class="sidebar-section">
+                <h2 class="section-title">
+                    <span class="icon-bracket">{</span>
+                    カスタマイズ / Customize
+                    <span class="icon-bracket">}</span>
+                </h2>
+
+                <!-- サイズスライダー -->
+                <div class="control-group">
+                    <label class="control-label" for="sizeRange">
+                        <span class="label-keyword">サイズ</span> / Size
+                        <span class="control-value" id="sizeValue">60px</span>
+                    </label>
+                    <input type="range" class="control-slider" id="sizeRange" min="20" max="200" value="60">
+                </div>
+
+                <!-- 色数セレクト -->
+                <div class="control-group">
+                    <label class="control-label" for="colorCountSelect">
+                        <span class="label-keyword">色数</span> / Color Count
+                    </label>
+                    <div class="color-count-group" id="colorCountGroup">
+                        <button class="color-count-btn active" data-count="1" id="countBtn1">1色 / 1 Color</button>
+                        <button class="color-count-btn" data-count="3" id="countBtn3">3色 / 3 Colors</button>
+                        <button class="color-count-btn" data-count="5" id="countBtn5">5色 / 5 Colors</button>
+                    </div>
+                </div>
+
+                <!-- カラーピッカー群（JSで動的に増減） -->
+                <div class="control-group">
+                    <label class="control-label">
+                        <span class="label-keyword">色</span> / Color
+                    </label>
+                    <div class="color-pickers-container" id="colorPickersContainer">
+                        <!-- JSが動的にカラーピッカーを生成する -->
+                    </div>
+                </div>
+
+                <!-- アニメーション速度スライダー -->
+                <div class="control-group">
+                    <label class="control-label" for="speedRange">
+                        <span class="label-keyword">速度</span> / Speed
+                        <span class="control-value" id="speedValue">1.0s</span>
+                    </label>
+                    <input type="range" class="control-slider" id="speedRange" min="3" max="30" value="10">
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- ===== 右メインエリア: プレビュー＋コード ===== -->
+        <main class="main-area" id="mainArea">
+
+            <!-- プレビューエリア -->
+            <section class="preview-section" id="previewSection">
+                <div class="preview-tab-bar">
+                    <span class="preview-tab active">
+                        <span class="tab-icon">▶</span>
+                        preview.html
+                    </span>
+                </div>
+                <div class="preview-container" id="previewContainer">
+                    <!-- ここにJSでアニメーションDOM要素が挿入される -->
+                </div>
+            </section>
+
+            <!-- コード出力エリア -->
+            <section class="code-section" id="codeSection">
+                <!-- HTMLコード -->
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-tab">
+                            <span class="tab-icon-html">&lt;/&gt;</span>
+                            HTML
+                        </span>
+                        <button class="copy-btn" id="copyHtmlBtn" data-target="htmlCode">
+                            📋 コピー / Copy
+                        </button>
+                    </div>
+                    <pre class="code-content" id="htmlCode"></pre>
+                </div>
+                <!-- CSSコード -->
+                <div class="code-block">
+                    <div class="code-header">
+                        <span class="code-tab">
+                            <span class="tab-icon-css">#</span>
+                            CSS
+                        </span>
+                        <button class="copy-btn" id="copyCssBtn" data-target="cssCode">
+                            📋 コピー / Copy
+                        </button>
+                    </div>
+                    <pre class="code-content" id="cssCode"></pre>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- スクリプトの読み込み -->
+    <script src="script.js"></script>
+</body>
+
+</html>
