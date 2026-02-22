@@ -1,6 +1,6 @@
 /* ========================================
    Quick QR Generator — メインスクリプト
-   機能: QRコード生成・ダウンロード・エラーハンドリング
+   機能: QRコード生成・ダウンロード・エラーハンドリング・色変更
    ======================================== */
 
 // --- DOM要素の取得 ---
@@ -10,6 +10,8 @@ const qrPlaceholder = document.getElementById('qr-placeholder'); // 空欄時の
 const qrDisplay = document.getElementById('qr-display');       // QRコード表示エリア
 const downloadBtn = document.getElementById('download-btn');   // ダウンロードボタン
 const charCount = document.getElementById('char-count');       // 文字数カウンター
+const qrColorPicker = document.getElementById('qr-color');     // カラーピッカー
+const colorValueLabel = document.getElementById('color-value'); // 選択中のカラーコード表示
 
 // --- QRiousインスタンスを作成（ライブラリの初期化） ---
 const qr = new QRious({
@@ -17,7 +19,7 @@ const qr = new QRious({
     size: 800,           // 内部解像度（高品質でダウンロードするため大きめに設定）
     level: 'M',          // 誤り訂正レベル（M = 中程度）
     backgroundAlpha: 1,  // 背景の透明度（1 = 不透明な白）
-    foreground: '#222222', // QRコードの色（ダークグレー）
+    foreground: '#000000', // QRコードの色（初期値: 黒）
     background: '#ffffff'  // 背景色（白）
 });
 
@@ -38,6 +40,25 @@ qrInput.addEventListener('input', function () {
     }, 150);
 });
 
+// --- カラーピッカーの変更イベント ---
+qrColorPicker.addEventListener('input', function () {
+    // 選択されたカラーコードを取得
+    const selectedColor = qrColorPicker.value;
+
+    // カラーコード表示を更新
+    colorValueLabel.textContent = selectedColor;
+
+    // QRiousの前景色を更新
+    qr.foreground = selectedColor;
+
+    // 現在のテキストでQRコードを再生成（テキストがある場合のみ）
+    const text = qrInput.value;
+    if (text && text.trim().length > 0) {
+        qr.value = text;
+        showQRCode();
+    }
+});
+
 // --- QRコードの更新処理 ---
 function updateQRCode(text) {
     // 入力が空（文字数ゼロ）の場合
@@ -45,6 +66,9 @@ function updateQRCode(text) {
         hideQRCode();
         return;
     }
+
+    // カラーピッカーの現在の色を反映
+    qr.foreground = qrColorPicker.value;
 
     // QRコードを生成（QRiousが自動的にcanvasに描画する）
     qr.value = text;
@@ -82,7 +106,7 @@ downloadBtn.addEventListener('click', function () {
     // ボタンが非活性の場合は何もしない（安全措置）
     if (downloadBtn.disabled) return;
 
-    // canvasの内容をPNG画像としてData URLに変換
+    // canvasの内容をPNG画像としてData URLに変換（現在の色が反映された状態）
     const dataURL = qrCanvas.toDataURL('image/png');
 
     // ダウンロード用の一時的なリンク要素を作成

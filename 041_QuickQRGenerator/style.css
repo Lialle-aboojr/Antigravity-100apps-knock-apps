@@ -130,6 +130,70 @@ body {
     font-weight: 400;
 }
 
+/* --- カラーピッカーセクション --- */
+.color-section {
+    margin-top: 20px;
+}
+
+/* カラーピッカーのラッパー（横並びレイアウト） */
+.color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* カラーピッカー本体のスタイル */
+.color-picker {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 44px;
+    height: 44px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 3px;
+    cursor: pointer;
+    background-color: transparent;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* カラーピッカーのホバー時 */
+.color-picker:hover {
+    border-color: #bbb;
+}
+
+/* カラーピッカーのフォーカス時 */
+.color-picker:focus {
+    outline: none;
+    border-color: #bbb;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+}
+
+/* WebKitブラウザ（Chrome, Safari等）のカラーピッカー内部スタイル */
+.color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+/* Firefox用のカラーピッカー内部スタイル */
+.color-picker::-moz-color-swatch {
+    border: none;
+    border-radius: 6px;
+}
+
+/* 選択中のカラーコード表示 */
+.color-value {
+    font-size: 0.82rem;
+    color: #999;
+    font-family: 'Inter', monospace;
+    letter-spacing: 0.03em;
+    font-weight: 400;
+}
+
 /* --- 区切り線 --- */
 .divider {
     height: 1px;

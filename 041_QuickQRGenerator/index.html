@@ -13,7 +13,9 @@
     <!-- Google Fonts: Inter（クリーンなサンセリフ体） -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
 
     <!-- QRコード生成ライブラリ: QRious（軽量CDN版） -->
     <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
@@ -41,16 +43,23 @@
                 <label for="qr-input" class="input-label">
                     テキスト・URL 入力 / Enter Text or URL
                 </label>
-                <textarea
-                    id="qr-input"
-                    class="input-textarea"
-                    placeholder="例: https://example.com&#10;Example: Hello World!"
-                    rows="4"
-                    spellcheck="false"
-                ></textarea>
+                <textarea id="qr-input" class="input-textarea"
+                    placeholder="例: https://example.com&#10;Example: Hello World!" rows="4"
+                    spellcheck="false"></textarea>
                 <!-- 文字数カウンター -->
                 <div class="char-counter">
                     <span id="char-count">0</span> 文字 / characters
+                </div>
+            </section>
+
+            <!-- カラーピッカー -->
+            <section class="color-section">
+                <label for="qr-color" class="input-label">
+                    QRコードの色 / QR Code Color
+                </label>
+                <div class="color-picker-wrapper">
+                    <input type="color" id="qr-color" class="color-picker" value="#000000">
+                    <span class="color-value" id="color-value">#000000</span>
                 </div>
             </section>
 
@@ -77,10 +86,11 @@
 
                 <!-- ダウンロードボタン -->
                 <button class="download-btn" id="download-btn" disabled>
-                    <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="7 10 12 15 17 10"/>
-                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    <svg class="download-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
                     </svg>
                     ダウンロード / Download
                 </button>
