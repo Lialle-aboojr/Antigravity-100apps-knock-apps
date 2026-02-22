@@ -1,0 +1,327 @@
+/* ========================================
+   Quick QR Generator — スタイルシート
+   デザイン: 無印良品風ミニマル
+   カラー: 白 + 薄いグレー基調
+   ======================================== */
+
+/* --- リセット & ベース設定 --- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    /* フォント: Inter（英語）+ Noto Sans JP（日本語） */
+    font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #fafafa;
+    color: #333;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- ヘッダー --- */
+.header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #eee;
+    padding: 28px 24px;
+    text-align: center;
+}
+
+.header-inner {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #222;
+    letter-spacing: -0.02em;
+}
+
+.header-subtitle {
+    font-size: 0.82rem;
+    color: #999;
+    margin-top: 6px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+}
+
+/* --- メインコンテンツ --- */
+.main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px 60px;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 480px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #eee;
+    padding: 32px 28px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* --- 入力セクション --- */
+.input-section {
+    margin-bottom: 0;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 10px;
+    letter-spacing: 0.02em;
+}
+
+.input-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: #333;
+    background-color: #fafafa;
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    line-height: 1.5;
+}
+
+/* テキストエリアのフォーカス時スタイル */
+.input-textarea:focus {
+    outline: none;
+    border-color: #bbb;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+}
+
+/* プレースホルダーの色 */
+.input-textarea::placeholder {
+    color: #c0c0c0;
+    font-size: 0.88rem;
+}
+
+/* 文字数カウンター */
+.char-counter {
+    text-align: right;
+    font-size: 0.75rem;
+    color: #bbb;
+    margin-top: 6px;
+    font-weight: 400;
+}
+
+/* --- 区切り線 --- */
+.divider {
+    height: 1px;
+    background-color: #f0f0f0;
+    margin: 24px 0;
+}
+
+/* --- 出力セクション --- */
+.output-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* QRコード表示エリア */
+.qr-display {
+    width: 240px;
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background-color: #fdfdfd;
+    border: 1px solid #f0f0f0;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+    transition: border-color 0.3s ease;
+}
+
+/* QRコードが生成されたときのボーダー */
+.qr-display.has-qr {
+    border-color: #e0e0e0;
+}
+
+/* QRキャンバス */
+#qr-canvas {
+    display: none;
+    width: 200px;
+    height: 200px;
+    image-rendering: pixelated;
+}
+
+/* QR生成時にキャンバスを表示 */
+#qr-canvas.visible {
+    display: block;
+}
+
+/* プレースホルダー */
+.qr-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    transition: opacity 0.3s ease;
+}
+
+/* QR生成時にプレースホルダーを非表示 */
+.qr-placeholder.hidden {
+    display: none;
+}
+
+.placeholder-icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    opacity: 0.25;
+}
+
+.placeholder-text {
+    font-size: 0.8rem;
+    color: #bbb;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+.placeholder-text-en {
+    font-size: 0.72rem;
+    color: #ccc;
+}
+
+/* --- ダウンロードボタン --- */
+.download-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 280px;
+    padding: 13px 24px;
+    background-color: #333;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.15s ease, opacity 0.2s ease;
+    letter-spacing: 0.02em;
+}
+
+/* ホバー */
+.download-btn:hover:not(:disabled) {
+    background-color: #444;
+    transform: translateY(-1px);
+}
+
+/* アクティブ（クリック時） */
+.download-btn:active:not(:disabled) {
+    transform: translateY(0);
+    background-color: #222;
+}
+
+/* 非活性状態（disabled） — グレーアウト */
+.download-btn:disabled {
+    background-color: #e0e0e0;
+    color: #aaa;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ダウンロードアイコン（SVG） */
+.download-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+/* --- フッター --- */
+.footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.72rem;
+    color: #ccc;
+    letter-spacing: 0.02em;
+}
+
+/* --- レスポンシブ対応 --- */
+
+/* タブレット以下 */
+@media (max-width: 600px) {
+    .header {
+        padding: 22px 16px;
+    }
+
+    .header-title {
+        font-size: 1.25rem;
+    }
+
+    .main {
+        padding: 24px 16px 40px;
+    }
+
+    .app-container {
+        padding: 24px 20px;
+        border-radius: 12px;
+    }
+
+    .qr-display {
+        width: 200px;
+        height: 200px;
+    }
+
+    #qr-canvas {
+        width: 170px;
+        height: 170px;
+    }
+
+    .download-btn {
+        max-width: 100%;
+    }
+}
+
+/* 小さいスマートフォン */
+@media (max-width: 380px) {
+    .header-title {
+        font-size: 1.1rem;
+    }
+
+    .app-container {
+        padding: 20px 16px;
+    }
+
+    .qr-display {
+        width: 180px;
+        height: 180px;
+    }
+
+    #qr-canvas {
+        width: 150px;
+        height: 150px;
+    }
+}
