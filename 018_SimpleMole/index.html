@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mole Busters: Neo Retro Arcade</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;800&family=Press+Start+2P&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="header-container">
+        <h1>Mole Busters <br><span class="subtitle">モグラたたき: Neo Retro</span></h1>
+        <div class="phase-indicator" id="phase-display">READY?</div>
+    </div>
+
+    <!-- Settings Area -->
+    <div class="settings-panel">
+
+        <!-- Sound Toggle -->
+        <button id="sound-toggle" class="setting-btn" aria-label="Toggle Sound">
+            🔇 Sound OFF
+        </button>
+
+        <!-- Difficulty Select -->
+        <div class="difficulty-select">
+            <label class="radio-label">
+                <input type="radio" name="difficulty" value="easy">
+                <span class="radio-custom">EASY</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="difficulty" value="normal" checked>
+                <span class="radio-custom">NORMAL</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="difficulty" value="hard">
+                <span class="radio-custom">HARD</span>
+            </label>
+        </div>
+
+    </div>
+
+    <div class="game-info">
+        <div class="score-board">
+            Score: <span class="score">0</span>
+        </div>
+        <div class="timer-board">
+            Time: <span class="time-left">30</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onClick="startGame()" id="start-btn">Start Game / ゲーム開始</button>
+    </div>
+
+    <div class="game">
+        <!-- 9 holes -->
+        <div class="hole hole1">
+            <div class="character"></div>
+        </div>
+        <div class="hole hole2">
+            <div class="character"></div>
+        </div>
+        <div class="hole hole3">
+            <div class="character"></div>
+        </div>
+        <div class="hole hole4">
+            <div class="character"></div>
+        </div>
+        <div class="hole hole5">
+            <div class="character"></div>
+        </div>
+        <div class="hole hole6">
+            <div class="character"></div>
+        </div>
+        <div class="hole hole7">
+            <div class="character"></div>
+        </div>
+        <div class="hole hole8">
+            <div class="character"></div>
+        </div>
+        <div class="hole hole9">
+            <div class="character"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

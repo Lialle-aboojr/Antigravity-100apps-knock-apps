@@ -1,0 +1,315 @@
+:root {
+    --bg-color: #FDFBF7; /* クリーム色 */
+    --accent-green: #8DA399; /* セージグリーン */
+    --accent-brown: #5D5C61; /* 落ち着いたブラウン */
+    --text-color: #4A4A4A;
+    --card-bg: #FFFFFF;
+    --input-border: #E0E0E0;
+    --radius: 12px;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+header {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--accent-green);
+    color: white;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+header p {
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 16px 40px;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+h2 {
+    color: var(--accent-brown);
+    font-size: 1.2rem;
+    margin-top: 0;
+    border-bottom: 2px solid var(--bg-color);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* 人数設定エリア */
+.servings-input-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.input-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-wrapper label {
+    font-size: 0.9rem;
+    margin-bottom: 5px;
+    color: var(--accent-brown);
+}
+
+.input-unit {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-unit input {
+    width: 100%;
+    padding: 12px;
+    padding-right: 40px; /* 単位のスペース */
+    font-size: 1.2rem;
+    border: 1px solid var(--input-border);
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    color: var(--accent-brown);
+}
+
+.input-unit span {
+    position: absolute;
+    right: 12px;
+    color: #999;
+}
+
+.arrow {
+    font-size: 1.5rem;
+    color: var(--accent-green);
+    font-weight: bold;
+}
+
+.scaling-factor {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.1rem;
+    background-color: var(--bg-color);
+    padding: 10px;
+    border-radius: 8px;
+    color: var(--accent-brown);
+}
+
+.scaling-factor span {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent-green);
+}
+
+/* アクションエリア */
+.actions-area {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+.toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.toggle-label {
+    font-size: 0.95rem;
+}
+
+/* トグルスイッチ */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--accent-green);
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+.btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-family: inherit;
+}
+
+.primary-btn {
+    background-color: var(--accent-brown);
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #4a494d;
+}
+
+.secondary-btn {
+    background-color: white;
+    border: 2px solid var(--accent-green);
+    color: var(--accent-green);
+    margin-top: 10px;
+}
+
+.secondary-btn:hover {
+    background-color: #f0f4f2;
+}
+
+/* 材料リスト */
+#ingredients-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.ingredient-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 40px;
+    gap: 8px;
+    align-items: center;
+    background-color: #FAFAFA;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.ingredient-row:focus-within {
+    border-color: var(--accent-green);
+}
+
+.ingredient-row input, .ingredient-row select {
+    padding: 10px 5px;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    font-size: 1rem;
+    width: 100%;
+}
+
+.ingredient-row input[type="number"] {
+    text-align: center;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: #999;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.delete-btn:hover {
+    color: #e74c3c;
+}
+
+.calculated-val {
+    font-weight: bold;
+    color: var(--accent-brown);
+}
+
+/* モバイル対応調整 */
+@media (max-width: 400px) {
+    .servings-input-group {
+        flex-direction: column;
+    }
+    .arrow {
+        transform: rotate(90deg);
+    }
+    
+    .ingredient-row {
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas: 
+            "name name"
+            "qty unit";
+        position: relative;
+        padding-right: 30px; /* 削除ボタン用 */
+    }
+    
+    .ingredient-row input:first-child {
+        grid-area: name;
+    }
+    
+    .delete-btn {
+        position: absolute;
+        top: 5px;
+        right: 0;
+    }
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinate Hunter</title>
+    <!-- ファビコン: 衛星アンテナ -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📡</text></svg>">
+    <!-- Sci-Fi/HUD風のフォントを読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="scanline"></div>
+
+    <div class="hud-container">
+        <!-- ヘッダーエリア -->
+        <header class="hud-header">
+            <h1 class="glow-text">
+                <span class="ja">現在地取得コンパス</span><br>
+                <span class="en">COORDINATE HUNTER</span>
+            </h1>
+            <div class="decoration-line"></div>
+        </header>
+
+        <!-- メインディスプレイエリア -->
+        <main class="hud-display">
+            <!-- 緯度 -->
+            <div class="data-row">
+                <div class="label">
+                    <span class="ja">緯度</span>
+                    <span class="en">LATITUDE</span>
+                </div>
+                <div class="value" id="lat-display">--.------</div>
+            </div>
+
+            <!-- 経度 -->
+            <div class="data-row">
+                <div class="label">
+                    <span class="ja">経度</span>
+                    <span class="en">LONGITUDE</span>
+                </div>
+                <div class="value" id="lng-display">--.------</div>
+            </div>
+
+            <!-- 精度 -->
+            <div class="data-row sm">
+                <div class="label">
+                    <span class="ja">精度</span>
+                    <span class="en">ACCURACY</span>
+                </div>
+                <div class="value text-sm" id="acc-display">± - m</div>
+            </div>
+
+            <!-- ステータス/メッセージ表示 -->
+            <div class="status-box" id="status-area">
+                <p class="ja">システム待機中...</p>
+                <p class="en">SYSTEM STANDBY...</p>
+            </div>
+        </main>
+
+        <!-- コントロールエリア -->
+        <footer class="hud-controls">
+            <button id="btn-get-location" class="hud-btn primary">
+                <span class="ja">計測開始</span>
+                <span class="en">GET LOCATION</span>
+            </button>
+
+            <a id="link-map" href="#" target="_blank" class="hud-btn secondary disabled">
+                <span class="ja">Googleマップで開く</span>
+                <span class="en">OPEN MAP</span>
+            </a>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

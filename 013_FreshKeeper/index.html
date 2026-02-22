@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshKeeper - 食材の賞味期限を管理します</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Colors */
+            --color-expired-bg: #ffebee;
+            --color-expired-border: #ff5252;
+            --color-expired-text: #d32f2f;
+
+            --color-warning-bg: #fffde7;
+            --color-warning-border: #fdd835;
+            --color-warning-text: #f57f17;
+
+            --color-safe-bg: #e8f5e9;
+            --color-safe-border: #4caf50;
+            --color-safe-text: #2e7d32;
+
+            --color-text-main: #333;
+            --color-text-sub: #666;
+            --color-bg: #fafafa;
+            --color-white: #fff;
+
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius-md: 12px;
+            --radius-sm: 8px;
+        }
+
+        /* Reset & Base */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-main);
+            line-height: 1.5;
+            padding: 20px;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 80px;
+            /* Space for fixed elements if needed, or footer */
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 3rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--color-text-sub);
+        }
+
+        .settings-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .settings-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        /* Form Area */
+        .input-card {
+            background: var(--color-white);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-card);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group.full-width {
+            flex: 100%;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-text-sub);
+        }
+
+        input,
+        select {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #888;
+        }
+
+        /* File Input Custom Styling */
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-input-btn {
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            color: #666;
+            padding: 0.8rem;
+            border-radius: var(--radius-sm);
+            text-align: center;
+            display: block;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-input-wrapper:hover .file-input-btn {
+            border-color: #999;
+            color: #333;
+        }
+
+        button.primary-btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button.primary-btn:hover {
+            background-color: #555;
+        }
+
+        /* List Area */
+        .food-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Card Component */
+        .card {
+            background: var(--color-white);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            border: 2px solid transparent;
+            /* For status border */
+            position: relative;
+        }
+
+        .card-image-area {
+            height: 180px;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-image-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .no-image {
+            font-size: 3rem;
+            color: #999;
+        }
+
+        .card-content {
+            padding: 1rem;
+            flex-grow: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .food-name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+        }
+
+        .dates {
+            font-size: 0.9rem;
+            color: var(--color-text-sub);
+            margin-bottom: 1rem;
+        }
+
+        .dates div {
+            margin-bottom: 0.25rem;
+        }
+
+        .card-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background-color: #f5f5f5;
+        }
+
+        .icon-btn.delete:hover {
+            background-color: #ffebee;
+            border-color: #ffcdd2;
+            color: #d32f2f;
+        }
+
+        /* Status Styles */
+        .card.status-expired {
+            background-color: var(--color-expired-bg);
+            border-color: var(--color-expired-border);
+        }
+
+        .card.status-expired .status-badge {
+            color: var(--color-expired-text);
+            border: 1px solid var(--color-expired-text);
+        }
+
+        .card.status-warning {
+            background-color: var(--color-warning-bg);
+            border-color: var(--color-warning-border);
+        }
+
+        .card.status-warning .status-badge {
+            color: var(--color-warning-text);
+            border: 1px solid var(--color-warning-text);
+        }
+
+        .card.status-safe {
+            background-color: var(--color-safe-bg);
+            border-color: var(--color-safe-border);
+        }
+
+        .card.status-safe .status-badge {
+            color: var(--color-safe-text);
+            border: 1px solid var(--color-safe-text);
+        }
+
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal {
+            background: white;
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+            color: var(--color-text-sub);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn-secondary {
+            background: #eee;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .btn-danger {
+            background: var(--color-expired-border);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Settings List */
+        .settings-list {
+            list-style: none;
+            margin-top: 1rem;
+            border: 1px solid #eee;
+            border-radius: var(--radius-sm);
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .settings-add-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Utilities */
+        .text-center {
+            text-align: center;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .food-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+            <h1>FreshKeeper</h1>
+            <div class="subtitle">食材の賞味期限を管理します</div>
+            <button class="settings-btn" id="openSettingsBtn" aria-label="設定">⚙️</button>
+        </header>
+
+        <!-- App State Root -->
+        <main id="app">
+            <!-- Input Form -->
+            <div class="input-card">
+                <div class="form-group full-width">
+                    <div class="file-input-wrapper">
+                        <div class="file-input-btn" id="fileInputLabel">📸 写真を選択 (クリックして追加)</div>
+                        <input type="file" id="itemImage" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>食材名</label>
+                        <input type="text" id="itemName" list="foodSuggestions" placeholder="食材名を入力または選択">
+                        <datalist id="foodSuggestions"></datalist>
+                    </div>
+                    <div class="form-group">
+                        <label>購入日</label>
+                        <input type="date" id="purchaseDate">
+                    </div>
+                    <div class="form-group">
+                        <label>賞味期限</label>
+                        <input type="date" id="expiryDate">
+                    </div>
+                </div>
+
+                <button id="addBtn" class="primary-btn">リストに追加</button>
+            </div>
+
+            <!-- List -->
+            <div id="foodList" class="food-list">
+                <!-- Items will be injected here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Delete Modal -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">削除の確認</div>
+            <div class="modal-body" id="deleteModalBody">
+                <!-- Dynamic Text -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelDeleteBtn">キャンセル</button>
+                <button class="btn-danger" id="confirmDeleteBtn">削除する</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">食材の編集</div>
+            <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem;">
+                <div class="form-group">
+                    <div class="file-input-wrapper">
+                        <div class="file-input-btn" id="editFileInputLabel">📸 写真を変更</div>
+                        <input type="file" id="editItemImage" accept="image/*">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>食材名</label>
+                    <input type="text" id="editItemName">
+                </div>
+                <div class="form-group">
+                    <label>購入日</label>
+                    <input type="date" id="editPurchaseDate">
+                </div>
+                <div class="form-group">
+                    <label>賞味期限</label>
+                    <input type="date" id="editExpiryDate">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelEditBtn">キャンセル</button>
+                <button class="primary-btn" id="saveEditBtn" style="padding: 0.6rem 1.2rem;">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">設定：食材リスト</div>
+            <div class="modal-body">
+                <p style="margin-bottom: 1rem; font-size: 0.9rem;">食材名と賞味期限目安（日）を管理します。</p>
+
+                <div class="settings-add-row">
+                    <input type="text" id="settingName" placeholder="食材名" style="flex:2">
+                    <input type="number" id="settingDays" placeholder="日数" style="flex:1">
+                    <button id="addSettingBtn" class="primary-btn" style="padding: 0 1rem;">＋</button>
+                </div>
+
+                <ul id="settingsList" class="settings-list">
+                    <!-- Settings items injected here -->
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="closeSettingsBtn">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * FreshKeeper Application Logic
+         */
+
+        // --- State & Constants ---
+        const STORAGE_KEY_ITEMS = 'freshkeeper_items_v1';
+        const STORAGE_KEY_SETTINGS = 'freshkeeper_settings_v1';
+
+        // Default Database
+        const DEFAULT_DB = [
+            { name: '豚肉', days: 3 },
+            { name: '鶏肉', days: 3 },
+            { name: 'ひき肉', days: 2 },
+            { name: '魚', days: 2 },
+            { name: '作り置き', days: 2 },
+            { name: '食パン', days: 4 },
+            { name: '葉野菜', days: 4 },
+            { name: '豆腐', days: 5 },
+            { name: '牛乳', days: 7 },
+            { name: '豆乳', days: 7 },
+            { name: '卵', days: 14 },
+            { name: 'ヨーグルト', days: 14 },
+            { name: 'ハム', days: 21 },
+            { name: 'ソーセージ', days: 21 },
+            { name: '納豆', days: 21 },
+        ];
+
+        let state = {
+            items: [],
+            settings: []
+        };
+
+        let itemToDeleteId = null;
+        let itemToEditId = null;
+        let currentImageBase64 = null; // Temp holder for new item
+        let editImageBase64 = null;    // Temp holder for edit item
+
+        // --- DOM Elements ---
+        const ui = {
+            itemImage: document.getElementById('itemImage'),
+            fileInputLabel: document.getElementById('fileInputLabel'),
+            itemName: document.getElementById('itemName'),
+            foodSuggestions: document.getElementById('foodSuggestions'),
+            purchaseDate: document.getElementById('purchaseDate'),
+            expiryDate: document.getElementById('expiryDate'),
+            addBtn: document.getElementById('addBtn'),
+            foodList: document.getElementById('foodList'),
+
+            // Modals
+            deleteModal: document.getElementById('deleteModal'),
+            deleteModalBody: document.getElementById('deleteModalBody'),
+            confirmDeleteBtn: document.getElementById('confirmDeleteBtn'),
+            cancelDeleteBtn: document.getElementById('cancelDeleteBtn'),
+
+            settingsModal: document.getElementById('settingsModal'),
+            openSettingsBtn: document.getElementById('openSettingsBtn'),
+            closeSettingsBtn: document.getElementById('closeSettingsBtn'),
+            settingsList: document.getElementById('settingsList'),
+            settingName: document.getElementById('settingName'),
+            settingDays: document.getElementById('settingDays'),
+            addSettingBtn: document.getElementById('addSettingBtn'),
+
+            editModal: document.getElementById('editModal'),
+            editItemImage: document.getElementById('editItemImage'),
+            editFileInputLabel: document.getElementById('editFileInputLabel'),
+            editItemName: document.getElementById('editItemName'),
+            editPurchaseDate: document.getElementById('editPurchaseDate'),
+            editExpiryDate: document.getElementById('editExpiryDate'),
+            saveEditBtn: document.getElementById('saveEditBtn'),
+            cancelEditBtn: document.getElementById('cancelEditBtn'),
+        };
+
+        // --- Initialization ---
+        function init() {
+            loadData();
+            setupEventListeners();
+            setupDefaults();
+            renderSettings();
+            renderList();
+        }
+
+        function loadData() {
+            const savedItems = localStorage.getItem(STORAGE_KEY_ITEMS);
+            const savedSettings = localStorage.getItem(STORAGE_KEY_SETTINGS);
+
+            if (savedItems) {
+                state.items = JSON.parse(savedItems);
+            }
+
+            if (savedSettings) {
+                state.settings = JSON.parse(savedSettings);
+            } else {
+                state.settings = [...DEFAULT_DB]; // Deep copy not strictly needed for flat obj but good practice
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEY_ITEMS, JSON.stringify(state.items));
+            localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(state.settings));
+        }
+
+        function setupDefaults() {
+            // Set today for date inputs
+            const today = new Date().toISOString().split('T')[0];
+            ui.purchaseDate.value = today;
+            ui.expiryDate.value = today;
+
+            updateDatalist();
+        }
+
+        function updateDatalist() {
+            ui.foodSuggestions.innerHTML = '';
+            state.settings.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.name;
+                ui.foodSuggestions.appendChild(option);
+            });
+        }
+
+        // --- Core Logic ---
+
+        // Calculates expiration based on purchase date and DB
+        function calculateAutoExpiry(name, purchaseDateStr) {
+            const setting = state.settings.find(s => s.name === name);
+            if (setting && purchaseDateStr) {
+                const date = new Date(purchaseDateStr);
+                date.setDate(date.getDate() + parseInt(setting.days));
+                return date.toISOString().split('T')[0];
+            }
+            return null;
+        }
+
+        // Image Handling (Canvas Compression)
+        function handleImageFile(file, callback) {
+            if (!file) return callback(null);
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 300;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Compress to JPEG 0.7
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    callback(dataUrl);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Status Determination
+        function getItemStatus(expiryDateStr) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const expiry = new Date(expiryDateStr);
+            expiry.setHours(0, 0, 0, 0);
+
+            const diffTime = expiry - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) return { type: 'expired', label: '期限切れ！', colorClass: 'status-expired' };
+            if (diffDays === 0) return { type: 'expired', label: '今日まで！', colorClass: 'status-expired' }; // User requirement: Red for today too? Prompt said "Expired/Today: Red"
+            if (diffDays <= 3) return { type: 'warning', label: `残り${diffDays}日`, colorClass: 'status-warning' };
+            return { type: 'safe', label: `残り${diffDays}日`, colorClass: 'status-safe' };
+        }
+
+        // --- Event Listeners ---
+        function setupEventListeners() {
+
+            // Auto-fill logic
+            const autoFillHandler = () => {
+                const name = ui.itemName.value;
+                const pDate = ui.purchaseDate.value;
+                const newExpiry = calculateAutoExpiry(name, pDate);
+                if (newExpiry) {
+                    ui.expiryDate.value = newExpiry;
+                }
+            };
+            ui.itemName.addEventListener('change', autoFillHandler);
+            ui.purchaseDate.addEventListener('change', autoFillHandler);
+
+            // Image Input
+            ui.itemImage.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    handleImageFile(e.target.files[0], (data) => {
+                        currentImageBase64 = data;
+                        ui.fileInputLabel.textContent = `✅ 画像選択済み: ${e.target.files[0].name}`;
+                    });
+                }
+            });
+
+            // Add Item
+            ui.addBtn.addEventListener('click', addItem);
+
+            // Settings Modal
+            ui.openSettingsBtn.addEventListener('click', () => {
+                updateDatalist(); // Ensure list is sync
+                ui.settingsModal.classList.add('active');
+            });
+            ui.closeSettingsBtn.addEventListener('click', () => ui.settingsModal.classList.remove('active'));
+            ui.addSettingBtn.addEventListener('click', addSetting);
+
+            // Delete Modal
+            ui.cancelDeleteBtn.addEventListener('click', () => ui.deleteModal.classList.remove('active'));
+            ui.confirmDeleteBtn.addEventListener('click', executeDelete);
+
+            // Edit Modal
+            ui.cancelEditBtn.addEventListener('click', () => ui.editModal.classList.remove('active'));
+            ui.saveEditBtn.addEventListener('click', executeEdit);
+
+            ui.editItemName.addEventListener('change', () => {
+                const name = ui.editItemName.value;
+                const pDate = ui.editPurchaseDate.value;
+                const newExpiry = calculateAutoExpiry(name, pDate);
+                if (newExpiry) ui.editExpiryDate.value = newExpiry;
+            });
+            ui.editPurchaseDate.addEventListener('change', () => {
+                const name = ui.editItemName.value;
+                const pDate = ui.editPurchaseDate.value;
+                const newExpiry = calculateAutoExpiry(name, pDate);
+                if (newExpiry) ui.editExpiryDate.value = newExpiry;
+            });
+            ui.editItemImage.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    handleImageFile(e.target.files[0], (data) => {
+                        editImageBase64 = data;
+                        ui.editFileInputLabel.textContent = '✅ 新しい画像を選択済み';
+                    });
+                }
+            });
+        }
+
+        // --- Actions ---
+
+        function addItem() {
+            if (!ui.itemName.value) {
+                alert('食材名を入力してください');
+                return;
+            }
+
+            const newItem = {
+                id: Date.now().toString(),
+                name: ui.itemName.value,
+                purchaseDate: ui.purchaseDate.value,
+                expiryDate: ui.expiryDate.value,
+                image: currentImageBase64
+            };
+
+            // Add to TOP
+            state.items.unshift(newItem);
+            saveData();
+            renderList();
+
+            // Reset Form
+            ui.itemName.value = '';
+            ui.itemImage.value = ''; // Reset file input
+            currentImageBase64 = null;
+            ui.fileInputLabel.textContent = '📸 写真を選択 (クリックして追加)';
+            setupDefaults(); // Reset dates
+        }
+
+        function openDeleteModal(id) {
+            const item = state.items.find(i => i.id === id);
+            if (!item) return;
+
+            itemToDeleteId = id;
+            ui.deleteModalBody.textContent = `『${item.name}』（期限: ${item.expiryDate}）を削除しますか？`;
+            ui.deleteModal.classList.add('active');
+        }
+
+        function executeDelete() {
+            if (itemToDeleteId) {
+                state.items = state.items.filter(i => i.id !== itemToDeleteId);
+                saveData();
+                renderList();
+            }
+            ui.deleteModal.classList.remove('active');
+            itemToDeleteId = null;
+        }
+
+        function openEditModal(id) {
+            const item = state.items.find(i => i.id === id);
+            if (!item) return;
+
+            itemToEditId = id;
+            ui.editItemName.value = item.name;
+            ui.editPurchaseDate.value = item.purchaseDate;
+            ui.editExpiryDate.value = item.expiryDate;
+            editImageBase64 = item.image; // Keep invalid old img by default unless changed
+            ui.editFileInputLabel.textContent = '📸 写真を変更';
+            ui.editItemImage.value = ''; // Reset
+
+            ui.editModal.classList.add('active');
+        }
+
+        function executeEdit() {
+            if (!itemToEditId) return;
+
+            const idx = state.items.findIndex(i => i.id === itemToEditId);
+            if (idx !== -1) {
+                state.items[idx] = {
+                    ...state.items[idx],
+                    name: ui.editItemName.value,
+                    purchaseDate: ui.editPurchaseDate.value,
+                    expiryDate: ui.editExpiryDate.value,
+                    image: editImageBase64
+                };
+                saveData();
+                renderList();
+            }
+            ui.editModal.classList.remove('active');
+            itemToEditId = null;
+        }
+
+        function addSetting() {
+            const name = ui.settingName.value;
+            const days = ui.settingDays.value;
+
+            if (name && days) {
+                state.settings.push({ name, days: parseInt(days) });
+                saveData();
+                updateDatalist();
+                renderSettings();
+
+                ui.settingName.value = '';
+                ui.settingDays.value = '';
+            }
+        }
+
+        function removeSetting(index) {
+            state.settings.splice(index, 1);
+            saveData();
+            updateDatalist();
+            renderSettings();
+        }
+
+        // --- Rendering ---
+
+        function renderList() {
+            ui.foodList.innerHTML = '';
+
+            state.items.forEach(item => {
+                const status = getItemStatus(item.expiryDate);
+
+                const card = document.createElement('div');
+                card.className = `card ${status.colorClass}`;
+
+                // Image Logic
+                let imageHtml = '';
+                if (item.image) {
+                    imageHtml = `<img src="${item.image}" alt="${item.name}">`;
+                } else {
+                    imageHtml = `<div class="no-image">🍎</div>`;
+                }
+
+                card.innerHTML = `
+                <div class="card-image-area">
+                    ${imageHtml}
+                </div>
+                <div class="card-content">
+                    <div class="card-header">
+                        <span class="food-name">${item.name}</span>
+                        <span class="status-badge">${status.label}</span>
+                    </div>
+                    <div class="dates">
+                        <div>購入: ${item.purchaseDate}</div>
+                        <div>期限: ${item.expiryDate}</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="icon-btn" onclick="openEditModal('${item.id}')" aria-label="編集">✏️</button>
+                        <button class="icon-btn delete" onclick="openDeleteModal('${item.id}')" aria-label="削除">🗑️</button>
+                    </div>
+                </div>
+            `;
+                ui.foodList.appendChild(card);
+            });
+        }
+
+        function renderSettings() {
+            ui.settingsList.innerHTML = '';
+            state.settings.forEach((s, index) => {
+                const li = document.createElement('li');
+                li.className = 'settings-item';
+                li.innerHTML = `
+                <span>${s.name} (${s.days}日)</span>
+                <button class="icon-btn delete" style="width:24px; height:24px; font-size:0.8rem;" onclick="removeSetting(${index})">✕</button>
+            `;
+                ui.settingsList.appendChild(li);
+            });
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', init);
+
+        // Global Exposure for inline onclicks
+        window.openDeleteModal = openDeleteModal;
+        window.openEditModal = openEditModal;
+        window.removeSetting = removeSetting; // Need to expose this logic too
+
+    </script>
+</body>
+
+</html>

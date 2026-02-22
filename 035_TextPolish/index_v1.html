@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Polish / テキスト整形ツール</title>
+    <!-- ファビコン: 🧹 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧹</text></svg>">
+    <!-- Google Fonts: Noto Sans JP & Roboto -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo-area">
+                <h1>Text Polish <span class="sub-title">/ テキスト整形ツール</span></h1>
+                <p class="description">不要な文字や改行を削除して、テキストをきれいに整えます。<br><span class="en-desc">Remove unnecessary characters and line breaks to polish your text.</span></p>
+            </div>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <span class="icon">☀️</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Left: Input Area -->
+            <section class="panel input-panel">
+                <div class="panel-header">
+                    <h2>入力 <span class="en-label">/ Input</span></h2>
+                </div>
+                <textarea id="inputText" placeholder="ここにテキストを入力または貼り付けてください...&#10;Paste your text here..."></textarea>
+                <div class="utility-bar">
+                    <button id="clearBtn" class="btn secondary">クリア / Clear All</button>
+                </div>
+            </section>
+
+            <!-- Center: Controls -->
+            <section class="panel control-panel">
+                <div class="panel-header">
+                    <h2>操作 <span class="en-label">/ Actions</span></h2>
+                </div>
+                
+                <div class="action-group">
+                    <button id="removeLineBreaksBtn" class="btn primary">
+                        <span class="label-jp">改行削除</span>
+                        <span class="label-en">Remove Line Breaks</span>
+                    </button>
+                    <button id="removeAllSpacesBtn" class="btn primary">
+                        <span class="label-jp">空白全削除</span>
+                        <span class="label-en">Remove All Spaces</span>
+                    </button>
+                    <button id="removeEmptyLinesBtn" class="btn primary">
+                        <span class="label-jp">空行のみ削除</span>
+                        <span class="label-en">Remove Empty Lines</span>
+                    </button>
+                </div>
+
+                <div class="custom-group">
+                    <label for="customDeleteInput">カスタム削除 / Custom Delete</label>
+                    <div class="input-group">
+                        <input type="text" id="customDeleteInput" placeholder="文字 / Char (e.g. ★)">
+                        <button id="customDeleteBtn" class="btn primary small">実行 / Execute</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right: Result Area -->
+            <section class="panel output-panel">
+                <div class="panel-header">
+                    <h2>結果 <span class="en-label">/ Result</span></h2>
+                </div>
+                <textarea id="outputText" readonly placeholder="整形されたテキストがここに表示されます...&#10;Polished text will appear here..."></textarea>
+                <div class="utility-bar">
+                    <button id="copyBtn" class="btn accent">コピー / Copy Result</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Text Polish</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

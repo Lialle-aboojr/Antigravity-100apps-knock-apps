@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Filler Text Generator / 万能ダミーテキスト生成器</title>
+    <!-- ファビコン: 📄 の絵文字をSVG化してData URIで使用 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Universal Filler Text Generator</h1>
+            <p class="subtitle">万能ダミーテキスト生成器</p>
+        </header>
+
+        <main>
+            <!-- コントロールパネル -->
+            <section class="controls">
+                
+                <!-- モード選択 -->
+                <div class="control-group">
+                    <label class="group-label">Mode / モード</label>
+                    <div class="mode-selector">
+                        <label class="radio-label">
+                            <input type="radio" name="mode" value="standard" checked>
+                            <span class="radio-custom"></span>
+                            Standard (Lorem ipsum)
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="mode" value="japanese">
+                            <span class="radio-custom"></span>
+                            Japanese (青空文庫)
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="mode" value="designer">
+                            <span class="radio-custom"></span>
+                            Designer's Pain (業界あるある)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- パラグラフ数スライダー -->
+                <div class="control-group">
+                    <div class="label-row">
+                        <label class="group-label" for="paragraph-slider">Paragraphs / 段落数</label>
+                        <span id="paragraph-value" class="value-display">3</span>
+                    </div>
+                    <input type="range" id="paragraph-slider" min="1" max="10" value="3" class="slider">
+                </div>
+
+                <!-- オプション -->
+                <div class="control-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="html-tag-check">
+                        <span class="checkbox-custom"></span>
+                        Include HTML Tags (&lt;p&gt;) / HTMLタグを含める
+                    </label>
+                </div>
+            </section>
+
+            <!-- 出力エリア -->
+            <section class="output-section">
+                <div class="output-container">
+                    <textarea id="output-text" readonly></textarea>
+                    <button id="copy-btn" class="copy-btn" aria-label="Copy to Clipboard">
+                        <span class="icon">📋</span> Copy / コピー
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Universal Filler Text Generator</p>
+        </footer>
+    </div>
+
+    <!-- トースト通知 -->
+    <div id="toast" class="toast">Copied! / コピーしました</div>
+
+    <script src="script.js"></script>
+</body>
+</html>

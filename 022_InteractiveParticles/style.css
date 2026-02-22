@@ -1,0 +1,120 @@
+/* 全体のリセットと基本的な設定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* デフォルト（ダークモード）の変数定義 */
+    --bg-gradient: radial-gradient(circle at center, #1a1f35 0%, #000000 100%);
+    --text-color: #ffffff;
+    --text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    --instruction-color: #a0a0ff;
+    --btn-bg: rgba(255, 255, 255, 0.1);
+    --btn-border: rgba(255, 255, 255, 0.3);
+    --btn-hover: rgba(255, 255, 255, 0.2);
+}
+
+/* ライトモード用のクラス */
+body.light-mode {
+    --bg-gradient: radial-gradient(circle at center, #ffffff 0%, #f0f4f8 100%);
+    --text-color: #333333;
+    --text-shadow: none;
+    --instruction-color: #5555aa;
+    --btn-bg: rgba(0, 0, 0, 0.05);
+    --btn-border: rgba(0, 0, 0, 0.2);
+    --btn-hover: rgba(0, 0, 0, 0.1);
+}
+
+body {
+    /* スクロールバーを消す */
+    overflow: hidden;
+    /* 背景色設定 */
+    background: var(--bg-gradient);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-color);
+    /* 背景色の変化を滑らかにするアニメーション */
+    transition: background 0.5s ease, color 0.5s ease;
+}
+
+/* キャンバスの設定 */
+#canvas1 {
+    /* 画面いっぱいに広げる */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* UIの下に配置 */
+    z-index: 1;
+}
+
+/* UIコンテナ（タイトルと説明文） */
+#ui-container {
+    position: absolute;
+    /* 画面の中央上部に配置 */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    /* キャンバスより手前に表示 */
+    z-index: 10;
+    /* UI自体はクリックイベントを妨害しないようにする */
+    /* ただし、ボタンはクリック可能にするため、子要素でpointer-events: autoに戻す */
+    pointer-events: none;
+
+    /* 視認性の確保 */
+    opacity: 0.9;
+}
+
+h1 {
+    font-size: 3rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+    letter-spacing: 0.2rem;
+    text-shadow: var(--text-shadow);
+    transition: text-shadow 0.5s ease;
+}
+
+h1 small {
+    display: block;
+    font-size: 1.2rem;
+    opacity: 0.7;
+    margin-top: 0.5rem;
+}
+
+.instruction {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--instruction-color);
+    transition: color 0.5s ease;
+}
+
+/* テーマ切り替えボタン */
+#theme-btn {
+    pointer-events: auto;
+    /* ここだけクリック可能に */
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: var(--btn-bg);
+    border: 1px solid var(--btn-border);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+#theme-btn:hover {
+    background: var(--btn-hover);
+    transform: scale(1.05);
+}
+
+/* モバイル向けの調整 */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2rem;
+    }
+}

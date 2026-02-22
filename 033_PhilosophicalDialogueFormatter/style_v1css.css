@@ -1,0 +1,265 @@
+/* ==========================================================================
+   Base Styles / 基本スタイル
+   ========================================================================== */
+:root {
+    --bg-color: #fcfbf6; /* アイボリー */
+    --text-color: #2b2b2b;
+    --panel-bg: #eae8e1;
+    --panel-width: 350px;
+    --font-mincho: "HiraMinProN-W3", "Hiragino Mincho ProN", "Yu Mincho", "YuMincho", "MS PMincho", serif;
+    --font-serif: "Times New Roman", "Times", "Georgia", serif;
+    --font-ui: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-ui);
+    display: flex; /* Sidebar + Main layout */
+    height: 100vh;
+    overflow: hidden; /* Main scroll controlled separately */
+}
+
+/* ==========================================================================
+   Control Panel / コントロールパネル (Left Sidebar)
+   ========================================================================== */
+#control-panel {
+    width: var(--panel-width);
+    background-color: var(--panel-bg);
+    padding: 20px;
+    overflow-y: auto;
+    border-right: 1px solid #d4d2cb;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+header h1 {
+    font-size: 1.2rem;
+    margin: 0;
+    color: #4a4a4a;
+}
+
+.subtitle {
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: 5px;
+}
+
+.settings-group h3 {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+    color: #555;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.settings-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.settings-group textarea {
+    width: 100%;
+    min-height: 60px;
+    resize: vertical;
+    border: 1px solid #ccc;
+    padding: 5px;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.input-row input {
+    width: 100px;
+    padding: 4px;
+}
+
+.input-row .arrow {
+    color: #999;
+}
+
+#chat-input {
+    width: 100%;
+    height: 150px;
+    border: 1px solid #ccc;
+    padding: 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.footer-note {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: auto;
+}
+
+/* ==========================================================================
+   Preview Area / プレビューエリア (Right Main)
+   ========================================================================== */
+#preview-area {
+    flex: 1;
+    overflow: auto; /* Scroll inside this area */
+    padding: 40px;
+    display: flex;
+    justify-content: center; /* Horizontally center content */
+    background-color: var(--bg-color);
+}
+
+.book-container {
+    width: 100%;
+    /* Default is empty, specific styles applied by layout mode */
+}
+
+/* ==========================================================================
+   Layout Mode: Vertical (Japanese Book) / 縦書き
+   ========================================================================== */
+.vertical-mode {
+    font-family: var(--font-mincho);
+}
+
+.vertical-mode .book-container {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    height: 80vh; /* Fixed height for horizontal scrolling in vertical mode */
+    padding-right: 20px; /* Initial space */
+}
+
+.vertical-mode .book-element {
+    margin-left: 3rem; /* Space between elements */
+}
+
+.vertical-mode #book-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-right: 2rem; /* Title spacing */
+    margin-left: 4rem;
+}
+
+.vertical-mode .dialogue-block {
+    margin-left: 1.5rem; /* Paragraph spacing */
+    line-height: 2.0; /* Line height */
+    text-indent: 1em;
+}
+
+.vertical-mode .speaker-name {
+    font-weight: bold;
+    margin-left: 0.5em; /* Small space after name */
+    display: inline-block; /* Keep with text */
+}
+
+.vertical-mode .divider hr {
+    border: none;
+    border-left: 1px solid #ccc; /* Vertical line */
+    height: 100%;
+    width: 1px;
+    margin: 0 2rem;
+}
+
+/* ==========================================================================
+   Layout Mode: Horizontal (Western Paperback) / 横書き
+   ========================================================================== */
+.horizontal-mode {
+    font-family: var(--font-serif);
+}
+
+.horizontal-mode .book-container {
+    writing-mode: horizontal-tb;
+    max-width: 700px; /* Paperback width limit */
+    margin: 0 auto;
+}
+
+.horizontal-mode #book-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+}
+
+.horizontal-mode .dialogue-block {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    text-align: justify; /* Justify text */
+}
+
+.horizontal-mode .speaker-name {
+    font-weight: bold;
+    font-variant: small-caps;
+    margin-right: 0.5em;
+    display: block; /* Name on own line or block start */
+    color: #444;
+}
+
+.horizontal-mode .divider hr {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 2rem 0;
+}
+
+/* Common text styles */
+.meta-text {
+    font-size: 0.95rem;
+    line-height: 1.8;
+}
+
+/* ==========================================================================
+   Print Styles / 印刷設定 (Ctrl + P)
+   ========================================================================== */
+@media print {
+    @page {
+        margin: 2cm;
+    }
+
+    body {
+        background-color: transparent;
+        display: block; /* Reset flex */
+        height: auto;
+        overflow: visible;
+    }
+
+    /* Hide Control Panel */
+    .no-print {
+        display: none !important;
+    }
+
+    /* Reset Preview Area for Print */
+    #preview-area {
+        padding: 0;
+        margin: 0;
+        overflow: visible;
+        display: block;
+        height: auto;
+    }
+    
+    .book-container {
+        height: auto !important; /* Reset fixed height */
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    /* Print Tweaks for Vertical */
+    .vertical-mode .book-container {
+        writing-mode: vertical-rl;
+        /* Ensure multiple pages work in vertical print */
+    }
+
+    /* Ensure text color is black for print */
+    p, div, span {
+        color: #000 !important;
+    }
+}

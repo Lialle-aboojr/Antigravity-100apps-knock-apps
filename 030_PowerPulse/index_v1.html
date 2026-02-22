@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Pulse - Battery Monitor</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- ファビコンのプレースホルダー（JSで動的に更新されます） -->
+    <link rel="icon" id="favicon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔋</text></svg>">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- ヘッダー -->
+        <header>
+            <h1>Power Pulse</h1>
+            <p class="subtitle">Battery Monitor</p>
+        </header>
+
+        <!-- メインのバッテリー表示 -->
+        <div class="battery-display">
+            <div class="battery-shell">
+                <div class="battery-level" id="battery-level">
+                    <div class="liquid"></div>
+                </div>
+            </div>
+            <div class="battery-tip"></div>
+        </div>
+
+        <!-- 情報パネル -->
+        <div class="info-panel">
+            <div class="info-item">
+                <span class="label">残量 / Level</span>
+                <span class="value" id="level-text">--%</span>
+            </div>
+            <div class="info-item">
+                <span class="label">状態 / Status</span>
+                <span class="value" id="status-text">---</span>
+            </div>
+            <div class="info-item">
+                <span class="label">時間 / Time</span>
+                <span class="value" id="time-text">---</span>
+            </div>
+        </div>
+
+        <!-- 非対応ブラウザ用メッセージ (初期状態は非表示) -->
+        <div id="not-supported" class="hidden">
+            <p>⚠️ このブラウザはバッテリー情報の取得に対応していません。<br>Google Chrome または Microsoft Edge を推奨します。</p>
+            <p class="en">⚠️ Battery Status API is not supported in this browser.<br>Please use Google Chrome or
+                Microsoft Edge.</p>
+        </div>
+    </div>
+
+    <!-- JavaScriptの読み込み -->
+    <script src="script.js"></script>
+</body>
+
+</html>

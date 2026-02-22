@@ -1,0 +1,222 @@
+@charset "UTF-8";
+
+/* =========================================
+   基本設定
+   ========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #000000;
+    color: #eeeeee;
+    font-family: 'Shippori Mincho', serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+/* 英語フォント指定 */
+.en,
+.curse-text-en,
+.btn-curse .en,
+.app-title {
+    font-family: 'Crimson Text', serif;
+}
+
+/* =========================================
+   ヘッダー (タイトル復活)
+   ========================================= */
+.header {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    opacity: 0.9;
+}
+
+.app-title {
+    font-size: 3rem;
+    letter-spacing: 0.05em;
+    font-weight: 400;
+    color: #b30000;
+    /* ホラーテイストの赤 */
+    text-shadow: 0 0 10px rgba(100, 0, 0, 0.8);
+    margin-bottom: 0.2rem;
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: #888888;
+    letter-spacing: 0.5em;
+    display: block;
+}
+
+/* =========================================
+   コンテナ
+   ========================================= */
+.curse-container {
+    width: 100%;
+    max-width: 800px;
+    padding: 2rem;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* =========================================
+   固定テキスト: 「あいつ...」
+   ========================================= */
+.fixed-prefix {
+    color: #cccccc;
+    font-size: 1.8rem;
+    /* 大きめで強調 */
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+    /* 不気味な明滅アニメーション */
+    animation: spookyBreath 4s infinite alternate ease-in-out;
+}
+
+@keyframes spookyBreath {
+    0% {
+        opacity: 0.6;
+        transform: scale(0.98);
+    }
+
+    100% {
+        opacity: 1.0;
+        transform: scale(1.02);
+        text-shadow: 0 0 8px rgba(200, 200, 200, 0.3);
+    }
+}
+
+/* =========================================
+   日本語の呪いテキスト
+   ========================================= */
+.curse-text-jp {
+    font-size: 2rem;
+    color: #ffffff;
+    line-height: 1.6;
+    font-weight: 700;
+    min-height: 3.2rem;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+/* =========================================
+   英語の呪いテキスト
+   ========================================= */
+.curse-text-en {
+    font-size: 1.2rem;
+    color: #884444;
+    /* 薄いダークレッド */
+    font-style: italic;
+    min-height: 1.5rem;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+
+.curse-text-en.visible {
+    opacity: 1;
+}
+
+/* =========================================
+   ボタン
+   ========================================= */
+.action-area {
+    margin-top: 3rem;
+    min-height: 80px;
+}
+
+.btn-curse {
+    background: transparent;
+    border: 1px solid #880000;
+    color: #880000;
+    padding: 1rem 3rem;
+    font-family: inherit;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    opacity: 1;
+}
+
+.btn-curse:hover {
+    background: #220000;
+    box-shadow: 0 0 15px rgba(136, 0, 0, 0.6);
+    color: #ff0000;
+    border-color: #ff0000;
+}
+
+.btn-curse span {
+    display: block;
+    line-height: 1.3;
+}
+
+.btn-curse .en {
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.btn-curse .jp {
+    font-size: 0.9rem;
+}
+
+.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* =========================================
+   フッター
+   ========================================= */
+.footer {
+    padding: 2rem;
+    text-align: center;
+    width: 100%;
+}
+
+.link-submit {
+    color: #444;
+    text-decoration: none;
+    font-size: 0.85rem;
+    border-bottom: 1px dotted #444;
+    transition: color 0.3s;
+}
+
+.link-submit:hover {
+    color: #888;
+    border-color: #888;
+}
+
+/* =========================================
+   モバイル対応
+   ========================================= */
+@media (max-width: 600px) {
+    .app-title {
+        font-size: 2.2rem;
+    }
+
+    .fixed-prefix {
+        font-size: 1.4rem;
+    }
+
+    .curse-text-jp {
+        font-size: 1.5rem;
+    }
+
+    .curse-text-en {
+        font-size: 1rem;
+    }
+
+    .btn-curse {
+        padding: 0.8rem 2rem;
+    }
+}

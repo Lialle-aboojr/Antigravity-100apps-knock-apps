@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美の黄金比・白銀比計算機 | Aesthetics Ratio Calculator</title>
+
+    <!-- Google Fonts: Noto Serif JP for Japanese Modern aesthetic -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Favicon: SVG Data URI representing a Golden Ratio Spiral / Abstract form -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%23bd3025%22 rx=%2220%22/><path d=%22M30 70 Q 30 30 70 30%22 stroke=%22%23fcfbf6%22 stroke-width=%228%22 fill=%22none%22/><circle cx=%2270%22 cy=%2230%22 r=%226%22 fill=%22%23cba052%22/></svg>">
+</head>
+
+<body>
+    <div class="japan-bg-texture"></div>
+
+    <main class="container">
+        <!-- Header Section -->
+        <header class="app-header">
+            <div class="logo-mark">美</div>
+            <h1>美の黄金比・白銀比計算機</h1>
+            <p class="subtitle">Aesthetics Ratio Calculator</p>
+        </header>
+
+        <!-- Ratio Selection Tabs -->
+        <div class="ratio-selector">
+            <button class="tab-btn active" data-ratio="golden" id="tab-golden">
+                <span class="tab-ja">黄金比</span>
+                <span class="tab-en">Golden Ratio (1 : 1.618)</span>
+            </button>
+            <button class="tab-btn" data-ratio="silver" id="tab-silver">
+                <span class="tab-ja">白銀比</span>
+                <span class="tab-en">Silver Ratio (1 : 1.414)</span>
+            </button>
+        </div>
+
+        <!-- Calculation Area -->
+        <section class="calculator-card">
+            <div class="input-group">
+                <label for="short-side">
+                    <span class="label-ja">短辺</span>
+                    <span class="label-en">Short Side</span>
+                </label>
+                <div class="input-wrapper">
+                    <input type="number" id="short-side" placeholder="100" min="0" step="any">
+                    <button class="copy-btn" aria-label="Copy Short Side" tabindex="-1">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="ratio-display">
+                <span class="ratio-symbol">1 : <span id="current-ratio-value">1.618</span></span>
+                <div class="decoration-line"></div>
+            </div>
+
+            <div class="input-group">
+                <label for="long-side">
+                    <span class="label-ja">長辺</span>
+                    <span class="label-en">Long Side</span>
+                </label>
+                <div class="input-wrapper">
+                    <input type="number" id="long-side" placeholder="161.8" min="0" step="any">
+                    <button class="copy-btn" aria-label="Copy Long Side" tabindex="-1">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Visual Preview Section -->
+        <section class="preview-section">
+            <h2 class="preview-title">
+                <span class="ja">形状プレビュー</span>
+                <span class="en">Shape Preview</span>
+            </h2>
+            <div class="preview-container">
+                <div id="shape-preview" class="shape-box">
+                    <span class="preview-label">Short</span>
+                    <span class="preview-label vertical">Long</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>© 2026 Cosmetics of Mathematics.</p>
+        </footer>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

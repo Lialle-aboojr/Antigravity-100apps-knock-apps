@@ -1,0 +1,276 @@
+/* =========================================
+   BizMail Generator - Style Sheet
+   Theme: Business Clean
+   ========================================= */
+
+   :root {
+    /* Color Palette */
+    --color-primary: #2c3e50;    /* 信頼感のあるネイビー (Main) */
+    --color-accent: #3498db;     /* 清潔感のあるブルー (Accent) */
+    --color-accent-hover: #2980b9;
+    --color-bg: #f4f7f6;         /* 背景色: 薄いグレー */
+    --color-surface: #ffffff;    /* カード背景: 白 */
+    --color-text-main: #333333;  /* メインテキスト */
+    --color-text-sub: #666666;   /* サブテキスト */
+    --color-border: #e0e0e0;     /* ボーダー色 */
+    --color-focus-ring: rgba(52, 152, 219, 0.25); /* フォーカス時の光彩 */
+
+    /* Spacing & Layout */
+    --spacing-unit: 8px;
+    --border-radius: 12px;
+    --container-max-width: 1000px;
+    --header-height: 60px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text-main);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* =========================================
+   Layout Structure
+   ========================================= */
+
+.app-container {
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: calc(var(--spacing-unit) * 3);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: calc(var(--spacing-unit) * 4);
+    padding: calc(var(--spacing-unit) * 2) 0;
+}
+
+.app-header h1 {
+    font-size: 2rem;
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-unit);
+    letter-spacing: 0.05em;
+}
+
+.app-header p {
+    color: var(--color-text-sub);
+    font-size: 1rem;
+}
+
+/* メインコンテンツ: PCは横並び、スマホは縦並び */
+.main-content {
+    display: flex;
+    gap: calc(var(--spacing-unit) * 3);
+    flex: 1;
+}
+
+/* =========================================
+   Components: Card
+   ========================================= */
+
+.card {
+    background-color: var(--color-surface);
+    border-radius: var(--border-radius);
+    padding: calc(var(--spacing-unit) * 4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 柔らかい影 */
+    border: 1px solid rgba(0,0,0,0.02);
+}
+
+.input-section {
+    flex: 1;
+}
+
+.preview-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    font-size: 1.25rem;
+    color: var(--color-primary);
+    margin-bottom: calc(var(--spacing-unit) * 3);
+    border-bottom: 2px solid var(--color-bg);
+    padding-bottom: var(--spacing-unit);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-unit);
+}
+
+.icon {
+    font-size: 1.2em;
+}
+
+/* =========================================
+   Components: Form
+   ========================================= */
+
+.form-group {
+    margin-bottom: calc(var(--spacing-unit) * 2.5);
+}
+
+label {
+    display: block;
+    margin-bottom: calc(var(--spacing-unit));
+    font-weight: 600;
+    color: var(--color-primary);
+    font-size: 0.95rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1rem;
+    color: var(--color-text-main);
+    background-color: #fafafa;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    background-color: var(--color-surface);
+    box-shadow: 0 0 0 4px var(--color-focus-ring);
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* =========================================
+   Components: Preview Area
+   ========================================= */
+
+.preview-container {
+    background-color: #f8f9fa; /* 紙のような白さを少し落とした色 */
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    padding: calc(var(--spacing-unit) * 3);
+    flex-grow: 1; /* プレビューエリアを縦に伸ばす */
+    margin-bottom: calc(var(--spacing-unit) * 3);
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: var(--spacing-unit);
+    margin-bottom: calc(var(--spacing-unit) * 2);
+    font-weight: bold;
+    color: var(--color-text-main);
+}
+
+.preview-header .label {
+    color: var(--color-text-sub);
+    margin-right: var(--spacing-unit);
+}
+
+.preview-body pre {
+    white-space: pre-wrap; /* 折り返しを有効にする */
+    font-family: inherit; /* 等幅フォントではなく本文と同じフォント */
+    font-size: 0.95rem;
+    color: var(--color-text-main);
+    line-height: 1.8;
+}
+
+/* =========================================
+   Components: Button
+   ========================================= */
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-unit);
+    width: 100%;
+    padding: 14px 20px;
+    background-color: var(--color-accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+}
+
+.btn-primary:hover {
+    background-color: var(--color-accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(52, 152, 219, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+}
+
+/* =========================================
+   Components: Toast Notification
+   ========================================= */
+
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--color-primary);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.3s ease, bottom 0.3s ease;
+}
+
+.toast.hidden {
+    opacity: 0;
+    bottom: 10px;
+    pointer-events: none;
+}
+
+/* =========================================
+   Footer
+   ========================================= */
+
+.app-footer {
+    text-align: center;
+    margin-top: calc(var(--spacing-unit) * 4);
+    color: #999;
+    font-size: 0.85rem;
+}
+
+/* =========================================
+   Responsive Design
+   ========================================= */
+
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+
+    .app-container {
+        padding: var(--spacing-unit);
+    }
+    
+    .card {
+        padding: calc(var(--spacing-unit) * 2.5);
+    }
+}

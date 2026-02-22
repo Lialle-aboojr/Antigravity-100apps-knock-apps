@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat or Light? Cursor Follower</title>
+    <!-- ファビコン: 黒猫のSVG -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐈⬛</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="cat-mode">
+
+    <!-- ヘッダー: モード切り替えスイッチ -->
+    <header>
+        <div class="toggle-container">
+            <span class="label">Black Cat Mode</span>
+            <label class="switch">
+                <input type="checkbox" id="mode-toggle">
+                <span class="slider round"></span>
+            </label>
+            <span class="label">Luminous Mode</span>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ: 案内テキスト -->
+    <main>
+        <div class="center-text">
+            <h1>Move your mouse!</h1>
+            <p>マウスを動かしてみて！</p>
+        </div>
+    </main>
+
+    <!-- カーソル追従要素のコンテナ -->
+    <div id="cursor-container"></div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

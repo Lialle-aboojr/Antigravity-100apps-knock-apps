@@ -1,0 +1,269 @@
+/* 基本リセット */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #050505;
+    /* ごく深いグレー/ほぼ黒 */
+    color: #00ffff;
+    /* シアン（基本色） */
+    font-family: 'Share Tech Mono', monospace;
+    /* HUD風フォント */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    overflow: hidden;
+    /* スキャンラインのため */
+    position: relative;
+}
+
+/* 画面全体のスキャンラインエフェクト */
+.scanline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom,
+            rgba(255, 255, 255, 0),
+            rgba(255, 255, 255, 0) 50%,
+            rgba(0, 0, 0, 0.1) 50%,
+            rgba(0, 0, 0, 0.1));
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* メインHUDコンテナ */
+.hud-container {
+    width: 100%;
+    max-width: 500px;
+    border: 2px solid #00ffff;
+    padding: 30px;
+    background: rgba(0, 20, 30, 0.85);
+    /* 透過度を少し下げて視認性アップ */
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.2), inset 0 0 30px rgba(0, 255, 255, 0.1);
+    position: relative;
+}
+
+/* 四隅の装飾 */
+.hud-container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 30px;
+    height: 30px;
+    border-top: 4px solid #00ffff;
+    border-left: 4px solid #00ffff;
+    box-shadow: -2px -2px 10px #00ffff;
+}
+
+.hud-container::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 30px;
+    height: 30px;
+    border-bottom: 4px solid #00ffff;
+    border-right: 4px solid #00ffff;
+    box-shadow: 2px 2px 10px #00ffff;
+}
+
+/* ヘッダー */
+.hud-header {
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(0, 255, 255, 0.3);
+    padding-bottom: 10px;
+}
+
+.glow-text {
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+    line-height: 1.2;
+}
+
+.glow-text .ja {
+    display: block;
+    font-size: 1.2rem;
+    letter-spacing: 0.1em;
+}
+
+.glow-text .en {
+    display: block;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    letter-spacing: 0.2em;
+}
+
+/* データ表示エリア - HUD装飾強化 */
+.data-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(0, 255, 0, 0.4);
+    /* ネオングリーンの枠線を追加 */
+    border-left: 4px solid #00ff00;
+    /* 左端を太くしてアクセント */
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    background: rgba(0, 20, 0, 0.2);
+    /* ほんのり緑がかった背景 */
+    position: relative;
+    box-shadow: 0 0 5px rgba(0, 255, 0, 0.1);
+}
+
+.data-row .label {
+    display: flex;
+    flex-direction: column;
+}
+
+.data-row .label .ja {
+    font-size: 0.9rem;
+    color: #00ffaa;
+}
+
+.data-row .label .en {
+    font-size: 0.7rem;
+    color: #00ffaa;
+    opacity: 0.7;
+}
+
+.data-row .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ccffcc;
+    /* 白に近い緑 */
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.6);
+    letter-spacing: 0.1em;
+}
+
+.data-row.sm .value {
+    font-size: 1.0rem;
+}
+
+/* ステータスエリア */
+.status-box {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px dashed rgba(255, 50, 50, 0.5);
+    /* 警告色のボーダー */
+    background: rgba(20, 0, 0, 0.3);
+    color: #ff5555;
+    text-align: center;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.status-box.success {
+    border-color: rgba(0, 255, 0, 0.5);
+    background: rgba(0, 20, 0, 0.3);
+    color: #00ff00;
+}
+
+.status-box .ja {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.status-box .en {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* ボタンエリア */
+.hud-controls {
+    display: grid;
+    gap: 15px;
+}
+
+.hud-btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    text-decoration: none;
+    /* リンク用 */
+    position: relative;
+    overflow: hidden;
+}
+
+/* 計測ボタン */
+.hud-btn.primary {
+    background: rgba(0, 255, 255, 0.1);
+    border: 2px solid #00ffff;
+    color: #00ffff;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
+}
+
+.hud-btn.primary:hover {
+    background: #00ffff;
+    color: #000;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+}
+
+.hud-btn.primary:active {
+    transform: scale(0.98);
+}
+
+/* マップボタン */
+.hud-btn.secondary {
+    background: rgba(0, 255, 100, 0.1);
+    border: 2px solid #00ff66;
+    color: #00ff66;
+}
+
+.hud-btn.secondary:hover {
+    background: #00ff66;
+    color: #000;
+    box-shadow: 0 0 15px rgba(0, 255, 100, 0.6);
+}
+
+/* 無効状態 */
+.hud-btn.disabled {
+    pointer-events: none;
+    opacity: 0.3;
+    border-color: #555;
+    color: #555;
+    background: transparent;
+    box-shadow: none;
+}
+
+.hud-btn .ja {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.hud-btn .en {
+    font-size: 0.75rem;
+    opacity: 0.9;
+    letter-spacing: 0.1em;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 480px) {
+    .hud-container {
+        padding: 20px;
+    }
+
+    .data-row .value {
+        font-size: 1.2rem;
+    }
+}

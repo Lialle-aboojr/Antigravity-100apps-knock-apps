@@ -1,0 +1,389 @@
+/* 
+ * 美の黄金比・白銀比計算機 - Styles
+ * Theme: Japanese Modern (和モダン)
+ */
+
+:root {
+    /* Color Palette */
+    --color-bg: #f7f6f0;         /* 和紙のような生成り色 */
+    --color-text: #2b2b2b;       /* 墨色 */
+    --color-text-light: #595959; /* 薄墨色 */
+    --color-accent-red: #bd3025; /* エンジ（朱色） */
+    --color-accent-gold: #cba052;/* 金茶 */
+    --color-border: #dcdbd5;     /* 境界線 */
+    --color-white: #ffffff;      /* 胡粉色 */
+    --color-shadow: rgba(43, 43, 43, 0.08);
+
+    /* Typography */
+    --font-main: "Noto Serif JP", serif;
+    
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2.5rem;
+
+    /* Border Radius */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 16px;
+}
+
+/* Reset & Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-main);
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Washi Paper Texture Effect using CSS pattern */
+.japan-bg-texture {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.4;
+    background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
+}
+
+/* Layout Container */
+.container {
+    width: 100%;
+    max-width: 500px;
+    padding: var(--spacing-md);
+    margin: 0 auto;
+}
+
+/* Header */
+.app-header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.logo-mark {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    background-color: var(--color-accent-red);
+    color: var(--color-white);
+    font-size: 2rem;
+    font-weight: 700;
+    border-radius: 50%;
+    margin-bottom: var(--spacing-sm);
+    box-shadow: 0 4px 12px rgba(189, 48, 37, 0.3);
+}
+
+h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    color: var(--color-accent-gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+}
+
+/* Ratio Selector Tabs */
+.ratio-selector {
+    display: flex;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 50px; /* Pill shape */
+    padding: 4px;
+    margin-bottom: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 12px 0;
+    border-radius: 46px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-light);
+}
+
+.tab-btn.active {
+    background-color: var(--color-text);
+    color: var(--color-bg); /* Inverted for active state */
+    box-shadow: 0 4px 12px var(--color-shadow);
+}
+
+.tab-btn.active[data-ratio="golden"] {
+    background-color: var(--color-accent-gold); /* Gold for Golden Ratio */
+    color: #fff;
+}
+
+.tab-btn.active[data-ratio="silver"] {
+    background-color: #a0a0a0; /* Silver-ish custom color or just simple dark */
+    background-color: var(--color-text-light);
+    color: #fff;
+}
+
+.tab-ja {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.tab-en {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+/* Calculator Card */
+.calculator-card {
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg) var(--spacing-md);
+    box-shadow: 0 10px 30px var(--color-shadow);
+    border: 1px solid rgba(255,255,255,0.8);
+    position: relative;
+    margin-bottom: var(--spacing-lg);
+}
+
+.calculator-card::before {
+    /* Decorative top border */
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background-color: var(--color-accent-red);
+    border-radius: 0 0 4px 4px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--spacing-sm);
+}
+
+.input-group label {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.label-ja {
+    font-weight: 700;
+}
+
+.label-en {
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 12px 48px 12px 16px; /* Space for copy button */
+    font-family: var(--font-main);
+    font-size: 1.4rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: #fcfcfc;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield; /* Remove spinner */
+    color: var(--color-text);
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: var(--color-accent-gold);
+    box-shadow: 0 0 0 3px rgba(203, 160, 82, 0.1);
+    background-color: #fff;
+}
+
+.copy-btn {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: var(--color-border);
+    transition: color 0.2s;
+    border-radius: 4px;
+}
+
+.copy-btn:hover {
+    color: var(--color-accent-gold);
+    background-color: rgba(203, 160, 82, 0.1);
+}
+
+.copy-btn:active {
+    transform: scale(0.95);
+}
+
+/* Link between inputs */
+.ratio-display {
+    text-align: center;
+    margin: var(--spacing-sm) 0;
+    position: relative;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ratio-symbol {
+    background-color: var(--color-white);
+    padding: 0 12px;
+    z-index: 2;
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    font-weight: 500;
+}
+
+.decoration-line {
+    position: absolute;
+    top: 50%;
+    left: 10%;
+    width: 80%;
+    height: 1px;
+    background-color: var(--color-border);
+    z-index: 1;
+}
+
+/* Visual Preview */
+.preview-section {
+    text-align: center;
+}
+
+.preview-title {
+    font-size: 1rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text-light);
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.preview-title .ja {
+    font-weight: 500;
+}
+
+.preview-title .en {
+    font-size: 0.75rem;
+}
+
+.preview-container {
+    padding: 40px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 250px; /* space for the shape */
+}
+
+.shape-box {
+    background-color: var(--color-accent-red);
+    opacity: 0.9;
+    box-shadow: 4px 4px 0 rgba(203, 160, 82, 0.4); /* Gold shadow */
+    transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1), 
+                height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    position: relative;
+    max-width: 100%;
+    max-height: 200px;
+    /* Default size, updated by JS */
+    width: 100px;
+    height: 161.8px; 
+}
+
+/* Shape Text Labels - minimal */
+.preview-label {
+    position: absolute;
+    color: var(--color-text-light);
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+/* Bottom label (Short side usually) */
+.preview-label:not(.vertical) {
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Side label (Long side usually) */
+.preview-label.vertical {
+    top: 50%;
+    right: -25px;
+    transform: translateY(-50%) rotate(90deg);
+}
+
+/* Footer */
+.app-footer {
+    text-align: center;
+    margin-top: var(--spacing-lg);
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    opacity: 0.6;
+}
+
+/* Animation for copy feedback */
+@keyframes copied-fade {
+    0% { transform: scale(1); color: var(--color-accent-gold); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.copy-active svg {
+    animation: copied-fade 0.3s ease;
+    stroke: var(--color-accent-gold);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 480px) {
+    h1 { font-size: 1.3rem; }
+    .calculator-card { padding: var(--spacing-md); }
+    input[type="number"] { font-size: 1.2rem; }
+}

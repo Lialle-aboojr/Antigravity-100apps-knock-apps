@@ -1,0 +1,398 @@
+/* =========================================
+   ベース設定 / Base Variables & Reset
+   ========================================= */
+   :root {
+    /* ライトモード (Default Light Mode) */
+    --bg-color: #f9f9f9;
+    --text-color: #333333;
+    --card-bg: #nffffff;
+    --accent-color: #333333; /* 黒に近いグレーで美術館風 */
+    --secondary-text: #666666;
+    --border-color: #e0e0e0;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --input-bg: #ffffff;
+    --btn-hover: #555555;
+}
+
+/* ダークモード用変数 (Dark Mode Variables) */
+body.dark-mode {
+    --bg-color: #121212; /* 映画館のような暗闇 */
+    --text-color: #e0e0e0;
+    --card-bg: #1e1e1e;
+    --accent-color: #ffffff;
+    --secondary-text: #aaaaaa;
+    --border-color: #333333;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --input-bg: #2c2c2c;
+    --btn-hover: #dddddd;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* =========================================
+   ヘッダー / Header
+   ========================================= */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.logo-area h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    color: var(--secondary-text);
+    display: block;
+    margin-top: -2px;
+}
+
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.search-container input {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    width: 200px;
+    transition: all 0.3s ease;
+}
+
+.search-container input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    width: 240px; /* フォーカス時に少し伸びる */
+}
+
+.icon-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.icon-button:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+}
+
+/* アイコンの表示切り替え */
+.icon-sun { display: none; }
+.icon-moon { display: block; }
+
+body.dark-mode .icon-sun { display: block; }
+body.dark-mode .icon-moon { display: none; }
+
+/* =========================================
+   メインコンテンツ / Main Layout
+   ========================================= */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 350px 1fr; /* 左:入力フォーム, 右:ギャラリー */
+    gap: 3rem;
+}
+
+.section-title {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+}
+
+.en-title, .en-label {
+    font-size: 0.8rem;
+    color: var(--secondary-text);
+    font-weight: 400;
+}
+
+/* =========================================
+   入力フォーム / Input Form
+   ========================================= */
+.input-section {
+    position: sticky;
+    top: 100px; /* スクロールしてもついてくる */
+    height: fit-content;
+}
+
+.review-form {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    transition: background-color 0.3s ease;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+input[type="text"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+/* 星評価インタラクション */
+.star-rating {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--border-color); /* 未選択色 */
+}
+
+.star-rating .star.active {
+    color: #ffd700; /* 金色 */
+}
+
+/* 画像アップロード & プレビュー */
+.file-upload-wrapper {
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    background-color: var(--input-bg);
+    transition: border-color 0.2s;
+}
+
+.file-upload-wrapper:hover {
+    border-color: var(--accent-color);
+}
+
+input[type="file"] {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.image-preview {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.placeholder-text {
+    font-size: 0.8rem;
+    color: var(--secondary-text);
+    pointer-events: none;
+}
+
+.btn-save {
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--accent-color);
+    color: var(--bg-color); /* 反転色 */
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:  opacity 0.2s;
+    margin-top: 1rem;
+}
+
+.btn-save:hover {
+    opacity: 0.9;
+}
+
+/* =========================================
+   ギャラリー / Gallery Grid
+   ========================================= */
+.gallery-grid {
+    display: grid;
+    /* カードの最小幅を250pxとし、画面幅に合わせて自動詰め込み */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.review-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s, background-color 0.3s ease;
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    background-color: var(--input-bg);
+}
+
+.card-content {
+    padding: 1.2rem;
+}
+
+.card-category {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--secondary-text);
+    margin-bottom: 0.5rem;
+    display: inline-block;
+    border: 1px solid var(--border-color);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.card-rating {
+    color: #ffd700;
+    margin-bottom: 0.8rem;
+    font-size: 0.9rem;
+}
+
+.card-comment {
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+    margin-bottom: 1.5rem;
+    white-space: pre-wrap; /* 改行を保持 */
+}
+
+/* 削除ボタン */
+.btn-delete {
+    background: none;
+    border: none;
+    color: #ff4d4d;
+    font-size: 0.8rem;
+    cursor: pointer;
+    position: absolute;
+    bottom: 1.2rem;
+    right: 1.2rem;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.btn-delete:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.no-data {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: var(--secondary-text);
+    border: 2px dashed var(--border-color);
+    border-radius: 12px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* =========================================
+   レスポンシブ / Responsive
+   ========================================= */
+@media (max-width: 768px) {
+    .container {
+        grid-template-columns: 1fr; /* スマホでは1カラムに */
+        padding: 1rem;
+        gap: 2rem;
+    }
+
+    .input-section {
+        position: static; /* スマホでは追従させない */
+    }
+
+    .header-controls {
+        gap: 0.5rem;
+    }
+
+    .search-container input {
+        width: 140px;
+    }
+    
+    .search-container input:focus {
+        width: 160px;
+    }
+}

@@ -1,0 +1,244 @@
+@charset "UTF-8";
+
+/* =========================================
+   基本設定 (Base Styles)
+   ========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #000000;
+    /* 漆黒の背景 */
+    color: #eeeeee;
+    /* 基本文字色：オフホワイト */
+    font-family: 'Crimson Text', 'Shippori Mincho', serif;
+    /* 和風ホラーに適した明朝体 */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+/* =========================================
+   コンテナ・レイアウト (Layout)
+   ========================================= */
+.curse-container {
+    width: 100%;
+    max-width: 800px;
+    padding: 2rem;
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* =========================================
+   タイトルデザイン (Header)
+   ========================================= */
+.header {
+    margin-bottom: 3rem;
+    opacity: 0.8;
+}
+
+.app-title {
+    font-size: 2rem;
+    letter-spacing: 0.05em;
+    font-weight: 400;
+    line-height: 1.4;
+    text-shadow: 0 0 10px rgba(136, 0, 0, 0.5);
+    /* 赤い不気味な光彩 */
+}
+
+.subtitle {
+    font-size: 1rem;
+    color: #880000;
+    /* 血のような暗い赤 */
+    display: block;
+    margin-top: 0.5rem;
+}
+
+/* =========================================
+   呪いの表示エリア (Curse Display)
+   ========================================= */
+.curse-display {
+    margin-bottom: 4rem;
+    min-height: 200px;
+    /* 文字がない時も高さ確保 */
+}
+
+.curse-prefix {
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+/* 不気味に常駐するテキストの演出 */
+.spooky-text {
+    color: #880000;
+    text-shadow: 0 0 5px #330000;
+    display: inline-block;
+    animation: spookyPulse 4s infinite alternate ease-in-out;
+    font-weight: bold;
+    letter-spacing: 0.2em;
+}
+
+@keyframes spookyPulse {
+    0% {
+        opacity: 0.4;
+        text-shadow: 0 0 2px #330000;
+        transform: scale(0.98);
+    }
+
+    100% {
+        opacity: 1.0;
+        text-shadow: 0 0 15px #aa0000;
+        transform: scale(1.02);
+    }
+}
+
+.curse-text {
+    font-size: 1.8rem;
+    /* メインの呪いは大きく */
+    line-height: 1.8;
+    font-weight: 700;
+}
+
+.curse-item {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.curse-item.jp {
+    font-size: 1.6rem;
+}
+
+.curse-item.en {
+    font-size: 1.2rem;
+    color: #aaa;
+    font-style: italic;
+}
+
+/* 点滅するカーソル演出 */
+.cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.6rem;
+    background-color: #880000;
+    margin-left: 5px;
+    animation: blink 1s infinite;
+    vertical-align: middle;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+/* =========================================
+   ボタンデザイン (Buttons)
+   ========================================= */
+.btn-curse {
+    background: transparent;
+    border: 1px solid #880000;
+    color: #880000;
+    padding: 1rem 3rem;
+    font-family: inherit;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.5s ease;
+    opacity: 1;
+    display: inline-block;
+}
+
+.btn-curse:hover {
+    background: #220000;
+    box-shadow: 0 0 15px rgba(136, 0, 0, 0.6);
+    color: #ff0000;
+    border-color: #ff0000;
+}
+
+.btn-curse span {
+    display: block;
+    line-height: 1.4;
+}
+
+.btn-curse .en {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.btn-curse .jp {
+    font-size: 0.9rem;
+}
+
+/* フェードイン・アウト用のクラス */
+.hidden {
+    opacity: 0;
+    pointer-events: none;
+    /* クリック不可にする */
+}
+
+/* =========================================
+   フッター (Footer)
+   ========================================= */
+.footer {
+    padding: 2rem;
+    text-align: center;
+    width: 100%;
+}
+
+.link-submit {
+    color: #444;
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-bottom: 1px dotted #444;
+    transition: color 0.3s;
+}
+
+.link-submit:hover {
+    color: #888;
+    border-color: #888;
+}
+
+/* =========================================
+   レスポンシブ対応 (Mobile)
+   ========================================= */
+@media (max-width: 600px) {
+    .app-title {
+        font-size: 1.5rem;
+    }
+
+    .curse-text {
+        font-size: 1.4rem;
+    }
+
+    .curse-item.jp {
+        font-size: 1.3rem;
+    }
+
+    .curse-item.en {
+        font-size: 1rem;
+    }
+
+    .btn-curse {
+        padding: 0.8rem 2rem;
+    }
+
+    .spooky-text {
+        font-size: 1.2rem;
+    }
+}

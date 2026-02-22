@@ -1,0 +1,451 @@
+/* 
+ * Memory Garden - Style Sheet
+ * 北欧モダン (Nordic Modern) デザイン
+ * Learning Point: CSS変数、Gridレイアウト、3Dトランスフォーム
+ */
+
+:root {
+    /* カラーパレット: 北欧風のくすみカラー */
+    --color-bg: #F4F3EF;
+    /* サンドベージュ、オフホワイト */
+    --color-primary: #8A9A5B;
+    /* セージグリーン (Start) */
+    --color-primary-dark: #6E7C49;
+    --color-stop: #E6B422;
+    /* マスタード (Stop) */
+    --color-reset: #D8A48F;
+    /* テラコッタ (Reset) */
+    --color-shuffle: #7D9CB8;
+    /* スレートブルー (Shuffle) */
+
+    --color-text: #4A4A4A;
+    /* ダークグレー (黒より柔らかい) */
+    --color-card-back: #A4B59E;
+    /* カード裏面の色 */
+    --color-white: #FFFFFF;
+    --color-disabled: #CFD8DC;
+    /* 無効状態の色 */
+    --color-disabled-text: #90A4AE;
+
+    --shadow-soft: 0 4px 12px rgba(138, 154, 91, 0.15);
+
+    /* 角丸の統一 */
+    --radius-md: 12px;
+    --radius-lg: 20px;
+
+    /* アニメーション速度 */
+    --transition-speed: 0.3s;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* ヘッダー周り */
+header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 2rem;
+    color: var(--color-primary-dark);
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    font-weight: normal;
+    margin-left: 10px;
+}
+
+.description {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* コントロールパネル */
+.controls,
+.game-info {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-white);
+    padding: 6px 14px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+}
+
+select {
+    padding: 5px 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: var(--color-text);
+    background-color: #fff;
+    cursor: pointer;
+}
+
+select:disabled {
+    background-color: #f0f0f0;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+/* ボタンデザイン */
+.button-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+button {
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+    transition: all var(--transition-speed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.control-btn {
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    font-weight: bold;
+    font-size: 0.95rem;
+    color: var(--color-white);
+    box-shadow: var(--shadow-soft);
+    min-width: 100px;
+}
+
+.control-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.control-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.control-btn:disabled {
+    background-color: var(--color-disabled);
+    color: var(--color-disabled-text);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Colors */
+.start {
+    background-color: var(--color-primary);
+}
+
+.stop {
+    background-color: var(--color-stop);
+}
+
+.reset {
+    background-color: var(--color-reset);
+}
+
+.shuffle {
+    background-color: var(--color-shuffle);
+}
+
+/* モーダル内のボタン */
+.primary-btn {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: var(--shadow-soft);
+}
+
+.primary-btn:hover {
+    background-color: var(--color-primary-dark);
+    transform: translateY(-2px);
+}
+
+/* hiddenクラス */
+.hidden {
+    display: none !important;
+}
+
+/* ゲーム情報表示 (Time, Moves) */
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--color-white);
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    min-width: 80px;
+    box-shadow: var(--shadow-soft);
+}
+
+.info-item .label {
+    font-size: 0.75rem;
+    color: #888;
+}
+
+.info-item .value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-primary-dark);
+    font-variant-numeric: tabular-nums;
+}
+
+/* --- ゲームボード (CSS Grid) --- */
+.game-board {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    max-width: 600px;
+    margin-top: 10px;
+    transition: opacity 0.3s;
+}
+
+/* ロック・一時停止状態 */
+.game-board.locked {
+    opacity: 0.6;
+    filter: grayscale(40%);
+    pointer-events: none;
+    /* クリック無効 */
+}
+
+/* 難易度別グリッド */
+.game-board.hard,
+.game-board.super-hard {
+    grid-template-columns: repeat(6, 1fr);
+}
+
+/* --- カード (3D Flip Animation) --- */
+.card {
+    aspect-ratio: 1 / 1.2;
+    position: relative;
+    perspective: 1000px;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* ロック中もカードは見えているが、カーソルはデフォルト */
+.game-board.locked .card {
+    cursor: default;
+}
+
+.game-board:not(.locked) .card {
+    cursor: pointer;
+}
+
+.card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card.flipped .card-inner,
+.card.matched .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-back {
+    background-color: var(--color-card-back);
+    background-image:
+        repeating-linear-gradient(45deg,
+            transparent,
+            transparent 10px,
+            rgba(255, 255, 255, 0.2) 10px,
+            rgba(255, 255, 255, 0.2) 20px);
+}
+
+.card-front {
+    background-color: var(--color-white);
+    transform: rotateY(180deg);
+    font-size: 2.5rem;
+    border: 3px solid var(--color-primary);
+}
+
+.card.matched .card-front {
+    background-color: #E8F5E9;
+    border-color: #81C784;
+    animation: pulse 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: rotateY(180deg) scale(1);
+    }
+
+    50% {
+        transform: rotateY(180deg) scale(1.1);
+    }
+
+    100% {
+        transform: rotateY(180deg) scale(1);
+    }
+}
+
+/* --- モーダル (Congratulations) --- */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    opacity: 1;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(4px);
+}
+
+.modal.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.modal-content {
+    background-color: var(--color-white);
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    /* 中央揃えのためのFlex設定 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    max-width: 90%;
+    width: 400px;
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-content h2 {
+    color: var(--color-primary-dark);
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.result-stats {
+    background-color: var(--color-bg);
+    padding: 15px;
+    border-radius: var(--radius-md);
+    margin: 20px 0;
+    width: 100%;
+    /* 横幅いっぱいに広げる */
+}
+
+.result-stats p {
+    font-size: 1.1rem;
+    margin: 5px 0;
+}
+
+/* --- レスポンシブ --- */
+@media (max-width: 600px) {
+    .app-container {
+        gap: 15px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    .game-board {
+        gap: 8px;
+    }
+
+    .game-board.hard,
+    .game-board.super-hard {
+        width: 100%;
+    }
+
+    .card-front {
+        font-size: 1.8rem;
+        border-width: 2px;
+    }
+
+    .control-btn {
+        padding: 8px 12px;
+        min-width: 80px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 400px) {
+
+    .game-board.hard,
+    .game-board.super-hard {
+        gap: 5px;
+    }
+
+    .card-front {
+        font-size: 1.4rem;
+    }
+}

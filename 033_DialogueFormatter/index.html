@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>哲学的対話メーカー - Philosophical Dialogue Formatter</title>
+    <!-- Favicon: Books Emoji -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Sawarabi Mincho for Japanese, EB Garamond for English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,700;1,400&family=Sawarabi+Mincho&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar: Settings & Input -->
+        <aside class="sidebar no-print">
+            <header class="app-header">
+                <h1>哲学的対話メーカー</h1>
+                <p class="subtitle">Philosophical Dialogue Formatter</p>
+            </header>
+
+            <div class="control-panel">
+                <!-- Data Entry -->
+                <section class="panel-section">
+                    <h2>1. テキスト入力 <span class="en-label">Input Text</span></h2>
+                    <textarea id="rawInput" placeholder="ここにAIとの対話ログを貼り付けてください...&#10;Paste your dialogue log here..."></textarea>
+                </section>
+
+                <!-- Parse Settings -->
+                <section class="panel-section">
+                    <h2>2. 設定 <span class="en-label">Settings</span></h2>
+                    
+                    <!-- Writing Mode -->
+                    <div class="setting-group">
+                        <label>表示モード <span class="en-label">Writing Mode</span></label>
+                        <div class="toggle-group">
+                            <button id="btnVertical" class="toggle-btn active" data-mode="vertical">縦書き <span class="small">Vertical</span></button>
+                            <button id="btnHorizontal" class="toggle-btn" data-mode="horizontal">横書き <span class="small">Horizontal</span></button>
+                        </div>
+                    </div>
+
+                    <!-- Speaker Names -->
+                    <div class="setting-group">
+                        <label>登場人物名 <span class="en-label">Speaker Names</span></label>
+                        <div class="input-row">
+                            <input type="text" id="nameUser" value="青年" placeholder="User Name">
+                            <input type="text" id="nameAI" value="哲人" placeholder="AI Name">
+                        </div>
+                    </div>
+
+                    <!-- Meta Info Toggle -->
+                    <div class="setting-group">
+                        <label>
+                            <input type="checkbox" id="checkMeta" checked>
+                            メタ情報を含める <span class="en-label">Include Meta Info</span>
+                        </label>
+                    </div>
+
+                    <!-- Meta Info Details (Hidden by default based on JS, but shown for now) -->
+                    <div id="metaInfoArea" class="meta-inputs">
+                        <input type="text" id="metaTitle" placeholder="タイトル / Title" value="ある日の対話">
+                        <textarea id="metaForeword" placeholder="まえがき / Foreword" rows="2"></textarea>
+                        <textarea id="metaAfterword" placeholder="あとがき / Afterword" rows="2"></textarea>
+                    </div>
+                </section>
+
+                <!-- Actions -->
+                <section class="panel-section actions">
+                    <button id="btnFormat" class="primary-btn">
+                        <span class="icon">✨</span> フォーマット変換 <span class="en-label">Format</span>
+                    </button>
+                    <button id="btnPrint" class="secondary-btn">
+                        <span class="icon">🖨️</span> PDF保存 / 印刷 <span class="en-label">Print / PDF</span>
+                    </button>
+                </section>
+                
+                <div class="tips">
+                    <p>💡 ヒント: 「話者名:」がない行は、空行を挟むと自動で交互に割り当てられます。</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content: Preview -->
+        <main class="preview-area" id="previewContainer">
+            <!-- Paper Container (The book page) -->
+            <article id="paper" class="paper vertical">
+                <!-- Content will be injected here via JavaScript -->
+                <div class="placeholder-text">
+                    ここに整形されたテキストが表示されます。<br>
+                    Formatted text will appear here.
+                </div>
+            </article>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

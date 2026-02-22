@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Breeze</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Gradient Breeze</h1>
+            <p>美しいグラデーションを直感的に。</p>
+        </header>
+
+        <main class="controls-card">
+            <!-- Settings Section -->
+            <div class="section-title">Settings</div>
+            <div class="settings-row">
+                <!-- Type Selection -->
+                <div class="control-group half-width">
+                    <label class="toggle-label">タイプ</label>
+                    <div class="toggle-switch">
+                        <input type="radio" name="type" id="type-linear" value="linear" checked>
+                        <label for="type-linear">Linear</label>
+
+                        <input type="radio" name="type" id="type-radial" value="radial">
+                        <label for="type-radial">Radial</label>
+                    </div>
+                </div>
+
+                <!-- Mode Selection -->
+                <div class="control-group half-width">
+                    <label class="toggle-label">カラー数</label>
+                    <div class="toggle-switch">
+                        <input type="radio" name="mode" id="mode-2" value="2" checked>
+                        <label for="mode-2">2色</label>
+
+                        <input type="radio" name="mode" id="mode-3" value="3">
+                        <label for="mode-3">3色</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customization Section -->
+            <div class="section-title">Colors & Angle</div>
+
+            <!-- Color Pickers -->
+            <div class="control-group colors-group">
+                <div class="color-wrapper">
+                    <input type="color" id="color-1" value="#ff9a9e">
+                    <span class="color-label">Color 1</span>
+                </div>
+                <div class="color-wrapper">
+                    <input type="color" id="color-2" value="#fad0c4">
+                    <span class="color-label">Color 2</span>
+                </div>
+                <div class="color-wrapper hidden" id="color-3-wrapper">
+                    <input type="color" id="color-3" value="#a1c4fd">
+                    <span class="color-label">Color 3</span>
+                </div>
+            </div>
+
+            <!-- Angle Slider -->
+            <div class="control-group angle-group">
+                <label for="angle-slider">角度: <span id="angle-value">45deg</span></label>
+                <input type="range" id="angle-slider" min="0" max="360" value="45">
+            </div>
+
+            <!-- Copy Button -->
+            <button id="copy-btn" class="primary-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+                CSSをコピー
+            </button>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">コピーしました！</div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

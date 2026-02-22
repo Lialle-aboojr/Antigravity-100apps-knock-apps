@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cinema Roulette Pro</title>
+    <!-- ファビコン: 映画のカチンコアイコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- ヘッダーエリア -->
+        <header class="main-header">
+            <div class="logo-area">
+                <h1>Cinema Roulette Pro</h1>
+                <p class="subtitle">Your Personal Movie Selector / 映画ルーレット</p>
+            </div>
+            <button id="spinBtn" class="spin-button">
+                <span class="icon">🎲</span> 抽選する / Spin
+            </button>
+        </header>
+
+        <main>
+            <!-- 抽選結果表示エリア（ポップアップオーバーレイ） -->
+            <div id="rouletteOverlay" class="overlay hidden">
+                <div class="result-modal">
+                    <h2>Tonight's Movie / 今日の1本</h2>
+                    <div id="resultContent" class="result-content">
+                        <!-- 結果がここに表示されます -->
+                    </div>
+                    <div class="result-actions">
+                        <a id="searchLink" href="#" target="_blank" class="action-btn search-btn">Googleで検索 / Search</a>
+                        <button id="closeResultBtn" class="action-btn close-btn">閉じる / Close</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 確認用ダイアログ（オーバーレイ） -->
+            <div id="confirmOverlay" class="overlay hidden">
+                <div class="confirm-modal">
+                    <p id="confirmMessage">本当に削除しますか？ / Are you sure?</p>
+                    <div class="confirm-actions">
+                        <button id="confirmYesBtn" class="action-btn delete-btn">はい / Yes</button>
+                        <button id="confirmNoBtn" class="action-btn cancel-btn">いいえ / No</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <!-- 左側：登録フォーム -->
+                <section class="form-section">
+                    <h3>新しい映画を登録 / Add New Movie</h3>
+                    <form id="movieForm">
+                        <input type="hidden" id="movieId"> <!-- 編集用ID -->
+                        
+                        <div class="form-group">
+                            <label for="title">映画タイトル / Title</label>
+                            <input type="text" id="title" required placeholder="例: Your Name. / 君の名は。">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="genre">ジャンル / Genre</label>
+                            <select id="genre" required>
+                                <option value="" disabled selected>選択してください / Select</option>
+                                <option value="Action">アクション / Action</option>
+                                <option value="Comedy">コメディ / Comedy</option>
+                                <option value="Drama">ドラマ / Drama</option>
+                                <option value="Sci-Fi">SF / Sci-Fi</option>
+                                <option value="Horror">ホラー / Horror</option>
+                                <option value="Romance">ロマンス / Romance</option>
+                                <option value="Animation">アニメ / Animation</option>
+                                <option value="Documentary">ドキュメンタリー / Documentary</option>
+                                <option value="Other">その他 / Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>評価 / Rating</label>
+                            <div class="rating-input">
+                                <input type="radio" name="rating" id="star5" value="5"><label for="star5">★</label>
+                                <input type="radio" name="rating" id="star4" value="4"><label for="star4">★</label>
+                                <input type="radio" name="rating" id="star3" value="3"><label for="star3">★</label>
+                                <input type="radio" name="rating" id="star2" value="2"><label for="star2">★</label>
+                                <input type="radio" name="rating" id="star1" value="1"><label for="star1">★</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="imageInput">ポスター画像 / Poster Image</label>
+                            <input type="file" id="imageInput" accept="image/*">
+                            <div id="imagePreview" class="image-preview"></div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="saveBtn" class="save-btn">保存 / Save</button>
+                            <button type="button" id="cancelEditBtn" class="cancel-btn hidden">キャンセル / Cancel</button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- 右側：映画リスト -->
+                <section class="list-section">
+                    <h3>ウォッチリスト / Watch List <span id="movieCount">(0)</span></h3>
+                    <div id="movieList" class="movie-grid">
+                        <!-- 映画カードがここに生成されます -->
+                    </div>
+                    <div id="emptyState" class="empty-state">
+                        <p>まだ映画がありません。<br>左のフォームから追加してください。</p>
+                        <p>No movies yet.<br>Add one from the form.</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer class="main-footer">
+            <p>&copy; 2026 Cinema Roulette Pro</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

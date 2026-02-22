@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Filler Text Generator / 万能ダミーテキスト生成器</title>
+    <!-- ファビコン: 📄 -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- テーマ切り替えボタン (右上) -->
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+            <span class="theme-icon">🌙</span>
+        </button>
+
+        <header>
+            <h1>Universal Filler Text Generator</h1>
+            <p class="subtitle">万能ダミーテキスト生成器 V2</p>
+        </header>
+
+        <main>
+            <!-- コントロールパネル -->
+            <section class="controls">
+
+                <!-- テキストタイプ選択 (Standard, Japanese, Designer) -->
+                <div class="control-group">
+                    <label class="group-label">Text Type / 文章タイプ</label>
+                    <div class="radio-group mode-selector">
+                        <label class="radio-label">
+                            <input type="radio" name="textMode" value="standard" checked>
+                            <span class="radio-custom"></span>
+                            Standard (Lorem ipsum)
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="textMode" value="japanese">
+                            <span class="radio-custom"></span>
+                            Japanese (青空文庫)
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="textMode" value="designer">
+                            <span class="radio-custom"></span>
+                            Designer's Pain (業界あるある)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 生成単位選択 (Paragraphs vs Characters) -->
+                <div class="control-group">
+                    <label class="group-label">Length Mode / 生成単位</label>
+                    <div class="radio-group unit-selector">
+                        <label class="radio-label">
+                            <input type="radio" name="lengthMode" value="paragraph" checked>
+                            <span class="radio-custom"></span>
+                            Paragraphs (段落数)
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="lengthMode" value="character">
+                            <span class="radio-custom"></span>
+                            Characters (文字数)
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 数値調整スライダー (動的に変化) -->
+                <div class="control-group">
+                    <div class="label-row">
+                        <label id="slider-label" class="group-label" for="amount-slider">Count / 数 (1-10)</label>
+                        <span id="amount-display" class="value-display">3</span>
+                    </div>
+                    <!-- 初期値: 段落モード (1〜10) -->
+                    <input type="range" id="amount-slider" min="1" max="10" value="3" class="slider">
+                </div>
+
+                <!-- オプション -->
+                <div class="control-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="html-tag-check">
+                        <span class="checkbox-custom"></span>
+                        Include HTML Tags (&lt;p&gt;) / HTMLタグを含める
+                    </label>
+                </div>
+            </section>
+
+            <!-- 出力エリア -->
+            <section class="output-section">
+                <div class="output-container">
+                    <textarea id="output-text" readonly></textarea>
+                    <button id="copy-btn" class="copy-btn" aria-label="Copy to Clipboard">
+                        <span class="icon">📋</span> Copy / コピー
+                    </button>
+                    <!-- 文字数カウント表示 (おまけ: 現在の生成結果の文字数) -->
+                    <div class="char-count-display">Length: <span id="current-length">0</span> chars</div>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Universal Filler Text Generator</p>
+        </footer>
+    </div>
+
+    <!-- トースト通知 -->
+    <div id="toast" class="toast">Copied! / コピーしました</div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

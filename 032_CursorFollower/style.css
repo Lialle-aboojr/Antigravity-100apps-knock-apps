@@ -1,0 +1,268 @@
+/* 
+ * style.css (Final V5)
+ * 修正点: 
+ * 1. クリック波紋のバグ修正（scale(0)削除）
+ * 2. 猫SVGの差し替え（座っている黒猫）
+ */
+
+:root {
+    /* デフォルト（Cat Mode） */
+    --bg-color: #fdfdfd;
+    /* オフホワイト */
+    --text-color: #333333;
+    /* ダークグレー */
+    --accent-color: #444444;
+}
+
+/* Light Mode */
+body.light-mode {
+    --bg-color: #0a0a1a;
+    /* ダークネイビー */
+    --text-color: #ffffff;
+    /* 白 */
+    --accent-color: #00d2ff;
+    /* ネオンシアン */
+}
+
+/* 基本リセット */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    cursor: default;
+    /* システムカーソルは常に表示 */
+
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* ヘッダー */
+header {
+    position: absolute;
+    top: 20px;
+    z-index: 100;
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+    background: rgba(128, 128, 128, 0.1);
+    padding: 10px 20px;
+    border-radius: 30px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    transition: border-color 0.3s;
+}
+
+.label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin: 0 10px;
+    opacity: 0.8;
+}
+
+/* スイッチ */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #00d2ff;
+    box-shadow: 0 0 10px #00d2ff;
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+/* コンテンツ */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    user-select: none;
+}
+
+.center-text {
+    text-align: center;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.center-text h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+body.light-mode .center-text h1 {
+    text-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+}
+
+.center-text p {
+    font-size: 1.2rem;
+    opacity: 0.7;
+}
+
+/* カーソルコンテナ */
+#cursor-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* クリックを通過させる */
+    z-index: 50;
+}
+
+.cursor-element {
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+    pointer-events: none;
+    /* 要素自体もクリックを通過 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 
+ * Cat Mode: SVGシルエット (座っている黒猫)
+ */
+.cat {
+    width: 50px;
+    height: 50px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    /* 修正: シンプルで可愛い座り姿の黒猫SVG */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M366 332c-15.5-23.3-37-43.2-62.5-56.3 3.4-3.5 6.7-7.2 9.7-11.1 27.2-34.9 36.3-80.9 23.3-122.3 -5.7-18.1-15.1-34.9-27.7-49.3 -11.9-13.6-26.7-24.6-43.4-32.1 -2.6-1.2-5.3-2.2-8-3.2 -17.6-6.3-36.6-9.5-55.9-9.1 -19.3 0.3-38.2 3.9-55.6 10.7 -2.6 1-5.2 2.1-7.7 3.3 -16.5 7.8-31 19.1-42.5 32.9 -12.3 14.6-21.3 31.6-26.6 49.9 -12.2 41.7-2.3 87.7 25.6 122.1 2.8 3.5 5.8 6.9 8.9 10.1 -25.2 13.2-46.4 33-61.6 56.1 -20.6 31.3-29.4 69.1-25.1 106.3 0.9 8.2 7.8 14.4 16.1 14.4h379.8c8.3 0 15.1-6.2 16.1-14.4 4.3-37.2-4.5-75-25.1-106.3zM151.8 139.8c5.4-6.8 12.4-12.4 20.3-16.3 17.1-8.3 38-6.4 53.6 5.5 13.5 10.3 20 27.7 16.3 44.2 -3.7 16.5-16.7 29.5-33.1 33.3 -16.5 3.8-33.9-2.7-44.2-16.3 -8.9-11.6-12.8-26.6-8.2-40.8zM202 411.3c-20.2 0-36.5-16.3-36.5-36.5s16.3-36.5 36.5-36.5 36.5 16.3 36.5 36.5 -16.3 36.5-36.5 36.5zM310 411.3c-20.2 0-36.5-16.3-36.5-36.5s16.3-36.5 36.5-36.5 36.5 16.3 36.5 36.5 -16.3 36.5-36.5 36.5zM345.9 194.2c-10.3 13.5-27.7 20-44.2 16.3 -16.4-3.8-29.4-16.8-33.1-33.3 -3.7-16.5 2.8-33.9 16.3-44.2 15.6-11.9 36.5-13.8 53.6-5.5 7.9 3.8 14.9 9.5 20.3 16.3 4.6 14.1 0.7 29.2-8.2 40.8z' fill='black'/%3E%3C/svg%3E");
+    opacity: 0.9;
+}
+
+/* 
+ * Light Mode: Glowing Spot
+ */
+.light-spot {
+    width: 25px;
+    height: 25px;
+    background: radial-gradient(circle, rgba(0, 210, 255, 0.9) 0%, rgba(0, 210, 255, 0.1) 80%);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.5), 0 0 30px rgba(0, 210, 255, 0.2);
+}
+
+/* 
+ * Effect: Paw Print (SVG)
+ */
+.paw-print {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M30,35 Q20,20 40,15 Q60,20 50,35 Q60,40 50,55 Q40,65 30,55 Q20,40 30,35 Z' fill='black'/%3E%3Cellipse cx='20' cy='25' rx='8' ry='12' fill='black' transform='rotate(-20 20 25)'/%3E%3Cellipse cx='60' cy='25' rx='8' ry='12' fill='black' transform='rotate(20 60 25)'/%3E%3Cellipse cx='40' cy='10' rx='8' ry='12' fill='black'/%3E%3Cellipse cx='8' cy='45' rx='6' ry='10' fill='black' transform='rotate(-45 8 45)'/%3E%3Cellipse cx='72' cy='45' rx='6' ry='10' fill='black' transform='rotate(45 72 45)'/%3E%3C/svg%3E");
+
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: pawFade 1.0s forwards;
+    z-index: 45;
+}
+
+@keyframes pawFade {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+    }
+
+    20% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -60%) scale(1.2);
+        opacity: 0;
+    }
+}
+
+/* 
+ * Effect: Ripple
+ * 修正: scale(0)を削除し、アニメーションのみで制御
+ */
+.ripple {
+    position: absolute;
+    border: 3px solid rgba(0, 210, 255, 0.8);
+    border-radius: 50%;
+
+    /* 以前はここに scale(0) があったため描画されなかったバグを修正 */
+    transform: translate(-50%, -50%);
+
+    pointer-events: none;
+    z-index: 45;
+    animation: rippleExpand 0.6s ease-out forwards;
+}
+
+@keyframes rippleExpand {
+    0% {
+        width: 0px;
+        height: 0px;
+        opacity: 1;
+        border-width: 5px;
+    }
+
+    100% {
+        width: 250px;
+        height: 250px;
+        opacity: 0;
+        border-width: 0px;
+    }
+}

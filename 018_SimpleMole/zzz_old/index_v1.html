@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Mole / もぐらたたき</title>
+  <!-- CSSファイルの読み込み -->
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <h1>Simple Mole <br><span class="subtitle">もぐらたたき</span></h1>
+
+  <div class="game-info">
+    <div class="score-board">
+      Score / 得点: <span class="score">0</span>
+    </div>
+    <div class="timer-board">
+      Time / 時間: <span class="time-left">30</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button onClick="startGame()">Start / スタート</button>
+  </div>
+
+  <div class="game">
+    <!-- 9つの穴とモグラを用意します -->
+    <!-- hole: 穴, mole: モグラ -->
+    <div class="hole hole1">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole2">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole3">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole4">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole5">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole6">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole7">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole8">
+      <div class="mole"></div>
+    </div>
+    <div class="hole hole9">
+      <div class="mole"></div>
+    </div>
+  </div>
+
+  <!-- JavaScriptファイルの読み込み -->
+  <script src="script.js"></script>
+</body>
+</html>

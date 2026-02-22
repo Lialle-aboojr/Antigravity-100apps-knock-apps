@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philosophical Dialogue Formatter</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Favicon (Book Emoji SVG) -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+</head>
+
+<body>
+
+    <!-- コントロールパネル (印刷時は非表示) -->
+    <div id="control-panel" class="no-print">
+        <header>
+            <h1>📚 哲学的対話メーカー <br><span class="en-sub">Philosophical Dialogue Formatter</span></h1>
+            <p class="subtitle">AIとの対話を、美しい書籍フォーマットへ。<br><span class="en-sub">Turn AI chats into beautiful book
+                    formats.</span></p>
+        </header>
+
+        <div class="settings-group">
+            <h3>表示モード / Layout Mode</h3>
+            <label>
+                <input type="radio" name="layout-mode" value="vertical" checked>
+                縦書き (日本語書籍風) <br><span class="en-sub">Vertical (Japanese Book Style)</span>
+            </label>
+            <label>
+                <input type="radio" name="layout-mode" value="horizontal">
+                横書き (Paperback Style) <br><span class="en-sub">Horizontal (Paperback Style)</span>
+            </label>
+        </div>
+
+        <div class="settings-group">
+            <h3>登場人物名 / Character Names</h3>
+            <div class="input-row">
+                <input type="text" id="name-user" value="私">
+                <span class="arrow">→</span>
+                <span>User役 / User Role</span>
+            </div>
+            <div class="input-row">
+                <input type="text" id="name-model" value="AI">
+                <span class="arrow">→</span>
+                <span>AI役 / AI Role</span>
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h3>メタ情報 / Meta Info</h3>
+            <label><input type="checkbox" id="show-title" checked> タイトル / Title</label>
+            <input type="text" id="meta-title-input" placeholder="タイトルを入力 / Enter Title">
+
+            <label><input type="checkbox" id="show-pre"> まえがき / Preface</label>
+            <textarea id="meta-pre-input" placeholder="まえがきを入力 / Enter Preface"></textarea>
+
+            <label><input type="checkbox" id="show-post"> あとがき / Postscript</label>
+            <textarea id="meta-post-input" placeholder="あとがきを入力 / Enter Postscript"></textarea>
+        </div>
+
+        <div class="settings-group">
+            <h3>チャットログ入力 / Chat Log</h3>
+            <textarea id="chat-input"
+                placeholder="例 / Example:&#10;User: 幸せとは何ですか？&#10;Model: それは主観的な概念であり..."></textarea>
+        </div>
+
+        <div class="footer-note">
+            <p>💡 ヒント: <strong>Ctrl + P</strong> でPDF保存・印刷。<br><span class="en-sub">Hint: Press Ctrl + P to save as
+                    PDF.</span></p>
+        </div>
+    </div>
+
+    <!-- プレビューエリア (本の中身) -->
+    <main id="preview-area" class="vertical-mode">
+        <!-- 横スクロール用コンテナ -->
+        <div class="scroll-wrapper">
+            <div class="book-container">
+                <!-- タイトル -->
+                <h1 id="book-title" class="book-element"></h1>
+
+                <!-- まえがき -->
+                <div id="book-preface" class="book-element meta-text"></div>
+                <div id="preface-divider" class="book-element divider">
+                    <hr>
+                </div>
+
+                <!-- 対話本文 -->
+                <div id="dialogue-content"></div>
+
+                <!-- あとがき -->
+                <div id="postscript-divider" class="book-element divider">
+                    <hr>
+                </div>
+                <div id="book-postscript" class="book-element meta-text"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

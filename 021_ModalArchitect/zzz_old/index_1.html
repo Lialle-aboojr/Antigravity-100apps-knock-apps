@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Architect - モーダルアーキテクト</title>
+    <!-- ハンマーとレンチのファビコン (SVG Data URI) -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for DevTools look -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="app-header">
+        <div class="logo">
+            <span class="icon">🛠️</span>
+            <h1>Modal Architect</h1>
+        </div>
+        <div class="header-meta">
+            <span class="version">v1.0.0</span>
+        </div>
+    </header>
+
+    <main class="app-container">
+        <!-- 左側：設定パネル -->
+        <section class="settings-panel">
+            <h2 class="panel-title">設定 / Settings</h2>
+
+            <div class="control-group">
+                <label for="input-title">見出し / Title</label>
+                <input type="text" id="input-title" placeholder="モーダルのタイトル / Modal Title"
+                    value="Welcome to Modal Architect">
+            </div>
+
+            <div class="control-group">
+                <label for="input-content">本文 / Content</label>
+                <textarea id="input-content" rows="4"
+                    placeholder="モーダルの本文 / Modal Content">ここにテキストを入力してください。&#13;&#10;Enter your text here.</textarea>
+            </div>
+
+            <div class="control-group">
+                <label>画像 / Image</label>
+                <div class="image-inputs">
+                    <input type="text" id="input-image-url" placeholder="画像URL (https://...)">
+                    <span class="separator">OR</span>
+                    <label class="file-upload-btn">
+                        ファイルを選択 / Select File
+                        <input type="file" id="input-image-file" accept="image/*">
+                    </label>
+                </div>
+                <!-- 選択した画像のプレビュー名を表示するエリア -->
+                <div id="file-name-display" class="file-name">選択されていません / No file selected</div>
+            </div>
+
+            <div class="control-group two-col">
+                <div class="sub-group">
+                    <label for="input-color">アクセントカラー / Accent Color</label>
+                    <div class="color-picker-wrapper">
+                        <input type="color" id="input-color" value="#007acc">
+                        <span id="color-value">#007acc</span>
+                    </div>
+                </div>
+                <div class="sub-group">
+                    <label for="input-animation">アニメーション / Animation</label>
+                    <select id="input-animation">
+                        <option value="fade-in">Fade In</option>
+                        <option value="slide-down">Slide Down</option>
+                        <option value="zoom-in">Zoom In</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- 右側：プレビュー＆コード出力 -->
+        <section class="preview-area">
+            <div class="action-bar">
+                <button id="btn-try" class="btn primary">
+                    <span class="btn-icon">▶</span> プレビュー実行 / Try Demo
+                </button>
+                <button id="btn-generate" class="btn secondary">
+                    <span class="btn-icon">⚡</span> コード生成 / Get Code
+                </button>
+            </div>
+
+            <div class="code-output-container">
+                <div class="code-header">
+                    <span>Generated Code</span>
+                    <button id="btn-copy" class="btn small">コピー / Copy</button>
+                </div>
+                <textarea id="code-output" readonly
+                    placeholder="「コード生成」ボタンを押すと、ここにHTML/CSS/JSが出力されます。&#13;&#10;Click 'Get Code' to generate HTML/CSS/JS here."></textarea>
+            </div>
+        </section>
+    </main>
+
+    <!-- モーダルプレビュー用のオーバーレイ (デフォルトは非表示) -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div id="modal-window" class="modal-window">
+            <div class="modal-header">
+                <h3 id="modal-title">Modal Title</h3>
+                <button id="modal-close-btn" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <img id="modal-image" src="" alt="Modal Image" class="modal-image hidden">
+                <p id="modal-text">Modal Content</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-action-btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知トースト -->
+    <div id="toast" class="toast hidden">Copied to Clipboard!</div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

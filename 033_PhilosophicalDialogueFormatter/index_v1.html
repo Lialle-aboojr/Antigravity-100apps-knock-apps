@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philosophical Dialogue Formatter</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Favicon (Book Emoji SVG) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+</head>
+<body>
+
+    <!-- コントロールパネル (印刷時は非表示) -->
+    <div id="control-panel" class="no-print">
+        <header>
+            <h1>📚 <span data-i18n="app_title">哲学的対話メーカー</span></h1>
+            <p class="subtitle" data-i18n="app_subtitle">AIとの対話を、美しい書籍フォーマットへ。</p>
+        </header>
+
+        <div class="settings-group">
+            <h3 data-i18n="settings_lang">言語 / Language</h3>
+            <label><input type="radio" name="ui-lang" value="ja" checked> 日本語</label>
+            <label><input type="radio" name="ui-lang" value="en"> English</label>
+        </div>
+
+        <div class="settings-group">
+            <h3 data-i18n="settings_mode">表示モード / Layout Mode</h3>
+            <label>
+                <input type="radio" name="layout-mode" value="vertical" checked> 
+                <span data-i18n="mode_vertical">縦書き (日本語書籍風)</span>
+            </label>
+            <label>
+                <input type="radio" name="layout-mode" value="horizontal"> 
+                <span data-i18n="mode_horizontal">横書き (Paperback Style)</span>
+            </label>
+        </div>
+
+        <div class="settings-group">
+            <h3 data-i18n="settings_names">登場人物名 / Names</h3>
+            <div class="input-row">
+                <input type="text" id="name-user" value="私">
+                <span class="arrow">→</span>
+                <span data-i18n="role_user">User役</span>
+            </div>
+            <div class="input-row">
+                <input type="text" id="name-model" value="AI">
+                <span class="arrow">→</span>
+                <span data-i18n="role_model">AI役</span>
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h3 data-i18n="settings_meta">メタ情報 / Meta Info</h3>
+            <label><input type="checkbox" id="show-title" checked> <span data-i18n="meta_title">タイトル</span></label>
+            <input type="text" id="meta-title-input" placeholder="タイトルを入力 / Title">
+            
+            <label><input type="checkbox" id="show-pre"> <span data-i18n="meta_pre">まえがき</span></label>
+            <textarea id="meta-pre-input" placeholder="まえがきを入力 / Preface"></textarea>
+            
+            <label><input type="checkbox" id="show-post"> <span data-i18n="meta_post">あとがき</span></label>
+            <textarea id="meta-post-input" placeholder="あとがきを入力 / Postscript"></textarea>
+        </div>
+
+        <div class="settings-group">
+            <h3 data-i18n="input_label">チャットログ入力 / Chat Log</h3>
+            <textarea id="chat-input" placeholder="User: 幸せとは何ですか？&#10;Model: それは主観的な概念であり..."></textarea>
+        </div>
+        
+        <div class="footer-note">
+            <p data-i18n="print_hint">💡 ヒント: Ctrl + P でPDFとして保存できます。</p>
+        </div>
+    </div>
+
+    <!-- プレビューエリア (本の中身) -->
+    <main id="preview-area" class="vertical-mode">
+        <div class="book-container">
+            <!-- タイトル -->
+            <h1 id="book-title" class="book-element"></h1>
+            
+            <!-- まえがき -->
+            <div id="book-preface" class="book-element meta-text"></div>
+            <div id="preface-divider" class="book-element divider"><hr></div>
+
+            <!-- 対話本文 -->
+            <div id="dialogue-content"></div>
+
+            <!-- あとがき -->
+            <div id="postscript-divider" class="book-element divider"><hr></div>
+            <div id="book-postscript" class="book-element meta-text"></div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

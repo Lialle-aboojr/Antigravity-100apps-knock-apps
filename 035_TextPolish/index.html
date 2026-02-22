@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Polish / テキスト整形ツール</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Noto Sans JP for clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧹</text></svg>">
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <h1>Text Polish</h1>
+                <span class="subtitle">テキスト整形ツール</span>
+            </div>
+            <button id="theme-toggle" class="icon-btn" aria-label="Toggle Dark Mode">
+                <span class="icon">🌙</span>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Input Area -->
+            <section class="panel input-panel">
+                <div class="panel-header">
+                    <h2>Input</h2>
+                    <button id="clear-btn" class="text-btn">Clear</button>
+                </div>
+                <textarea id="input-text" placeholder="ここにテキストを貼り付けてください..."></textarea>
+            </section>
+
+            <!-- Control Panel (Pipeline) -->
+            <section class="controls">
+                <div class="settings-card">
+                    <h3>Processing Options</h3>
+                    
+                    <div class="checkbox-group">
+                        <!-- Custom Character Removal -->
+                        <div class="checkbox-item custom-remove-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="check-custom">
+                                <span class="checkmark"></span>
+                                <span class="label-text">指定文字を削除 (Remove Custom Chars)</span>
+                            </label>
+                            <input type="text" id="custom-chars" placeholder="例: ※,★" aria-label="削除したい文字">
+                        </div>
+
+                        <!-- Remove Line Breaks -->
+                        <div class="checkbox-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="check-linebreaks">
+                                <span class="checkmark"></span>
+                                <span class="label-text">改行を削除 (Remove Line Breaks)</span>
+                            </label>
+                        </div>
+
+                        <!-- Remove Empty Lines -->
+                        <div class="checkbox-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="check-emptylines">
+                                <span class="checkmark"></span>
+                                <span class="label-text">空行のみ削除 (Remove Empty Lines)</span>
+                            </label>
+                        </div>
+
+                        <!-- Remove All Spaces -->
+                        <div class="checkbox-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="check-spaces">
+                                <span class="checkmark"></span>
+                                <span class="label-text">空白を全削除 (Remove All Spaces)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="run-btn" class="run-button">
+                    実行 / Run
+                </button>
+            </section>
+
+            <!-- Output Area -->
+            <section class="panel output-panel">
+                <div class="panel-header">
+                    <h2>Output</h2>
+                    <button id="copy-btn" class="text-btn">Copy</button>
+                </div>
+                <textarea id="output-text" readonly placeholder="整形されたテキストがここに表示されます..."></textarea>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2026 Text Polish Tool</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

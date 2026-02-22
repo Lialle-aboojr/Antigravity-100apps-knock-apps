@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator | Secure & Random</title>
+    <!-- Google Fonts: Inter for a clean, tech look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --primary-hover: #004494;
+            --bg-color: #f4f7f9;
+            --text-color: #333333;
+            --text-muted: #666666;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Controls Section */
+        .controls {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .control-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .length-control {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .length-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .length-value {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .options-control {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            user-select: none;
+        }
+
+        input[type="checkbox"] {
+            accent-color: var(--primary-color);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .generate-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 86, 179, 0.2);
+        }
+
+        .generate-btn:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 86, 179, 0.3);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Results Section */
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* PC: 2 columns */
+            gap: 1rem;
+        }
+
+        .password-card {
+            background-color: var(--card-bg);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .password-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
+            border-color: rgba(0, 86, 179, 0.1);
+        }
+
+        .password-text {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            letter-spacing: 0.5px;
+            word-break: break-all;
+        }
+
+        .copy-icon {
+            color: var(--text-muted);
+            opacity: 0.5;
+            transition: var(--transition);
+        }
+
+        .password-card:hover .copy-icon {
+            opacity: 1;
+            color: var(--primary-color);
+        }
+
+        /* Toast Notification */
+        .toast {
+            visibility: hidden;
+            min-width: 250px;
+            background-color: #1a1a1a;
+            color: #fff;
+            text-align: center;
+            border-radius: 50px;
+            padding: 16px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+
+        .toast.show {
+            visibility: visible;
+            opacity: 1;
+            bottom: 50px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .results-container {
+                grid-template-columns: 1fr; /* Mobile: 1 column */
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .controls {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Password Generator</h1>
+            <p class="subtitle">安全なパスワードを瞬時に20個生成します</p>
+        </header>
+
+        <main class="controls">
+            <!-- パスワード長設定 -->
+            <div class="control-row">
+                <div class="length-control">
+                    <div class="length-header">
+                        <label for="length-slider">パスワードの長さ</label>
+                        <span id="length-value" class="length-value">12</span>
+                    </div>
+                    <input type="range" id="length-slider" min="8" max="32" value="12">
+                </div>
+            </div>
+
+            <!-- 文字種オプション -->
+            <div class="control-row">
+                <div class="options-control">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="uppercase" checked> 英大文字 (A-Z)
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="lowercase" checked> 英小文字 (a-z)
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="numbers" checked> 数字 (0-9)
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="symbols" checked> 記号 (!@#$%^&*)
+                    </label>
+                </div>
+            </div>
+
+            <!-- 生成ボタン -->
+            <button id="generate-btn" class="generate-btn">
+                パスワードを生成する
+            </button>
+        </main>
+
+        <!-- 結果一覧 -->
+        <div id="results" class="results-container">
+            <!-- JavaScriptでここにパスワードカードが挿入されます -->
+        </div>
+    </div>
+
+    <!-- トースト通知 -->
+    <div id="toast" class="toast">コピーしました！</div>
+
+    <script>
+        /**
+         * パスワード生成ツール
+         * 
+         * 機能:
+         * 1. ユーザー設定（長さ、文字種）に基づいてランダムなパスワードを生成
+         * 2. 生成されたパスワードをリスト表示（20個）
+         * 3. クリックでクリップボードにコピー
+         */
+
+        // 文字種定義
+        const CHAR_SETS = {
+            uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+            lowercase: 'abcdefghijklmnopqrstuvwxyz',
+            numbers: '0123456789',
+            symbols: '!@#$%^&*'
+        };
+
+        // DOM要素の取得
+        const lengthSlider = document.getElementById('length-slider');
+        const lengthValue = document.getElementById('length-value');
+        const uppercaseCb = document.getElementById('uppercase');
+        const lowercaseCb = document.getElementById('lowercase');
+        const numbersCb = document.getElementById('numbers');
+        const symbolsCb = document.getElementById('symbols');
+        const generateBtn = document.getElementById('generate-btn');
+        const resultsContainer = document.getElementById('results');
+        const toast = document.getElementById('toast');
+
+        /**
+         * 初期化処理
+         */
+        function init() {
+            // スライダーの値表示更新イベント
+            lengthSlider.addEventListener('input', (e) => {
+                lengthValue.textContent = e.target.value;
+            });
+
+            // 生成ボタンクリックイベント
+            generateBtn.addEventListener('click', generatePasswords);
+
+            // 初回ロード時に一度生成する
+            generatePasswords();
+        }
+
+        /**
+         * パスワードを生成して表示するメイン関数
+         */
+        function generatePasswords() {
+            const length = parseInt(lengthSlider.value);
+            const useUpper = uppercaseCb.checked;
+            const useLower = lowercaseCb.checked;
+            const useNumbers = numbersCb.checked;
+            const useSymbols = symbolsCb.checked;
+
+            // バリデーション: 最低1つの文字種が選択されているか確認
+            if (!useUpper && !useLower && !useNumbers && !useSymbols) {
+                alert('最低1つの文字種を選んでください');
+                return;
+            }
+
+            // 使用する文字セットを構築
+            let allowedChars = '';
+            if (useUpper) allowedChars += CHAR_SETS.uppercase;
+            if (useLower) allowedChars += CHAR_SETS.lowercase;
+            if (useNumbers) allowedChars += CHAR_SETS.numbers;
+            if (useSymbols) allowedChars += CHAR_SETS.symbols;
+
+            // 結果エリアをクリア
+            resultsContainer.innerHTML = '';
+
+            // 20個のパスワードを生成
+            for (let i = 0; i < 20; i++) {
+                const password = createSinglePassword(length, allowedChars);
+                const card = createPasswordCard(password);
+                resultsContainer.appendChild(card);
+            }
+        }
+
+        /**
+         * 指定された長さと文字セットで1つのランダムなパスワード文字列を作成する
+         * @param {number} length - パスワードの長さ
+         * @param {string} chars - 使用可能な文字セット
+         * @return {string} 生成されたパスワード
+         */
+        function createSinglePassword(length, chars) {
+            let password = '';
+            const array = new Uint32Array(length);
+            window.crypto.getRandomValues(array);
+
+            for (let i = 0; i < length; i++) {
+                // セキュアな乱数を使用して文字を選択
+                password += chars[array[i] % chars.length];
+            }
+            return password;
+        }
+
+        /**
+         * パスワード表示用のHTML要素（カード）を作成する
+         * @param {string} password - 表示するパスワード
+         * @return {HTMLElement} 作成されたDOM要素
+         */
+        function createPasswordCard(password) {
+            const card = document.createElement('div');
+            card.className = 'password-card';
+            card.title = 'クリップボードにコピー';
+
+            // HTML構造を作成
+            // コピーアイコンはSVGを使用
+            card.innerHTML = `
+                <span class="password-text">${escapeHtml(password)}</span>
+                <svg class="copy-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+            `;
+
+            // クリックイベント設定（コピー機能）
+            card.addEventListener('click', () => {
+                copyToClipboard(password);
+            });
+
+            return card;
+        }
+
+        /**
+         * クリップボードにテキストをコピーし、トーストを表示する
+         * @param {string} text - コピーするテキスト
+         */
+        async function copyToClipboard(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast();
+            } catch (err) {
+                console.error('コピーに失敗しました', err);
+                // フォールバック（古いブラウザ用など必要がある場合）
+                alert('コピーできませんでした');
+            }
+        }
+
+        /**
+         * トースト通知を表示し、一定時間後に消去する
+         */
+        function showToast() {
+            // トーストを表示
+            toast.className = 'toast show';
+
+            // 2秒後に非表示にする
+            setTimeout(function() {
+                toast.className = 'toast';
+            }, 2000);
+        }
+
+        /**
+         * HTMLエスケープ処理（XSS対策）
+         * @param {string} str - エスケープする文字列
+         * @return {string} エスケープ後の文字列
+         */
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // アプリケーション開始
+        init();
+
+    </script>
+</body>
+</html>

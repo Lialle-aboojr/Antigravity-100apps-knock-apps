@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philosophical Dialogue Formatter - Hybrid Edition</title>
+    <!-- ファビコン: 本のアイコン -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+    <!-- Google Fonts: 雰囲気のある明朝体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-container">
+    <!-- 左パネル: 操作エリア -->
+    <aside class="control-panel">
+        <header class="panel-header">
+            <h1>Philosophical Dialogue</h1>
+            <p class="subtitle">Hybrid Edition</p>
+        </header>
+
+        <!-- モード切替タブ -->
+        <div class="mode-tabs">
+            <button class="tab-btn active" data-mode="manual">手動入力<br><span class="en">Manual</span></button>
+            <button class="tab-btn" data-mode="import">一括取込<br><span class="en">JSON Import</span></button>
+        </div>
+
+        <!-- 手動入力モード -->
+        <div id="mode-manual" class="mode-content active">
+            <div class="input-group">
+                <label>Speaker</label>
+                <div class="speaker-select">
+                    <input type="radio" name="speaker" id="sp-user" value="User" checked>
+                    <label for="sp-user" class="radio-label">User (私)</label>
+                    <input type="radio" name="speaker" id="sp-ai" value="AI">
+                    <label for="sp-ai" class="radio-label">AI</label>
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Dialogue Text</label>
+                <textarea id="manual-text" placeholder="ここに会話を入力..." rows="5"></textarea>
+            </div>
+            <div class="action-buttons">
+                <button id="btn-write" class="primary-btn">書き込む <span class="en">Write</span></button>
+                <button id="btn-undo" class="secondary-btn">1つ戻る <span class="en">Undo</span></button>
+            </div>
+        </div>
+
+        <!-- 一括取込モード -->
+        <div id="mode-import" class="mode-content">
+            <div class="prompt-box">
+                <label>AIへの指示文 (Prompt)</label>
+                <div class="prompt-text" id="prompt-text">以下のテキストを解析し、
+[{"role":"User","text":"..."},{"role":"AI","text":"..."}]
+という形式のJSONリストに変換してください。</div>
+                <button id="btn-copy-prompt" class="small-btn">指示文をコピー <span class="en">Copy Prompt</span></button>
+            </div>
+            <div class="input-group">
+                <label>JSON Data</label>
+                <textarea id="json-input" placeholder='[{"role":"User","text":"..."}, ...]' rows="8"></textarea>
+            </div>
+            <button id="btn-import" class="primary-btn">インポート <span class="en">Import</span></button>
+        </div>
+
+        <hr class="divider">
+
+        <!-- 共通設定 -->
+        <div class="settings-area">
+            <h3>共通設定 <span class="en">Settings</span></h3>
+            
+            <div class="input-group toggle-group">
+                <label>Writing Mode</label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="writing-mode-toggle" checked>
+                    <label for="writing-mode-toggle" class="toggle-label">
+                        <span class="left">横書き</span>
+                        <span class="right">縦書き</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Title</label>
+                <input type="text" id="input-title" placeholder="タイトル">
+            </div>
+            <div class="input-group">
+                <label>Preface (まえがき)</label>
+                <textarea id="input-preface" rows="3" placeholder="まえがきを入力"></textarea>
+            </div>
+            <div class="input-group">
+                <label>Postscript (あとがき)</label>
+                <textarea id="input-postscript" rows="3" placeholder="あとがきを入力"></textarea>
+            </div>
+        </div>
+    </aside>
+
+    <!-- 右パネル: プレビューエリア -->
+    <main class="preview-panel">
+        <div id="paper" class="paper vertical">
+            <div class="paper-content">
+                <h1 id="view-title" class="doc-title"></h1>
+                <div id="view-preface" class="doc-section preface"></div>
+                
+                <div id="dialogue-list" class="dialogue-list">
+                    <!-- 会話がここに追加される -->
+                    <div class="empty-state">ここに対話が表示されます</div>
+                </div>
+
+                <div id="view-postscript" class="doc-section postscript"></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

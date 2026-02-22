@@ -1,0 +1,472 @@
+/* =========================================
+   Base Variables & Reset
+   ========================================= */
+:root {
+    --bg-color: #fcfbf6;
+    /* Ivory / 書籍用紙のような色 */
+    --editor-bg: #e8e6e1;
+    /* Sidebar bg */
+    --text-color: #2c2c2c;
+    /* Sumi / 墨色 */
+    --accent-color: #a8473a;
+    /* Traditional Red / 茜色 */
+    --ui-border: #d4d2cc;
+    --font-serif-jp: "Sawarabi Mincho", "Hiragino Mincho ProN", "Yu Mincho", serif;
+    --font-serif-en: "EB Garamond", "Times New Roman", serif;
+    --sidebar-width: 340px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-serif-jp);
+    background-color: var(--editor-bg);
+    color: var(--text-color);
+    height: 100vh;
+    overflow: hidden;
+    /* Prevent full body scroll, handle inside containers */
+}
+
+/* =========================================
+   App Layout
+   ========================================= */
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+    width: var(--sidebar-width);
+    background-color: #ffffff;
+    border-right: 1px solid var(--ui-border);
+    display: flex;
+    flex-direction: column;
+    z-index: 10;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.app-header {
+    padding: 1rem;
+    background-color: var(--bg-color);
+    border-bottom: 1px solid var(--ui-border);
+    text-align: center;
+}
+
+.app-header h1 {
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+    color: var(--accent-color);
+}
+
+.subtitle {
+    font-size: 0.75rem;
+    color: #666;
+    letter-spacing: 0.05em;
+}
+
+.control-panel {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.panel-section h2 {
+    font-size: 0.95rem;
+    border-left: 3px solid var(--accent-color);
+    padding-left: 0.5rem;
+    margin-bottom: 0.8rem;
+    font-family: sans-serif;
+    color: #444;
+}
+
+.en-label {
+    font-size: 0.8em;
+    color: #888;
+    font-weight: normal;
+    margin-left: 0.3em;
+}
+
+/* --- Inputs & Buttons --- */
+textarea,
+input[type="text"] {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid var(--ui-border);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    background: #fafafa;
+    transition: border-color 0.2s;
+}
+
+textarea:focus,
+input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background: #fff;
+}
+
+#rawInput {
+    height: 150px;
+    resize: vertical;
+    font-family: monospace;
+    /* Easier to edit raw text */
+}
+
+.setting-group {
+    margin-bottom: 1rem;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.input-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toggle-group {
+    display: flex;
+    border: 1px solid var(--ui-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.toggle-btn {
+    flex: 1;
+    padding: 0.5rem;
+    border: none;
+    background: #f0f0f0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.toggle-btn.active {
+    background: var(--accent-color);
+    color: white;
+}
+
+.toggle-btn .small {
+    display: block;
+    font-size: 0.7em;
+    opacity: 0.8;
+}
+
+.meta-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding-left: 0.5rem;
+    border-left: 2px solid #eee;
+}
+
+.primary-btn,
+.secondary-btn {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    transition: transform 0.1s, opacity 0.2s;
+}
+
+.primary-btn {
+    background-color: var(--accent-color);
+    color: white;
+    box-shadow: 0 4px 6px rgba(168, 71, 58, 0.2);
+}
+
+.secondary-btn {
+    background-color: #fff;
+    border: 2px solid var(--ui-border);
+    color: #555;
+}
+
+.primary-btn:active,
+.secondary-btn:active {
+    transform: translateY(1px);
+}
+
+.tips {
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: auto;
+    background: #f9f9f9;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+/* --- Preview Area --- */
+.preview-area {
+    flex: 1;
+    background-color: #555;
+    /* Dark backdrop for contrast */
+    padding: 2rem;
+    overflow: auto;
+    /* Handle scroll here */
+    display: flex;
+    justify-content: center;
+    /* Center the paper horizontally if possible */
+    align-items: flex-start;
+}
+
+/* The Paper Sheet */
+.paper {
+    background-color: var(--bg-color);
+    padding: 4rem 3rem;
+    /* Margins around text */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    min-height: 80vh;
+    min-width: 60vw;
+    /* Sensible default width */
+    max-width: 95vw;
+    position: relative;
+    /* Font Settings */
+    font-size: 17px;
+    line-height: 1.8;
+    text-align: justify;
+}
+
+/* Placeholder */
+.placeholder-text {
+    color: #999;
+    text-align: center;
+    writing-mode: horizontal-tb;
+    /* Always horizontal for help text */
+    padding: 2rem;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+}
+
+/* =========================================
+   Typography & Modes
+   ========================================= */
+
+/* --- Vertical Mode (Default for JP books) --- */
+.paper.vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    height: 85vh;
+    /* Fixed height to force horizontal scroll */
+    width: auto;
+    /* Width expands with content */
+    overflow-x: auto;
+    overflow-y: hidden;
+    margin: 0 auto;
+    /* Center horizontally if narrow */
+}
+
+/* Number rotation correction in vertical mode */
+.paper.vertical .tcy {
+    text-combine-upright: all;
+    /* Fallback for some browsers */
+    display: inline-block;
+}
+
+/* --- Horizontal Mode --- */
+.paper.horizontal {
+    writing-mode: horizontal-tb;
+    width: 60vw;
+    height: auto;
+    margin: 0 auto;
+}
+
+/* --- Content Styling --- */
+
+/* Meta Info */
+.meta-block {
+    margin-bottom: 2rem;
+    /* Applies to both modes roughly */
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Adjust margin for vertical mode specifics */
+.paper.vertical .meta-block {
+    margin-left: 2rem;
+    margin-bottom: 0;
+    padding-left: 1rem;
+    padding-bottom: 0;
+    border-bottom: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.meta-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    /* vertical: margin-left */
+    color: var(--accent-color);
+}
+
+.meta-foreword,
+.meta-afterword {
+    font-size: 0.95rem;
+    color: #555;
+    margin: 1rem 0;
+}
+
+.meta-separator {
+    text-align: center;
+    color: #bbb;
+    margin: 2rem 0;
+}
+
+/* Dialogue Lines */
+.dialogue-line {
+    margin-bottom: 1.2em;
+    /* Spacing between speeches */
+}
+
+.paper.vertical .dialogue-line {
+    margin-bottom: 0;
+    margin-left: 1.5em;
+    /* Spacing in vertical mode */
+}
+
+.speaker-label {
+    font-weight: bold;
+    font-family: sans-serif;
+    /* Distinct from body text */
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 0.3em;
+    /* Horizontal */
+    display: block;
+}
+
+.paper.vertical .speaker-label {
+    margin-bottom: 0;
+    margin-left: 0.5em;
+}
+
+.speech-content {
+    display: block;
+    text-indent: 1em;
+    /* Standard indentation */
+}
+
+/* Bold/Italic mappings */
+.paper strong {
+    font-weight: bold;
+    background: linear-gradient(transparent 60%, rgba(168, 71, 58, 0.2) 0%);
+    /* Red underline marker */
+}
+
+/* =========================================
+   PRINT OPTIMIZATION (CRITICAL)
+   ========================================= */
+@media print {
+
+    /* Hide UI */
+    .no-print {
+        display: none !important;
+    }
+
+    /* Reset Body */
+    body,
+    .app-container {
+        height: auto;
+        width: auto;
+        overflow: visible;
+        background: white;
+        display: block;
+    }
+
+    .preview-area {
+        background: white;
+        padding: 0;
+        margin: 0;
+        display: block;
+        overflow: visible;
+    }
+
+    /* Reset Paper constraints for print pages */
+    .paper {
+        box-shadow: none;
+        padding: 0;
+        /* Let print margins handle it, or minimal */
+        margin: 0;
+        width: 100% !important;
+        max-width: none !important;
+        min-height: 0 !important;
+        height: auto !important;
+        /* Allow growing */
+        background: white;
+        /* Save ink, or use #fcfbf6 if requested. User said "Ivory", sticking to background-color if user enables bg printing */
+    }
+
+    /* 
+       For Vertical Print:
+       Browsers struggle with vertical-rl multipage. 
+       Standard "height: auto" grows downwards. Vertical text grows leftwards.
+       To print correctly, we often need to rely on the browser's pagination logic strictly.
+       However, Chrome often clips vertical text content that flows off-screen left.
+       
+       Strategy: 
+       For strictly vertical print, we want the content to flow naturally.
+       If the conversation is long, it should paginated.
+       Use css columns or specific print dimensions?
+       
+       Actually, standard "writing-mode: vertical-rl" works in modern chrome print preview 
+       IF the height is constrained to page height and width is allowed to expand (creating horizontal pages?).
+       No, printers print "Down then Right".
+       
+       Best Practice for Simple Vertical Print:
+       Keep it simple. Let the browser paginate. 
+       We ensure "break-inside: avoid" on dialogue/paragraphs.
+    */
+
+    .dialogue-line {
+        break-inside: avoid;
+        /* Prevent splitting a speech bubble across pages */
+        page-break-inside: avoid;
+    }
+
+    .meta-block {
+        break-inside: avoid;
+    }
+
+    /* Force background color if user browser settings allow */
+    html {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    /* 
+     HACK: For reliable vertical printing on web, 
+     sometimes it's safer to provide a printer-friendly layout 
+     that resets to horizontal if the vertical paging fails. 
+     But user explicitly requested "Vertical text".
+     
+     We will try to maintain vertical-rl. 
+     We ensure the main container is not fixed height.
+    */
+    .paper.vertical {
+        height: auto;
+        /* Let content flow */
+        overflow: visible;
+    }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WriteBoost - 執筆モチベーター</title>
+    <meta name="description" content="執筆へのモチベーションを高める、シンプルで美しい文字数カウンター。">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Favicon (Pen Emoji SVG) -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✒️</text></svg>">
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1 class="app-logo">
+                <span class="logo-icon">✒️</span> WriteBoost
+            </h1>
+            <p class="app-subtitle">Focus & Write / 執筆に集中しよう</p>
+        </header>
+
+        <main class="main-content">
+            <!-- ランク表示エリア -->
+            <section class="status-panel">
+                <div class="rank-badge" id="rankBadge">
+                    <span class="rank-label">Rank</span>
+                    <span class="rank-title" id="rankTitle">Newbie</span>
+                    <span class="rank-subtitle" id="rankSubtitle">新人</span>
+                </div>
+                <div class="progress-info">
+                    <span id="nextRankMessage">次のランクまで: あと 100 文字</span>
+                    <!-- ランク判定基準の表示 -->
+                    <span id="rankBasis" class="rank-basis">(判定基準: 文字数)</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 入力エリア -->
+            <div class="editor-container">
+                <textarea id="textInput" placeholder="ここに文章を入力してください... (Start typing here...)"></textarea>
+            </div>
+
+            <!-- 計測ダッシュボード -->
+            <div class="dashboard">
+                <div class="stat-card">
+                    <div class="stat-label" id="countLabel">文字数 / Characters</div>
+                    <div class="stat-value" id="mainCount">0</div>
+                </div>
+
+                <!-- 枚数/ページ換算カード -->
+                <div class="stat-card" id="paperCard">
+                    <!-- idを追加してJSから書き換えやすくする -->
+                    <div class="stat-label" id="paperLabel">原稿用紙 / Pages (400)</div>
+                    <div class="stat-value" id="paperCount">0.0<span class="unit"> 枚</span></div>
+                </div>
+            </div>
+
+            <!-- 操作ボタン -->
+            <div class="controls">
+                <button id="copyBtn" class="btn btn-primary">
+                    <span class="icon">📋</span> コピー / Copy
+                </button>
+                <button id="resetBtn" class="btn btn-secondary">
+                    <span class="icon">🗑️</span> リセット / Reset
+                </button>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 WriteBoost. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+
+</html>

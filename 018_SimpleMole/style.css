@@ -1,0 +1,364 @@
+:root {
+    --bg-color: #ffecd2;
+    --text-color: #5d4037;
+    --hole-bg: #ccc;
+    --hole-shadow: rgba(0, 0, 0, 0.3);
+    --mole-color: #8B4513;
+    --bomb-color: #333;
+    --heart-color: #ff4081;
+    --primary-btn: #ff7043;
+    --primary-btn-shadow: #d84315;
+}
+
+body {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    background-color: var(--bg-color);
+    text-align: center;
+    margin: 0;
+    padding: 10px;
+    color: var(--text-color);
+    transition: background-color 0.5s;
+    user-select: none;
+}
+
+/* Phase Styles */
+body.chaos-mode {
+    background-color: #cfd8dc;
+}
+
+body.fever-mode {
+    animation: bg-flash 0.5s infinite alternate;
+}
+
+@keyframes bg-flash {
+    from {
+        background-color: #ffebee;
+    }
+
+    to {
+        background-color: #ffcdd2;
+    }
+}
+
+h1 {
+    font-family: 'Press Start 2P', cursive;
+    margin-bottom: 5px;
+    font-size: 1.8rem;
+    color: var(--text-color);
+    line-height: 1.4;
+    text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+}
+
+.subtitle {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-size: 0.9rem;
+    color: #8d6e63;
+    letter-spacing: 0.1em;
+}
+
+.header-container {
+    margin-bottom: 15px;
+}
+
+.phase-indicator {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    margin-top: 10px;
+    color: #d84315;
+    height: 1.2em;
+}
+
+/* Settings Panel */
+.settings-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 15px;
+    display: inline-flex;
+}
+
+.setting-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    padding: 10px 15px;
+    background-color: #78909c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px #546e7a;
+    margin: 0;
+    min-width: 140px;
+}
+
+.setting-btn.on {
+    background-color: #66bb6a;
+    box-shadow: 0 4px #2e7d32;
+}
+
+.setting-btn:active {
+    box-shadow: 0 2px #546e7a;
+    transform: translateY(2px);
+}
+
+/* Difficulty Radio */
+.difficulty-select {
+    display: flex;
+    gap: 5px;
+    background: #fff;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.radio-label {
+    cursor: pointer;
+}
+
+.radio-label input {
+    display: none;
+}
+
+.radio-custom {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6rem;
+    color: #999;
+    background: #f0f0f0;
+    transition: all 0.2s;
+}
+
+.radio-label input:checked+.radio-custom {
+    background: var(--primary-btn);
+    color: #fff;
+    box-shadow: 0 2px var(--primary-btn-shadow);
+}
+
+.game-info {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 15px 0;
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.score-board,
+.timer-board {
+    background: #fff;
+    padding: 8px 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.1);
+    min-width: 100px;
+    border: 2px solid #5d4037;
+}
+
+#start-btn {
+    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    padding: 12px 40px;
+    background-color: var(--primary-btn);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 5px var(--primary-btn-shadow);
+    transition: all 0.1s;
+    margin-bottom: 20px;
+    border: 2px solid #fff;
+}
+
+#start-btn:active {
+    box-shadow: 0 2px var(--primary-btn-shadow);
+    transform: translateY(3px);
+}
+
+#start-btn:disabled {
+    background-color: #ccc;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Game Board */
+.game {
+    width: 100%;
+    max-width: 500px;
+    height: 400px;
+    /* Base height */
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+}
+
+@media (min-width: 600px) {
+    .game {
+        max-width: 600px;
+        height: 500px;
+    }
+
+    h1 {
+        font-size: 2.2rem;
+    }
+}
+
+.hole {
+    flex: 1 0 33.33%;
+    overflow: hidden;
+    position: relative;
+    background: var(--hole-bg);
+    border-radius: 50%;
+    box-shadow: inset 0 10px 20px var(--hole-shadow);
+    box-sizing: border-box;
+    border: 5px solid transparent;
+}
+
+/* Character Base */
+.character {
+    width: 70%;
+    height: 70%;
+    position: absolute;
+    top: 100%;
+    /* Hidden */
+    left: 15%;
+    border-radius: 20%;
+    transition: top 0.1s;
+    cursor: pointer;
+    pointer-events: none;
+}
+
+.hole.up .character {
+    top: 10%;
+    pointer-events: all;
+}
+
+/* ================= TYPES ================= */
+
+/* MOLE STYLE */
+.character.mole {
+    background: var(--mole-color);
+    border-radius: 50% 50% 20% 20%;
+    box-shadow: inset 0 10px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.character.mole::before {
+    /* Eyes */
+    content: '';
+    position: absolute;
+    top: 25%;
+    left: 20%;
+    width: 15%;
+    height: 15%;
+    background: #333;
+    border-radius: 50%;
+    box-shadow: 25px 0 0 #333;
+}
+
+.character.mole::after {
+    /* Nose */
+    content: '';
+    position: absolute;
+    top: 45%;
+    left: 40%;
+    width: 20%;
+    height: 20%;
+    background: #faa;
+    border-radius: 50%;
+}
+
+/* BOMB STYLE */
+.character.bomb {
+    background: var(--bomb-color);
+    border-radius: 50%;
+    box-shadow: inset -5px -5px 10px rgba(255, 255, 255, 0.1);
+}
+
+.character.bomb::before {
+    /* Fuse */
+    content: '';
+    position: absolute;
+    top: -15%;
+    left: 45%;
+    width: 10%;
+    height: 20%;
+    background: #8d6e63;
+    z-index: -1;
+}
+
+.character.bomb::after {
+    /* Mark */
+    content: '☠️';
+    font-size: 3rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* HEART STYLE */
+.character.heart {
+    background: transparent;
+    width: 60%;
+    height: 60%;
+    top: 120%;
+    left: 20%;
+}
+
+.hole.up .character.heart {
+    top: 20%;
+}
+
+.character.heart::before,
+.character.heart::after {
+    content: "";
+    position: absolute;
+    left: 30%;
+    top: 0;
+    width: 40%;
+    height: 65%;
+    background: var(--heart-color);
+    border-radius: 50px 50px 0 0;
+    transform: rotate(-45deg);
+    transform-origin: 0 100%;
+}
+
+.character.heart::after {
+    left: 0;
+    transform: rotate(45deg);
+    transform-origin: 100% 100%;
+}
+
+/* FEEDBACK ANIMATIONS */
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.game.shake {
+    animation: shake 0.3s;
+}
+
+/* HIT EFFECTS (Simple CSS pop) */
+.hole.bonked .character {
+    transform: scale(0.9) translateY(10px);
+    transition: all 0.05s;
+}

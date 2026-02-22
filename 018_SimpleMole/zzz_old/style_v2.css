@@ -1,0 +1,235 @@
+:root {
+  --bg-color: #ffecd2;
+  --text-color: #5d4037;
+  --hole-bg: #ccc;
+  --hole-shadow: rgba(0,0,0,0.3);
+  --mole-color: #8B4513;
+  --bomb-color: #333;
+  --heart-color: #ff4081;
+}
+
+body {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  background-color: var(--bg-color);
+  text-align: center;
+  margin: 0;
+  padding: 20px;
+  color: var(--text-color);
+  transition: background-color 0.5s;
+  user-select: none; /* Prevent double-tap selection */
+}
+
+/* Phase Styles */
+body.chaos-mode {
+  background-color: #e0e0e0;
+}
+body.fever-mode {
+  animation: bg-flash 0.5s infinite alternate;
+}
+
+@keyframes bg-flash {
+  from { background-color: #ffebee; }
+  to { background-color: #ffcdd2; }
+}
+
+h1 {
+  font-family: 'Press Start 2P', cursive;
+  margin-bottom: 5px;
+  font-size: 2rem;
+  color: var(--text-color);
+  line-height: 1.4;
+}
+
+.subtitle {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-size: 1rem;
+  color: #8d6e63;
+}
+
+.phase-indicator {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+  margin-top: 10px;
+  color: #d84315;
+  height: 1.2em;
+}
+
+.game-info {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.score-board, .timer-board {
+  background: #fff;
+  padding: 10px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+  min-width: 120px;
+}
+
+button {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+  font-weight: 800;
+  font-size: 1.2rem;
+  padding: 12px 30px;
+  background-color: #ff7043;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 4px #d84315;
+  transition: all 0.1s;
+  margin-bottom: 20px;
+}
+
+button:active {
+  box-shadow: 0 2px #d84315;
+  transform: translateY(2px);
+}
+
+button:disabled {
+  background-color: #ccc;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.game {
+  width: 100%;
+  max-width: 600px;
+  height: 400px; /* Base height */
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 auto;
+}
+
+@media (min-width: 600px) {
+  .game {
+    height: 600px;
+  }
+}
+
+.hole {
+  flex: 1 0 33.33%;
+  overflow: hidden;
+  position: relative;
+  background: var(--hole-bg);
+  border-radius: 50%;
+  box-shadow: inset 0 10px 20px var(--hole-shadow);
+  box-sizing: border-box;
+  border: 5px solid transparent; 
+}
+
+/* Character Base */
+.character {
+  width: 70%;
+  height: 70%;
+  position: absolute;
+  top: 100%; /* Hidden */
+  left: 15%;
+  border-radius: 20%;
+  transition: top 0.1s;
+  cursor: pointer;
+  pointer-events: none; /* Prevent clicks when hidden */
+}
+
+.hole.up .character {
+  top: 10%;
+  pointer-events: all;
+}
+
+/* ================= TYPES ================= */
+
+/* MOLE STYLE */
+.character.mole {
+  background: var(--mole-color);
+  border-radius: 50% 50% 20% 20%;
+  box-shadow: inset 0 10px 0 10px rgba(0,0,0,0.1);
+}
+/* Mole Face */
+.character.mole::before {
+  content: '';
+  position: absolute;
+  top: 25%; left: 20%;
+  width: 15%; height: 15%;
+  background: #333;
+  border-radius: 50%;
+  box-shadow: 25px 0 0 #333; /* Right eye */
+}
+.character.mole::after {
+  content: '';
+  position: absolute;
+  top: 45%; left: 40%;
+  width: 20%; height: 20%;
+  background: #faa;
+  border-radius: 50%;
+}
+
+/* BOMB STYLE */
+.character.bomb {
+  background: var(--bomb-color);
+  border-radius: 50%;
+  box-shadow: inset -5px -5px 10px rgba(255,255,255,0.1);
+}
+/* Bomb Fuse */
+.character.bomb::before {
+  content: '';
+  position: absolute;
+  top: -15%; left: 45%;
+  width: 10%; height: 20%;
+  background: #8d6e63;
+  z-index: -1;
+}
+/* Bomb Mark (X) */
+.character.bomb::after {
+  content: '✖';
+  color: red;
+  font-size: 3rem;
+  font-weight: bold;
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* HEART STYLE */
+.character.heart {
+  background: transparent;
+  width: 60%;
+  height: 60%;
+  top: 120%; /* Deeper start */
+  left: 20%;
+}
+.hole.up .character.heart {
+  top: 20%; /* Float position */
+}
+.character.heart::before,
+.character.heart::after {
+  content: "";
+  position: absolute;
+  left: 30%; top: 0;
+  width: 40%; height: 65%;
+  background: var(--heart-color);
+  border-radius: 50px 50px 0 0;
+  transform: rotate(-45deg);
+  transform-origin: 0 100%;
+}
+.character.heart::after {
+  left: 0; 
+  transform: rotate(45deg);
+  transform-origin: 100% 100%;
+}
+
+/* FEEDBACK ANIMATIONS */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+.game.shake {
+  animation: shake 0.3s;
+}

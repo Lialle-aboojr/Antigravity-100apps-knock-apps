@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Comic Shelf</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header class="app-header">
+        <div class="container">
+            <h1>My Comic Shelf</h1>
+            <p>あなたの漫画コレクションをスマートに管理</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 登録フォームセクション -->
+        <!-- フォームはここだけ！ここに入力欄と追加ボタンを配置 -->
+        <section class="input-section">
+            <h2 class="section-title">新しい漫画を追加</h2>
+            <form id="comic-form" class="comic-form">
+                <div class="form-group">
+                    <label for="title">タイトル</label>
+                    <input type="text" id="title" placeholder="例: ONE PIECE" required>
+                </div>
+                <div class="form-group">
+                    <label for="image-url">画像URL (任意)</label>
+                    <input type="url" id="image-url" placeholder="例: https://example.com/image.jpg">
+                </div>
+                <div class="form-group">
+                    <label for="volume">最新巻数</label>
+                    <input type="number" id="volume" placeholder="例: 100" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">ステータス</label>
+                    <select id="status" required>
+                        <option value="next">次を買う</option>
+                        <option value="purchased">購入済み</option>
+                        <option value="completed">完結</option>
+                        <option value="unread">積読中</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-btn">本棚に追加</button>
+            </form>
+        </section>
+
+        <!-- 本棚リスト表示セクション -->
+        <!-- ここはフォームの外側（弟要素）なのでリロードは起きない -->
+        <section class="shelf-section">
+            <h2 class="section-title">本棚</h2>
+            <div id="comic-grid" class="comic-grid">
+                <!-- ここにJavaScriptでカードが生成されます -->
+            </div>
+            <!-- データがない場合のメッセージ -->
+            <div id="empty-state" class="empty-state hidden">
+                <p>まだ本棚は空っぽです。<br>新しい漫画を追加してみましょう！</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>&copy; 2026 My Comic Shelf</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Battle Arena</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Zen+Maru+Gothic:wght@500;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="glass-container">
+        <header class="header">
+            <div class="title-group">
+                <h1>Emoji Battle Arena</h1>
+                <p class="subtitle">じゃんけんゲーム</p>
+            </div>
+            <button id="soundLibToggle" class="sound-toggle" aria-label="サウンド・オン/オフ">
+                <span id="soundIcon">🔇</span>
+            </button>
+        </header>
+
+        <main class="arena">
+            <div class="streak-board">
+                <span class="label">WIN STREAK</span>
+                <span id="streakCount" class="count">0</span>
+            </div>
+
+            <div class="battle-ground">
+                <div class="hand-container user-hand">
+                    <span class="label-badge">YOU</span>
+                    <!-- 絵文字を直接表示 -->
+                    <div id="userHand" class="emoji-display">✊</div>
+                </div>
+
+                <div class="vs-text">VS</div>
+
+                <div class="hand-container cpu-hand">
+                    <span class="label">CPU</span>
+                    <div id="cpuHand" class="emoji-display">✊</div>
+                </div>
+            </div>
+
+            <div id="resultMessage" class="result-message hidden">READY?</div>
+        </main>
+
+        <footer class="controls">
+            <p class="instruction">あなたの手を選んでください</p>
+            <div class="hand-options">
+                <button class="hand-btn" data-hand="rock" aria-label="グー">✊</button>
+                <button class="hand-btn" data-hand="scissors" aria-label="チョキ">✌️</button>
+                <button class="hand-btn" data-hand="paper" aria-label="パー">✋</button>
+            </div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type Try: Google Fonts 試着室</title>
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔠</text></svg>">
+    
+    <!-- Google Fonts Preconnect -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Google Fonts Load (50 selected fonts) -->
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Alfa+Slab+One&family=Amatic+SC&family=Audiowide&family=Bangers&family=Bungee+Shade&family=Caveat&family=Chakra+Petch&family=Cinzel&family=Creepster&family=Dancing+Script&family=Dela+Gothic+One&family=DotGothic16&family=Fredericka+the+Great&family=Great+Vibes&family=Hachi+Maru+Pop&family=Indie+Flower&family=Kaisei+Decol&family=Lato&family=Lobster&family=Monoton&family=Montserrat&family=Noto+Sans+JP&family=Noto+Serif+JP&family=Open+Sans&family=Orbitron&family=Oswald&family=Pacifico&family=Permanent+Marker&family=Playfair+Display&family=Potta+One&family=Press+Start+2P&family=Rajdhani&family=Rampart+One&family=Reggae+One&family=Righteous&family=Roboto&family=RocknRoll+One&family=Rubik+Mono+One&family=Sacramento&family=Satisfy&family=Shadows+Into+Light&family=Shippori+Mincho&family=Stick&family=Syncopate&family=UnifrakturMaguntia&family=Wallpoet&family=Yusei+Magic&family=Zen+Kurenaido&family=Zen+Maru+Gothic&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <h1>Type Try <span class="subtitle">Google Fonts 試着室</span></h1>
+            
+            <div class="controls-container">
+                <!-- Text Input -->
+                <div class="control-group text-input-group">
+                    <label for="preview-text">プレビューテキスト / Preview Text</label>
+                    <input type="text" id="preview-text" value="あいうえお ABCDE 12345" placeholder="テキストを入力...">
+                </div>
+
+                <!-- Font Size Slider -->
+                <div class="control-group">
+                    <label for="font-size">サイズ / Size</label>
+                    <input type="range" id="font-size" min="12" max="120" value="40">
+                </div>
+
+                <!-- Font Color -->
+                <div class="control-group color-group">
+                    <label for="text-color">文字色 / Text</label>
+                    <input type="color" id="text-color" value="#333333">
+                </div>
+
+                <!-- Background Color -->
+                <div class="control-group color-group">
+                    <label for="bg-color">背景色 / Background</label>
+                    <input type="color" id="bg-color" value="#f5f5f7">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main id="font-grid" class="font-grid">
+        <!-- JS will populate font cards here -->
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

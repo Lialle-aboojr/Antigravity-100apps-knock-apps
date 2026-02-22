@@ -1,0 +1,518 @@
+/* =========================================
+   SHADOW CRAFT V3 - Refined Industrial Design
+   ========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+    /* カラーパレット: ダーク・インダストリアル */
+    --bg-dark: #0f1012;
+    --bg-panel: #18191b;
+    --bg-input: #232427;
+    --text-primary: #ecf0f1;
+    --text-secondary: #95a5a6;
+    --accent-color: #00d2d3;
+    /* シアン系 */
+    --accent-dim: rgba(0, 210, 211, 0.1);
+    --border-color: #353b48;
+
+    /* プレビュー設定 */
+    --preview-bg: #ffffff;
+    --card-bg: #f5f5f5;
+    --card-text: #2d3436;
+
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.5;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* レイアウト */
+.app-container {
+    display: flex;
+    height: 100%;
+}
+
+/* 左側: 操作パネル */
+.control-panel {
+    width: 420px;
+    background-color: var(--bg-panel);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+/* スクロールバーのカスタマイズ */
+.control-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.control-panel::-webkit-scrollbar-track {
+    background: var(--bg-panel);
+}
+
+.control-panel::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.app-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-panel);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.logo-icon {
+    font-size: 1.5rem;
+}
+
+.app-header h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+
+.version {
+    font-size: 0.7rem;
+    background-color: var(--accent-dim);
+    color: var(--accent-color);
+    padding: 2px 6px;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-left: 4px;
+}
+
+.app-header .description {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* レイヤーコントロール */
+.layers-container {
+    padding: var(--spacing-md);
+}
+
+.layer-control {
+    background-color: #202124;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    position: relative;
+    transition: border-color 0.2s;
+}
+
+.layer-control:hover {
+    border-color: #4a5468;
+}
+
+.layer-control::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background-color: var(--accent-color);
+    border-top-left-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
+    opacity: 0.6;
+}
+
+.layer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.layer-header h2 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+}
+
+.status-indicator {
+    font-size: 0.65rem;
+    font-family: 'JetBrains Mono', monospace;
+    background-color: var(--accent-dim);
+    color: var(--accent-color);
+    padding: 3px 6px;
+    border-radius: 2px;
+}
+
+/* フォームコントロール共通 */
+.control-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.control-group:last-child {
+    margin-bottom: 0;
+}
+
+.control-group label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+/* スライダー値表示 */
+.value-display {
+    color: var(--accent-color);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+}
+
+/* デュアル入力コンテナ (カラー用) */
+.dual-input-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* カラーピッカーラッパー */
+.color-picker-wrapper {
+    flex-shrink: 0;
+    width: 40px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--border-color);
+}
+
+input[type="color"] {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Hexテキスト入力 */
+.hex-input {
+    flex: 1;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    padding: 6px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+    text-transform: uppercase;
+}
+
+.hex-input:focus {
+    border-color: var(--accent-color);
+}
+
+/* スライダーのカスタマイズ */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--bg-input);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--text-primary);
+    border: 2px solid var(--bg-panel);
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    transition: transform 0.1s, background-color 0.1s;
+    margin-top: -5px;
+    /* アラインメント調整 */
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    background: var(--accent-color);
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: var(--bg-input);
+    border-radius: 2px;
+}
+
+/* 右側: プレビューエリア */
+.preview-area {
+    flex: 1;
+    background-color: var(--preview-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+/* 背景パターン */
+.preview-area::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 背景切り替えボタン */
+.bg-switcher {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    display: flex;
+    gap: var(--spacing-sm);
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px;
+    border-radius: 30px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.bg-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+}
+
+.bg-btn:hover {
+    transform: translateY(-2px);
+}
+
+.bg-btn.active {
+    box-shadow: 0 0 0 2px var(--accent-color);
+    border-color: transparent;
+}
+
+.bg-white {
+    background-color: #ffffff;
+}
+
+.bg-gray {
+    background-color: #e0e5ec;
+}
+
+.bg-black {
+    background-color: #000000;
+    border: 1px solid #333;
+}
+
+/* プレビュー要素 */
+.preview-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    z-index: 1;
+    perspective: 1000px;
+}
+
+.preview-card {
+    width: 220px;
+    height: 220px;
+    background-color: var(--card-bg);
+    color: var(--card-text);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.4s;
+}
+
+.card-content {
+    text-align: center;
+}
+
+.card-content h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.card-content p {
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    opacity: 0.6;
+    letter-spacing: 1px;
+}
+
+/* コード出力エリア */
+.code-output {
+    width: 90%;
+    max-width: 600px;
+    background-color: #0f1012;
+    border: 1px solid #353b48;
+    border-radius: var(--radius-md);
+    margin-bottom: 40px;
+    z-index: 1;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: #18191b;
+    border-bottom: 1px solid #353b48;
+}
+
+.code-header span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.copy-btn {
+    background-color: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 4px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.copy-btn:hover {
+    background-color: var(--accent-color);
+    color: #000;
+}
+
+.code-output pre {
+    padding: 20px;
+    overflow-x: auto;
+    color: #a5b3ce;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.6;
+}
+
+/* トースト通知 */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background-color: var(--accent-color);
+    color: #000;
+    padding: 10px 24px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.9rem;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 900px) {
+    .app-container {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .control-panel {
+        width: 100%;
+        height: auto;
+        max-height: 50vh;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .preview-area {
+        height: 50vh;
+        min-height: 400px;
+        padding: var(--spacing-md);
+    }
+}

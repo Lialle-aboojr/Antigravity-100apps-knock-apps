@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Petty Curse | 小さな呪い</title>
+    <!-- 独自のCSSファイルを読み込み -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: 雰囲気のある明朝体とSerifフォント -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Shippori+Mincho:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <main class="curse-container">
+        <!-- タイトルエリア -->
+        <header class="header">
+            <h1 class="app-title">The Petty Curse<br><span class="subtitle">小さな呪い</span></h1>
+        </header>
+
+        <!-- 呪いの表示エリア -->
+        <section class="curse-display">
+            <!-- 定型文（呪いの導入） -->
+            <!-- 修正：英語削除、日本語は「あいつ...」に変更し、不気味なクラスを追加 -->
+            <p class="curse-prefix">
+                <span class="jp spooky-text">あいつ...</span>
+            </p>
+
+            <!-- 呪いの本文が表示される場所 -->
+            <div id="curse-text" class="curse-text">
+                <!-- ここにJavaScriptで文字が一文字ずつ表示されます -->
+            </div>
+        </section>
+
+        <!-- 操作ボタンエリア -->
+        <div class="action-area">
+            <button id="btn-next" class="btn-curse hidden">
+                <span class="en">Curse Again</span>
+                <span class="jp">もう一度呪う</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <a href="https://forms.google.com/" target="_blank" rel="noopener noreferrer" class="link-submit">
+            Submit a Curse / 呪いを投稿する
+        </a>
+    </footer>
+
+    <!-- 独自のJavaScriptファイルを読み込み -->
+    <script src="script.js"></script>
+</body>
+
+</html>

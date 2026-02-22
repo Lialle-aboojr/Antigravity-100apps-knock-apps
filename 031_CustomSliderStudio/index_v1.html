@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Slider Studio</title>
+    <!-- ファビコン: 絵文字🎨をSVGとして使用 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="app-header">
+    <div class="logo">
+        <span class="icon">🎨</span>
+        <h1>Custom Slider Studio</h1>
+    </div>
+    <p class="subtitle">自分だけの画像スライダーを作ろう / Create Your Own Image Slider</p>
+</header>
+
+<main class="app-container">
+    <!-- 左側: 設定パネル / Left: Settings Panel -->
+    <section class="settings-panel">
+        
+        <!-- 画像管理 / Image Management -->
+        <div class="setting-group">
+            <h2 class="group-title">画像管理 / Images</h2>
+            <div class="input-row">
+                <input type="url" id="image-url-input" placeholder="画像URLを入力 / Enter Image URL" value="https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&q=80">
+                <button id="add-image-btn" class="btn-primary">追加 / Add</button>
+            </div>
+            <ul id="image-list" class="image-list">
+                <!-- Javascriptでリスト生成 -->
+            </ul>
+        </div>
+
+        <!-- カスタマイズ / Customization -->
+        <div class="setting-group">
+            <h2 class="group-title">カスタマイズ / Customize</h2>
+            
+            <!-- スピード / Speed -->
+            <div class="control-item">
+                <label>
+                    <span>切り替え速度 / Speed (秒/sec)</span>
+                    <span id="speed-value" class="value-display">3.0s</span>
+                </label>
+                <input type="range" id="speed-range" min="1" max="10" step="0.5" value="3.0">
+            </div>
+
+            <!-- 角丸 / Border Radius -->
+            <div class="control-item">
+                <label>
+                    <span>画像の角丸 / Border Radius (px)</span>
+                    <span id="radius-value" class="value-display">0px</span>
+                </label>
+                <input type="range" id="radius-range" min="0" max="50" step="1" value="0">
+            </div>
+
+            <!-- アニメーション種類 / Animation Type -->
+            <div class="control-item">
+                <label>アニメーション / Animation</label>
+                <div class="toggle-group">
+                    <input type="radio" name="anim-type" id="anim-slide" value="slide" checked>
+                    <label for="anim-slide" class="toggle-btn">スライド / Slide</label>
+                    
+                    <input type="radio" name="anim-type" id="anim-fade" value="fade">
+                    <label for="anim-fade" class="toggle-btn">フェード / Fade</label>
+                </div>
+            </div>
+
+            <!-- スイッチ設定 / Toggles -->
+            <div class="switch-row">
+                <label class="switch-label">
+                    <span>矢印ナビ / Arrows</span>
+                    <input type="checkbox" id="nav-toggle" checked>
+                    <div class="toggle-switch"></div>
+                </label>
+                
+                <label class="switch-label">
+                    <span>ドット / Dots</span>
+                    <input type="checkbox" id="dots-toggle" checked>
+                    <div class="toggle-switch"></div>
+                </label>
+
+                <label class="switch-label">
+                    <span>自動再生 / Auto Play</span>
+                    <input type="checkbox" id="autoplay-toggle" checked>
+                    <div class="toggle-switch"></div>
+                </label>
+            </div>
+        </div>
+
+        <!-- コード生成 / Generate Code -->
+        <div class="setting-group">
+            <button id="generate-btn" class="btn-large">コードを生成する / Generate Code</button>
+        </div>
+
+    </section>
+
+    <!-- 右側: プレビューエリア / Right: Preview Area -->
+    <section class="preview-area">
+        <div class="preview-header">
+            <h2>Preview</h2>
+        </div>
+        <div class="preview-canvas">
+            <!-- ここにスライダーが描画されます / Slider will be rendered here -->
+            <div id="slider-preview-container" class="slider-wrapper">
+                <!-- Javascriptによって注入 -->
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- コード出力モーダル / Code Output Modal -->
+<div id="code-modal" class="modal hidden">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>生成されたコード / Generated Code</h3>
+            <button id="close-modal-btn" class="close-btn">&times;</button>
+        </div>
+        <p class="modal-desc">以下のコードをあなたのHTMLファイルに貼り付けてください。<br>Paste this code into your HTML file.</p>
+        <textarea id="code-output" readonly></textarea>
+        <button id="copy-code-btn" class="btn-primary full-width">コピーする / Copy to Clipboard</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

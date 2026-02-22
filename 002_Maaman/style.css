@@ -1,0 +1,498 @@
+:root {
+    /* Color Palette */
+    --bg-color: #F9F9F6;
+    --text-color: #434343;
+    --accent-color: #8C8A85;
+    /* Greige/Earth tone */
+    --link-color: #434343;
+    --white: #FFFFFF;
+
+    /* Spacing */
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 32px;
+    --spacing-xl: 64px;
+
+    /* Fonts */
+    --font-main: 'Shippori Mincho', 'Noto Serif JP', serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-main);
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.3s ease;
+}
+
+a:hover {
+    opacity: 0.7;
+}
+
+/* Header */
+.header {
+    padding: var(--spacing-md) var(--spacing-lg);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(249, 249, 246, 0.9);
+    /* Slightly transparent matching bg */
+    backdrop-filter: blur(5px);
+    z-index: 100;
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.btn-contact {
+    display: inline-block;
+    border: 1px solid var(--text-color);
+    padding: 10px 24px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    /* Slightly rounded corners */
+    color: var(--text-color);
+    background-color: transparent;
+}
+
+/* Hero Section */
+.hero {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    padding: 0;
+    color: var(--white);
+}
+
+.hero-content {
+    margin-bottom: 0;
+    z-index: 1;
+    position: relative;
+    max-width: 1200px;
+    padding: 0 var(--spacing-md);
+}
+
+.hero-copy {
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 500;
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 0.1em;
+    color: var(--white);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-subcopy {
+    font-size: clamp(1rem, 2.5vw, 1.25rem);
+    color: var(--white);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin-top: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.hero-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    /* Dark overlay for readability */
+}
+
+.hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    /* Pin to top to show head */
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Utilities */
+.sp-only {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .header {
+        padding: var(--spacing-md);
+    }
+
+    .sp-only {
+        display: block;
+    }
+
+    .hero-image-placeholder {
+        height: 40vh;
+    }
+}
+
+/* Lifestyle Section */
+.lifestyle {
+    padding: var(--spacing-xl) var(--spacing-md);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-family: var(--font-main);
+    margin-bottom: var(--spacing-sm);
+    letter-spacing: 0.1em;
+}
+
+.section-subtitle {
+    font-size: 1rem;
+    color: var(--accent-color);
+    letter-spacing: 0.05em;
+}
+
+.lifestyle-container {
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+    /* Generous spacing between items */
+}
+
+.lifestyle-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-xl);
+}
+
+.lifestyle-item.reverse {
+    flex-direction: row-reverse;
+}
+
+.lifestyle-image {
+    flex: 1;
+    max-width: 50%;
+}
+
+.lifestyle-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    /* Soft floating shadow */
+}
+
+.lifestyle-content {
+    flex: 1;
+    max-width: 45%;
+    padding: var(--spacing-md);
+}
+
+.lifestyle-catch {
+    font-size: 1.8rem;
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 0.1em;
+    line-height: 1.4;
+}
+
+.lifestyle-text {
+    font-size: 1rem;
+    line-height: 2;
+    color: var(--text-color);
+}
+
+/* Responsive Lifestyle */
+@media (max-width: 768px) {
+
+    .lifestyle-item,
+    .lifestyle-item.reverse {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+    }
+
+    .lifestyle-image,
+    .lifestyle-content {
+        max-width: 100%;
+    }
+
+    .section-header {
+        margin-bottom: 40px;
+    }
+
+    .lifestyle-container {
+        gap: 60px;
+    }
+
+    .lifestyle-catch {
+        font-size: 1.5rem;
+    }
+}
+
+/* FAQ Section */
+.faq {
+    padding: var(--spacing-xl) var(--spacing-md);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-container {
+    border-top: 1px solid #E0E0E0;
+}
+
+.faq-item {
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.faq-question {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: var(--spacing-md) 0;
+    font-size: 1.1rem;
+    font-family: var(--font-main);
+    color: var(--text-color);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: color 0.3s ease;
+}
+
+.faq-question:hover {
+    color: var(--accent-color);
+}
+
+.faq-icon {
+    position: relative;
+    width: 16px;
+    height: 16px;
+    display: block;
+}
+
+.faq-icon::before,
+.faq-icon::after {
+    content: '';
+    position: absolute;
+    background-color: currentColor;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.3s ease;
+}
+
+.faq-icon::before {
+    width: 100%;
+    height: 1.5px;
+}
+
+.faq-icon::after {
+    width: 1.5px;
+    height: 100%;
+}
+
+/* Active State for Icon */
+.faq-item.active .faq-icon::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+    /* Rotate to make it horizontal (forming a minus) */
+}
+
+/* If we want an 'X' to close, we rotate 45deg. 
+   User asked: "Plus mark on right, changing to X or minus". 
+   Rotating the AFTER element by 90deg makes it match the BEFORE element, effectively a minus.
+   Reference: "change to X or -". 
+   Let's stick to Minus (-) for cleanliness or X (45deg for both). 
+   Standard accordion often goes + -> -. 
+   Let's do + -> - by rotating the vertical line 90deg.
+*/
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, padding 0.3s ease;
+}
+
+.faq-item.active .faq-answer {
+    max-height: 200px;
+    /* Arbitrary large enough height */
+    padding-bottom: var(--spacing-md);
+}
+
+.faq-text {
+    font-size: 1rem;
+    color: var(--text-color);
+    line-height: 1.8;
+}
+
+
+/* Footer */
+.footer {
+    background-color: #EFECE8;
+    /* Darker greige/gray */
+    padding: var(--spacing-xl) var(--spacing-md);
+    margin-top: var(--spacing-xl);
+    color: var(--text-color);
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-lg);
+    text-align: center;
+}
+
+.footer-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.footer-sns {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.footer-sns a {
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+}
+
+.footer-copyright {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    font-family: sans-serif;
+    /* Standard font for copyright */
+}
+
+/* CTA Section */
+.cta {
+    background-color: #F2F0EC;
+    /* Light beige / Earth tone */
+    padding: var(--spacing-xl) var(--spacing-md);
+    margin-top: var(--spacing-xl);
+    text-align: center;
+}
+
+.cta-inner {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.cta-catch {
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-family: var(--font-main);
+    margin-bottom: var(--spacing-md);
+    letter-spacing: 0.1em;
+    color: var(--text-color);
+}
+
+.cta-sub {
+    font-size: 1rem;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.8;
+}
+
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    align-items: center;
+}
+
+.btn-cta {
+    display: inline-block;
+    padding: 14px 40px;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    text-align: center;
+    min-width: 240px;
+}
+
+.btn-cta.primary {
+    background-color: var(--text-color);
+    color: var(--white);
+    border: 1px solid var(--text-color);
+}
+
+.btn-cta.primary:hover {
+    background-color: #5d5d5d;
+    border-color: #5d5d5d;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-cta.secondary {
+    background-color: transparent;
+    color: var(--text-color);
+    border: 1px solid var(--text-color);
+}
+
+.btn-cta.secondary:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+/* Responsive for CTA */
+@media (max-width: 768px) {
+    .cta-buttons {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .btn-cta {
+        width: 100%;
+        max-width: 300px;
+        /* Prevent too wide on tablets */
+    }
+}

@@ -1,0 +1,412 @@
+/* =========================================
+   SHADOW CRAFT - Modern Industrial Design
+   ========================================= */
+
+:root {
+    /* カラーパレット: インダストリアル・ダーク */
+    --bg-dark: #121212;
+    --bg-panel: #1e1e1e;
+    --bg-input: #2a2a2a;
+    --text-primary: #e0e0e0;
+    --text-secondary: #aaaaaa;
+    --accent-color: #00e5ff; /* シアン系の発光アクセント */
+    --accent-hover: #00b8cc;
+    --border-color: #333333;
+    
+    /* プレビュー背景のデフォルト */
+    --preview-bg: #ffffff;
+
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    
+    --radius-sm: 4px;
+    --radius-md: 8px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.5;
+    height: 100vh;
+    overflow: hidden; /* デスクトップではスクロールさせない */
+}
+
+/* レイアウト */
+.app-container {
+    display: flex;
+    height: 100%;
+}
+
+/* 左側: 操作パネル */
+.control-panel {
+    width: 400px; /* 固定幅 */
+    background-color: var(--bg-panel);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* 縦スクロール許可 */
+    flex-shrink: 0;
+}
+
+.app-header {
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border-color);
+    background: linear-gradient(to bottom, var(--bg-panel), #252525);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.app-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-primary);
+    text-transform: uppercase;
+}
+
+.app-header .subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: normal;
+}
+
+.app-header .description {
+    font-size: 0.8rem;
+    color: var(--accent-color);
+    margin-top: var(--spacing-xs);
+    letter-spacing: 2px;
+    opacity: 0.8;
+}
+
+/* レイヤーコントロール */
+.layers-container {
+    padding: var(--spacing-md);
+}
+
+.layer-control {
+    background-color: #252525;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    position: relative;
+}
+
+/* メカニカルな装飾線 */
+.layer-control::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: var(--accent-color);
+    border-top-left-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
+    opacity: 0.5;
+}
+
+.layer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: var(--spacing-sm);
+}
+
+.layer-header h2 {
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.status-indicator {
+    font-size: 0.7rem;
+    background-color: rgba(0, 229, 255, 0.1);
+    color: var(--accent-color);
+    padding: 2px 6px;
+    border-radius: 2px;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+/* フォームコントロール */
+.control-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.control-group:last-child {
+    margin-bottom: 0;
+}
+
+.control-group label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.value-display {
+    color: var(--accent-color);
+    font-family: monospace;
+}
+
+/* スライダーのカスタマイズ */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--bg-input);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    background: var(--text-primary);
+    border: 2px solid var(--bg-panel);
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    transition: transform 0.1s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: var(--accent-color);
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+    background: var(--accent-hover);
+}
+
+/* 右側: プレビューエリア */
+.preview-area {
+    flex: 1;
+    background-color: var(--preview-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+/* パターン背景（方眼紙のような精密感） */
+.preview-area::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: center;
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* 背景切り替えボタン */
+.bg-switcher {
+    position: absolute;
+    top: var(--spacing-lg);
+    right: var(--spacing-lg);
+    display: flex;
+    gap: var(--spacing-sm);
+    z-index: 10;
+    background: rgba(0,0,0,0.2);
+    padding: var(--spacing-sm);
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+}
+
+.bg-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.bg-btn:hover {
+    transform: scale(1.1);
+}
+
+.bg-btn.active {
+    border-color: var(--accent-color);
+}
+
+.bg-white { background-color: #ffffff; }
+.bg-gray { background-color: #e0e5ec; }
+.bg-black { background-color: #1a1a1a; border: 1px solid #444; }
+
+/* プレビュー要素 */
+.preview-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    z-index: 1;
+}
+
+.preview-card {
+    width: 200px;
+    height: 200px;
+    background-color: var(--preview-bg); /* 背景に合わせるか、固定にするか */
+    /* 背景色が変わるとカードが見えなくなるのを防ぐため、カード自体は少し異なる色にするか、あるいはユーザー指定の影だけを見せるためにカード自体の色は背景と合わせるのが一般的だが、
+       ここでは「カード」としての存在感を出すため、背景色より少し明るい/暗い色にするか、固定色にする。
+       要件に「背景切り替え」があるため、影の見え方を確認するためにはカード自体の色は白かターゲットとなる色が望ましい。
+       ここでは汎用的な白ベースのカードとするが、ダークモード背景の時はダークなカードの方が自然かもしれない。
+       シンプルにするため、カードは常時 #f5f5f5 (Off-white) にし、影を落とす。
+    */
+    background-color: #f5f5f5;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #333;
+    font-weight: bold;
+    /* 初期スタイル */
+    transition: box-shadow 0.1s ease; /* スライダー操作時の遅延を減らすため短めに */
+}
+
+/* ダーク背景選択時、カードが浮きすぎるのを防ぐため、カード色を調整するJSロジックを入れるか、
+   あるいはCSSで親クラスに応じて変える。
+   ここではシンプルに「CSSコピー機能」が主眼なので、カード自体はニュートラルな色で固定する。
+*/
+
+.card-content {
+    text-align: center;
+}
+
+.card-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 4px;
+}
+
+.card-content p {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* コード出力エリア */
+.code-output {
+    width: 90%;
+    max-width: 600px;
+    background-color: #111;
+    border: 1px solid #333;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+    z-index: 1;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background-color: #1a1a1a;
+    border-bottom: 1px solid #333;
+    border-top-left-radius: var(--radius-md);
+    border-top-right-radius: var(--radius-md);
+}
+
+.code-header span {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: bold;
+}
+
+.copy-btn {
+    background-color: transparent;
+    border: 1px solid var(--accent-color);
+    color: var(--accent-color);
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.copy-btn:hover {
+    background-color: var(--accent-color);
+    color: #000;
+}
+
+.code-output pre {
+    padding: var(--spacing-md);
+    overflow-x: auto;
+    color: #a5b3ce;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* トースト通知 */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background-color: var(--accent-color);
+    color: #000;
+    padding: 10px 24px;
+    border-radius: 30px;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0,229,255,0.4);
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+    z-index: 100;
+}
+
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .control-panel {
+        width: 100%;
+        height: 50vh;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .preview-area {
+        height: 50vh;
+        padding: var(--spacing-md);
+    }
+    
+    .preview-card {
+        width: 150px;
+        height: 150px;
+    }
+}

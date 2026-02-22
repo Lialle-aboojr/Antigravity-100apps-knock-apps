@@ -1,0 +1,289 @@
+/* 
+ * style.css (V3)
+ * アプリケーションのスタイル定義
+ * 修正点: カーソルの表示、絵文字問題の解消(SVG利用)、光の余韻表現
+ */
+
+:root {
+    /* デフォルト（Cat Mode）の変数定義 */
+    --bg-color: #fdfdfd;
+    /* 明るいオフホワイト */
+    --text-color: #333333;
+    /* 濃いグレー */
+    --accent-color: #444444;
+
+    /* カーソルの見た目はSVGとCSSで制御するため色は使わないが、念のため保持 */
+    --cursor-color: #000000;
+}
+
+/* Light Mode 用の変数上書き */
+body.light-mode {
+    --bg-color: #0a0a1a;
+    /* 深いネイビー */
+    --text-color: #ffffff;
+    /* 白 */
+    --accent-color: #00d2ff;
+    /* ネオンシアン */
+
+    --cursor-color: #00d2ff;
+}
+
+/* 
+ * 全体のリセットと基本設定 
+ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    /* 重要: システムカーソルを表示する（遅延追従の違和感解消のため） */
+    cursor: default;
+
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* 
+ * ----------------------------------------
+ * ヘッダーとトグルスイッチ
+ * ----------------------------------------
+ */
+header {
+    position: absolute;
+    top: 20px;
+    z-index: 100;
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+    background: rgba(128, 128, 128, 0.1);
+    padding: 10px 20px;
+    border-radius: 30px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(128, 128, 128, 0.2);
+    transition: border-color 0.3s;
+}
+
+.label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin: 0 10px;
+    opacity: 0.8;
+}
+
+/* スイッチ本体 */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked+.slider {
+    background-color: #00d2ff;
+    box-shadow: 0 0 10px #00d2ff;
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+/* 
+ * ----------------------------------------
+ * 中央テキスト
+ * ----------------------------------------
+ */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    user-select: none;
+}
+
+.center-text {
+    text-align: center;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.center-text h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+body.light-mode .center-text h1 {
+    text-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+}
+
+.center-text p {
+    font-size: 1.2rem;
+    opacity: 0.7;
+}
+
+/* 
+ * ----------------------------------------
+ * カーソル追従要素
+ * ----------------------------------------
+ */
+#cursor-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+}
+
+.cursor-element {
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 
+ * Cat Mode Styles
+ * 絵文字フォント問題の完全解消のため、インラインSVG背景を使用
+ */
+.cat {
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    /* 黒猫のSVGデータURI */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M25 80 Q 20 95 10 90 Q 20 70 25 75 Z' fill='%23000' /%3E%3Cpath d='M75 80 Q 80 95 90 90 Q 80 70 75 75 Z' fill='%23000' /%3E%3Cellipse cx='50' cy='60' rx='35' ry='30' fill='%23000' /%3E%3Ccircle cx='35' cy='50' r='3' fill='%23fff' /%3E%3Ccircle cx='65' cy='50' r='3' fill='%23fff' /%3E%3Cpolygon points='20,35 30,15 45,30' fill='%23000' /%3E%3Cpolygon points='80,35 70,15 55,30' fill='%23000' /%3E%3C/svg%3E");
+
+    /* 向きを変える際にスムーズにするか？（今回はパッと切り替わる方がキャラっぽいのでtransitionなし） */
+}
+
+/* 
+ * Light Mode Styles
+ * 光はdivの装飾で表現
+ * インクのような滲みを表現するためのスタイル
+ */
+.light-spot {
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle, rgba(0, 210, 255, 0.8) 0%, rgba(0, 210, 255, 0) 70%);
+    border-radius: 50%;
+    /* 強い発光 */
+    box-shadow:
+        0 0 20px rgba(0, 210, 255, 0.4),
+        0 0 40px rgba(0, 210, 255, 0.2);
+    mix-blend-mode: screen;
+    /* 重なった時に明るくなる */
+}
+
+/* 
+ * エフェクト：肉球（Cat Mode）
+ */
+.paw-print {
+    position: absolute;
+    font-size: 3rem;
+    color: #000;
+    /* 肉球もSVG化して確実に表示させる方が良いが、記号の🐾は比較的安全。
+       もし不安ならここもSVGに差し替え可能だが、まずはfont-family指定で対応 */
+    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    opacity: 1;
+    pointer-events: none;
+    animation: pawFade 1.2s forwards;
+}
+
+@keyframes pawFade {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0.8;
+    }
+
+    10% {
+        transform: translate(-50%, -50%) scale(1.1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -60%) scale(1.2);
+        opacity: 0;
+    }
+}
+
+/* 
+ * エフェクト：光の波紋（Light Mode）
+ */
+.ripple {
+    position: absolute;
+    border: 2px solid rgba(0, 210, 255, 0.8);
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.5);
+    transform: translate(-50%, -50%) scale(0);
+    pointer-events: none;
+    z-index: 40;
+    /* カーソルより少し後ろでもOK */
+    animation: rippleExpand 1.5s ease-out forwards;
+}
+
+@keyframes rippleExpand {
+    0% {
+        width: 0px;
+        height: 0px;
+        opacity: 1;
+        border-width: 4px;
+    }
+
+    100% {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+        border-width: 0px;
+    }
+}

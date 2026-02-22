@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Petty Curse | 小さな呪い</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Shippori+Mincho:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <main class="curse-container">
+        <!-- 固定テキスト: あいつ... -->
+        <div class="fixed-prefix">あいつ...</div>
+
+        <!-- メイン: 日本語の呪い (アニメーション表示) -->
+        <div id="curse-jp" class="curse-text-jp"></div>
+
+        <!-- サブ: 英語の呪い (日本語の下に表示) -->
+        <div id="curse-en" class="curse-text-en"></div>
+
+        <!-- ボタンエリア -->
+        <div class="action-area">
+            <button id="btn-next" class="btn-curse hidden">
+                <span class="en">Curse Again</span>
+                <span class="jp">もう一度呪う</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="footer">
+        <a href="https://forms.google.com/" target="_blank" rel="noopener noreferrer" class="link-submit">
+            Submit a Curse / 呪いを投稿する
+        </a>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

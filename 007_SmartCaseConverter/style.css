@@ -1,0 +1,242 @@
+/*
+* Smart Case Converter CSS
+* User-friendly, modern design with a card layout.
+*/
+
+:root {
+    /* Color Palette */
+    --bg-color: #f0f4f8;       /* Thin Blue-Grey */
+    --card-bg: #ffffff;        /* White */
+    --accent-color: #4a90e2;   /* Vivid Blue */
+    --accent-hover: #357abd;   /* Darker Blue for hover */
+    --secondary-color: #6c757d; /* Grey for programming buttons */
+    --secondary-hover: #5a6268;
+    --text-color: #333333;     /* Dark Grey */
+    --border-color: #e0e0e0;   /* Light Grey Border */
+    --danger-color: #e74c3c;   /* Red for Clear button */
+    --danger-hover: #c0392b;
+
+    /* Spacing & Sizing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --border-radius: 12px;
+    --btn-radius: 8px;
+    
+    /* Font */
+    --font-main: 'Inter', sans-serif;
+}
+
+/* Reset & Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: var(--spacing-sm);
+}
+
+/* Card Container */
+.container {
+    width: 100%;
+    max-width: 800px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    width: 100%;
+}
+
+/* Header */
+.card-header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.card-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.card-header p {
+    color: #666;
+    font-size: 0.95rem;
+}
+
+/* Input/Output Sections */
+.input-section, .output-section {
+    margin-bottom: var(--spacing-md);
+    width: 100%;
+}
+
+.textarea-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: var(--spacing-sm);
+    padding-bottom: 2rem; /* Space for counter/button */
+    border: 2px solid var(--border-color);
+    border-radius: var(--btn-radius);
+    font-family: inherit;
+    font-size: 1rem;
+    resize: vertical;
+    transition: border-color 0.2s ease;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+/* Character Count & Copy Button Positioning */
+.char-count {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 0.85rem;
+    color: #888;
+    pointer-events: none;
+}
+
+.copy-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 12px;
+    font-size: 0.85rem;
+    padding: 4px 12px;
+    border-radius: 4px; /* Smaller radius for inner button */
+}
+
+/* Actions Section (Buttons) */
+.actions-section {
+    margin-bottom: var(--spacing-md);
+}
+
+.button-group-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: var(--spacing-xs);
+    display: block;
+}
+
+.button-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns by default */
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.button-group:last-child {
+    margin-bottom: 0;
+}
+
+/* Button Styles */
+.btn {
+    border: none;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    border-radius: var(--btn-radius);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn:active {
+    transform: translateY(2px);
+}
+
+/* Text Transform Buttons (Blue) */
+.btn-primary {
+    background-color: #e3f2fd; /* Light blue background */
+    color: var(--accent-color);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-color);
+    color: white;
+    box-shadow: 0 4px 8px rgba(74, 144, 226, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Code Transform Buttons (Grey/Code-like) */
+.btn-secondary {
+    background-color: #e9ecef;
+    color: #495057;
+    font-family: 'Courier New', monospace; /* Monospace for code vibes */
+}
+
+.btn-secondary:hover {
+    background-color: #ced4da;
+    color: #212529;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Utility Buttons (Copy/Clear) */
+.btn-action {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-action:hover {
+    background-color: var(--accent-hover);
+}
+
+.footer-actions {
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: var(--spacing-md);
+    margin-top: var(--spacing-md);
+}
+
+.btn-danger {
+    background-color: transparent;
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+    padding: 10px 24px;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .card {
+        padding: var(--spacing-md);
+    }
+
+    .button-group {
+        grid-template-columns: 1fr; /* Stack vertically on mobile */
+        gap: var(--spacing-xs);
+    }
+    
+    .card-header h1 {
+        font-size: 1.5rem;
+    }
+}

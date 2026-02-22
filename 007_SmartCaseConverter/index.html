@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Case Converter</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for a modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <main class="card">
+            <header class="card-header">
+                <h1>Smart Case Converter</h1>
+                <p>テキストを様々な形式に変換します</p>
+            </header>
+
+            <section class="input-section">
+                <div class="textarea-wrapper">
+                    <textarea id="inputText" placeholder="ここにテキストを入力..."></textarea>
+                    <div class="char-count">0 文字</div>
+                </div>
+            </section>
+
+            <section class="actions-section">
+                <div class="button-group-label">文章用変換</div>
+                <div class="button-group text-transform-group">
+                    <button class="btn btn-primary" data-type="uppercase">UPPERCASE</button>
+                    <button class="btn btn-primary" data-type="lowercase">lowercase</button>
+                    <button class="btn btn-primary" data-type="capitalize">Capitalize</button>
+                </div>
+
+                <div class="button-group-label">プログラミング用変換</div>
+                <div class="button-group code-transform-group">
+                    <button class="btn btn-secondary" data-type="camelCase">camelCase</button>
+                    <button class="btn btn-secondary" data-type="snakeCase">snake_case</button>
+                    <button class="btn btn-secondary" data-type="kebabCase">kebab-case</button>
+                </div>
+            </section>
+
+            <section class="output-section">
+                <div class="textarea-wrapper">
+                    <textarea id="outputText" readonly placeholder="変換結果がここに表示されます"></textarea>
+                    <button id="copyBtn" class="btn btn-action copy-btn">
+                        <span class="btn-text">コピー</span>
+                    </button>
+                </div>
+            </section>
+
+            <section class="footer-actions">
+                <button id="clearBtn" class="btn btn-danger">すべてクリア</button>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+/* 
+ * Modal Architect - Style Definitions
+ * テーマ: Dark / DevTools / Technical
+ */
+
+/* 変数定義 / CSS Variables */
+:root {
+    --bg-color: #1e1e1e;
+    --panel-bg: #252526;
+    --text-color: #cccccc;
+    --text-light: #ffffff;
+    --primary-color: #007acc; /* デフォルトのアクセントカラー / Default Accent */
+    --border-color: #3e3e42;
+    --input-bg: #3c3c3c;
+    --success-color: #4ec9b0;
+    
+    --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-code: 'Fira Code', monospace;
+    
+    --modal-z-index: 1000;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-ui);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* PCではスクロールを抑制しパネル内でスクロール / Prevent body scroll on PC */
+}
+
+/* ヘッダー / Header */
+.app-header {
+    height: 50px;
+    background-color: #333333;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-light);
+}
+
+.logo h1 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.header-meta .version {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    font-family: var(--font-code);
+}
+
+/* メインレイアウト / Main Layout */
+.app-container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* 左側：設定パネル / Settings Panel */
+.settings-panel {
+    width: 40%;
+    background-color: var(--panel-bg);
+    border-right: 1px solid var(--border-color);
+    padding: 1.5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* 右側：プレビューエリア / Preview Area */
+.preview-area {
+    width: 60%;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: #1e1e1e;
+}
+
+/* タイトルスタイル / Section Titles */
+.panel-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-light);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* フォーム要素 / Form Controls */
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+label {
+    font-size: 0.85rem;
+    color: #9cdcfe; /* VS Code Blue-ish */
+}
+
+input[type="text"],
+textarea,
+select {
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    padding: 0.6rem;
+    border-radius: 4px;
+    font-family: var(--font-ui);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+input[type="text"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary-color);
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* 画像入力 / Image Inputs */
+.image-inputs {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.separator {
+    font-size: 0.8rem;
+    font-weight: bold;
+    opacity: 0.5;
+}
+
+.file-upload-btn {
+    background-color: #3c3c3c;
+    border: 1px dashed var(--border-color);
+    color: var(--text-color);
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.file-upload-btn:hover {
+    background-color: #444;
+}
+
+.file-upload-btn input[type="file"] {
+    display: none;
+}
+
+.file-name {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-top: -0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* カラー＆アニメーション / Color & Animation */
+.two-col {
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.sub-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.color-picker-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--input-bg);
+    border: 1px solid var(--border-color);
+    padding: 0.3rem;
+    border-radius: 4px;
+}
+
+input[type="color"] {
+    border: none;
+    width: 30px;
+    height: 30px;
+    background: none;
+    cursor: pointer;
+}
+
+#color-value {
+    font-family: var(--font-code);
+    font-size: 0.85rem;
+}
+
+/* アクションボタン / Action Buttons */
+.action-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.btn {
+    flex: 1;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: filter 0.2s;
+}
+
+.btn:hover {
+    filter: brightness(1.1);
+}
+
+.btn.primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn.secondary {
+    background-color: #444;
+    color: white;
+}
+
+.btn-icon {
+    font-size: 1.1em;
+}
+
+/* コード出力エリア / Code Output */
+.code-output-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #1e1e1e;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.code-header {
+    background-color: #2d2d2d;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.code-header span {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #9cdcfe;
+}
+
+.btn.small {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.75rem;
+    background-color: #3c3c3c;
+    border: 1px solid var(--border-color);
+}
+
+#code-output {
+    flex: 1;
+    width: 100%;
+    border: none;
+    background-color: #1e1e1e;
+    padding: 1rem;
+    font-family: var(--font-code);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #d4d4d4;
+    overflow: auto;
+}
+
+/* =========================================
+   モーダルスタイル (Preview & Generated)
+   ========================================= */
+
+/* オーバーレイ: 画面全体を覆う */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--modal-z-index);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+/* 表示状態 */
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* モーダルウィンドウ本体 */
+.modal-window {
+    background-color: #ffffff;
+    color: #333;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    /* デフォルトのスケールや位置 */
+    transform: scale(0.9);
+    transition: transform 0.3s ease-out;
+}
+
+/* モーヘッダー */
+.modal-header {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 1.5rem;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* モーダルボディ */
+.modal-body {
+    padding: 1.5rem;
+    line-height: 1.6;
+}
+
+.modal-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.modal-image.hidden {
+    display: none;
+}
+
+/* モーダルフッター */
+.modal-footer {
+    padding: 1rem 1.5rem;
+    background-color: #f9f9f9;
+    text-align: right;
+    border-top: 1px solid #eee;
+}
+
+.modal-action-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.modal-action-btn:hover {
+    opacity: 0.9;
+}
+
+
+/* アニメーション定義 */
+
+/* Fade In */
+.modal-overlay.fade-in .modal-window {
+    transform: scale(1); /* 変化なし、opacityだけで表現 */
+}
+
+/* Slide Down */
+.modal-overlay.slide-down .modal-window {
+    transform: translateY(-50px);
+}
+.modal-overlay.slide-down.active .modal-window {
+    transform: translateY(0);
+}
+
+/* Zoom In */
+.modal-overlay.zoom-in .modal-window {
+    transform: scale(0.5);
+}
+.modal-overlay.zoom-in.active .modal-window {
+    transform: scale(1);
+}
+
+
+/* トースト通知 */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--success-color);
+    color: #000;
+    padding: 0.8rem 2rem;
+    border-radius: 50px;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.toast.show {
+    opacity: 1;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* レスポンシブ: スマホ表示 (768px以下) */
+@media (max-width: 768px) {
+    body {
+        height: auto;
+        overflow-y: auto;
+    }
+    
+    .app-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .settings-panel {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        padding: 1rem;
+    }
+
+    .preview-area {
+        width: 100%;
+        padding: 1rem;
+        /* スマホではコード表示エリアの高さを確保 */
+        min-height: 500px;
+    }
+
+    .two-col {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

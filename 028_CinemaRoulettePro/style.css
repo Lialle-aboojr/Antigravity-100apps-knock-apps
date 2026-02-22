@@ -1,0 +1,674 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap');
+
+/* ルート変数定義（デフォルトはダークモード） */
+:root {
+    --primary-red: #e50914;
+    /* Netflix風の赤 */
+    --primary-red-hover: #b20710;
+
+    /* ダークモード配色定義 */
+    --bg-main: #141414;
+    --bg-secondary: #1f1f1f;
+    --bg-card: #2f2f2f;
+    --bg-input: #333333;
+    --text-main: #ffffff;
+    --text-sub: #b3b3b3;
+    --border-color: #333333;
+
+    --border-radius: 8px;
+    --shadow-soft: 0 4px 10px rgba(0, 0, 0, 0.5);
+    --shadow-red: 0 0 15px rgba(229, 9, 20, 0.4);
+
+    --font-main: 'Montserrat', 'Noto Sans JP', sans-serif;
+}
+
+/* ライトモードの上書き定義 */
+/* bodyタグに .light-mode クラスが付いた時に適用される */
+body.light-mode {
+    --bg-main: #f5f5f5;
+    --bg-secondary: #ffffff;
+    --bg-card: #e0e0e0;
+    --bg-input: #eeeeee;
+    --text-main: #333333;
+    --text-sub: #666666;
+    --border-color: #cccccc;
+    --shadow-soft: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    line-height: 1.6;
+    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
+    /* モード切り替え時のアニメーション */
+}
+
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.logo-area h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary-red);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1px;
+}
+
+.subtitle {
+    color: var(--text-sub);
+    font-size: 0.9rem;
+}
+
+/* Theme Switch Toggle */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+/* チェック時はダークモードOFF(LightMode)の想定ではなく */
+/* 今回はデフォルトがDark、チェックでLightとするか、逆にするか */
+/* UI的には、OFF=Dark, ON=Light とするのが自然。*/
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Control Panel (Filter + Spin) */
+.control-panel {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+}
+
+.roulette-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    /* モバイル対応 */
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-group label {
+    font-size: 0.8rem;
+    color: var(--text-sub);
+    margin-bottom: 5px;
+}
+
+.spin-button {
+    background: linear-gradient(135deg, var(--primary-red), #ff4b4b);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: var(--shadow-red);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: fit-content;
+    align-self: flex-end;
+    /* ラベルがあるセレクトボックスと高さを合わせる */
+    white-space: nowrap;
+    /* 抽選ボタンも改行禁止 */
+}
+
+.spin-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 25px rgba(229, 9, 20, 0.7);
+}
+
+.spin-button:active {
+    transform: translateY(1px);
+}
+
+/* Layout */
+.content-grid {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 30px;
+    flex: 1;
+}
+
+/* Form Section */
+.form-section {
+    background-color: var(--bg-secondary);
+    padding: 25px;
+    border-radius: var(--border-radius);
+    height: fit-content;
+    box-shadow: var(--shadow-soft);
+    position: sticky;
+    top: 20px;
+}
+
+.form-section h3,
+.list-section h3 {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary-red);
+    font-size: 1.2rem;
+    color: var(--text-main);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-sub);
+    font-size: 0.9rem;
+}
+
+input[type="text"],
+select {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-main);
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary-red);
+}
+
+/* Rating Stars */
+.rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+.rating-input input {
+    display: none;
+}
+
+.rating-input label {
+    font-size: 2rem;
+    color: #444;
+    /* スターの色は固定でも良いが、ライトモードで見えるように調整 */
+    cursor: pointer;
+    margin: 0;
+    transition: color 0.2s;
+}
+
+body.light-mode .rating-input label {
+    color: #ccc;
+}
+
+.rating-input input:checked~label,
+.rating-input label:hover,
+.rating-input label:hover~label {
+    color: #ffd700;
+}
+
+/* Image Preview */
+.image-preview {
+    width: 100%;
+    height: 150px;
+    background-color: var(--bg-input);
+    border: 2px dashed var(--border-color);
+    border-radius: 4px;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: var(--text-sub);
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.save-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: var(--text-main);
+    color: var(--bg-main);
+    /* 反転色 */
+    border: 1px solid var(--text-main);
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.save-btn:hover {
+    opacity: 0.9;
+}
+
+.cancel-btn {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    border: 1px solid var(--text-sub);
+    color: var(--text-sub);
+    margin-top: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* List Section */
+.list-section {
+    flex: 1;
+}
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.movie-card {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+}
+
+.movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+.card-image {
+    width: 100%;
+    height: 280px;
+    background-color: #222;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.movie-card:hover .card-image img {
+    transform: scale(1.05);
+}
+
+/* Placeholder */
+.no-image {
+    width: 100%;
+    height: 100%;
+    background-color: #222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: #555;
+    background-image:
+        radial-gradient(circle, transparent 20%, #222 20%, #222 80%, transparent 80%, transparent),
+        radial-gradient(circle, transparent 20%, #222 20%, #222 80%, transparent 80%, transparent);
+    background-size: 20px 20px;
+    background-position: 0 0, 100% 0;
+    border-left: 20px solid #000;
+    border-right: 20px solid #000;
+}
+
+.no-image::after {
+    content: "🎬";
+    font-size: 3rem;
+    opacity: 0.5;
+}
+
+.card-info {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-main);
+}
+
+.card-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    margin-bottom: 10px;
+}
+
+.card-rating {
+    color: #ffd700;
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.card-btn {
+    flex: 1;
+    padding: 6px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: opacity 0.2s;
+}
+
+.edit-btn {
+    background-color: #444;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #331111;
+    color: #ff6b6b;
+}
+
+.card-btn:hover {
+    opacity: 0.8;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 50px;
+    color: var(--text-sub);
+    display: none;
+}
+
+/* Overlay & Modals */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(5px);
+}
+
+.overlay:not(.hidden) {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.result-modal,
+.confirm-modal {
+    background-color: var(--bg-secondary);
+    padding: 40px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: var(--text-main);
+}
+
+.overlay:not(.hidden) .result-modal,
+.overlay:not(.hidden) .confirm-modal {
+    transform: scale(1);
+}
+
+.result-modal h2 {
+    color: var(--primary-red);
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.result-content {
+    margin-bottom: 30px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.result-content img {
+    max-width: 200px;
+    max-height: 300px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.result-content h3 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* V3: 確認モーダルのレイアウト詳細修正 */
+.confirm-modal {
+    padding: 40px;
+    /* 余裕のあるパディング */
+}
+
+.confirm-message-box {
+    margin-bottom: 40px;
+    /* ボタンとの余白を十分にとる */
+    font-size: 1.1rem;
+    line-height: 1.8;
+    /* 行間を広げて視認性向上 */
+    color: var(--text-main);
+}
+
+.confirm-actions {
+    display: flex;
+    justify-content: center;
+    /* 中央寄せ */
+    gap: 30px;
+    /* ボタン間の余白 */
+}
+
+/* ボタン共通設定 */
+.action-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.search-btn {
+    background-color: #4285f4;
+    color: white;
+}
+
+.close-btn {
+    background-color: #555;
+    color: white;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+/* 削除確認：はいボタン (高コントラスト) */
+.delete-confirm-btn {
+    background-color: var(--primary-red);
+    color: white;
+    /* 常に白文字ではっきり */
+    box-shadow: var(--shadow-red);
+}
+
+/* 削除確認：いいえボタン (高コントラスト) */
+.cancel-confirm-btn {
+    background-color: #666;
+    /* グレー */
+    color: white;
+    /* 常に白文字ではっきり */
+}
+
+/* ライトモード時の調整（背景が明るいのでグレーを少し濃くする等の調整は不要、白文字#666で十分視認可） */
+
+/* Utility */
+.hidden {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-section {
+        position: static;
+        order: 2;
+    }
+
+    .list-section {
+        order: 1;
+    }
+
+    .main-header {
+        flex-direction: column;
+        gap: 20px;
+        text-align: center;
+    }
+
+    .roulette-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .spin-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .movie-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .movie-grid {
+        grid-template-columns: 1fr;
+    }
+}

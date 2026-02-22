@@ -1,0 +1,233 @@
+/* 
+ * style.css
+ * アプリケーションのスタイル定義
+ * 初心者の方にも分かりやすいように、コメントで解説を入れています。
+ */
+
+/* 全体のリセットと基本設定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* 深い夜空のようなダークネイビー */
+    background-color: #0a0a1a;
+    color: #ffffff;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    overflow: hidden;
+    /* スクロールバーが出ないようにする */
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: none;
+    /* デフォルトのカーソルを消して没入感を高める */
+}
+
+/* 
+ * ----------------------------------------
+ * ヘッダーとトグルスイッチのデザイン
+ * ----------------------------------------
+ */
+header {
+    position: absolute;
+    top: 20px;
+    z-index: 100;
+    /* カーソル要素より手前に表示 */
+    /* システムカーソルを表示させて操作しやすくする */
+    cursor: default;
+}
+
+.toggle-container {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px 20px;
+    border-radius: 30px;
+    backdrop-filter: blur(5px);
+    /* すりガラス効果 */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin: 0 10px;
+    color: #ccc;
+    transition: color 0.3s;
+}
+
+/* スイッチ本体のデザイン */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #444;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+/* チェック時はLuminousMode（右）へ */
+input:checked+.slider {
+    background-color: #00d2ff;
+    box-shadow: 0 0 10px #00d2ff;
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+/* 
+ * ----------------------------------------
+ * 中央の案内テキスト
+ * ----------------------------------------
+ */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: none;
+    /* テキスト上でもマウスイベントを通過させる */
+    user-select: none;
+    /* テキストを選択できないようにする */
+}
+
+.center-text {
+    text-align: center;
+    opacity: 0.8;
+}
+
+.center-text h1 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.center-text p {
+    font-size: 1.2rem;
+    color: #aaa;
+}
+
+/* 
+ * ----------------------------------------
+ * カーソル追従要素（共通）
+ * ----------------------------------------
+ */
+#cursor-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* クリックを邪魔しない */
+    z-index: 50;
+}
+
+.cursor-element {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    will-change: transform;
+    /* パフォーマンス最適化 */
+    transform: translate(-50%, -50%);
+    /* 中心を座標に合わせる */
+}
+
+/* 
+ * Black Cat Mode のスタイル 
+ */
+.cat {
+    font-size: 2rem;
+    /* 慣性をJavaScriptで制御するため、transitionはつけません */
+}
+
+/* クリック時の肉球エフェクト */
+.paw-print {
+    position: absolute;
+    font-size: 1.5rem;
+    transform: translate(-50%, -50%);
+    opacity: 0.8;
+    animation: fadeOut 1s forwards;
+    /* 1秒かけて消える */
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        transform: translate(-50%, -60%) scale(1.2);
+    }
+}
+
+/* 
+ * Luminous Mode のスタイル 
+ */
+.light-spot {
+    width: 20px;
+    height: 20px;
+    background: #00d2ff;
+    border-radius: 50%;
+    box-shadow:
+        0 0 20px #00d2ff,
+        0 0 40px #00d2ff,
+        0 0 60px #00d2ff;
+    opacity: 0.9;
+}
+
+/* クリック時の光の波紋エフェクト */
+.ripple {
+    position: absolute;
+    border: 2px solid rgba(0, 210, 255, 0.8);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: rippleEffect 0.8s ease-out forwards;
+}
+
+@keyframes rippleEffect {
+    0% {
+        width: 0px;
+        height: 0px;
+        opacity: 1;
+        border-width: 5px;
+    }
+
+    100% {
+        width: 200px;
+        height: 200px;
+        opacity: 0;
+        border-width: 0px;
+    }
+}

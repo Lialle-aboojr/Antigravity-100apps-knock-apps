@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Garden | 記憶の庭</title>
+    <!-- ファビコン (Favicon): 植物の絵文字をSVG化して埋め込み -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- スタート画面 (オーバーレイ) -->
+    <div id="start-screen" class="overlay">
+        <div class="overlay-content">
+            <h1>Memory Garden<br><span class="subtitle-large">記憶の庭</span></h1>
+            <p class="description-large">Find matching plants.<br>植物のペアを見つけてください。</p>
+            
+            <div class="start-controls">
+                <div class="control-group-large">
+                    <label for="difficulty-bg">Level / 難易度:</label>
+                    <select id="difficulty-bg">
+                        <option value="easy">Easy (8 cards)</option>
+                        <option value="normal" selected>Normal (16 cards)</option>
+                        <option value="hard">Hard (24 cards)</option>
+                        <option value="super-hard">Super Hard (36 cards)</option>
+                    </select>
+                </div>
+                <button id="start-btn" class="primary-btn-large">Start Game / スタート</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container">
+        <header>
+            <h1>Memory Garden <span class="subtitle">記憶の庭</span></h1>
+            <p class="description">Find matching plants. / 植物のペアを見つけてください。</p>
+        </header>
+
+        <section class="controls">
+            <!-- 難易度選択はスタート画面に移動したため削除 -->
+            <div class="control-group">
+                <button id="mute-btn" class="icon-btn" aria-label="Toggle Sound">
+                    🔊 Sound ON
+                </button>
+            </div>
+        </section>
+
+        <section class="game-info">
+            <div class="info-item">
+                <span class="label">Time / 時間</span>
+                <span id="timer" class="value">00:00</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Moves / 手数</span>
+                <span id="moves" class="value">0</span>
+            </div>
+            <button id="restart-btn" class="primary-btn">Restart / はじめから</button>
+        </section>
+
+        <!-- ゲームボード (カードがここに生成されます) -->
+        <main id="game-board" class="game-board"></main>
+    </div>
+
+    <!-- クリア時のモーダル -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <h2>Congratulations! 🎉<br>おめでとうございます！</h2>
+            <p>You nurtured the garden beautifully.<br>素敵な庭が完成しました。</p>
+            <div class="result-stats">
+                <p>Time: <span id="final-time">00:00</span></p>
+                <p>Moves: <span id="final-moves">0</span></p>
+            </div>
+            <button id="modal-restart-btn" class="primary-btn">Play Again / もう一度遊ぶ</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

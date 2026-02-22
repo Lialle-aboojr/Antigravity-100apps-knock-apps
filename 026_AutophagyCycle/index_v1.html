@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autophagy Cycle - 16:8 Fasting Timer</title>
+    <!-- ファビコン: 砂時計の絵文字をSVG化してData URIで埋め込み -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⌛</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <!-- アプリのタイトル -->
+        <header class="app-header">
+            <h1 class="app-title">Autophagy Cycle</h1>
+            <p class="app-subtitle">オートファジー・サイクル</p>
+        </header>
+
+        <!-- メインのタイマー表示部分 -->
+        <main class="timer-container">
+            <!-- 進捗リング (SVG) -->
+            <div class="progress-ring-container">
+                <svg class="progress-ring" width="300" height="300">
+                    <circle class="progress-ring__circle-bg" stroke="currentColor" stroke-width="12" fill="transparent" r="140" cx="150" cy="150" />
+                    <circle class="progress-ring__circle" stroke="currentColor" stroke-width="12" fill="transparent" r="140" cx="150" cy="150" />
+                </svg>
+                
+                <!-- 時間と状態のテキスト表示 -->
+                <div class="timer-content">
+                    <div class="status-label" id="statusLabel">
+                        <span class="ja">準備中</span>
+                        <span class="en">Ready</span>
+                    </div>
+                    <div class="time-display" id="timeDisplay">16:00:00</div>
+                    <div class="mode-indicator" id="modeIndicator">
+                        16:8 Fasting
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 操作ボタンエリア -->
+        <div class="controls">
+            <button id="toggleBtn" class="btn btn-primary">
+                <span class="ja">開始</span> / <span class="en">Start</span>
+            </button>
+            
+            <button id="switchModeBtn" class="btn btn-secondary">
+                <span class="ja">モード切替</span> / <span class="en">Switch Mode</span>
+            </button>
+        </div>
+        
+        <footer class="footer">
+            <p>16時間断食 (Fasting) & 8時間食事 (Eating)</p>
+        </footer>
+    </div>
+
+    <!-- Web Audio APIを使用した通知音の仕組みを含むスクリプト -->
+    <script src="script.js"></script>
+</body>
+</html>

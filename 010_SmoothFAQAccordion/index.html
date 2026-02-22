@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smooth FAQ Accordion</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for premium feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="header">
+        <h1 class="header-title">Common Questions</h1>
+        <button id="theme-toggle" class="theme-toggle" aria-label="ダークモード切り替え">
+            <span class="theme-icon sun">☀️</span>
+            <span class="theme-icon moon">🌙</span>
+        </button>
+    </header>
+
+    <main class="faq-container">
+        
+        <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+                <span class="faq-question-text">サービスを利用するのに費用はかかりますか？</span>
+                <span class="faq-icon"></span>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    <p>基本機能は無料でご利用いただけます。より高度な機能をお求めの場合は、月額980円からのプレミアムプランをご用意しております。まずは14日間の無料トライアルをお試しください。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+                <span class="faq-question-text">支払い方法は何がありますか？</span>
+                <span class="faq-icon"></span>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    <p>クレジットカード（Visa, Mastercard, JCB, Amex）およびPayPalでの決済に対応しております。法人のお客様に限り、請求書払いも承っております。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+                <span class="faq-question-text">サポートの対応時間を教えてください。</span>
+                <span class="faq-icon"></span>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    <p>サポートセンターは平日9:00〜18:00（日本時間）で営業しております。メールでのお問い合わせは24時間受け付けており、通常1営業日以内にご返信いたします。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+                <span class="faq-question-text">解約はいつでもできますか？</span>
+                <span class="faq-icon"></span>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    <p>はい、アカウント設定ページからいつでも解約手続きが可能です。解約金や違約金は一切発生しませんのでご安心ください。ただし、日割りでの返金は行っておりません。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+                <span class="faq-question-text">個人情報の取り扱いはどうなっていますか？</span>
+                <span class="faq-icon"></span>
+            </button>
+            <div class="faq-answer">
+                <div class="faq-answer-content">
+                    <p>お客様の個人情報は、厳重なセキュリティ対策のもと管理しております。詳細については、フッターリンクの「プライバシーポリシー」をご確認ください。</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Smooth FAQ Inc.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

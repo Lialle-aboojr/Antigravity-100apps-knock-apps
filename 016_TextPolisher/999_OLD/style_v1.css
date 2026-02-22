@@ -1,0 +1,287 @@
+/* =========================================
+   ベーススタイル (Notion風デザイン)
+   ========================================= */
+:root {
+  /* 共通カラー */
+  --bg-color: #ffffff;
+  --text-main: #37352f;
+  --text-sub: #787774;
+  --border-color: #e0e0e0;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+  /* 色定義（後でモードによって切り替えます） */
+  --accent-color: #2e86de; /* デフォルト青 */
+  --accent-light: #e6f7ff;
+  --highlight-color: #fff9c4; /* 修正箇所のハイライト背景色 */
+  --highlight-text: #d32f2f;  /* 修正箇所の文字色 */
+}
+
+/* 日本語モード用カラー（落ち着いたブルー） */
+body.mode-jp {
+  --accent-color: #1976d2;
+  --accent-light: #e3f2fd;
+  --btn-hover: #1565c0;
+}
+
+/* 英語モード用カラー（落ち着いたオレンジ） */
+body.mode-en {
+  --accent-color: #ed6c02;
+  --accent-light: #fff3e0;
+  --btn-hover: #e65100;
+}
+
+/* 全体のリセットとフォント設定 */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans JP', sans-serif;
+  background-color: #fbfbfa; /* Notionっぽい少し生成りの背景 */
+  color: var(--text-main);
+  line-height: 1.6;
+  transition: background-color 0.3s ease;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* =========================================
+   ヘッダーエリア
+   ========================================= */
+.app-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  letter-spacing: -0.03em;
+}
+
+.app-subtitle {
+  font-weight: 300;
+  color: var(--text-sub);
+  font-size: 1.2rem;
+  margin-left: 10px;
+}
+
+.description {
+  color: var(--text-sub);
+  margin-bottom: 24px;
+}
+
+/* モード切り替えスイッチ */
+.mode-switcher-container {
+  display: inline-flex;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
+}
+
+.mode-label {
+  cursor: pointer;
+}
+
+.mode-label input {
+  display: none; /* ラジオボタンは見えないように隠す */
+}
+
+/* 選択されていない状態のテキスト */
+.mode-text {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-sub);
+  transition: all 0.2s ease;
+}
+
+/* 選択された状態のテキスト */
+.mode-label input:checked + .mode-text {
+  background-color: var(--accent-light);
+  color: var(--accent-color);
+}
+
+/* =========================================
+   メインコンテンツ & カードデザイン
+   ========================================= */
+.card {
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 24px;
+  margin-bottom: 24px;
+  transition: border-color 0.3s ease;
+}
+
+.card:hover {
+  border-color: #d0d0d0;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-header h2 {
+  font-size: 1.1rem;
+  margin: 0;
+  color: var(--text-main);
+  font-weight: 700;
+}
+
+.badge {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: #eee;
+  color: #666;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.badge-result {
+  background: var(--accent-light);
+  color: var(--accent-color);
+}
+
+/* テキストエリア */
+textarea {
+  width: 100%;
+  height: 150px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  font-family: inherit;
+  resize: vertical;
+  background: #fdfdfd;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  background: #fff;
+}
+
+/* 結果ボックス */
+.result-box {
+  min-height: 150px;
+  padding: 16px;
+  background: #f7f6f3; /* Notionのグレー背景風 */
+  border-radius: 6px;
+  font-size: 1rem;
+  white-space: pre-wrap; /* 改行を反映 */
+  border: 1px solid transparent;
+}
+
+.placeholder-text {
+  color: #aaa;
+  text-align: center;
+  padding-top: 40px;
+}
+
+/* ハイライト表示（修正箇所） */
+.highlight-fix {
+  background-color: var(--highlight-color);
+  color: var(--text-main);
+  border-bottom: 2px solid var(--accent-color);
+  padding: 0 4px;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: help;
+  position: relative;
+}
+
+/* ツールチップ（ホバー時に元文言を表示するための簡易実装） */
+/* 注意：title属性を使うのでCSSのみで必須ではないが、視覚的にわかりやすくする場合 */
+
+/* =========================================
+   ボタン
+   ========================================= */
+.action-area {
+  margin-top: 16px;
+  text-align: right;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  border: none;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #f0f0f0;
+}
+
+/* コピーメッセージ */
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s;
+}
+
+#copyMessage {
+  font-size: 0.9rem;
+  color: var(--accent-color);
+  font-weight: bold;
+  opacity: 1;
+  visibility: visible;
+}
+
+#copyMessage.hidden {
+  opacity: 0;
+}
+
+/* フッター */
+footer {
+  text-align: center;
+  margin-top: 40px;
+  color: #ccc;
+  font-size: 0.8rem;
+}

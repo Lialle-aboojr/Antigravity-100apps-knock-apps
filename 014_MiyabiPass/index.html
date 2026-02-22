@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miyabi Pass | 雅パス</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1 class="logo">雅パス</h1>
+            <p class="desc-jp" style="font-size: 0.95rem; margin-top: 0.5rem; opacity: 0.9;">古語と記号を織り交ぜた、雅で強固なパスフレーズ生成器
+            </p>
+            <p class="desc-en"
+                style="font-size: 0.8rem; margin-top: 0.2rem; opacity: 0.7; font-family: sans-serif; letter-spacing: 0.05em;">
+                A secure passphrase generator weaving classical Japanese words.</p>
+        </header>
+
+        <main class="card">
+            <div class="passphrase-container">
+                <div id="passphrase" class="passphrase-text">---</div>
+                <div class="decoration-line"></div>
+                <div id="reading" class="reading-text">---</div>
+                <div id="meaning" class="meaning-text">---</div>
+            </div>
+
+            <div class="action-buttons">
+                <button id="generateBtn" class="btn btn-generate">
+                    <span class="btn-text">新たに紡ぐ</span>
+                </button>
+                <button id="copyBtn" class="btn btn-copy">
+                    <span class="btn-text">複製する</span>
+                </button>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <small>Miyabi Pass Engine</small>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast">コピーしました</div>
+    <script src="script.js"></script>
+</body>
+
+</html>

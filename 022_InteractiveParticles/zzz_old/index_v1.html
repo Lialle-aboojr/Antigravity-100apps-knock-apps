@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>煌めく流星群 - Stellar Flow</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- ファビコンを動的に生成するスクリプト -->
+    <script>
+        // ✨の絵文字をSVGとして描画し、Data URIに変換してファビコンに設定
+        const setFavicon = () => {
+            const canvas = document.createElement('canvas');
+            canvas.height = 64;
+            canvas.width = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.font = '50px serif';
+            ctx.fillText('✨', 5, 50);
+            const link = document.createElement('link');
+            link.rel = 'icon';
+            link.href = canvas.toDataURL();
+            document.head.appendChild(link);
+        };
+        setFavicon();
+    </script>
+</head>
+<body>
+    <!-- UIオーバーレイ -->
+    <div id="ui-container">
+        <h1>煌めく流星群 <small>/ Stellar Flow</small></h1>
+        <p class="instruction">マウスを動かして重力を操る / Move mouse to control gravity</p>
+        <p class="instruction">クリックで色変化 / Click to change colors</p>
+    </div>
+
+    <!-- 描画用キャンバス -->
+    <canvas id="canvas1"></canvas>
+
+    <script src="script.js"></script>
+</body>
+</html>

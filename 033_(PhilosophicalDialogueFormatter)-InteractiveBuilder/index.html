@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Philosophical Dialogue Formatter - Interactive Builder</title>
+    <!-- Favicon: Stack of Books (U+1F4DA) -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;700&family=Zen+Old+Mincho:wght@400;700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 左側：執筆エリア (Builder Panel) -->
+        <div class="builder-panel">
+            <header>
+                <h1>Philosophical Dialogue Builder</h1>
+                <p>対話作成ツール</p>
+            </header>
+
+            <div class="input-group">
+                <label for="user-input">あなたの言葉 / User Voice</label>
+                <textarea id="user-input" rows="3" placeholder="ここに質問や発言を入力..."></textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="ai-input">AIの言葉 / AI Voice</label>
+                <textarea id="ai-input" rows="5" placeholder="AIの回答を入力..."></textarea>
+            </div>
+
+            <div class="action-buttons">
+                <button id="add-btn" class="primary-btn">
+                    <span class="icon">✍️</span> 本に書き込む / Write into Book
+                </button>
+                <button id="undo-btn" class="secondary-btn">
+                    <span class="icon">↩</span> 1つ戻る / Undo
+                </button>
+            </div>
+
+            <hr class="divider">
+
+            <div class="settings-group">
+                <h3>設定 / Settings</h3>
+
+                <div class="setting-item">
+                    <label>モード / Mode</label>
+                    <div class="toggle-switch">
+                        <input type="radio" id="mode-vertical" name="writing-mode" value="vertical" checked>
+                        <label for="mode-vertical">縦書き</label>
+                        <input type="radio" id="mode-horizontal" name="writing-mode" value="horizontal">
+                        <label for="mode-horizontal">横書き</label>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <label>登場人物名 / Characters</label>
+                    <div class="char-names">
+                        <!-- Default values updated: User="私", AI="AI" -->
+                        <input type="text" id="name-user" value="私" placeholder="User Name">
+                        <input type="text" id="name-ai" value="AI" placeholder="AI Name">
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <label>メタデータ / Metadata</label>
+                    <input type="text" id="book-title" placeholder="タイトル / Title" class="full-width">
+                    <textarea id="preface-text" rows="2" placeholder="まえがき / Preface (Optional)"></textarea>
+                    <textarea id="postscript-text" rows="2" placeholder="あとがき / Postscript (Optional)"></textarea>
+                </div>
+
+                <!-- Updated Print Button Label -->
+                <button id="print-btn" class="action-btn">
+                    <span class="icon">🖨</span> 印刷 / Print <small style="margin-left:4px; font-weight:normal;">(横書きのみ /
+                        Hz only)</small>
+                </button>
+                <button id="clear-btn" class="action-btn danger">
+                    <span class="icon">🗑</span> 全消去 / Reset All
+                </button>
+            </div>
+        </div>
+
+        <!-- 右側：原稿プレビューエリア (Preview Panel) -->
+        <div class="preview-panel" id="preview-panel">
+            <div class="paper-sheet" id="paper-sheet">
+                <!-- スクロールアンカー用 -->
+                <div class="book-content" id="book-content"></div>
+                <div id="scroll-anchor"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

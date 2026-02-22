@@ -1,0 +1,243 @@
+:root {
+    /* カラーパレット定義 */
+    --bg-color: #f9f9f9;
+    --text-color: #333333;
+    --navy-blue: #2c3e50;
+    /* 断食モード用 */
+    --vibrant-orange: #e67e22;
+    /* 食事モード用 */
+    --circle-bg: #e0e0e0;
+
+    /* デフォルトのアクティブカラー（初期は断食モード） */
+    --primary-color: var(--navy-blue);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    transition: background-color 0.5s ease;
+}
+
+/* モードごとのスタイル切り替え */
+body.mode-fasting {
+    --primary-color: var(--navy-blue);
+}
+
+body.mode-eating {
+    --primary-color: var(--vibrant-orange);
+    background-color: #fffaf0;
+    /* 食事モード時はほんのり暖色に */
+}
+
+.container {
+    text-align: center;
+    width: 100%;
+    max-width: 480px;
+    padding: 20px;
+}
+
+.app-header {
+    margin-bottom: 2rem;
+}
+
+.app-title {
+    font-size: 2rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.app-subtitle {
+    font-size: 0.9rem;
+    color: #666;
+    letter-spacing: 1px;
+}
+
+/* タイマー表示コンテナ */
+.timer-container {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    margin: 0 auto 2rem;
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.progress-ring__circle-bg {
+    stroke: var(--circle-bg);
+}
+
+.progress-ring__circle {
+    stroke: var(--primary-color);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s linear, stroke 0.5s ease;
+    /* 半径140px * 2 * PI ≈ 879.64 */
+    stroke-dasharray: 880;
+    stroke-dashoffset: 0;
+}
+
+/* 円の中央のテキスト */
+.timer-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.status-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    transition: color 0.5s ease;
+}
+
+.time-display {
+    font-size: 3.5rem;
+    font-weight: 200;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+    color: var(--text-color);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+}
+
+.mode-indicator {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+/* ボタンエリア */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.btn {
+    border: none;
+    padding: 15px 40px;
+    border-radius: 50px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    outline: none;
+    letter-spacing: 0.5px;
+    min-width: 220px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    filter: brightness(1.1);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 2px solid #ddd;
+    color: #666;
+}
+
+.btn-secondary:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+/* デバッグ・テスト用コントロール */
+.debug-controls {
+    margin-top: 2rem;
+    padding: 10px;
+    border-top: 1px dotted #ccc;
+}
+
+.debug-title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #999;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.debug-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.btn-debug {
+    background-color: transparent;
+    border: 1px dashed #bbb;
+    color: #888;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-debug:hover {
+    border-color: #666;
+    color: #333;
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.footer {
+    margin-top: 3rem;
+    font-size: 0.8rem;
+    color: #aaa;
+}
+
+/* スマホ対応（レスポンシブ） */
+@media (max-width: 400px) {
+
+    .timer-container,
+    .progress-ring {
+        width: 260px;
+        height: 260px;
+    }
+
+    .progress-ring__circle,
+    .progress-ring__circle-bg {
+        r: 120;
+        cx: 130;
+        cy: 130;
+    }
+
+    .time-display {
+        font-size: 2.8rem;
+    }
+}

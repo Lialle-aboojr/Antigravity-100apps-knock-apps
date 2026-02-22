@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Resizer +</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for rounded feel -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <h1>Recipe Resizer +</h1>
+        <p>レシピの分量を人数に合わせて自動計算</p>
+    </header>
+
+    <main>
+        <!-- 人数設定エリア -->
+        <section class="card settings-area">
+            <h2>人数設定</h2>
+            <div class="servings-input-group">
+                <div class="input-wrapper">
+                    <label for="base-servings">元の人数</label>
+                    <div class="input-unit">
+                        <input type="number" id="base-servings" value="2" min="1">
+                        <span>人分</span>
+                    </div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="input-wrapper">
+                    <label for="target-servings">作りたい人数</label>
+                    <div class="input-unit">
+                        <input type="number" id="target-servings" value="3" min="1">
+                        <span>人分</span>
+                    </div>
+                </div>
+            </div>
+            <div class="scaling-factor">
+                倍率: <span id="scaling-factor-display">1.5</span>倍
+            </div>
+        </section>
+
+        <!-- アクションエリア (上部に配置してアクセスしやすくもできるが、要件通り入力後に配置または随時更新) -->
+        <section class="card actions-area">
+            <div class="toggle-wrapper">
+                <label class="toggle-switch">
+                    <input type="checkbox" id="unit-toggle">
+                    <span class="slider round"></span>
+                </label>
+                <span class="toggle-label">単位をmlに統一 (大さじ・小さじ・カップ)</span>
+            </div>
+            <button id="recalc-btn" class="btn primary-btn">分量を再計算</button>
+        </section>
+
+        <!-- 材料リスト管理エリア -->
+        <section class="card ingredients-area">
+            <h2>材料リスト</h2>
+            <div id="ingredients-list">
+                <!-- Javascriptでここに行を追加する -->
+            </div>
+            
+            <div class="list-actions">
+                <button id="add-row-btn" class="btn secondary-btn">＋ 行を追加</button>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

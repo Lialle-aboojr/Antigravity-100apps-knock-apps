@@ -1,0 +1,512 @@
+@charset "UTF-8";
+
+:root {
+    --bg-color: #f5f5f5;
+    --paper-color: #fcfaf2; /* Ivory */
+    --text-color: #333;
+    --accent-color: #5a4e4d; /* Dark Brownish Grey */
+    --primary-btn: #4a6fa5;
+    --secondary-btn: #888;
+    --border-color: #ddd;
+    --panel-width: 350px;
+    --font-mincho: 'Shippori Mincho', 'Hiragino Mincho ProN', 'Yu Mincho', serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    height: 100vh;
+    overflow: hidden; /* App-like feel */
+}
+
+/* App Container */
+.app-container {
+    display: flex;
+    height: 100vh;
+}
+
+/* --------------------------------------
+   Left Panel: Controls
+-------------------------------------- */
+.control-panel {
+    width: var(--panel-width);
+    background: #fff;
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+    z-index: 10;
+}
+
+.panel-header {
+    padding: 20px;
+    background: var(--accent-color);
+    color: #fff;
+    text-align: center;
+}
+
+.panel-header h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-family: var(--font-mincho);
+}
+
+.subtitle {
+    margin: 5px 0 0;
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* Tabs */
+.mode-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    background: #f0f0f0;
+    border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer;
+    font-weight: bold;
+    color: #666;
+    transition: all 0.3s;
+}
+
+.tab-btn .en {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: normal;
+}
+
+.tab-btn.active {
+    background: #fff;
+    color: var(--primary-btn);
+    border-bottom-color: var(--primary-btn);
+}
+
+/* Mode Content */
+.mode-content {
+    display: none;
+    padding: 20px;
+}
+
+.mode-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Inputs */
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+textarea, input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+}
+
+textarea:focus, input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-btn);
+    box-shadow: 0 0 0 2px rgba(74, 111, 165, 0.2);
+}
+
+/* Speaker Radio */
+.speaker-select {
+    display: flex;
+    gap: 10px;
+}
+
+.speaker-select input[type="radio"] {
+    display: none;
+}
+
+.radio-label {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #eee;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: normal !important;
+}
+
+.speaker-select input:checked + .radio-label {
+    background: var(--primary-btn);
+    color: #fff;
+}
+
+/* Buttons */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.primary-btn, .secondary-btn, .small-btn {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.1s, opacity 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.2;
+}
+
+.primary-btn {
+    background: var(--primary-btn);
+    color: #fff;
+    flex: 2;
+    font-size: 1rem;
+}
+
+.secondary-btn {
+    background: var(--secondary-btn);
+    color: #fff;
+    flex: 1;
+}
+
+.small-btn {
+    background: #666;
+    color: #fff;
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    width: 100%;
+}
+
+.primary-btn:active, .secondary-btn:active, .small-btn:active {
+    transform: scale(0.98);
+}
+
+.en {
+    font-size: 0.75em;
+    font-weight: normal;
+    opacity: 0.9;
+}
+
+/* Import Area */
+.prompt-box {
+    background: #f9f9f9;
+    border: 1px dashed #bbb;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+
+.prompt-text {
+    font-size: 0.8rem;
+    color: #555;
+    background: #fff;
+    padding: 8px;
+    border: 1px solid #eee;
+    margin-bottom: 5px;
+    word-break: break-all;
+    user-select: all;
+    font-family: monospace;
+}
+
+/* Settings */
+.divider {
+    border: 0;
+    border-top: 1px solid var(--border-color);
+    margin: 0;
+}
+
+.settings-area {
+    padding: 20px;
+    background: #fafafa;
+    flex-grow: 1;
+}
+
+.settings-area h3 {
+    margin-top: 0;
+    font-size: 1rem;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 5px;
+    margin-bottom: 15px;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    width: 100%;
+    height: 36px;
+    background: #ddd;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.toggle-switch input {
+    display: none;
+}
+
+.toggle-label {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    font-weight: normal !important;
+}
+
+.toggle-label span {
+    flex: 1;
+    text-align: center;
+    line-height: 36px;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 50%;
+    height: calc(100% - 4px);
+    background: #fff;
+    border-radius: 16px;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Logic for Toggle Animation */
+/* Checked = Vertical (Right side active) */
+.toggle-switch input:checked + .toggle-label .right {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+.toggle-switch input:not(:checked) + .toggle-label .left {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.toggle-switch input:checked ~ .toggle-switch::after {
+    /* This pseudo-element selector logic is tricky in pure CSS if structure isn't perfect, 
+       but here the ::after is on the parent (label's parent).
+       Wait, ::after needs to be on label or container. 
+       Let's use a simpler approach for the slider pill. 
+    */
+}
+/* Re-doing toggle simple approach */
+.toggle-switch input:checked + .toggle-label::before {
+    transform: translateX(100%);
+}
+.toggle-label::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: calc(50% - 2px);
+    height: calc(100% - 4px);
+    background: #fff;
+    border-radius: 16px;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: -1; /* Behind text */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+
+/* --------------------------------------
+   Right Panel: Preview
+-------------------------------------- */
+.preview-panel {
+    flex: 1;
+    background: #e0e0e0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Expand down */
+    overflow: auto;
+}
+
+.paper {
+    background: var(--paper-color);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    padding: 50px;
+    padding-top: 60px;
+    width: 100%;
+    max-width: 900px;
+    min-height: 90vh;
+    font-family: var(--font-mincho);
+    line-height: 2;
+    transition: all 0.5s ease;
+    position: relative;
+    /* Japanese paper texture effect subtle */
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+
+/* Vertical Writing Mode */
+.paper.vertical {
+    writing-mode: vertical-rl;
+    overflow-x: auto; /* Horizontal scroll for long vertical text */
+    overflow-y: hidden;
+    height: 85vh; /* Fixed height for scroll */
+    min-height: auto;
+    width: auto;
+    min-width: 80vh; /* Approximate A4 ratio */
+}
+
+.paper.horizontal {
+    writing-mode: horizontal-tb;
+    height: auto;
+}
+
+/* Typography elements */
+.doc-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 2em; /* Spacing handled by writing mode */
+    text-align: center;
+    margin-left: 1em; /* For vertical */
+}
+
+.doc-section {
+    font-size: 1rem;
+    margin-bottom: 2em;
+    white-space: pre-wrap;
+    line-height: 2;
+}
+
+.dialogue-list {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+.dialogue-item {
+    margin-bottom: 1.5em;
+    /* Animation for new items */
+    animation: typeIn 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes typeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.speaker-name {
+    font-weight: bold;
+    font-size: 0.9em;
+    margin-bottom: 0.2em; /* Vertical: left margin effectively */
+}
+
+/* In vertical mode, specific adjustments */
+.vertical .speaker-name {
+    margin-left: 0.5em; 
+    margin-bottom: 0;
+}
+
+.dialogue-text {
+    margin-left: 1em; /* Indent */
+}
+.vertical .dialogue-text {
+    margin-top: 1em;
+    margin-left: 0;
+}
+
+/* Empty state */
+.empty-state {
+    opacity: 0.4;
+    text-align: center;
+    border: 1px dashed #ccc;
+    padding: 2em;
+    border-radius: 8px;
+    margin: 2em;
+    writing-mode: horizontal-tb; /* Always readable */
+}
+
+/* TCY (Tate-Chu-Yoko) */
+.tcy {
+    text-combine-upright: all;
+    display: inline-block; /* Helps in some browsers */
+}
+
+/* --------------------------------------
+   Print Media Query
+-------------------------------------- */
+@media print {
+    @page {
+        size: auto;
+        margin: 20mm;
+    }
+
+    body {
+        height: auto;
+        overflow: visible;
+        background: white;
+    }
+
+    .app-container {
+        display: block;
+        height: auto;
+    }
+
+    .control-panel {
+        display: none !important;
+    }
+
+    .preview-panel {
+        display: block;
+        padding: 0;
+        background: white;
+        overflow: visible;
+    }
+
+    .paper {
+        width: 100%;
+        max-width: none;
+        box-shadow: none;
+        padding: 0;
+        margin: 0;
+        background: white;
+        /* Force Horizontal for Print */
+        writing-mode: horizontal-tb !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .doc-title {
+        text-align: center;
+        margin-bottom: 1em;
+    }
+
+    .dialogue-item {
+        opacity: 1; /* Ensure visible without animation */
+        page-break-inside: avoid;
+    }
+}

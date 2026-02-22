@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Pulse - Premium Battery Monitor</title>
+    <!-- Google Fonts: Inter (UI用) と Orbitron (数字/近未来感用) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Orbitron:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- ファビコン (JSで動的更新) -->
+    <link rel="icon" id="favicon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔋</text></svg>">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- ヘッダー -->
+        <header>
+            <h1>POWER PULSE</h1>
+            <p class="subtitle">System Status: <span id="connection-status">Online</span></p>
+        </header>
+
+        <!-- メインのバッテリー表示 -->
+        <div class="battery-wrapper">
+            <!-- グロー効果用の背景レイヤー -->
+            <div class="glow-bg"></div>
+
+            <div class="battery-shell">
+                <div class="battery-level">
+                    <div class="liquid"></div>
+                    <div class="bubbles">
+                        <span></span><span></span><span></span><span></span><span></span>
+                    </div>
+                </div>
+            </div>
+            <div class="battery-tip"></div>
+        </div>
+
+        <!-- パーセンテージ表示 -->
+        <div class="level-display">
+            <span id="level-text" class="digital-text">--%</span>
+        </div>
+
+        <!-- 情報詳細パネル -->
+        <div class="info-grid">
+            <div class="info-card">
+                <span class="label">STATUS / 状態</span>
+                <span class="value" id="status-text">Analyzing...</span>
+            </div>
+            <div class="info-card">
+                <span class="label">ESTIMATION / 予測</span>
+                <span class="value" id="time-text">---</span>
+            </div>
+        </div>
+
+        <!-- 非対応ブラウザ用メッセージ -->
+        <div id="not-supported" class="hidden">
+            <p>⚠️ Battery Status API unavailable.</p>
+            <p class="sub">Please use Chrome, Edge, or Opera.</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

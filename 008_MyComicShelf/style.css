@@ -1,0 +1,321 @@
+/* 基本設定 */
+:root {
+    --primary-color: #3b82f6;
+    /* 清潔感のあるブルー */
+    --primary-hover: #2563eb;
+    --background-color: #f8fafc;
+    /* 淡いグレーの背景 */
+    --card-bg: #ffffff;
+    --text-color: #1e293b;
+    --text-muted: #64748b;
+    --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-hover: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --radius-md: 0.5rem;
+    /* 角丸を少し控えめに */
+
+    /* ステータスカラー */
+    --status-next: #f97316;
+    /* オレンジ: 目立つ */
+    --status-purchased: #22c55e;
+    /* 緑: 安心感 */
+    --status-completed: #64748b;
+    /* グレー: 落ち着き */
+    --status-unread: #a855f7;
+    /* 紫: 特殊 */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Noto Sans JP', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* ヘッダー */
+.app-header {
+    background-color: var(--card-bg);
+    padding: 1.5rem 0;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.app-header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-color);
+    letter-spacing: 0.05em;
+}
+
+.app-header p {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* セクション共通 */
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+/* 入力フォーム */
+.input-section {
+    background-color: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 2rem;
+}
+
+.comic-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+/* PC等の広い画面では横並びにする */
+@media (min-width: 768px) {
+    .comic-form {
+        /* タイトルと画像URLを広めに、他は狭く */
+        grid-template-columns: 1.5fr 1.5fr 0.8fr 1fr auto;
+        align-items: end;
+    }
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.form-group input,
+.form-group select {
+    padding: 0.6rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.submit-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    height: 42px;
+    /* 入力欄と高さを合わせる */
+}
+
+.submit-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.submit-btn:active {
+    transform: scale(0.98);
+}
+
+/* 本棚グリッド (画像メインのレスポンシブグリッド) */
+.shelf-section {
+    margin-bottom: 3rem;
+    min-height: 50vh;
+}
+
+.comic-grid {
+    display: grid;
+    gap: 1.5rem;
+    /* カード間の余白 */
+    /* 画面幅に合わせて自動で列数を調整。最小幅を小さめ(140px程度)にして数を並べる */
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+}
+
+/* カードデザイン (画像メイン) */
+.comic-card {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-soft);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    /* 削除ボタンの配置基準 */
+    border: 1px solid #f1f5f9;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.comic-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* 画像エリア (アスペクト比 2:3) */
+.comic-image-container {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    background-color: #f1f5f9;
+    position: relative;
+}
+
+.comic-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* トリミングして埋める */
+    display: block;
+}
+
+/* オーバーレイ: 削除ボタン (右上) */
+/* .comic-card 基準ではなく .comic-image-container 基準で配置（HTML構造上そうなっているので）
+   ただしリクエストでは .comic-card に relative を指定して配置基準にする意図があったかもしれないが、
+   現在のHTML構造（画像コンテナの中にボタンがある）ならコンテナ基準が自然。
+   もしカード全体の右上にしたいならHTML構造を変えるか、top/rightを調整する。
+   ここではリクエスト通り「画像の右上に重ねて表示」を実現するため、コンテナ内の絶対配置を維持しつつスタイルを調整する。
+*/
+.delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* 半透明の黒 */
+    color: white;
+    /* 白文字 */
+    border: none;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    /* ボタンらしく見せる */
+    transition: background-color 0.2s;
+    z-index: 10;
+}
+
+.delete-btn:hover {
+    background-color: rgba(220, 38, 38, 0.9);
+}
+
+/* オーバーレイ: ステータスバッジ (右下) */
+.status-badge {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 5;
+}
+
+.status-badge.next {
+    background-color: var(--status-next);
+}
+
+.status-badge.purchased {
+    background-color: var(--status-purchased);
+}
+
+.status-badge.completed {
+    background-color: var(--status-completed);
+}
+
+.status-badge.unread {
+    background-color: var(--status-unread);
+}
+
+/* テキスト情報エリア (画像の下) */
+.comic-info {
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.comic-info h3 {
+    font-size: 0.95rem;
+    /* 少し小さく */
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* 長いタイトルは... */
+    margin: 0;
+}
+
+.comic-info .volume-info {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+.comic-info .volume-number {
+    font-weight: 700;
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+/* Empty State */
+.empty-state {
+    grid-column: 1 / -1;
+    /* 全列使用 */
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-muted);
+    background-color: #f1f5f9;
+    border-radius: var(--radius-md);
+    border: 2px dashed #cbd5e1;
+}
+
+.hidden {
+    display: none;
+}
+
+/* フッター */
+.app-footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-top: auto;
+}

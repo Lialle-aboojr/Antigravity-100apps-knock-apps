@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHADOW CRAFT / 影職人</title>
+    <!-- ファビコン: 新月の絵文字 -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌑</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 左側: 操作パネル -->
+        <aside class="control-panel">
+            <header class="app-header">
+                <h1>SHADOW CRAFT <span class="subtitle">/ 影職人</span></h1>
+                <p class="description">Shadow Artisan Generator</p>
+            </header>
+
+            <div class="layers-container">
+                <!-- Global Settings -->
+                <section class="layer-control global-control">
+                    <div class="layer-header">
+                        <h2>Global Settings / 全体設定</h2>
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">影の色 / Shadow Color</span>
+                            <span class="value-display" id="val-color">#000000</span>
+                        </label>
+                        <div class="color-picker-wrapper">
+                            <input type="color" id="shadow-color" value="#000000">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Layer 1 -->
+                <section class="layer-control">
+                    <div class="layer-header">
+                        <h2>Layer 1</h2>
+                        <span class="status-indicator">ACTIVE</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">X軸オフセット / Offset X</span>
+                            <span class="value-display" id="val-x-1">0px</span>
+                        </label>
+                        <input type="range" id="layer1-x" min="-50" max="50" value="0">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">Y軸オフセット / Offset Y</span>
+                            <span class="value-display" id="val-y-1">10px</span>
+                        </label>
+                        <input type="range" id="layer1-y" min="-50" max="50" value="10">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">ぼかし / Blur</span>
+                            <span class="value-display" id="val-blur-1">20px</span>
+                        </label>
+                        <input type="range" id="layer1-blur" min="0" max="100" value="20">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">広がり / Spread</span>
+                            <span class="value-display" id="val-spread-1">-5px</span>
+                        </label>
+                        <input type="range" id="layer1-spread" min="-50" max="50" value="-5">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">不透明度 / Opacity</span>
+                            <span class="value-display" id="val-alpha-1">0.4</span>
+                        </label>
+                        <input type="range" id="layer1-alpha" min="0" max="1" step="0.01" value="0.4">
+                    </div>
+                </section>
+
+                <!-- Layer 2 -->
+                <section class="layer-control">
+                    <div class="layer-header">
+                        <h2>Layer 2</h2>
+                        <span class="status-indicator">ACTIVE</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">X軸オフセット / Offset X</span>
+                            <span class="value-display" id="val-x-2">0px</span>
+                        </label>
+                        <input type="range" id="layer2-x" min="-50" max="50" value="0">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">Y軸オフセット / Offset Y</span>
+                            <span class="value-display" id="val-y-2">20px</span>
+                        </label>
+                        <input type="range" id="layer2-y" min="-50" max="50" value="20">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">ぼかし / Blur</span>
+                            <span class="value-display" id="val-blur-2">40px</span>
+                        </label>
+                        <input type="range" id="layer2-blur" min="0" max="100" value="40">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">広がり / Spread</span>
+                            <span class="value-display" id="val-spread-2">-10px</span>
+                        </label>
+                        <input type="range" id="layer2-spread" min="-50" max="50" value="-10">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">不透明度 / Opacity</span>
+                            <span class="value-display" id="val-alpha-2">0.2</span>
+                        </label>
+                        <input type="range" id="layer2-alpha" min="0" max="1" step="0.01" value="0.2">
+                    </div>
+                </section>
+
+                <!-- Layer 3 -->
+                <section class="layer-control">
+                    <div class="layer-header">
+                        <h2>Layer 3</h2>
+                        <span class="status-indicator">ACTIVE</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">X軸オフセット / Offset X</span>
+                            <span class="value-display" id="val-x-3">0px</span>
+                        </label>
+                        <input type="range" id="layer3-x" min="-50" max="50" value="0">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">Y軸オフセット / Offset Y</span>
+                            <span class="value-display" id="val-y-3">40px</span>
+                        </label>
+                        <input type="range" id="layer3-y" min="-50" max="50" value="40">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">ぼかし / Blur</span>
+                            <span class="value-display" id="val-blur-3">80px</span>
+                        </label>
+                        <input type="range" id="layer3-blur" min="0" max="100" value="80">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">広がり / Spread</span>
+                            <span class="value-display" id="val-spread-3">-15px</span>
+                        </label>
+                        <input type="range" id="layer3-spread" min="-50" max="50" value="-15">
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <span class="label-text">不透明度 / Opacity</span>
+                            <span class="value-display" id="val-alpha-3">0.1</span>
+                        </label>
+                        <input type="range" id="layer3-alpha" min="0" max="1" step="0.01" value="0.1">
+                    </div>
+                </section>
+            </div>
+        </aside>
+
+        <!-- 右側: プレビューエリア -->
+        <main class="preview-area" id="preview-area">
+            <div class="bg-switcher">
+                <button class="bg-btn bg-white active" data-bg="#ffffff" title="White Background"></button>
+                <button class="bg-btn bg-gray" data-bg="#e0e5ec" title="Gray Background"></button>
+                <button class="bg-btn bg-black" data-bg="#1a1a1a" title="Black Background"></button>
+            </div>
+
+            <div class="preview-container">
+                <div class="preview-card" id="target-element">
+                    <div class="card-content">
+                        <h3>Preview</h3>
+                        <p>Shadow Craft</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-output">
+                <div class="code-header">
+                    <span>CSS Code</span>
+                    <button id="copy-btn" class="copy-btn">
+                        <span class="icon">📋</span> Copy Code
+                    </button>
+                </div>
+                <pre><code id="css-code">box-shadow: 0px 10px 20px -5px rgba(0,0,0,0.4), ...</code></pre>
+            </div>
+        </main>
+    </div>
+
+    <!-- 通知トースト -->
+    <div id="toast" class="toast">Code Copied!</div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

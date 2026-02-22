@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizMail Generator - ビジネスメール作成ツール</title>
+    <!-- Google Fonts: Inter for modern UI, Noto Sans JP for Japanese text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>BizMail Generator</h1>
+            <p>ビジネスメールの定型文を、フォーム入力だけでご用意します。</p>
+        </header>
+
+        <main class="main-content">
+            <!-- 入力セクション -->
+            <section class="card input-section">
+                <h2><span class="icon">📝</span> 入力フォーム</h2>
+                
+                <div class="form-group">
+                    <label for="situation">シチュエーション</label>
+                    <select id="situation" class="form-control">
+                        <option value="apology">謝罪</option>
+                        <option value="meeting">会議案内</option>
+                        <option value="highlight">御礼</option>
+                        <option value="schedule">日程調整</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="recipientCompany">相手の会社名</label>
+                    <input type="text" id="recipientCompany" class="form-control" placeholder="例: 株式会社サンプル">
+                </div>
+
+                <div class="form-group">
+                    <label for="recipientName">相手の名前</label>
+                    <input type="text" id="recipientName" class="form-control" placeholder="例: 山田 太郎 様">
+                </div>
+
+                <div class="form-group">
+                    <label for="senderName">自分の名前</label>
+                    <input type="text" id="senderName" class="form-control" placeholder="例: 佐藤 次郎">
+                </div>
+
+                <!-- 可変フィールド: シチュエーションによってラベルなどが変わる想定だが、汎用的に「日付・理由など」とする -->
+                <div class="form-group">
+                    <label for="variableContent">日時・理由・詳細など</label>
+                    <textarea id="variableContent" class="form-control" rows="3" placeholder="会議の日時、謝罪の理由、日程の候補などを入力してください"></textarea>
+                </div>
+            </section>
+
+            <!-- プレビューセクション -->
+            <section class="card preview-section">
+                <h2><span class="icon">👀</span> プレビュー</h2>
+                <div class="preview-container">
+                    <div class="preview-header">
+                        <span class="label">件名:</span>
+                        <span id="previewSubject" class="subject-text">（入力すると件名が表示されます）</span>
+                    </div>
+                    <div class="preview-body">
+                        <pre id="previewBody">（ここに入力した内容に基づいたメール全文が表示されます）</pre>
+                    </div>
+                </div>
+                <button id="copyButton" class="btn-primary">
+                    <span class="btn-icon">📋</span> クリップボードにコピー
+                </button>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; 2026 BizMail Generator. Simple & Professional.</p>
+        </footer>
+    </div>
+
+    <!-- トースト通知 -->
+    <div id="toast" class="toast hidden">コピーしました！</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
