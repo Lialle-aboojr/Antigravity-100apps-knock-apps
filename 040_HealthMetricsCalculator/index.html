@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <!-- ===== 文字コードとビューポート設定 ===== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ===== SEO用メタ情報 ===== -->
+    <title>Health Metrics Calculator | 健康指標計算機</title>
+    <meta name="description"
+        content="BMI、適正体重、基礎代謝(BMR)、1日の推定消費カロリー(TDEE)を簡単に計算できる健康指標計算ツール。Calculate your BMI, ideal weight, BMR, and TDEE easily.">
+
+    <!-- ===== ファビコン（⚖️ 絵文字をSVGで表示） ===== -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚖️</text></svg>">
+
+    <!-- ===== Google Fonts（Inter）の読み込み ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- ===== スタイルシートの読み込み ===== -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== ヘッダー部分 ===== -->
+    <header class="header">
+        <div class="header-inner">
+            <div class="header-icon">⚖️</div>
+            <div class="header-text">
+                <h1>Health Metrics Calculator</h1>
+                <p class="header-subtitle">健康指標計算機</p>
+            </div>
+        </div>
+        <p class="header-desc">あなたのBMI・適正体重・基礎代謝・消費カロリーを瞬時に計算<br>Instantly calculate your BMI, ideal weight, BMR & TDEE
+        </p>
+    </header>
+
+    <!-- ===== メインコンテンツ ===== -->
+    <main class="main-container">
+
+        <!-- ===== 入力フォームカード ===== -->
+        <section class="card input-card" aria-label="Input Form">
+            <h2 class="card-title">
+                <span class="card-icon">📝</span>
+                基本データ入力 / Basic Data Input
+            </h2>
+
+            <form id="healthForm" novalidate>
+                <!-- 身長（初期値は空。スピンボタン操作時に170からスタートする） -->
+                <div class="form-group">
+                    <label for="height" class="form-label">身長 / Height <span class="unit">[cm]</span></label>
+                    <input type="number" id="height" class="form-input" placeholder="例 / e.g. 170" min="100" max="300"
+                        step="0.1" required>
+                </div>
+
+                <!-- 体重（初期値は空。スピンボタン操作時に60からスタートする） -->
+                <div class="form-group">
+                    <label for="weight" class="form-label">体重 / Weight <span class="unit">[kg]</span></label>
+                    <input type="number" id="weight" class="form-input" placeholder="例 / e.g. 60" min="30" max="300"
+                        step="0.1" required>
+                </div>
+
+                <!-- 年齢（初期値は空。スピンボタン操作時に30からスタートする） -->
+                <div class="form-group">
+                    <label for="age" class="form-label">年齢 / Age <span class="unit">[歳 / years]</span></label>
+                    <input type="number" id="age" class="form-input" placeholder="例 / e.g. 30" min="1" max="150"
+                        step="1" required>
+                </div>
+
+                <!-- 性別 -->
+                <div class="form-group">
+                    <label class="form-label">性別 / Gender</label>
+                    <div class="radio-group">
+                        <label class="radio-label" for="male">
+                            <input type="radio" id="male" name="gender" value="male" required>
+                            <span class="radio-custom"></span>
+                            <span class="radio-text">♂ 男性 / Male</span>
+                        </label>
+                        <label class="radio-label" for="female">
+                            <input type="radio" id="female" name="gender" value="female" required>
+                            <span class="radio-custom"></span>
+                            <span class="radio-text">♀ 女性 / Female</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 活動レベル -->
+                <div class="form-group">
+                    <label for="activity" class="form-label">活動レベル / Activity Level</label>
+                    <select id="activity" class="form-select" required>
+                        <option value="" disabled selected>-- 選択してください / Select --</option>
+                        <option value="1.2">ほとんど運動しない / Sedentary</option>
+                        <option value="1.375">軽い運動（週1〜3回）/ Lightly Active</option>
+                        <option value="1.55">中程度の運動（週3〜5回）/ Moderately Active</option>
+                        <option value="1.725">激しい運動（週6〜7回）/ Very Active</option>
+                        <option value="1.9">非常に激しい運動 / Extra Active</option>
+                    </select>
+                </div>
+
+                <!-- 計算ボタン -->
+                <button type="submit" id="calculateBtn" class="btn-calculate">
+                    <span class="btn-icon">🧮</span>
+                    <span>計算する / Calculate</span>
+                </button>
+            </form>
+        </section>
+
+        <!-- ===== 結果表示エリア（初期状態は非表示） ===== -->
+        <section id="resultsSection" class="results-section hidden">
+
+            <!-- BMI & 適正体重カード -->
+            <div class="card result-card bmi-card">
+                <h2 class="card-title">
+                    <span class="card-icon">📊</span>
+                    BMI & 適正体重 / BMI & Ideal Weight
+                </h2>
+
+                <!-- BMI値と判定 -->
+                <div class="bmi-display">
+                    <div class="bmi-value-wrapper">
+                        <span class="bmi-label">あなたのBMI / Your BMI</span>
+                        <span id="bmiValue" class="bmi-value">--</span>
+                    </div>
+                    <div id="bmiCategory" class="bmi-category">--</div>
+                </div>
+
+                <!-- BMI判定メーター -->
+                <div class="bmi-meter-wrapper">
+                    <div class="bmi-meter">
+                        <!-- マーカー（▼）は JSから動的に配置 -->
+                        <div id="bmiMarker" class="bmi-marker">▼</div>
+                        <div class="bmi-bar">
+                            <div class="bmi-zone zone-underweight" title="痩せ / Underweight"></div>
+                            <div class="bmi-zone zone-normal" title="普通 / Normal"></div>
+                            <div class="bmi-zone zone-overweight" title="肥満度1 / Overweight"></div>
+                            <div class="bmi-zone zone-obese1" title="肥満度2 / Obese Class 1"></div>
+                            <div class="bmi-zone zone-obese2" title="肥満度3 / Obese Class 2"></div>
+                            <div class="bmi-zone zone-obese3" title="肥満度4 / Obese Class 3"></div>
+                        </div>
+                        <!-- メーターの目盛りラベル -->
+                        <div class="bmi-labels">
+                            <span>15</span>
+                            <span>18.5</span>
+                            <span>25</span>
+                            <span>30</span>
+                            <span>35</span>
+                            <span>40</span>
+                        </div>
+                    </div>
+                    <!-- メーターの凡例 -->
+                    <div class="bmi-legend">
+                        <div class="legend-item"><span class="legend-color" style="background:#4ECDC4;"></span>痩せ /
+                            Underweight</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#2ECC71;"></span>普通 /
+                            Normal</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#F1C40F;"></span>肥満度1 /
+                            Overweight</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#E67E22;"></span>肥満度2 /
+                            Obese I</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#E74C3C;"></span>肥満度3 /
+                            Obese II</div>
+                        <div class="legend-item"><span class="legend-color" style="background:#C0392B;"></span>肥満度4 /
+                            Obese III</div>
+                    </div>
+                </div>
+
+                <!-- 適正体重 -->
+                <div class="ideal-weight-box">
+                    <div class="ideal-weight-label">適正体重 / Ideal Weight <span class="sub-label">(BMI 22)</span></div>
+                    <div id="idealWeight" class="ideal-weight-value">-- kg</div>
+                    <div id="weightDiff" class="weight-diff"></div>
+                </div>
+            </div>
+
+            <!-- カロリー計算カード -->
+            <div class="card result-card calorie-card">
+                <h2 class="card-title">
+                    <span class="card-icon">🔥</span>
+                    カロリー計算 / Calorie Estimation
+                </h2>
+
+                <div class="calorie-grid">
+                    <!-- 基礎代謝 -->
+                    <div class="calorie-item">
+                        <div class="calorie-icon">💤</div>
+                        <div class="calorie-label">基礎代謝 / BMR<br><span class="calorie-sublabel">Basal Metabolic
+                                Rate</span></div>
+                        <div id="bmrValue" class="calorie-value">-- kcal</div>
+                        <div class="calorie-desc">何もしなくても消費するカロリー<br>Calories burned at rest</div>
+                    </div>
+
+                    <!-- TDEE -->
+                    <div class="calorie-item">
+                        <div class="calorie-icon">🏃</div>
+                        <div class="calorie-label">推定消費カロリー / TDEE<br><span class="calorie-sublabel">Total Daily Energy
+                                Expenditure</span></div>
+                        <div id="tdeeValue" class="calorie-value">-- kcal</div>
+                        <div class="calorie-desc">活動レベルを考慮した1日の消費カロリー<br>Daily calories including activity</div>
+                    </div>
+                </div>
+
+                <!-- 摂取カロリー目安 -->
+                <div class="calorie-goals">
+                    <h3 class="calorie-goals-title">🎯 目的別 推定摂取カロリー / Calorie Goals</h3>
+                    <div class="goals-grid">
+                        <div class="goal-item goal-lose">
+                            <div class="goal-label">減量 / Weight Loss</div>
+                            <div id="goalLose" class="goal-value">-- kcal</div>
+                            <div class="goal-desc">TDEE × 0.8</div>
+                        </div>
+                        <div class="goal-item goal-maintain">
+                            <div class="goal-label">維持 / Maintain</div>
+                            <div id="goalMaintain" class="goal-value">-- kcal</div>
+                            <div class="goal-desc">TDEE × 1.0</div>
+                        </div>
+                        <div class="goal-item goal-gain">
+                            <div class="goal-label">増量 / Weight Gain</div>
+                            <div id="goalGain" class="goal-value">-- kcal</div>
+                            <div class="goal-desc">TDEE × 1.2</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- ===== フッター ===== -->
+    <footer class="footer">
+        <p>⚖️ Health Metrics Calculator | 健康指標計算機</p>
+        <p class="footer-note">※ 計算結果はあくまで目安です。正確な判断は医療専門家にご相談ください。<br>Results are estimates only. Consult a healthcare
+            professional for accurate advice.</p>
+    </footer>
+
+    <!-- ===== JavaScriptの読み込み ===== -->
+    <script src="script.js"></script>
+</body>
+
+</html>
