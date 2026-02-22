@@ -51,6 +51,7 @@ Complete it. Ship it. Relax. ☕
 | 038 | ⏲️ Multi-Kitchen Timer | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/038_Multi-KitchenTimer/) |
 | 039 | 🎡 CSS Loading Maker | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/039_CSSLoadingMaker/) |
 | 040 | 🏥 Health Metrics Calculator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/040_HealthMetricsCalculator/) |
+| 041 | 📱 Quick QR Generator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/041_QuickQRGenerator/) |
 
 ---
 
