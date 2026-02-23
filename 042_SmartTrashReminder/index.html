@@ -66,7 +66,20 @@
         <!-- ===== 設定エリア ===== -->
         <section class="settings-section">
 
-            <!-- 【A】ゴミの種類設定 -->
+            <!-- 【B】スケジュール設定（先に表示） -->
+            <div class="settings-block">
+                <h2 class="section-title">📅 スケジュール設定 / Schedule Settings</h2>
+                <p class="section-desc">各曜日のゴミ出し予定を「頻度」と「種類」で登録します。<br>Set the collection schedule for each day using
+                    frequency and trash type.</p>
+                <div id="schedule-settings" class="schedule-settings">
+                    <!-- JSで動的に生成 -->
+                </div>
+            </div>
+
+            <!-- 区切り線 -->
+            <div class="settings-divider"></div>
+
+            <!-- 【A】ゴミの種類設定（後に表示） -->
             <div class="settings-block">
                 <h2 class="section-title">🎨 ゴミの種類設定 / Trash Types</h2>
                 <p class="section-desc">種類の名前と色を管理します。スケジュールで選択できるようになります。<br>Manage trash type names and colors. These
@@ -77,19 +90,6 @@
                 <button class="add-btn" id="add-type-btn">
                     ＋ 種類を追加 / Add Type
                 </button>
-            </div>
-
-            <!-- 区切り線 -->
-            <div class="settings-divider"></div>
-
-            <!-- 【B】スケジュール設定 -->
-            <div class="settings-block">
-                <h2 class="section-title">📅 スケジュール設定 / Schedule Settings</h2>
-                <p class="section-desc">各曜日のゴミ出し予定を「頻度」と「種類」で登録します。<br>Set the collection schedule for each day using
-                    frequency and trash type.</p>
-                <div id="schedule-settings" class="schedule-settings">
-                    <!-- JSで動的に生成 -->
-                </div>
             </div>
 
             <!-- 保存ボタンエリア -->

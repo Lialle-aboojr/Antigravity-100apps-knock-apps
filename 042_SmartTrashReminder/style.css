@@ -99,7 +99,7 @@ body {
     background: linear-gradient(180deg, #ffffff 0%, #fafbfc 100%);
 }
 
-/* ラベル（「今日 / Today」など） */
+/* ラベル */
 .day-card-label {
     font-size: 0.75rem;
     font-weight: 600;
@@ -128,7 +128,7 @@ body {
     margin-bottom: 16px;
 }
 
-/* --- ゴミ種類バッジ（動的カラー対応） --- */
+/* --- ゴミ種類バッジ --- */
 .trash-badge {
     display: inline-flex;
     align-items: center;
@@ -214,7 +214,7 @@ body {
 .settings-divider {
     height: 1px;
     background-color: #f0f0f0;
-    margin: 24px 0;
+    margin: 28px 0;
 }
 
 .section-title {
@@ -299,7 +299,7 @@ body {
     box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
 }
 
-/* 削除ボタン（✖️） */
+/* 削除ボタン（✕） */
 .delete-btn {
     width: 32px;
     height: 32px;

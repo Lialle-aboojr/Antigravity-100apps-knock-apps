@@ -58,10 +58,9 @@ var DEFAULT_SCHEDULE = {
 // グローバル変数
 // =============================================
 
-// 現在のデータを保持する変数
 var currentTypes = [];
 var currentSchedule = {};
-var typeIdCounter = 10; // 新規種類のID用カウンター
+var typeIdCounter = 10;
 
 // =============================================
 // DOM要素の取得
@@ -83,12 +82,12 @@ var addTypeBtnEl = document.getElementById('add-type-btn');
 // =============================================
 
 document.addEventListener('DOMContentLoaded', function () {
-    // LocalStorageからデータを読み込み（なければデフォルト）
+    // LocalStorageからデータを読み込み
     loadData();
 
-    // UIを構築
+    // UIを構築（初回なのでskipCollect = true）
     renderTrashTypes();
-    renderScheduleSettings();
+    renderScheduleSettings(true);
 
     // 今日と明日の表示を更新
     updateTodayTomorrow();
@@ -104,7 +103,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // --- LocalStorageからデータを読み込む ---
 function loadData() {
-    // ゴミの種類を読み込み
     var savedTypes = localStorage.getItem(STORAGE_KEY_TYPES);
     if (savedTypes) {
         try {
@@ -116,7 +114,6 @@ function loadData() {
         currentTypes = JSON.parse(JSON.stringify(DEFAULT_TYPES));
     }
 
-    // スケジュールを読み込み
     var savedSchedule = localStorage.getItem(STORAGE_KEY_SCHEDULE);
     if (savedSchedule) {
         try {
@@ -128,7 +125,7 @@ function loadData() {
         currentSchedule = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
     }
 
-    // IDカウンターを既存の最大値+1に設定（重複防止）
+    // IDカウンターを既存の最大値+1に設定
     currentTypes.forEach(function (t) {
         var num = parseInt(t.id.replace('type_', ''), 10);
         if (!isNaN(num) && num >= typeIdCounter) {
@@ -151,7 +148,7 @@ function saveAll() {
     updateTodayTomorrow();
 
     // スケジュールのプルダウンを最新の種類で更新
-    renderScheduleSettings();
+    renderScheduleSettings(true);
 
     // トースト表示
     showToast();
@@ -173,7 +170,7 @@ function showToast() {
 function renderTrashTypes() {
     trashTypesListEl.innerHTML = '';
 
-    currentTypes.forEach(function (type, index) {
+    currentTypes.forEach(function (type) {
         var row = document.createElement('div');
         row.className = 'type-row';
         row.setAttribute('data-type-id', type.id);
@@ -210,7 +207,7 @@ function renderTrashTypes() {
 
 // --- 新しいゴミの種類を追加する ---
 function addNewType() {
-    // UIから最新データを収集（入力中のデータを保持するため）
+    // UIから最新データを収集
     collectTypesFromUI();
 
     var newId = 'type_' + typeIdCounter;
@@ -227,7 +224,6 @@ function addNewType() {
 
 // --- ゴミの種類を削除する ---
 function removeType(typeId) {
-    // UIから最新データを収集
     collectTypesFromUI();
 
     // 対象を除外
@@ -236,6 +232,7 @@ function removeType(typeId) {
     });
 
     // スケジュールから該当typeIdの行も削除
+    collectScheduleFromUI();
     DAYS.forEach(function (day) {
         if (currentSchedule[day.key]) {
             currentSchedule[day.key] = currentSchedule[day.key].filter(function (entry) {
@@ -245,7 +242,7 @@ function removeType(typeId) {
     });
 
     renderTrashTypes();
-    renderScheduleSettings();
+    renderScheduleSettings(true);
 }
 
 // --- UIからゴミの種類データを収集する ---
@@ -273,10 +270,11 @@ function collectTypesFromUI() {
 // =============================================
 
 // --- スケジュール設定エリアを描画する ---
-function renderScheduleSettings() {
-    // 描画前にUIからスケジュールデータを収集（入力中のデータを保持）
-    // ただし初回描画時は要素がないのでスキップ
-    if (scheduleSettingsEl.children.length > 0) {
+// skipCollect: trueの場合、描画前のUI収集をスキップする
+//   初回描画時や、既にcollectScheduleFromUI()を呼んだ直後に使う
+function renderScheduleSettings(skipCollect) {
+    // 描画前にUIから現在のデータを収集（既にメモリ上が最新なら不要）
+    if (!skipCollect && scheduleSettingsEl.children.length > 0) {
         collectScheduleFromUI();
     }
 
@@ -297,11 +295,9 @@ function renderScheduleSettings() {
         var rowsContainer = document.createElement('div');
         rowsContainer.className = 'schedule-rows';
 
-        // 該当曜日のスケジュール行を描画
         var entries = currentSchedule[day.key] || [];
 
         if (entries.length === 0) {
-            // 空状態のメッセージ
             var emptyMsg = document.createElement('div');
             emptyMsg.className = 'empty-schedule';
             emptyMsg.textContent = '予定なし / No schedule';
@@ -319,13 +315,15 @@ function renderScheduleSettings() {
         var addBtn = document.createElement('button');
         addBtn.className = 'add-schedule-btn';
         addBtn.textContent = '＋ ' + day.ja + 'の予定を追加 / Add to ' + day.en;
-        addBtn.addEventListener('click', (function (dayKey) {
-            return function () {
-                addScheduleEntry(dayKey);
-            };
-        })(day.key));
-        block.appendChild(addBtn);
 
+        // クロージャで曜日キーを確実にバインド
+        (function (dayKey) {
+            addBtn.addEventListener('click', function () {
+                addScheduleEntry(dayKey);
+            });
+        })(day.key);
+
+        block.appendChild(addBtn);
         scheduleSettingsEl.appendChild(block);
     });
 }
@@ -353,7 +351,6 @@ function createScheduleRow(dayKey, entry, entryIndex) {
     var typeSelect = document.createElement('select');
     typeSelect.className = 'type-select';
 
-    // 「選択してください」オプション
     var defaultOption = document.createElement('option');
     defaultOption.value = '';
     defaultOption.textContent = '-- 種類を選択 / Select type --';
@@ -374,11 +371,13 @@ function createScheduleRow(dayKey, entry, entryIndex) {
     deleteBtn.className = 'delete-btn';
     deleteBtn.textContent = '✕';
     deleteBtn.title = '削除 / Delete';
-    deleteBtn.addEventListener('click', (function (dk, idx) {
-        return function () {
+
+    // クロージャで曜日キーとインデックスを確実にバインド
+    (function (dk, idx) {
+        deleteBtn.addEventListener('click', function () {
             removeScheduleEntry(dk, idx);
-        };
-    })(dayKey, entryIndex));
+        });
+    })(dayKey, entryIndex);
 
     row.appendChild(freqSelect);
     row.appendChild(typeSelect);
@@ -389,7 +388,7 @@ function createScheduleRow(dayKey, entry, entryIndex) {
 
 // --- スケジュール行を追加する ---
 function addScheduleEntry(dayKey) {
-    // UIから最新データを収集
+    // まずUIから最新のスケジュールデータを収集
     collectScheduleFromUI();
 
     if (!currentSchedule[dayKey]) {
@@ -403,19 +402,21 @@ function addScheduleEntry(dayKey) {
         typeId: defaultTypeId
     });
 
-    renderScheduleSettings();
+    // skipCollect = true: 直前にcollectしたので再度の収集はスキップ
+    renderScheduleSettings(true);
 }
 
 // --- スケジュール行を削除する ---
 function removeScheduleEntry(dayKey, entryIndex) {
-    // UIから最新データを収集
+    // まずUIから最新データを収集
     collectScheduleFromUI();
 
     if (currentSchedule[dayKey]) {
         currentSchedule[dayKey].splice(entryIndex, 1);
     }
 
-    renderScheduleSettings();
+    // skipCollect = true: 直前にcollectしたので再度の収集はスキップ
+    renderScheduleSettings(true);
 }
 
 // --- UIからスケジュールデータを収集する ---
@@ -453,34 +454,23 @@ function updateTodayTomorrow() {
     var tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // 日付をフォーマットして表示
     todayDateEl.textContent = formatDate(now);
     tomorrowDateEl.textContent = formatDate(tomorrow);
 
-    // 今日と明日に該当するゴミの種類を取得
     var todayItems = getTrashForDate(now);
     var tomorrowItems = getTrashForDate(tomorrow);
 
-    // バッジを描画
     renderDayBadges(todayTrashEl, todayItems);
     renderDayBadges(tomorrowTrashEl, tomorrowItems);
 
-    // Googleカレンダーボタンを更新
     updateGcalButton(todayItems, now);
 }
 
 // --- 指定日のゴミの種類リストを取得する ---
 function getTrashForDate(date) {
-    // 曜日キーを取得
     var dayKey = getDayKey(date.getDay());
-
-    // その月の第何曜日かを計算
     var weekNumber = getNthWeekday(date);
-
-    // 該当曜日のスケジュールを取得
     var entries = currentSchedule[dayKey] || [];
-
-    // 条件に合うエントリをフィルタリング
     var matchedItems = [];
 
     entries.forEach(function (entry) {
@@ -488,7 +478,6 @@ function getTrashForDate(date) {
 
         switch (entry.frequency) {
             case 'every':
-                // 毎週 → 常にマッチ
                 matches = true;
                 break;
             case 'week1':
@@ -507,20 +496,16 @@ function getTrashForDate(date) {
                 matches = (weekNumber === 5);
                 break;
             case 'week13':
-                // 第1・第3
                 matches = (weekNumber === 1 || weekNumber === 3);
                 break;
             case 'week24':
-                // 第2・第4
                 matches = (weekNumber === 2 || weekNumber === 4);
                 break;
         }
 
         if (matches && entry.typeId) {
-            // ゴミの種類情報を検索
             var typeInfo = findTypeById(entry.typeId);
             if (typeInfo) {
-                // 重複チェック（同じ種類が2回表示されないように）
                 var alreadyAdded = matchedItems.some(function (item) {
                     return item.id === typeInfo.id;
                 });
@@ -545,13 +530,12 @@ function findTypeById(typeId) {
 }
 
 // --- その月の第何曜日かを計算する ---
-// 例: 2月の第3月曜日 → weekNumber = 3
 function getNthWeekday(date) {
     var dayOfMonth = date.getDate();
     return Math.ceil(dayOfMonth / 7);
 }
 
-// --- JavaScriptの曜日番号（0=日, 1=月, ...）をキー名に変換 ---
+// --- 曜日番号をキー名に変換 ---
 function getDayKey(dayIndex) {
     var map = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     return map[dayIndex];
@@ -566,8 +550,6 @@ function formatDate(date) {
     var dayNamesEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     var dayName = dayNames[date.getDay()];
     var dayNameEn = dayNamesEn[date.getDay()];
-
-    // 第何週かも表示
     var nth = getNthWeekday(date);
 
     return year + '/' + month + '/' + day + ' (' + dayName + ' / ' + dayNameEn + ') 第' + nth + '週';
@@ -578,7 +560,6 @@ function renderDayBadges(container, items) {
     container.innerHTML = '';
 
     if (items.length === 0) {
-        // 未設定の場合
         var badge = document.createElement('span');
         badge.className = 'trash-badge badge-notset';
         badge.textContent = '未設定 / Not set';
@@ -590,15 +571,12 @@ function renderDayBadges(container, items) {
         var badge = document.createElement('span');
         badge.className = 'trash-badge';
 
-        // テーマカラーを使ったバッジスタイル
-        // 背景色を薄くし、文字色を濃くする
         var bgColor = hexToRgba(item.color, 0.1);
         var borderColor = hexToRgba(item.color, 0.3);
         badge.style.backgroundColor = bgColor;
         badge.style.color = item.color;
         badge.style.border = '1px solid ' + borderColor;
 
-        // 色ドット
         var dot = document.createElement('span');
         dot.className = 'badge-dot';
         dot.style.backgroundColor = item.color;
@@ -611,7 +589,6 @@ function renderDayBadges(container, items) {
 
 // --- HEXカラーをRGBA文字列に変換するヘルパー ---
 function hexToRgba(hex, alpha) {
-    // #rrggbb形式のHEXからR, G, Bを取り出す
     var r = parseInt(hex.substring(1, 3), 16);
     var g = parseInt(hex.substring(3, 5), 16);
     var b = parseInt(hex.substring(5, 7), 16);
@@ -632,7 +609,6 @@ function updateGcalButton(todayItems, date) {
 
     gcalBtnEl.disabled = false;
 
-    // 今日のゴミの種類名をカンマ区切りで結合
     var trashNames = todayItems.map(function (item) {
         return item.name;
     }).join('・');
