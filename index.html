@@ -571,9 +571,28 @@
     </div>
 
     <script>
-        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbySZUcnFt27nWGW8UnSxp1PnmjP3sjrdGbWzWxSpbpGPfj4zg3To9tyGRnYWPPgtiQD/exec"; // Updated URL from user
+        const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwUAcvf8Veb4k0xldQ6KwpxJnX0qyNdQfjuAlkw-B-hRcqdoJrZgds24PDQipV6tVg/exec"; // Updated URL from user
 
         let allTasks = [];
+        // --- パスワード認証用 ---
+        // セッション中はlocalStorageに一時保存。間違った場合はクリアして再入力を促す
+        let adminPassword = localStorage.getItem('kanban_admin_pw') || '';
+
+        function getAdminPassword() {
+            if (!adminPassword) {
+                const input = prompt('管理者パスワードを入力してください / Enter admin password:');
+                if (input === null) return null; // キャンセル
+                adminPassword = input;
+                localStorage.setItem('kanban_admin_pw', adminPassword);
+            }
+            return adminPassword;
+        }
+
+        function clearAdminPassword() {
+            adminPassword = '';
+            localStorage.removeItem('kanban_admin_pw');
+        }
+
         document.addEventListener('DOMContentLoaded', fetchTasks);
 
         async function fetchTasks() {
@@ -593,6 +612,11 @@
         }
 
         async function postData(payload) {
+            // --- パスワードをpayloadに自動注入 ---
+            const pw = getAdminPassword();
+            if (pw === null) return null; // ユーザーがキャンセルした場合
+            payload.password = pw;
+
             showLoading(true);
             try {
                 // GASのCORSを回避するため、あえてtext/plainで送信
@@ -605,6 +629,14 @@
                     body: JSON.stringify(payload)
                 });
                 const data = await res.json();
+
+                // --- 認証エラーチェック ---
+                if (data.error && data.error.includes('Unauthorized')) {
+                    clearAdminPassword();
+                    alert('パスワードが違います / Incorrect password');
+                    return null;
+                }
+
                 if (data.error) throw new Error(data.error);
                 return data;
             } catch (e) {
