@@ -1,5 +1,5 @@
 // ■ 設定 / Configuration
-const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzTtZHdQ6094Nmu90-VgyIUWuNES5_uA8fyIY-qJlXa3Hw6yVgCWtxKlBitavZn0N6T/exec";
+const GAS_API_URL = "https://script.google.com/macros/s/AKfycbz38qzZ0lDToz2F3OSkOXf7zIbbqi2dgySdaERAbZ9EEFDA8QYIxR5ph-l4Ye0x7S5V/exec";
 
 // ■ DOM要素の取得 / Get DOM elements
 const columns = document.querySelectorAll('.column');
