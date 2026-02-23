@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Trash Reminder</title>
+
+    <!-- ファビコン: ゴミ箱絵文字 🗑️ をSVG Data URIで設定 -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗑️</text></svg>">
+
+    <!-- Google Fonts: Inter + Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- スタイルシート読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== ヘッダー ===== -->
+    <header class="header">
+        <div class="header-inner">
+            <h1 class="header-title">🗑️ Smart Trash Reminder</h1>
+            <p class="header-subtitle">スマートゴミ出しリマインダー / Daily Trash Collection Reminder</p>
+        </div>
+    </header>
+
+    <!-- ===== メインコンテンツ ===== -->
+    <main class="main">
+
+        <!-- ===== 今日 & 明日の表示エリア ===== -->
+        <section class="today-section">
+            <div class="today-cards">
+
+                <!-- 今日のカード -->
+                <div class="day-card today-card">
+                    <div class="day-card-label">今日 / Today</div>
+                    <div class="day-card-date" id="today-date"></div>
+                    <div class="day-card-trash" id="today-trash"></div>
+                    <!-- Googleカレンダーボタン -->
+                    <button class="gcal-btn" id="gcal-btn" title="Googleカレンダーに追加 / Add to Google Calendar">
+                        <svg class="gcal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                            <line x1="16" y1="2" x2="16" y2="6" />
+                            <line x1="8" y1="2" x2="8" y2="6" />
+                            <line x1="3" y1="10" x2="21" y2="10" />
+                        </svg>
+                        カレンダーに追加 / Add to Calendar
+                    </button>
+                </div>
+
+                <!-- 明日のカード -->
+                <div class="day-card tomorrow-card">
+                    <div class="day-card-label">明日 / Tomorrow</div>
+                    <div class="day-card-date" id="tomorrow-date"></div>
+                    <div class="day-card-trash" id="tomorrow-trash"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===== スケジュール設定エリア ===== -->
+        <section class="schedule-section">
+            <h2 class="section-title">📅 スケジュール設定 / Schedule Settings</h2>
+            <p class="section-desc">各曜日のゴミの種類を入力して「保存」を押してください。<br>Enter the trash type for each day and click "Save".
+            </p>
+
+            <div class="schedule-form" id="schedule-form">
+                <!-- JSで曜日ごとの入力フォームを動的に生成 -->
+            </div>
+
+            <div class="save-area">
+                <button class="save-btn" id="save-btn">
+                    <svg class="save-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                        <polyline points="17 21 17 13 7 13 7 21" />
+                        <polyline points="7 3 7 8 15 8" />
+                    </svg>
+                    保存 / Save
+                </button>
+                <!-- 保存成功メッセージ -->
+                <div class="save-toast" id="save-toast">✅ 保存しました / Saved!</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===== フッター ===== -->
+    <footer class="footer">
+        <p>© 2025 Smart Trash Reminder — Antigravity 100 Apps Knock #042</p>
+    </footer>
+
+    <!-- スクリプト読み込み -->
+    <script src="script.js"></script>
+
+</body>
+
+</html>
