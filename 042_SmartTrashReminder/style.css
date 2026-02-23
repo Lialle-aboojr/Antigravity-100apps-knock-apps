@@ -128,11 +128,11 @@ body {
     margin-bottom: 16px;
 }
 
-/* --- ゴミ種類バッジ --- */
+/* --- ゴミ種類バッジ（動的カラー対応） --- */
 .trash-badge {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 0.82rem;
@@ -141,53 +141,12 @@ body {
     line-height: 1;
 }
 
-/* 可燃ゴミ: 赤系 */
-.badge-burnable {
-    background-color: #fef2f2;
-    color: #dc2626;
-    border: 1px solid #fecaca;
-}
-
-/* 不燃ゴミ: 青系 */
-.badge-nonburnable {
-    background-color: #eff6ff;
-    color: #2563eb;
-    border: 1px solid #bfdbfe;
-}
-
-/* 資源ゴミ: 緑系 */
-.badge-recyclable {
-    background-color: #f0fdf4;
-    color: #16a34a;
-    border: 1px solid #bbf7d0;
-}
-
-/* プラスチック: 紫系 */
-.badge-plastic {
-    background-color: #faf5ff;
-    color: #9333ea;
-    border: 1px solid #e9d5ff;
-}
-
-/* ペットボトル・びん・缶: ティール系 */
-.badge-bottles {
-    background-color: #f0fdfa;
-    color: #0d9488;
-    border: 1px solid #99f6e4;
-}
-
-/* 粗大ゴミ: オレンジ系 */
-.badge-oversized {
-    background-color: #fff7ed;
-    color: #ea580c;
-    border: 1px solid #fed7aa;
-}
-
-/* その他・デフォルト: グレー系 */
-.badge-default {
-    background-color: #f9fafb;
-    color: #6b7280;
-    border: 1px solid #e5e7eb;
+/* バッジ内の色ドット */
+.badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
 }
 
 /* 未設定バッジ */
@@ -226,7 +185,6 @@ body {
     transform: translateY(0);
 }
 
-/* Googleカレンダーボタンが非活性のとき（未設定時） */
 .gcal-btn:disabled {
     background-color: #f3f3f3;
     color: #bbb;
@@ -241,12 +199,22 @@ body {
     flex-shrink: 0;
 }
 
-/* ===== スケジュール設定セクション ===== */
-.schedule-section {
+/* ===== 設定セクション全体 ===== */
+.settings-section {
     background-color: #fff;
     border-radius: 16px;
     border: 1px solid #eee;
     padding: 28px 24px;
+}
+
+.settings-block {
+    margin-bottom: 8px;
+}
+
+.settings-divider {
+    height: 1px;
+    background-color: #f0f0f0;
+    margin: 24px 0;
 }
 
 .section-title {
@@ -259,73 +227,247 @@ body {
 .section-desc {
     font-size: 0.78rem;
     color: #999;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     line-height: 1.6;
 }
 
-/* スケジュールフォーム */
-.schedule-form {
+/* ===== 【A】ゴミの種類設定 ===== */
+.trash-types-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    margin-bottom: 14px;
 }
 
-/* 各曜日の行 */
-.schedule-row {
+/* 各種類の行 */
+.type-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-}
-
-/* 曜日ラベル */
-.day-label {
-    width: 100px;
-    flex-shrink: 0;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #555;
-    text-align: right;
-    line-height: 1.3;
-}
-
-/* 曜日ラベルの英語表記 */
-.day-label-en {
-    display: block;
-    font-size: 0.68rem;
-    font-weight: 400;
-    color: #aaa;
-}
-
-/* テキスト入力欄 */
-.schedule-input {
-    flex: 1;
+    gap: 10px;
+    background-color: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 10px;
     padding: 10px 14px;
+}
+
+/* カラーピッカー */
+.type-color-picker {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 2px;
+    cursor: pointer;
+    background: transparent;
+    flex-shrink: 0;
+}
+
+.type-color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.type-color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 5px;
+}
+
+.type-color-picker::-moz-color-swatch {
+    border: none;
+    border-radius: 5px;
+}
+
+/* 種類名テキスト入力 */
+.type-name-input {
+    flex: 1;
+    padding: 8px 12px;
     border: 1.5px solid #e5e5e5;
     border-radius: 8px;
     font-family: inherit;
     font-size: 0.88rem;
     color: #333;
-    background-color: #fafafa;
-    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    background-color: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    min-width: 0;
 }
 
-.schedule-input:focus {
+.type-name-input:focus {
     outline: none;
     border-color: #bbb;
-    background-color: #fff;
     box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
 }
 
-.schedule-input::placeholder {
+/* 削除ボタン（✖️） */
+.delete-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background-color: transparent;
     color: #ccc;
-    font-size: 0.82rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: color 0.2s ease, background-color 0.2s ease;
 }
 
-/* 保存エリア */
+.delete-btn:hover {
+    color: #e74c3c;
+    background-color: #fef2f2;
+}
+
+/* 追加ボタン共通 */
+.add-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 9px 18px;
+    background-color: #f5f5f5;
+    color: #666;
+    border: 1.5px dashed #ddd;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    width: 100%;
+}
+
+.add-btn:hover {
+    background-color: #eee;
+    border-color: #ccc;
+}
+
+/* ===== 【B】スケジュール設定 ===== */
+.schedule-settings {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 各曜日のブロック */
+.schedule-day-block {
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 16px;
+    background-color: #fcfcfc;
+}
+
+/* 曜日ヘッダー */
+.schedule-day-header {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.schedule-day-header-en {
+    font-weight: 400;
+    color: #aaa;
+    font-size: 0.78rem;
+}
+
+/* スケジュール行リスト */
+.schedule-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+/* 各スケジュール行 */
+.schedule-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 頻度プルダウン */
+.freq-select {
+    padding: 8px 10px;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    color: #333;
+    background-color: #fff;
+    cursor: pointer;
+    min-width: 110px;
+    transition: border-color 0.2s ease;
+}
+
+.freq-select:focus {
+    outline: none;
+    border-color: #bbb;
+}
+
+/* ゴミの種類プルダウン */
+.type-select {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1.5px solid #e5e5e5;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.82rem;
+    color: #333;
+    background-color: #fff;
+    cursor: pointer;
+    min-width: 0;
+    transition: border-color 0.2s ease;
+}
+
+.type-select:focus {
+    outline: none;
+    border-color: #bbb;
+}
+
+/* 曜日ごとの追加ボタン */
+.add-schedule-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 14px;
+    background-color: #f8f8f8;
+    color: #888;
+    border: 1px dashed #ddd;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.add-schedule-btn:hover {
+    background-color: #eee;
+    border-color: #ccc;
+}
+
+/* 空状態テキスト */
+.empty-schedule {
+    font-size: 0.78rem;
+    color: #ccc;
+    padding: 4px 0;
+}
+
+/* ===== 保存エリア（完全中央揃え） ===== */
 .save-area {
-    margin-top: 24px;
+    margin-top: 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    position: relative;
 }
 
 /* 保存ボタン */
@@ -334,7 +476,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    padding: 12px 32px;
+    padding: 12px 40px;
     background-color: #1a1a1a;
     color: #fff;
     border: none;
@@ -364,7 +506,6 @@ body {
 
 /* 保存完了トースト */
 .save-toast {
-    display: inline-block;
     margin-top: 12px;
     font-size: 0.82rem;
     color: #16a34a;
@@ -374,7 +515,6 @@ body {
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* トースト表示時のクラス */
 .save-toast.show {
     opacity: 1;
     transform: translateY(0);
@@ -403,30 +543,25 @@ body {
         padding: 20px 16px 40px;
     }
 
-    /* カードを縦並びに変更 */
     .today-cards {
         grid-template-columns: 1fr;
     }
 
-    .schedule-section {
-        padding: 22px 18px;
+    .settings-section {
+        padding: 22px 16px;
     }
 
-    /* 曜日行を縦に */
     .schedule-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 4px;
+        flex-wrap: wrap;
     }
 
-    .day-label {
-        text-align: left;
-        width: auto;
+    .freq-select {
+        min-width: 100px;
+        font-size: 0.78rem;
     }
 
-    .day-label-en {
-        display: inline;
-        margin-left: 6px;
+    .type-row {
+        flex-wrap: wrap;
     }
 }
 
@@ -437,5 +572,9 @@ body {
 
     .day-card {
         padding: 18px 14px;
+    }
+
+    .schedule-day-block {
+        padding: 12px;
     }
 }

@@ -1,11 +1,15 @@
 /* ========================================
    Smart Trash Reminder — メインスクリプト
-   機能: 曜日判定、LocalStorage保存、Googleカレンダー連携
+   機能: ゴミ種類マスター管理・曜日×頻度スケジュール・
+         第N曜日判定・LocalStorage・Googleカレンダー連携
    ======================================== */
 
-// --- 曜日データの定義（月曜始まり） ---
-// 各曜日の日本語名・英語名・キー名をまとめた配列
-const DAYS = [
+// =============================================
+// 定数定義
+// =============================================
+
+// --- 曜日データ（月曜始まり） ---
+var DAYS = [
     { key: 'monday', ja: '月曜日', en: 'Monday' },
     { key: 'tuesday', ja: '火曜日', en: 'Tuesday' },
     { key: 'wednesday', ja: '水曜日', en: 'Wednesday' },
@@ -15,278 +19,639 @@ const DAYS = [
     { key: 'sunday', ja: '日曜日', en: 'Sunday' }
 ];
 
-// --- 初期ダミーデータ（初回アクセス時のデフォルト値） ---
-// 初回でも画面が寂しくないよう、一般的なゴミ出しスケジュールをセット
-const DEFAULT_SCHEDULE = {
-    monday: '可燃ゴミ',
-    tuesday: '不燃ゴミ',
-    wednesday: '資源ゴミ',
-    thursday: '可燃ゴミ',
-    friday: 'プラスチック',
-    saturday: 'ペットボトル・びん・缶',
-    sunday: ''
-};
-
-// --- LocalStorageのキー名 ---
-const STORAGE_KEY = 'smartTrashReminder_schedule';
-
-// --- ゴミの種類 → バッジCSSクラスのマッピング ---
-// テキストの中にキーワードが含まれているかで判定する
-const BADGE_MAP = [
-    { keywords: ['可燃', 'burnable', '燃える', '燃やせる'], className: 'badge-burnable' },
-    { keywords: ['不燃', 'nonburnable', '燃えない', '燃やせない'], className: 'badge-nonburnable' },
-    { keywords: ['資源', 'recyclable', 'リサイクル'], className: 'badge-recyclable' },
-    { keywords: ['プラ', 'plastic', 'プラスチック'], className: 'badge-plastic' },
-    { keywords: ['ペット', 'びん', '缶', 'bottle', 'can', 'pet'], className: 'badge-bottles' },
-    { keywords: ['粗大', 'oversized', '大型'], className: 'badge-oversized' }
+// --- 頻度の選択肢 ---
+var FREQUENCIES = [
+    { value: 'every', label: '毎週 / Every week' },
+    { value: 'week1', label: '第1 / 1st week' },
+    { value: 'week2', label: '第2 / 2nd week' },
+    { value: 'week3', label: '第3 / 3rd week' },
+    { value: 'week4', label: '第4 / 4th week' },
+    { value: 'week5', label: '第5 / 5th week' },
+    { value: 'week13', label: '第1・第3 / 1st & 3rd' },
+    { value: 'week24', label: '第2・第4 / 2nd & 4th' }
 ];
 
-// --- DOM要素の取得 ---
-const todayDateEl = document.getElementById('today-date');
-const todayTrashEl = document.getElementById('today-trash');
-const tomorrowDateEl = document.getElementById('tomorrow-date');
-const tomorrowTrashEl = document.getElementById('tomorrow-trash');
-const scheduleFormEl = document.getElementById('schedule-form');
-const saveBtnEl = document.getElementById('save-btn');
-const saveToastEl = document.getElementById('save-toast');
-const gcalBtnEl = document.getElementById('gcal-btn');
+// --- LocalStorageのキー名 ---
+var STORAGE_KEY_TYPES = 'smartTrash_types';
+var STORAGE_KEY_SCHEDULE = 'smartTrash_schedule';
 
-// --- 初期化処理 ---
+// --- 初期プリセットのゴミの種類 ---
+var DEFAULT_TYPES = [
+    { id: 'type_1', name: '可燃ゴミ', color: '#dc2626' },
+    { id: 'type_2', name: '不燃ゴミ', color: '#2563eb' },
+    { id: 'type_3', name: '資源ゴミ', color: '#16a34a' },
+    { id: 'type_4', name: 'プラスチック', color: '#ea580c' }
+];
+
+// --- 初期プリセットのスケジュール ---
+var DEFAULT_SCHEDULE = {
+    monday: [{ frequency: 'every', typeId: 'type_1' }],
+    tuesday: [{ frequency: 'every', typeId: 'type_2' }],
+    wednesday: [{ frequency: 'every', typeId: 'type_3' }],
+    thursday: [{ frequency: 'every', typeId: 'type_1' }],
+    friday: [{ frequency: 'every', typeId: 'type_4' }],
+    saturday: [],
+    sunday: []
+};
+
+// =============================================
+// グローバル変数
+// =============================================
+
+// 現在のデータを保持する変数
+var currentTypes = [];
+var currentSchedule = {};
+var typeIdCounter = 10; // 新規種類のID用カウンター
+
+// =============================================
+// DOM要素の取得
+// =============================================
+
+var todayDateEl = document.getElementById('today-date');
+var todayTrashEl = document.getElementById('today-trash');
+var tomorrowDateEl = document.getElementById('tomorrow-date');
+var tomorrowTrashEl = document.getElementById('tomorrow-trash');
+var trashTypesListEl = document.getElementById('trash-types-list');
+var scheduleSettingsEl = document.getElementById('schedule-settings');
+var saveBtnEl = document.getElementById('save-btn');
+var saveToastEl = document.getElementById('save-toast');
+var gcalBtnEl = document.getElementById('gcal-btn');
+var addTypeBtnEl = document.getElementById('add-type-btn');
+
+// =============================================
+// 初期化処理
+// =============================================
+
 document.addEventListener('DOMContentLoaded', function () {
-    // スケジュールフォームを生成
-    buildScheduleForm();
+    // LocalStorageからデータを読み込み（なければデフォルト）
+    loadData();
 
-    // LocalStorageからデータを読み込み（なければデフォルト値を使用）
-    loadSchedule();
+    // UIを構築
+    renderTrashTypes();
+    renderScheduleSettings();
 
     // 今日と明日の表示を更新
     updateTodayTomorrow();
+
+    // イベントリスナーを設定
+    saveBtnEl.addEventListener('click', saveAll);
+    addTypeBtnEl.addEventListener('click', addNewType);
 });
 
-// --- スケジュールフォームの動的生成 ---
-function buildScheduleForm() {
-    // 7つの曜日分の入力行を生成
-    DAYS.forEach(function (day) {
-        // 行の親要素を作成
-        const row = document.createElement('div');
-        row.className = 'schedule-row';
+// =============================================
+// データの読み込み・保存
+// =============================================
 
-        // 曜日ラベル
-        const label = document.createElement('label');
-        label.className = 'day-label';
-        label.setAttribute('for', 'input-' + day.key);
-        label.innerHTML = day.ja + '<span class="day-label-en">' + day.en + '</span>';
-
-        // テキスト入力欄
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.id = 'input-' + day.key;
-        input.className = 'schedule-input';
-        input.placeholder = 'ゴミの種類を入力 / Trash type';
-
-        // 行に追加
-        row.appendChild(label);
-        row.appendChild(input);
-        scheduleFormEl.appendChild(row);
-    });
-}
-
-// --- LocalStorageからスケジュールを読み込む ---
-function loadSchedule() {
-    // LocalStorageに保存されたデータを取得
-    const saved = localStorage.getItem(STORAGE_KEY);
-
-    // 保存データがあればパース、なければデフォルト値を使用
-    let schedule;
-    if (saved) {
+// --- LocalStorageからデータを読み込む ---
+function loadData() {
+    // ゴミの種類を読み込み
+    var savedTypes = localStorage.getItem(STORAGE_KEY_TYPES);
+    if (savedTypes) {
         try {
-            schedule = JSON.parse(saved);
+            currentTypes = JSON.parse(savedTypes);
         } catch (e) {
-            // パースエラーの場合はデフォルト値を使用
-            schedule = DEFAULT_SCHEDULE;
+            currentTypes = JSON.parse(JSON.stringify(DEFAULT_TYPES));
         }
     } else {
-        // 初回アクセス: デフォルトデータをセットしてLocalStorageにも保存
-        schedule = DEFAULT_SCHEDULE;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(schedule));
+        currentTypes = JSON.parse(JSON.stringify(DEFAULT_TYPES));
     }
 
-    // フォームの入力欄にデータを反映
-    DAYS.forEach(function (day) {
-        const input = document.getElementById('input-' + day.key);
-        if (input && schedule[day.key] !== undefined) {
-            input.value = schedule[day.key];
+    // スケジュールを読み込み
+    var savedSchedule = localStorage.getItem(STORAGE_KEY_SCHEDULE);
+    if (savedSchedule) {
+        try {
+            currentSchedule = JSON.parse(savedSchedule);
+        } catch (e) {
+            currentSchedule = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
+        }
+    } else {
+        currentSchedule = JSON.parse(JSON.stringify(DEFAULT_SCHEDULE));
+    }
+
+    // IDカウンターを既存の最大値+1に設定（重複防止）
+    currentTypes.forEach(function (t) {
+        var num = parseInt(t.id.replace('type_', ''), 10);
+        if (!isNaN(num) && num >= typeIdCounter) {
+            typeIdCounter = num + 1;
         }
     });
 }
 
-// --- スケジュールをLocalStorageに保存する ---
-function saveSchedule() {
-    // 各入力欄から値を取得してオブジェクトにまとめる
-    const schedule = {};
-    DAYS.forEach(function (day) {
-        const input = document.getElementById('input-' + day.key);
-        schedule[day.key] = input ? input.value.trim() : '';
-    });
+// --- すべてのデータをLocalStorageに保存する ---
+function saveAll() {
+    // フォームからデータを収集
+    collectTypesFromUI();
+    collectScheduleFromUI();
 
     // LocalStorageに保存
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(schedule));
+    localStorage.setItem(STORAGE_KEY_TYPES, JSON.stringify(currentTypes));
+    localStorage.setItem(STORAGE_KEY_SCHEDULE, JSON.stringify(currentSchedule));
 
-    // 今日・明日の表示を更新する
+    // 今日・明日の表示を更新
     updateTodayTomorrow();
 
-    // 保存完了トーストを表示
+    // スケジュールのプルダウンを最新の種類で更新
+    renderScheduleSettings();
+
+    // トースト表示
     showToast();
 }
 
 // --- 保存完了トーストの表示 ---
 function showToast() {
     saveToastEl.classList.add('show');
-    // 2秒後に自動で非表示にする
     setTimeout(function () {
         saveToastEl.classList.remove('show');
     }, 2000);
 }
 
-// --- 保存ボタンのクリックイベント ---
-saveBtnEl.addEventListener('click', saveSchedule);
+// =============================================
+// 【A】ゴミの種類設定のUI
+// =============================================
+
+// --- ゴミの種類リストを描画する ---
+function renderTrashTypes() {
+    trashTypesListEl.innerHTML = '';
+
+    currentTypes.forEach(function (type, index) {
+        var row = document.createElement('div');
+        row.className = 'type-row';
+        row.setAttribute('data-type-id', type.id);
+
+        // カラーピッカー
+        var colorInput = document.createElement('input');
+        colorInput.type = 'color';
+        colorInput.className = 'type-color-picker';
+        colorInput.value = type.color;
+        colorInput.title = '色を選択 / Pick color';
+
+        // 種類名テキスト入力
+        var nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.className = 'type-name-input';
+        nameInput.value = type.name;
+        nameInput.placeholder = '種類名 / Type name';
+
+        // 削除ボタン
+        var deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.textContent = '✕';
+        deleteBtn.title = '削除 / Delete';
+        deleteBtn.addEventListener('click', function () {
+            removeType(type.id);
+        });
+
+        row.appendChild(colorInput);
+        row.appendChild(nameInput);
+        row.appendChild(deleteBtn);
+        trashTypesListEl.appendChild(row);
+    });
+}
+
+// --- 新しいゴミの種類を追加する ---
+function addNewType() {
+    // UIから最新データを収集（入力中のデータを保持するため）
+    collectTypesFromUI();
+
+    var newId = 'type_' + typeIdCounter;
+    typeIdCounter++;
+
+    currentTypes.push({
+        id: newId,
+        name: '',
+        color: '#6b7280'
+    });
+
+    renderTrashTypes();
+}
+
+// --- ゴミの種類を削除する ---
+function removeType(typeId) {
+    // UIから最新データを収集
+    collectTypesFromUI();
+
+    // 対象を除外
+    currentTypes = currentTypes.filter(function (t) {
+        return t.id !== typeId;
+    });
+
+    // スケジュールから該当typeIdの行も削除
+    DAYS.forEach(function (day) {
+        if (currentSchedule[day.key]) {
+            currentSchedule[day.key] = currentSchedule[day.key].filter(function (entry) {
+                return entry.typeId !== typeId;
+            });
+        }
+    });
+
+    renderTrashTypes();
+    renderScheduleSettings();
+}
+
+// --- UIからゴミの種類データを収集する ---
+function collectTypesFromUI() {
+    var rows = trashTypesListEl.querySelectorAll('.type-row');
+    var newTypes = [];
+
+    rows.forEach(function (row) {
+        var id = row.getAttribute('data-type-id');
+        var colorInput = row.querySelector('.type-color-picker');
+        var nameInput = row.querySelector('.type-name-input');
+
+        newTypes.push({
+            id: id,
+            name: nameInput.value.trim(),
+            color: colorInput.value
+        });
+    });
+
+    currentTypes = newTypes;
+}
+
+// =============================================
+// 【B】スケジュール設定のUI
+// =============================================
+
+// --- スケジュール設定エリアを描画する ---
+function renderScheduleSettings() {
+    // 描画前にUIからスケジュールデータを収集（入力中のデータを保持）
+    // ただし初回描画時は要素がないのでスキップ
+    if (scheduleSettingsEl.children.length > 0) {
+        collectScheduleFromUI();
+    }
+
+    scheduleSettingsEl.innerHTML = '';
+
+    DAYS.forEach(function (day) {
+        var block = document.createElement('div');
+        block.className = 'schedule-day-block';
+        block.setAttribute('data-day-key', day.key);
+
+        // 曜日ヘッダー
+        var header = document.createElement('div');
+        header.className = 'schedule-day-header';
+        header.innerHTML = day.ja + ' <span class="schedule-day-header-en">' + day.en + '</span>';
+        block.appendChild(header);
+
+        // スケジュール行のコンテナ
+        var rowsContainer = document.createElement('div');
+        rowsContainer.className = 'schedule-rows';
+
+        // 該当曜日のスケジュール行を描画
+        var entries = currentSchedule[day.key] || [];
+
+        if (entries.length === 0) {
+            // 空状態のメッセージ
+            var emptyMsg = document.createElement('div');
+            emptyMsg.className = 'empty-schedule';
+            emptyMsg.textContent = '予定なし / No schedule';
+            rowsContainer.appendChild(emptyMsg);
+        } else {
+            entries.forEach(function (entry, entryIndex) {
+                var row = createScheduleRow(day.key, entry, entryIndex);
+                rowsContainer.appendChild(row);
+            });
+        }
+
+        block.appendChild(rowsContainer);
+
+        // 「＋ ○曜日の予定を追加」ボタン
+        var addBtn = document.createElement('button');
+        addBtn.className = 'add-schedule-btn';
+        addBtn.textContent = '＋ ' + day.ja + 'の予定を追加 / Add to ' + day.en;
+        addBtn.addEventListener('click', (function (dayKey) {
+            return function () {
+                addScheduleEntry(dayKey);
+            };
+        })(day.key));
+        block.appendChild(addBtn);
+
+        scheduleSettingsEl.appendChild(block);
+    });
+}
+
+// --- スケジュール行の要素を作成する ---
+function createScheduleRow(dayKey, entry, entryIndex) {
+    var row = document.createElement('div');
+    row.className = 'schedule-row';
+
+    // 頻度プルダウン
+    var freqSelect = document.createElement('select');
+    freqSelect.className = 'freq-select';
+
+    FREQUENCIES.forEach(function (freq) {
+        var option = document.createElement('option');
+        option.value = freq.value;
+        option.textContent = freq.label;
+        if (entry.frequency === freq.value) {
+            option.selected = true;
+        }
+        freqSelect.appendChild(option);
+    });
+
+    // ゴミの種類プルダウン
+    var typeSelect = document.createElement('select');
+    typeSelect.className = 'type-select';
+
+    // 「選択してください」オプション
+    var defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = '-- 種類を選択 / Select type --';
+    typeSelect.appendChild(defaultOption);
+
+    currentTypes.forEach(function (type) {
+        var option = document.createElement('option');
+        option.value = type.id;
+        option.textContent = type.name || '(名前なし)';
+        if (entry.typeId === type.id) {
+            option.selected = true;
+        }
+        typeSelect.appendChild(option);
+    });
+
+    // 削除ボタン
+    var deleteBtn = document.createElement('button');
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.textContent = '✕';
+    deleteBtn.title = '削除 / Delete';
+    deleteBtn.addEventListener('click', (function (dk, idx) {
+        return function () {
+            removeScheduleEntry(dk, idx);
+        };
+    })(dayKey, entryIndex));
+
+    row.appendChild(freqSelect);
+    row.appendChild(typeSelect);
+    row.appendChild(deleteBtn);
+
+    return row;
+}
+
+// --- スケジュール行を追加する ---
+function addScheduleEntry(dayKey) {
+    // UIから最新データを収集
+    collectScheduleFromUI();
+
+    if (!currentSchedule[dayKey]) {
+        currentSchedule[dayKey] = [];
+    }
+
+    // デフォルトで「毎週」「最初の種類」を追加
+    var defaultTypeId = currentTypes.length > 0 ? currentTypes[0].id : '';
+    currentSchedule[dayKey].push({
+        frequency: 'every',
+        typeId: defaultTypeId
+    });
+
+    renderScheduleSettings();
+}
+
+// --- スケジュール行を削除する ---
+function removeScheduleEntry(dayKey, entryIndex) {
+    // UIから最新データを収集
+    collectScheduleFromUI();
+
+    if (currentSchedule[dayKey]) {
+        currentSchedule[dayKey].splice(entryIndex, 1);
+    }
+
+    renderScheduleSettings();
+}
+
+// --- UIからスケジュールデータを収集する ---
+function collectScheduleFromUI() {
+    var blocks = scheduleSettingsEl.querySelectorAll('.schedule-day-block');
+
+    blocks.forEach(function (block) {
+        var dayKey = block.getAttribute('data-day-key');
+        var rows = block.querySelectorAll('.schedule-row');
+        var entries = [];
+
+        rows.forEach(function (row) {
+            var freqSelect = row.querySelector('.freq-select');
+            var typeSelect = row.querySelector('.type-select');
+
+            if (freqSelect && typeSelect) {
+                entries.push({
+                    frequency: freqSelect.value,
+                    typeId: typeSelect.value
+                });
+            }
+        });
+
+        currentSchedule[dayKey] = entries;
+    });
+}
+
+// =============================================
+// 今日と明日の表示
+// =============================================
 
 // --- 今日と明日の表示を更新する ---
 function updateTodayTomorrow() {
-    // 現在の日付を取得
-    const now = new Date();
-
-    // 明日の日付を計算
-    const tomorrow = new Date(now);
+    var now = new Date();
+    var tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // 保存されたスケジュールを取得
-    const saved = localStorage.getItem(STORAGE_KEY);
-    let schedule;
-    try {
-        schedule = saved ? JSON.parse(saved) : DEFAULT_SCHEDULE;
-    } catch (e) {
-        schedule = DEFAULT_SCHEDULE;
-    }
-
-    // 今日の曜日キーを取得（JavaScriptのgetDay()は日曜=0なので変換が必要）
-    const todayKey = getDayKey(now.getDay());
-    const tomorrowKey = getDayKey(tomorrow.getDay());
-
-    // 今日のゴミの種類を取得
-    const todayTrash = schedule[todayKey] || '';
-    const tomorrowTrash = schedule[tomorrowKey] || '';
-
-    // 日付テキストをフォーマット
+    // 日付をフォーマットして表示
     todayDateEl.textContent = formatDate(now);
     tomorrowDateEl.textContent = formatDate(tomorrow);
 
-    // ゴミの種類をバッジとして表示
-    renderTrashBadges(todayTrashEl, todayTrash);
-    renderTrashBadges(tomorrowTrashEl, tomorrowTrash);
+    // 今日と明日に該当するゴミの種類を取得
+    var todayItems = getTrashForDate(now);
+    var tomorrowItems = getTrashForDate(tomorrow);
 
-    // Googleカレンダーボタンの状態を更新
-    updateGcalButton(todayTrash, now);
+    // バッジを描画
+    renderDayBadges(todayTrashEl, todayItems);
+    renderDayBadges(tomorrowTrashEl, tomorrowItems);
+
+    // Googleカレンダーボタンを更新
+    updateGcalButton(todayItems, now);
+}
+
+// --- 指定日のゴミの種類リストを取得する ---
+function getTrashForDate(date) {
+    // 曜日キーを取得
+    var dayKey = getDayKey(date.getDay());
+
+    // その月の第何曜日かを計算
+    var weekNumber = getNthWeekday(date);
+
+    // 該当曜日のスケジュールを取得
+    var entries = currentSchedule[dayKey] || [];
+
+    // 条件に合うエントリをフィルタリング
+    var matchedItems = [];
+
+    entries.forEach(function (entry) {
+        var matches = false;
+
+        switch (entry.frequency) {
+            case 'every':
+                // 毎週 → 常にマッチ
+                matches = true;
+                break;
+            case 'week1':
+                matches = (weekNumber === 1);
+                break;
+            case 'week2':
+                matches = (weekNumber === 2);
+                break;
+            case 'week3':
+                matches = (weekNumber === 3);
+                break;
+            case 'week4':
+                matches = (weekNumber === 4);
+                break;
+            case 'week5':
+                matches = (weekNumber === 5);
+                break;
+            case 'week13':
+                // 第1・第3
+                matches = (weekNumber === 1 || weekNumber === 3);
+                break;
+            case 'week24':
+                // 第2・第4
+                matches = (weekNumber === 2 || weekNumber === 4);
+                break;
+        }
+
+        if (matches && entry.typeId) {
+            // ゴミの種類情報を検索
+            var typeInfo = findTypeById(entry.typeId);
+            if (typeInfo) {
+                // 重複チェック（同じ種類が2回表示されないように）
+                var alreadyAdded = matchedItems.some(function (item) {
+                    return item.id === typeInfo.id;
+                });
+                if (!alreadyAdded) {
+                    matchedItems.push(typeInfo);
+                }
+            }
+        }
+    });
+
+    return matchedItems;
+}
+
+// --- ゴミの種類をIDで検索する ---
+function findTypeById(typeId) {
+    for (var i = 0; i < currentTypes.length; i++) {
+        if (currentTypes[i].id === typeId) {
+            return currentTypes[i];
+        }
+    }
+    return null;
+}
+
+// --- その月の第何曜日かを計算する ---
+// 例: 2月の第3月曜日 → weekNumber = 3
+function getNthWeekday(date) {
+    var dayOfMonth = date.getDate();
+    return Math.ceil(dayOfMonth / 7);
 }
 
 // --- JavaScriptの曜日番号（0=日, 1=月, ...）をキー名に変換 ---
 function getDayKey(dayIndex) {
-    const map = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    var map = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     return map[dayIndex];
 }
 
 // --- 日付をフォーマットする関数 ---
 function formatDate(date) {
-    const year = date.getFullYear();
-    const month = date.getMonth() + 1; // 月は0始まりなので+1
-    const day = date.getDate();
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+    var dayNamesEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    var dayName = dayNames[date.getDay()];
+    var dayNameEn = dayNamesEn[date.getDay()];
 
-    // 曜日の日本語名を取得
-    const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
-    const dayName = dayNames[date.getDay()];
+    // 第何週かも表示
+    var nth = getNthWeekday(date);
 
-    // 曜日の英語名を取得
-    const dayNamesEn = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const dayNameEn = dayNamesEn[date.getDay()];
-
-    return year + '/' + month + '/' + day + ' (' + dayName + ' / ' + dayNameEn + ')';
+    return year + '/' + month + '/' + day + ' (' + dayName + ' / ' + dayNameEn + ') 第' + nth + '週';
 }
 
-// --- ゴミの種類をバッジとして描画する関数 ---
-function renderTrashBadges(container, trashText) {
-    // コンテナをクリア
+// --- 今日/明日カードにバッジを描画する ---
+function renderDayBadges(container, items) {
     container.innerHTML = '';
 
-    // 未設定の場合
-    if (!trashText) {
-        const badge = document.createElement('span');
+    if (items.length === 0) {
+        // 未設定の場合
+        var badge = document.createElement('span');
         badge.className = 'trash-badge badge-notset';
         badge.textContent = '未設定 / Not set';
         container.appendChild(badge);
         return;
     }
 
-    // テキストを「・」「,」「、」「/」で分割して複数のバッジに対応
-    const items = trashText.split(/[・,、/]+/).map(function (s) { return s.trim(); }).filter(Boolean);
-
     items.forEach(function (item) {
-        const badge = document.createElement('span');
-        badge.className = 'trash-badge ' + getBadgeClass(item);
-        badge.textContent = item;
+        var badge = document.createElement('span');
+        badge.className = 'trash-badge';
+
+        // テーマカラーを使ったバッジスタイル
+        // 背景色を薄くし、文字色を濃くする
+        var bgColor = hexToRgba(item.color, 0.1);
+        var borderColor = hexToRgba(item.color, 0.3);
+        badge.style.backgroundColor = bgColor;
+        badge.style.color = item.color;
+        badge.style.border = '1px solid ' + borderColor;
+
+        // 色ドット
+        var dot = document.createElement('span');
+        dot.className = 'badge-dot';
+        dot.style.backgroundColor = item.color;
+
+        badge.appendChild(dot);
+        badge.appendChild(document.createTextNode(' ' + item.name));
         container.appendChild(badge);
     });
 }
 
-// --- テキストからバッジのCSSクラスを判定する関数 ---
-function getBadgeClass(text) {
-    const lowerText = text.toLowerCase();
-
-    // キーワードリストを順にチェック
-    for (let i = 0; i < BADGE_MAP.length; i++) {
-        const entry = BADGE_MAP[i];
-        for (let j = 0; j < entry.keywords.length; j++) {
-            if (lowerText.indexOf(entry.keywords[j]) !== -1) {
-                return entry.className;
-            }
-        }
-    }
-
-    // どのキーワードにもマッチしない場合はデフォルト
-    return 'badge-default';
+// --- HEXカラーをRGBA文字列に変換するヘルパー ---
+function hexToRgba(hex, alpha) {
+    // #rrggbb形式のHEXからR, G, Bを取り出す
+    var r = parseInt(hex.substring(1, 3), 16);
+    var g = parseInt(hex.substring(3, 5), 16);
+    var b = parseInt(hex.substring(5, 7), 16);
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
 }
 
+// =============================================
+// Googleカレンダー連携
+// =============================================
+
 // --- Googleカレンダーボタンの状態を更新する ---
-function updateGcalButton(trashText, date) {
-    if (!trashText) {
-        // 未設定の場合はボタンを非活性にする
+function updateGcalButton(todayItems, date) {
+    if (todayItems.length === 0) {
         gcalBtnEl.disabled = true;
         gcalBtnEl.onclick = null;
         return;
     }
 
-    // ボタンを有効化
     gcalBtnEl.disabled = false;
 
-    // クリック時の処理を設定
+    // 今日のゴミの種類名をカンマ区切りで結合
+    var trashNames = todayItems.map(function (item) {
+        return item.name;
+    }).join('・');
+
     gcalBtnEl.onclick = function () {
-        openGoogleCalendar(trashText, date);
+        openGoogleCalendar(trashNames, date);
     };
 }
 
 // --- Googleカレンダーの予定作成画面を開く ---
 function openGoogleCalendar(trashText, date) {
-    // タイトルを組み立て
-    const title = 'ゴミ出し：' + trashText;
+    var title = 'ゴミ出し：' + trashText;
 
-    // 日付をGoogleカレンダーのフォーマット（YYYYMMDD）に変換
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const dateStr = year + month + day;
+    var year = date.getFullYear();
+    var month = String(date.getMonth() + 1).padStart(2, '0');
+    var day = String(date.getDate()).padStart(2, '0');
+    var dateStr = year + month + day;
 
-    // GoogleカレンダーのURLを組み立て
-    // 終日イベントとして登録（dates=YYYYMMDD/YYYYMMDD 形式）
-    const url = 'https://calendar.google.com/calendar/render'
+    var url = 'https://calendar.google.com/calendar/render'
         + '?action=TEMPLATE'
         + '&text=' + encodeURIComponent(title)
         + '&dates=' + dateStr + '/' + dateStr
@@ -294,6 +659,5 @@ function openGoogleCalendar(trashText, date) {
         + '&sf=true'
         + '&output=xml';
 
-    // 別タブで開く
     window.open(url, '_blank');
 }
