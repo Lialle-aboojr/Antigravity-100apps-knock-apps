@@ -10,6 +10,7 @@ const lineColorInput = document.getElementById('line-color');
 const animationTypeSelect = document.getElementById('animation-type');
 const menuBgColorInput = document.getElementById('menu-bg-color');
 const menuTextColorInput = document.getElementById('menu-text-color');
+const menuFontFamilySelect = document.getElementById('menu-font-family');
 const slideDirectionSelect = document.getElementById('slide-direction');
 
 const hamburgerIcon = document.getElementById('hamburger-icon');
@@ -56,6 +57,9 @@ function updatePreview() {
   const menuBgColor = menuBgColorInput.value;
   const menuTextColor = menuTextColorInput.value;
 
+  // フォントを取得
+  const menuFontFamily = menuFontFamilySelect.value;
+
   // スライド方向を取得
   const slideDirection = slideDirectionSelect.value;
 
@@ -85,6 +89,9 @@ function updatePreview() {
   menuLinks.forEach(link => {
     link.style.color = menuTextColor;
   });
+
+  // フォントをメニューパネルに適用
+  menuPanel.style.fontFamily = menuFontFamily;
 
   // スライド方向クラスをリセットして再設定
   menuPanel.classList.remove('slide-right', 'slide-left', 'slide-top');
@@ -125,6 +132,7 @@ lineColorInput.addEventListener('input', updatePreview);
 animationTypeSelect.addEventListener('change', updatePreview);
 menuBgColorInput.addEventListener('input', updatePreview);
 menuTextColorInput.addEventListener('input', updatePreview);
+menuFontFamilySelect.addEventListener('change', updatePreview);
 slideDirectionSelect.addEventListener('change', updatePreview);
 
 // ===== コード生成 =====
@@ -135,6 +143,7 @@ function generateCode() {
   const animationType = animationTypeSelect.value;
   const menuBgColor = menuBgColorInput.value;
   const menuTextColor = menuTextColorInput.value;
+  const menuFontFamily = menuFontFamilySelect.value;
   const slideDirection = slideDirectionSelect.value;
 
   // 線の間隔を計算
@@ -143,7 +152,7 @@ function generateCode() {
 
   // ===== HTML コード生成 =====
   generatedCode.html =
-`<!-- ハンバーガーメニュー / Hamburger Menu -->
+    `<!-- ハンバーガーメニュー / Hamburger Menu -->
 <!-- このHTMLをbody内の適切な位置に貼り付けてください -->
 
 <!-- ハンバーガーアイコン（ボタン） -->
@@ -170,7 +179,7 @@ function generateCode() {
   if (animationType === 'cross') {
     // 王道のクロス
     animationCSS =
-`/* --- 王道のクロス アニメーション --- */
+      `/* --- 王道のクロス アニメーション --- */
 /* 上の線: 中央に移動して45度回転 */
 .hamburger-icon.is-open .line-top {
   transform: translateY(${lineGap}px) rotate(45deg);
@@ -187,10 +196,10 @@ function generateCode() {
   } else if (animationType === 'rotate-cross') {
     // 回転してクロス
     animationCSS =
-`/* --- 回転してクロス アニメーション --- */
-/* アイコン全体を180度回転 */
+      `/* --- 回転してクロス アニメーション --- */
+/* アイコン全体を360度回転させてダイナミックに変化 */
 .hamburger-icon.is-open {
-  transform: rotate(180deg);
+  transform: rotate(360deg);
 }
 /* 上の線: 中央に移動して45度回転 */
 .hamburger-icon.is-open .line-top {
@@ -208,7 +217,7 @@ function generateCode() {
   } else if (animationType === 'minus') {
     // マイナス
     animationCSS =
-`/* --- マイナス アニメーション --- */
+      `/* --- マイナス アニメーション --- */
 /* 上の線: 中央に移動して非表示 */
 .hamburger-icon.is-open .line-top {
   transform: translateY(${lineGap}px);
@@ -230,7 +239,7 @@ function generateCode() {
 
   if (slideDirection === 'right') {
     slideCSS =
-`/* --- 右からスライド --- */
+      `/* --- 右からスライド --- */
 .menu-panel {
   position: fixed;
   top: 0;
@@ -245,7 +254,7 @@ function generateCode() {
 }`;
   } else if (slideDirection === 'left') {
     slideCSS =
-`/* --- 左からスライド --- */
+      `/* --- 左からスライド --- */
 .menu-panel {
   position: fixed;
   top: 0;
@@ -260,7 +269,7 @@ function generateCode() {
 }`;
   } else if (slideDirection === 'top') {
     slideCSS =
-`/* --- 上からスライド --- */
+      `/* --- 上からスライド --- */
 .menu-panel {
   position: fixed;
   top: 0;
@@ -276,7 +285,7 @@ function generateCode() {
   }
 
   generatedCode.css =
-`/* ===== ハンバーガーメニュー スタイル ===== */
+    `/* ===== ハンバーガーメニュー スタイル ===== */
 /* このCSSをあなたのスタイルシートに追加してください */
 
 /* ハンバーガーアイコンのボタン */
@@ -292,7 +301,7 @@ function generateCode() {
   cursor: pointer;
   padding: 6px;
   gap: ${lineGap - parseInt(lineWidth)}px;
-  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 /* ハンバーガーの各線 */
@@ -315,6 +324,7 @@ ${slideCSS}
 .menu-panel {
   background-color: ${menuBgColor};
   color: ${menuTextColor};
+  font-family: ${menuFontFamily};
   z-index: 1000;
   display: flex;
   align-items: center;
@@ -350,7 +360,7 @@ ${slideCSS}
 
   // ===== JavaScript コード生成 =====
   generatedCode.js =
-`// ===== ハンバーガーメニュー スクリプト =====
+    `// ===== ハンバーガーメニュー スクリプト =====
 // このJavaScriptをあなたのスクリプトに追加してください
 
 // ハンバーガーアイコンとメニューパネルを取得
@@ -424,7 +434,7 @@ copyBtn.addEventListener('click', () => {
 copyAllBtn.addEventListener('click', () => {
   // 全コードを結合
   const allCode =
-`/* ===========================
+    `/* ===========================
    HTML コード
    =========================== */
 ${generatedCode.html}

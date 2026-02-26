@@ -51,13 +51,36 @@ body {
     background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
     border-bottom: 1px solid var(--border-color);
     padding: 20px 32px;
-    text-align: center;
+    /* 完璧な中央揃え */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.app-header h1 {
+/* タイトル全体をflexboxで横並びにして絵文字が潰れないようにする */
+.app-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     font-size: 1.6rem;
     font-weight: 700;
     letter-spacing: 0.5px;
+    margin: 0;
+    text-align: center;
+}
+
+/* 絵文字部分: background-clipの影響を受けないよう独立させる */
+.title-emoji {
+    font-size: 2rem;
+    line-height: 1;
+    flex-shrink: 0;
+    /* 絵文字はグラデーションテキストにしない */
+    -webkit-text-fill-color: initial;
+}
+
+/* テキスト部分: グラデーション文字 */
+.title-text {
     background: linear-gradient(135deg, #fff, var(--accent));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -270,6 +293,8 @@ body {
     gap: 5px;
     position: relative;
     z-index: 20;
+    /* 回転クロス用のtransitionを追加 */
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
 }
 
 .hamburger-line {
@@ -297,8 +322,9 @@ body {
 }
 
 /* ===== 回転してクロス (rotate-cross) ===== */
+/* 【修正】アイコン全体を360度回転させて明確な違いを出す */
 .hamburger-icon.anim-rotate-cross.is-open {
-    transform: rotate(180deg);
+    transform: rotate(360deg);
 }
 
 .hamburger-icon.anim-rotate-cross.is-open .line-top {
@@ -576,8 +602,13 @@ body {
         padding: 16px 20px;
     }
 
-    .app-header h1 {
+    .app-title {
         font-size: 1.2rem;
+        flex-wrap: wrap;
+    }
+
+    .title-emoji {
+        font-size: 1.6rem;
     }
 
     .header-sub {

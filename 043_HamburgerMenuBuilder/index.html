@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ハンバーガーメニュービルダー / Hamburger Menu Builder</title>
   <meta name="description" content="ハンバーガーメニューのアニメーションをカスタマイズし、実装用コードを生成するツール">
   <!-- ファビコン: ハンバーガー絵文字をSVGで表示 -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍔</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍔</text></svg>">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <!-- ===== ヘッダー ===== -->
   <header class="app-header">
-    <h1>🍔 ハンバーガーメニュービルダー <span class="header-sub">/ Hamburger Menu Builder</span></h1>
+    <h1 class="app-title">
+      <span class="title-emoji">🍔</span>
+      <span class="title-text">ハンバーガーメニュービルダー <span class="header-sub">/ Hamburger Menu Builder</span></span>
+    </h1>
   </header>
 
   <!-- ===== メインコンテンツ ===== -->
@@ -63,6 +69,16 @@
         <div class="setting-item">
           <label for="menu-text-color">テキスト色 / Text Color</label>
           <input type="color" id="menu-text-color" value="#ffffff">
+        </div>
+
+        <!-- フォント選択 -->
+        <div class="setting-item">
+          <label for="menu-font-family">フォント / Font Family</label>
+          <select id="menu-font-family">
+            <option value="sans-serif">ゴシック体 / Sans-serif</option>
+            <option value="serif">明朝体 / Serif</option>
+            <option value="monospace">等幅 / Monospace</option>
+          </select>
         </div>
 
         <!-- スライド方向 -->
@@ -139,4 +155,5 @@
 
   <script src="script.js"></script>
 </body>
+
 </html>
