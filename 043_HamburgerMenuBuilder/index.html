@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ハンバーガーメニュービルダー / Hamburger Menu Builder</title>
+  <meta name="description" content="ハンバーガーメニューのアニメーションをカスタマイズし、実装用コードを生成するツール">
+  <!-- ファビコン: ハンバーガー絵文字をSVGで表示 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍔</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ===== ヘッダー ===== -->
+  <header class="app-header">
+    <h1>🍔 ハンバーガーメニュービルダー <span class="header-sub">/ Hamburger Menu Builder</span></h1>
+  </header>
+
+  <!-- ===== メインコンテンツ ===== -->
+  <main class="app-main">
+
+    <!-- ===== 左側: 設定パネル ===== -->
+    <aside class="settings-panel">
+      <h2 class="panel-title">⚙️ 設定 / Settings</h2>
+
+      <!-- アイコン設定セクション -->
+      <section class="settings-section">
+        <h3 class="section-title">アイコン設定 / Icon Settings</h3>
+
+        <!-- 線の太さ -->
+        <div class="setting-item">
+          <label for="line-width">線の太さ / Line Width: <span id="line-width-value">3</span>px</label>
+          <input type="range" id="line-width" min="1" max="8" value="3" step="1">
+        </div>
+
+        <!-- 線の色 -->
+        <div class="setting-item">
+          <label for="line-color">線の色 / Line Color</label>
+          <input type="color" id="line-color" value="#ffffff">
+        </div>
+
+        <!-- アニメーションの種類 -->
+        <div class="setting-item">
+          <label for="animation-type">アニメーション / Animation</label>
+          <select id="animation-type">
+            <option value="cross">1. 王道のクロス / Classic Cross</option>
+            <option value="rotate-cross">2. 回転してクロス / Rotate Cross</option>
+            <option value="minus">3. マイナス / Minus</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- メニューパネル設定セクション -->
+      <section class="settings-section">
+        <h3 class="section-title">メニューパネル設定 / Menu Panel Settings</h3>
+
+        <!-- 背景色 -->
+        <div class="setting-item">
+          <label for="menu-bg-color">背景色 / Background Color</label>
+          <input type="color" id="menu-bg-color" value="#1a1a2e">
+        </div>
+
+        <!-- テキスト色 -->
+        <div class="setting-item">
+          <label for="menu-text-color">テキスト色 / Text Color</label>
+          <input type="color" id="menu-text-color" value="#ffffff">
+        </div>
+
+        <!-- スライド方向 -->
+        <div class="setting-item">
+          <label for="slide-direction">スライド方向 / Slide Direction</label>
+          <select id="slide-direction">
+            <option value="right">右から / From Right</option>
+            <option value="left">左から / From Left</option>
+            <option value="top">上から / From Top</option>
+          </select>
+        </div>
+      </section>
+    </aside>
+
+    <!-- ===== 右側: プレビュー + コード出力 ===== -->
+    <div class="output-area">
+
+      <!-- プレビューエリア -->
+      <section class="preview-section">
+        <h2 class="panel-title">👁️ プレビュー / Preview</h2>
+        <div class="preview-container" id="preview-container">
+          <!-- プレビュー用ヘッダーバー -->
+          <div class="preview-header-bar" id="preview-header-bar">
+            <span class="preview-site-name">Sample Site</span>
+            <!-- ハンバーガーアイコン -->
+            <button class="hamburger-icon" id="hamburger-icon" aria-label="メニューを開閉する">
+              <span class="hamburger-line line-top"></span>
+              <span class="hamburger-line line-middle"></span>
+              <span class="hamburger-line line-bottom"></span>
+            </button>
+          </div>
+          <!-- メニューパネル -->
+          <nav class="menu-panel" id="menu-panel">
+            <ul class="menu-list">
+              <li><a href="#">ホーム / Home</a></li>
+              <li><a href="#">概要 / About</a></li>
+              <li><a href="#">サービス / Services</a></li>
+              <li><a href="#">お問い合わせ / Contact</a></li>
+            </ul>
+          </nav>
+          <!-- プレビュー用コンテンツ -->
+          <div class="preview-body">
+            <p class="preview-placeholder">← ハンバーガーアイコンをクリックしてメニューを確認<br>Click the hamburger icon to see the menu</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- コード出力エリア -->
+      <section class="code-section">
+        <h2 class="panel-title">📋 生成コード / Generated Code</h2>
+        <!-- タブ切り替え -->
+        <div class="code-tabs">
+          <button class="code-tab active" data-tab="html">HTML</button>
+          <button class="code-tab" data-tab="css">CSS</button>
+          <button class="code-tab" data-tab="js">JavaScript</button>
+        </div>
+        <!-- コード表示エリア -->
+        <div class="code-output-wrapper">
+          <pre class="code-output" id="code-output"><code id="code-content"><!-- ここにコードが生成されます --></code></pre>
+          <!-- コピーボタン -->
+          <button class="copy-btn" id="copy-btn">📋 コピー / Copy</button>
+        </div>
+        <!-- 全コードコピーボタン -->
+        <button class="copy-all-btn" id="copy-all-btn">📦 すべてコピー / Copy All</button>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ===== フッター ===== -->
+  <footer class="app-footer">
+    <p>© 2026 Hamburger Menu Builder — Built with ❤️</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
