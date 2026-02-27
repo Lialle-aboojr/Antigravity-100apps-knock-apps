@@ -53,7 +53,7 @@ Complete it. Ship it. Relax. ☕
 | 040 | 🏥 Health Metrics Calculator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/040_HealthMetricsCalculator/) |
 | 041 | 📱 Quick QR Generator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/041_QuickQRGenerator/) |
 | 042 | 🗑️ スマートゴミ出しリマインダー | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/042_SmartTrashReminder/) |
-| 043 | 🍔 ハンバーガーメニュービルダー | [▶ Demo](./043_HamburgerMenuBuilder/) |
+| 043 | 🍔 ハンバーガーメニュービルダー | [▶ Demo](ttps://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/043_HamburgerMenuBuilder/) |
 
 ---
 
