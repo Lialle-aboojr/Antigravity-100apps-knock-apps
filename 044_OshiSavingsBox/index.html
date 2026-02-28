@@ -22,7 +22,7 @@
 
 <body>
 
-    <!-- ===== 背景装飾（推しカラーが動的に反映される） ===== -->
+    <!-- ===== 背景装飾（推しカラーのドット柄が動的に反映される） ===== -->
     <div class="bg-decoration" id="bg-decoration"></div>
 
     <!-- ===== ヘッダー ===== -->
@@ -50,6 +50,7 @@
                 </div>
                 <p class="total-label">合計貯金額 / Total Saved</p>
                 <p class="total-amount" id="total-amount">¥0</p>
+                <!-- innerHTMLで<br>を含むメッセージを動的に挿入する -->
                 <p class="total-oshi-name" id="total-oshi-name">推しのために貯金中！💪</p>
             </div>
         </section>
@@ -61,6 +62,7 @@
             <div class="left-column">
 
                 <!-- 貯金記録カード（頻繁に使うので上に配置） -->
+                <!-- formタグは使用せず、div＋buttonのclickイベントのみで制御 -->
                 <section class="card saving-card">
                     <h2 class="card-title">
                         <span class="card-icon">🐷</span>
@@ -78,7 +80,7 @@
                             <!-- JavaScriptで動的に追加される -->
                         </datalist>
                     </div>
-                    <button class="btn btn-save" id="btn-add-saving">
+                    <button class="btn btn-save" id="btn-add-saving" type="button">
                         💰 貯金する / Save
                     </button>
                 </section>
@@ -104,7 +106,7 @@
                         <label for="target-amount">目標額 / Target Amount (¥)</label>
                         <input type="number" id="target-amount" placeholder="例: 30000" min="0" step="1">
                     </div>
-                    <button class="btn btn-settings" id="btn-save-settings">
+                    <button class="btn btn-settings" id="btn-save-settings" type="button">
                         💾 設定を保存 / Save Settings
                     </button>
                 </section>

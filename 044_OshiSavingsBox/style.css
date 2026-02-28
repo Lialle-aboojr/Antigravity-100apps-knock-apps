@@ -1,6 +1,6 @@
 /* =============================================
    推し活貯金箱 / Oshi Savings Box - スタイルシート
-   明るくポップなデザイン・推しカラー全開テーマ
+   明るくポップなデザイン・推しカラー全開 + ドット柄テーマ
    ============================================= */
 
 /* --- CSS変数（推しカラーはJSで動的に書き換わる） --- */
@@ -10,8 +10,14 @@
   --oshi-color-light: #f472b6;
   --oshi-color-pale: rgba(233, 30, 140, 0.12);
   --oshi-color-glow: rgba(233, 30, 140, 0.25);
-  --oshi-color-bg-top: rgba(233, 30, 140, 0.18);
-  --oshi-color-bg-bottom: rgba(233, 30, 140, 0.06);
+
+  /* 推しカラーの薄い背景色（JSで動的にセット） */
+  --bg-color-light: #fef0f7;
+  /* ドット柄のドットカラー（JSで動的にセット） */
+  --dot-color: rgba(233, 30, 140, 0.10);
+
+  /* テキストの自動コントラストカラー（JSで動的にセット） */
+  --text-color-dynamic: #ffffff;
 
   /* 明るいベースカラー */
   --bg-page: #fef7fb;
@@ -44,7 +50,7 @@ html {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg-page);
+  background: var(--bg-color-light);
   color: var(--text-primary);
   min-height: 100vh;
   line-height: 1.6;
@@ -52,7 +58,7 @@ body {
   overflow-x: hidden;
 }
 
-/* --- 背景装飾（推しカラーのグラデーション） --- */
+/* --- 背景装飾（推しカラーのポップなドット柄） --- */
 .bg-decoration {
   position: fixed;
   top: 0;
@@ -62,10 +68,16 @@ body {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 80% 50% at 20% 0%, var(--oshi-color-bg-top), transparent 70%),
-    radial-gradient(ellipse 60% 40% at 80% 100%, var(--oshi-color-bg-bottom), transparent 60%),
-    radial-gradient(ellipse 50% 60% at 100% 30%, var(--oshi-color-bg-bottom), transparent 50%);
-  transition: background 0.6s ease;
+    /* ドット柄パターン（radial-gradientで水玉模様を生成） */
+    radial-gradient(circle 8px at 24px 24px, var(--dot-color) 6px, transparent 6px),
+    radial-gradient(circle 8px at 60px 60px, var(--dot-color) 4px, transparent 4px),
+    /* 全体の薄いグラデーション */
+    linear-gradient(135deg, var(--bg-color-light) 0%, #ffffff 50%, var(--bg-color-light) 100%);
+  background-size:
+    72px 72px,
+    72px 72px,
+    100% 100%;
+  transition: background-color 0.6s ease;
 }
 
 /* --- ヘッダー --- */
@@ -198,7 +210,9 @@ body {
 .total-label {
   font-size: 0.85rem;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.85);
+  /* 自動コントラスト文字色を適用 */
+  color: var(--text-color-dynamic);
+  opacity: 0.85;
   margin-bottom: 8px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -207,16 +221,20 @@ body {
 .total-amount {
   font-size: 3.2rem;
   font-weight: 800;
-  color: #fff;
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  /* 自動コントラスト文字色を適用 */
+  color: var(--text-color-dynamic);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
   letter-spacing: 1px;
 }
 
 .total-oshi-name {
   font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.92);
+  /* 自動コントラスト文字色を適用 */
+  color: var(--text-color-dynamic);
+  opacity: 0.92;
   margin-top: 10px;
   font-weight: 600;
+  line-height: 1.7;
 }
 
 /* --- 2カラムレイアウト --- */
@@ -393,7 +411,8 @@ body {
 
 .btn-save {
   background: linear-gradient(135deg, var(--oshi-color), var(--oshi-color-light));
-  color: #fff;
+  /* 自動コントラスト文字色を適用 */
+  color: var(--text-color-dynamic);
   box-shadow: 0 4px 20px var(--oshi-color-glow);
   border: none;
 }

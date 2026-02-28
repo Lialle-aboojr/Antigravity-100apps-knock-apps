@@ -3,52 +3,107 @@
    ============================================= */
 
 // ---- LocalStorageのキー定数 ----
-const STORAGE_KEY_SETTINGS = 'oshi_savings_settings'; // 推し設定用
-const STORAGE_KEY_RECORDS = 'oshi_savings_records';   // 貯金記録用
+var STORAGE_KEY_SETTINGS = 'oshi_savings_settings'; // 推し設定用
+var STORAGE_KEY_RECORDS = 'oshi_savings_records';   // 貯金記録用
 
 // ---- DOM要素の取得 ----
-const elOshiName = document.getElementById('oshi-name');
-const elOshiColor = document.getElementById('oshi-color');
-const elColorPreview = document.getElementById('color-preview');
-const elTargetAmount = document.getElementById('target-amount');
-const elBtnSaveSettings = document.getElementById('btn-save-settings');
-const elSavingAmount = document.getElementById('saving-amount');
-const elSavingReason = document.getElementById('saving-reason');
-const elReasonList = document.getElementById('reason-list');
-const elBtnAddSaving = document.getElementById('btn-add-saving');
-const elTotalAmount = document.getElementById('total-amount');
-const elTotalOshiName = document.getElementById('total-oshi-name');
-const elHistoryList = document.getElementById('history-list');
-const elHistoryEmpty = document.getElementById('history-empty');
-const elToast = document.getElementById('toast');
+var elOshiName = document.getElementById('oshi-name');
+var elOshiColor = document.getElementById('oshi-color');
+var elColorPreview = document.getElementById('color-preview');
+var elTargetAmount = document.getElementById('target-amount');
+var elBtnSaveSettings = document.getElementById('btn-save-settings');
+var elSavingAmount = document.getElementById('saving-amount');
+var elSavingReason = document.getElementById('saving-reason');
+var elReasonList = document.getElementById('reason-list');
+var elBtnAddSaving = document.getElementById('btn-add-saving');
+var elTotalAmount = document.getElementById('total-amount');
+var elTotalOshiName = document.getElementById('total-oshi-name');
+var elHistoryList = document.getElementById('history-list');
+var elHistoryEmpty = document.getElementById('history-empty');
+var elToast = document.getElementById('toast');
+
+// =============================================
+// 【重要】Enterキーによる送信を完全に無効化
+// すべてのinput要素でEnterキーを物理的にブロックする
+// 保存は「貯金する」ボタンのclickイベントのみで発火
+// =============================================
+document.querySelectorAll('input').forEach(function (input) {
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+      // IME変換中かどうかに関わらず、Enterキーを完全にブロック
+      e.preventDefault();
+    }
+  });
+});
+
+// =============================================
+// YIQ方式で推しカラーの明るさを判定し、
+// 適切な文字色（黒 or 白）を返す関数
+// =============================================
+function getContrastTextColor(hexColor) {
+  var r = parseInt(hexColor.slice(1, 3), 16);
+  var g = parseInt(hexColor.slice(3, 5), 16);
+  var b = parseInt(hexColor.slice(5, 7), 16);
+
+  // YIQ計算式：人間の目の感度に基づいた明るさの指標
+  var yiq = (r * 299 + g * 587 + b * 114) / 1000;
+
+  // YIQが128以上なら明るい色 → 黒文字、128未満なら暗い色 → 白文字
+  return yiq >= 128 ? '#2d2d3f' : '#ffffff';
+}
+
+// =============================================
+// HEXカラーから薄い背景色を生成する関数
+// 白を大量に混ぜて、テキストが読みやすい薄い色を作る
+// =============================================
+function getLightBgColor(hexColor) {
+  var r = parseInt(hexColor.slice(1, 3), 16);
+  var g = parseInt(hexColor.slice(3, 5), 16);
+  var b = parseInt(hexColor.slice(5, 7), 16);
+
+  // 白(255)と推しカラーを 90:10 の比率で混合 → 非常に薄い推しカラー
+  var lightR = Math.round(255 * 0.90 + r * 0.10);
+  var lightG = Math.round(255 * 0.90 + g * 0.10);
+  var lightB = Math.round(255 * 0.90 + b * 0.10);
+
+  return 'rgb(' + lightR + ', ' + lightG + ', ' + lightB + ')';
+}
 
 // =============================================
 // 推しカラーをCSS変数に反映する関数
 // =============================================
 function applyOshiColor(hexColor) {
-  const root = document.documentElement;
+  var root = document.documentElement;
   root.style.setProperty('--oshi-color', hexColor);
 
   // RGB値を取得
-  const r = parseInt(hexColor.slice(1, 3), 16);
-  const g = parseInt(hexColor.slice(3, 5), 16);
-  const b = parseInt(hexColor.slice(5, 7), 16);
+  var r = parseInt(hexColor.slice(1, 3), 16);
+  var g = parseInt(hexColor.slice(3, 5), 16);
+  var b = parseInt(hexColor.slice(5, 7), 16);
 
   // ライトカラー（元の色を明るく）
-  const lightR = Math.min(255, r + 60);
-  const lightG = Math.min(255, g + 60);
-  const lightB = Math.min(255, b + 60);
-  const lightHex = '#' +
+  var lightR = Math.min(255, r + 60);
+  var lightG = Math.min(255, g + 60);
+  var lightB = Math.min(255, b + 60);
+  var lightHex = '#' +
     lightR.toString(16).padStart(2, '0') +
     lightG.toString(16).padStart(2, '0') +
     lightB.toString(16).padStart(2, '0');
 
-  // 各CSS変数を更新（背景グラデーション用も含む）
+  // 各CSS変数を更新
   root.style.setProperty('--oshi-color-light', lightHex);
   root.style.setProperty('--oshi-color-pale', 'rgba(' + r + ', ' + g + ', ' + b + ', 0.12)');
   root.style.setProperty('--oshi-color-glow', 'rgba(' + r + ', ' + g + ', ' + b + ', 0.25)');
-  root.style.setProperty('--oshi-color-bg-top', 'rgba(' + r + ', ' + g + ', ' + b + ', 0.18)');
-  root.style.setProperty('--oshi-color-bg-bottom', 'rgba(' + r + ', ' + g + ', ' + b + ', 0.06)');
+
+  // 薄い推しカラーの背景色をセット
+  root.style.setProperty('--bg-color-light', getLightBgColor(hexColor));
+
+  // ドット柄のドットカラーをセット
+  root.style.setProperty('--dot-color', 'rgba(' + r + ', ' + g + ', ' + b + ', 0.10)');
+
+  // YIQ方式で文字色の自動コントラストを計算してセット
+  var textColor = getContrastTextColor(hexColor);
+  root.style.setProperty('--text-color-dynamic', textColor);
 }
 
 // =============================================
@@ -73,8 +128,12 @@ function saveSettings() {
   // 推しカラーを即時反映
   applyOshiColor(color);
 
-  // 推し名＋目標額を合計表示エリアに反映
-  updateOshiNameDisplay(name, target);
+  // 推し名＋目標額＋合計を表示エリアに反映
+  var records = getRecords();
+  var total = records.reduce(function (sum, record) {
+    return sum + record.amount;
+  }, 0);
+  updateOshiNameDisplay(name, target, total);
 
   // トースト通知で保存完了を表示
   showToast('✅ 設定を保存しました / Settings saved!');
@@ -96,31 +155,57 @@ function loadSettings() {
     // CSS変数に推しカラーを反映
     applyOshiColor(settings.color || '#e91e8c');
 
-    // 推し名＋目標額を合計表示エリアに反映
-    updateOshiNameDisplay(settings.name, settings.target);
+    // 推し名＋目標額を返す（init関数でupdateOshiNameDisplayを呼ぶ）
+    return settings;
   }
+  // デフォルト色を適用
+  applyOshiColor('#e91e8c');
+  return null;
 }
 
 // =============================================
-// 推し名＋目標額の表示を動的に更新
+// 現在の設定を取得するヘルパー
 // =============================================
-function updateOshiNameDisplay(name, target) {
+function getCurrentSettings() {
+  var stored = localStorage.getItem(STORAGE_KEY_SETTINGS);
+  if (stored) {
+    return JSON.parse(stored);
+  }
+  return { name: '', color: '#e91e8c', target: 0 };
+}
+
+// =============================================
+// 推し名＋目標額＋残り金額の表示を動的に更新
+// =============================================
+function updateOshiNameDisplay(name, target, totalSaved) {
   var hasName = name && name.length > 0;
   var hasTarget = target && target > 0;
 
-  // 状態に応じてメッセージを分岐
-  if (hasName && hasTarget) {
-    // 推し名＋目標額がある場合
-    elTotalOshiName.textContent = name + ' のために ' + target.toLocaleString() + '円 まで貯金中！💪';
-  } else if (hasName) {
-    // 推し名のみある場合
-    elTotalOshiName.textContent = name + ' のために貯金中！💪';
-  } else if (hasTarget) {
-    // 目標額のみある場合
-    elTotalOshiName.textContent = target.toLocaleString() + '円 まで貯金中！💪';
+  // 1行目: 推し名メッセージ
+  var line1 = '';
+  if (hasName) {
+    line1 = name + ' のために貯金中！💪';
   } else {
-    // どちらも未設定の場合
-    elTotalOshiName.textContent = '推しのために貯金中！💪';
+    line1 = '推しのために貯金中！💪';
+  }
+
+  // 2行目: 目標額＋残り金額メッセージ（目標がある場合のみ）
+  var line2 = '';
+  if (hasTarget) {
+    var remaining = target - totalSaved;
+    if (remaining <= 0) {
+      // 目標達成！
+      line2 = '目標額: ' + target.toLocaleString() + '円 — 🎉 目標金額達成おめでとうございます！ 🎉';
+    } else {
+      line2 = '目標額: ' + target.toLocaleString() + '円（あと ' + remaining.toLocaleString() + '円）';
+    }
+  }
+
+  // innerHTMLを使って<br>で改行を挿入
+  if (line2) {
+    elTotalOshiName.innerHTML = escapeHtml(line1) + '<br>' + escapeHtml(line2);
+  } else {
+    elTotalOshiName.textContent = line1;
   }
 }
 
@@ -143,12 +228,20 @@ function saveRecords(records) {
 // 貯金を追加する
 // =============================================
 function addSaving() {
-  var amount = parseInt(elSavingAmount.value, 10);
+  var amountValue = elSavingAmount.value;
+  var amount = parseInt(amountValue, 10);
   var reason = elSavingReason.value.trim();
 
-  // バリデーション: 金額チェック
-  if (!amount || amount <= 0) {
-    showToast('⚠️ 金額を正しく入力してください / Please enter a valid amount');
+  // バリデーション: 空入力チェック
+  if (!amountValue || amountValue === '') {
+    showToast('⚠️ 金額を入力してください / Please enter an amount');
+    elSavingAmount.focus();
+    return;
+  }
+
+  // バリデーション: マイナスまたは0の金額を防止
+  if (isNaN(amount) || amount <= 0) {
+    showToast('⚠️ 1円以上の金額を入力してください / Amount must be at least ¥1');
     elSavingAmount.focus();
     return;
   }
@@ -198,13 +291,17 @@ function deleteSaving(id) {
 }
 
 // =============================================
-// 合計金額を計算して表示
+// 合計金額を計算して表示（＋メッセージも更新）
 // =============================================
 function updateTotal(records) {
   var total = records.reduce(function (sum, record) {
     return sum + record.amount;
   }, 0);
   elTotalAmount.textContent = '¥' + total.toLocaleString();
+
+  // 設定を読み込んでメッセージも更新する
+  var settings = getCurrentSettings();
+  updateOshiNameDisplay(settings.name, settings.target, total);
 }
 
 // =============================================
@@ -312,27 +409,11 @@ function showToast(message) {
 // イベントリスナーの登録
 // =============================================
 
-// 設定保存ボタン
+// 設定保存ボタン（clickのみ）
 elBtnSaveSettings.addEventListener('click', saveSettings);
 
-// 貯金追加ボタン
+// 貯金追加ボタン（clickのみ — Enterキーでは絶対に発火しない）
 elBtnAddSaving.addEventListener('click', addSaving);
-
-// --- IME対応：全角入力中のEnterキー誤爆を防止 ---
-// isComposing が true の場合（IME変換中）はEnterを無視する
-elSavingAmount.addEventListener('keydown', function (e) {
-  if (e.key === 'Enter' && !e.isComposing) {
-    e.preventDefault(); // フォーム送信を抑制
-    addSaving();
-  }
-});
-
-elSavingReason.addEventListener('keydown', function (e) {
-  if (e.key === 'Enter' && !e.isComposing) {
-    e.preventDefault(); // フォーム送信を抑制
-    addSaving();
-  }
-});
 
 // 履歴リスト内の削除ボタン（イベント委譲）
 elHistoryList.addEventListener('click', function (e) {
@@ -349,7 +430,7 @@ elHistoryList.addEventListener('click', function (e) {
 // =============================================
 function init() {
   // 推し設定を読み込む
-  loadSettings();
+  var settings = loadSettings();
 
   // 貯金記録を読み込んで表示
   var records = getRecords();
