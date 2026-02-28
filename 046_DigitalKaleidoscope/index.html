@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Kaleidoscope | デジタル万華鏡</title>
+    <meta name="description"
+        content="インタラクティブなデジタル万華鏡。マウスやタッチで美しい幾何学模様を描こう。Interactive digital kaleidoscope - create beautiful geometric patterns.">
+
+    <!-- ファビコン: ✨絵文字をSVGに変換して表示 -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+
+    <!-- Google Fonts: モダンなフォントを読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <!-- CSSファイルの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== メインキャンバス（全画面表示）===== -->
+    <canvas id="kaleidoscope-canvas"></canvas>
+
+    <!-- ===== 画面右上のヘッダー（アプリタイトル）===== -->
+    <header class="app-header">
+        <h1 class="app-title">
+            <span class="title-icon">✨</span>
+            <span>Digital Kaleidoscope</span>
+        </h1>
+        <p class="app-subtitle">デジタル万華鏡</p>
+    </header>
+
+    <!-- ===== 操作パネル（右下にフローティング、折りたたみ可能）===== -->
+    <aside id="control-panel" class="control-panel">
+
+        <!-- パネルのトグルボタン -->
+        <button id="panel-toggle" class="panel-toggle" aria-label="操作パネルの開閉">
+            <span class="toggle-icon">⚙️</span>
+            <span class="toggle-text">設定 / Settings</span>
+            <span class="toggle-arrow">▼</span>
+        </button>
+
+        <!-- パネルの中身 -->
+        <div id="panel-body" class="panel-body">
+
+            <!-- 分割数 / Segments -->
+            <div class="control-group">
+                <label class="control-label" for="segments">
+                    🔷 分割数 / Segments
+                </label>
+                <select id="segments" class="control-select">
+                    <option value="4">4</option>
+                    <option value="6" selected>6</option>
+                    <option value="8">8</option>
+                    <option value="12">12</option>
+                    <option value="16">16</option>
+                    <option value="24">24</option>
+                </select>
+            </div>
+
+            <!-- 線の太さ / Line Width -->
+            <div class="control-group">
+                <label class="control-label" for="line-width">
+                    ✏️ 線の太さ / Line Width:
+                    <span id="line-width-value" class="control-value">3</span>px
+                </label>
+                <input type="range" id="line-width" class="control-range" min="1" max="10" value="3">
+            </div>
+
+            <!-- カラーパレット / Color Palette -->
+            <div class="control-group">
+                <label class="control-label" for="color-palette">
+                    🎨 カラーパレット / Palette
+                </label>
+                <select id="color-palette" class="control-select">
+                    <option value="rainbow">🌈 虹色 / Rainbow</option>
+                    <option value="neon">💜 ネオン / Neon</option>
+                    <option value="pastel">🩷 パステル / Pastel</option>
+                    <option value="fire">🔥 炎 / Fire</option>
+                    <option value="ocean">🌊 海 / Ocean</option>
+                </select>
+            </div>
+
+            <!-- 区切り線 -->
+            <hr class="control-divider">
+
+            <!-- オートプレイ / Auto Play -->
+            <div class="control-group">
+                <label class="control-label toggle-label" for="autoplay-toggle">
+                    <span>▶️ オートプレイ / Auto Play</span>
+                    <div class="switch-wrapper">
+                        <input type="checkbox" id="autoplay-toggle" class="switch-input">
+                        <span class="switch-slider"></span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- 区切り線 -->
+            <hr class="control-divider">
+
+            <!-- アクションボタン群 -->
+            <div class="action-buttons">
+                <!-- ダウンロードボタン -->
+                <button id="download-btn" class="action-btn download-btn">
+                    💾 ダウンロード / Download
+                </button>
+                <!-- クリアボタン -->
+                <button id="clear-btn" class="action-btn clear-btn">
+                    🗑️ クリア / Clear
+                </button>
+            </div>
+
+        </div><!-- /.panel-body -->
+    </aside>
+
+    <!-- ===== 画面中央下部の操作ヒント ===== -->
+    <div id="hint-message" class="hint-message">
+        🖱️ ドラッグして描く / Drag to draw ✨
+    </div>
+
+    <!-- JavaScriptファイルの読み込み -->
+    <script src="script.js"></script>
+</body>
+
+</html>
