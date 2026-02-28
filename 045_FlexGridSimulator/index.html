@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex & Grid Layout Simulator</title>
+    <meta name="description" content="FlexboxとCSS Gridのレイアウトプロパティをリアルタイムで操作・学習できるシミュレーター。">
+
+    <!-- ファビコン: 🔲をSVG Data URIで表示 -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔲</text></svg>">
+
+    <!-- Google Fonts: JetBrains Mono（コード表示用）+ Inter（UI用） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+
+    <!-- スタイルシート読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== ヘッダー ===== -->
+    <header class="app-header">
+        <div class="header-inner">
+            <h1 class="app-title">
+                <span class="title-icon">🔲</span>
+                <span>Flex & Grid Layout Simulator</span>
+            </h1>
+            <p class="app-subtitle">Flexbox・Grid 配置シミュレーター</p>
+        </div>
+    </header>
+
+    <!-- ===== メインコンテンツ ===== -->
+    <main class="main-content">
+
+        <!-- === モード切替タブ === -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" id="tab-flex" data-mode="flex" type="button">
+                <span class="tab-icon">📐</span> Flexbox モード
+            </button>
+            <button class="mode-tab" id="tab-grid" data-mode="grid" type="button">
+                <span class="tab-icon">🔳</span> CSS Grid モード
+            </button>
+        </div>
+
+        <!-- === 2カラム: 操作パネル + プレビュー/コード === -->
+        <div class="workspace">
+
+            <!-- 左: 操作パネル -->
+            <aside class="control-panel">
+                <h2 class="panel-title">プロパティ操作 / Properties</h2>
+
+                <!-- Flexbox操作パネル -->
+                <div class="panel-section" id="panel-flex">
+
+                    <div class="control-group">
+                        <label for="flex-direction">flex-direction</label>
+                        <select id="flex-direction">
+                            <option value="row" selected>row</option>
+                            <option value="row-reverse">row-reverse</option>
+                            <option value="column">column</option>
+                            <option value="column-reverse">column-reverse</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="flex-wrap">flex-wrap</label>
+                        <select id="flex-wrap">
+                            <option value="nowrap" selected>nowrap</option>
+                            <option value="wrap">wrap</option>
+                            <option value="wrap-reverse">wrap-reverse</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="flex-justify">justify-content</label>
+                        <select id="flex-justify">
+                            <option value="flex-start" selected>flex-start</option>
+                            <option value="flex-end">flex-end</option>
+                            <option value="center">center</option>
+                            <option value="space-between">space-between</option>
+                            <option value="space-around">space-around</option>
+                            <option value="space-evenly">space-evenly</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="flex-align">align-items</label>
+                        <select id="flex-align">
+                            <option value="stretch" selected>stretch</option>
+                            <option value="flex-start">flex-start</option>
+                            <option value="flex-end">flex-end</option>
+                            <option value="center">center</option>
+                            <option value="baseline">baseline</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="flex-align-content">align-content</label>
+                        <select id="flex-align-content">
+                            <option value="normal" selected>normal</option>
+                            <option value="flex-start">flex-start</option>
+                            <option value="flex-end">flex-end</option>
+                            <option value="center">center</option>
+                            <option value="space-between">space-between</option>
+                            <option value="space-around">space-around</option>
+                            <option value="stretch">stretch</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="flex-gap">gap (px)</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="flex-gap" min="0" max="40" value="10">
+                            <span class="range-value" id="flex-gap-value">10px</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- CSS Grid操作パネル -->
+                <div class="panel-section hidden" id="panel-grid">
+
+                    <div class="control-group">
+                        <label for="grid-columns">grid-template-columns</label>
+                        <select id="grid-columns">
+                            <option value="1fr 1fr 1fr" selected>1fr 1fr 1fr (3列)</option>
+                            <option value="1fr 1fr">1fr 1fr (2列)</option>
+                            <option value="1fr 1fr 1fr 1fr">1fr 1fr 1fr 1fr (4列)</option>
+                            <option value="repeat(3, 100px)">repeat(3, 100px)</option>
+                            <option value="1fr 2fr 1fr">1fr 2fr 1fr</option>
+                            <option value="200px 1fr">200px 1fr</option>
+                            <option value="repeat(auto-fill, minmax(100px, 1fr))">auto-fill, minmax(100px, 1fr)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="grid-rows">grid-template-rows</label>
+                        <select id="grid-rows">
+                            <option value="auto" selected>auto</option>
+                            <option value="1fr 1fr">1fr 1fr (2行)</option>
+                            <option value="1fr 1fr 1fr">1fr 1fr 1fr (3行)</option>
+                            <option value="100px auto">100px auto</option>
+                            <option value="repeat(3, 100px)">repeat(3, 100px)</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="grid-justify-items">justify-items</label>
+                        <select id="grid-justify-items">
+                            <option value="stretch" selected>stretch</option>
+                            <option value="start">start</option>
+                            <option value="end">end</option>
+                            <option value="center">center</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="grid-align-items">align-items</label>
+                        <select id="grid-align-items">
+                            <option value="stretch" selected>stretch</option>
+                            <option value="start">start</option>
+                            <option value="end">end</option>
+                            <option value="center">center</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="grid-justify-content">justify-content</label>
+                        <select id="grid-justify-content">
+                            <option value="start" selected>start</option>
+                            <option value="end">end</option>
+                            <option value="center">center</option>
+                            <option value="space-between">space-between</option>
+                            <option value="space-around">space-around</option>
+                            <option value="space-evenly">space-evenly</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="grid-align-content">align-content</label>
+                        <select id="grid-align-content">
+                            <option value="start" selected>start</option>
+                            <option value="end">end</option>
+                            <option value="center">center</option>
+                            <option value="space-between">space-between</option>
+                            <option value="space-around">space-around</option>
+                            <option value="stretch">stretch</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="grid-gap">gap (px)</label>
+                        <div class="range-wrapper">
+                            <input type="range" id="grid-gap" min="0" max="40" value="10">
+                            <span class="range-value" id="grid-gap-value">10px</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- アイテム数コントロール（共通） -->
+                <div class="panel-section item-controls">
+                    <h3 class="section-subtitle">アイテム数 / Items</h3>
+                    <div class="item-count-controls">
+                        <button class="btn-item" id="btn-remove-item" type="button">− 削除 / Remove</button>
+                        <span class="item-count" id="item-count">5</span>
+                        <button class="btn-item" id="btn-add-item" type="button">+ 追加 / Add</button>
+                    </div>
+                </div>
+
+            </aside>
+
+            <!-- 右: プレビュー＋コード出力 -->
+            <div class="preview-code-area">
+
+                <!-- プレビューエリア -->
+                <section class="preview-section">
+                    <h2 class="section-title">
+                        <span class="section-icon">👁️</span>
+                        プレビュー / Preview
+                    </h2>
+                    <div class="preview-container" id="preview-container">
+                        <!-- JSで動的にアイテムが追加される -->
+                    </div>
+                </section>
+
+                <!-- CSSコード出力エリア -->
+                <section class="code-section">
+                    <div class="code-header">
+                        <h2 class="section-title">
+                            <span class="section-icon">💻</span>
+                            CSS コード / CSS Code
+                        </h2>
+                        <button class="btn-copy" id="btn-copy" type="button">
+                            📋 コピー / Copy
+                        </button>
+                    </div>
+                    <pre class="code-output" id="code-output"><code>/* ここにCSSが表示されます */</code></pre>
+                </section>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ===== フッター ===== -->
+    <footer class="app-footer">
+        <p>Made with 💻 for CSS Learners</p>
+    </footer>
+
+    <!-- トースト通知 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- スクリプト読み込み -->
+    <script src="script.js"></script>
+
+</body>
+
+</html>
