@@ -1,0 +1,543 @@
+/* =============================================
+   推し活貯金箱 / Oshi Savings Box - スタイルシート
+   ============================================= */
+
+/* --- CSS変数（推しカラーはJSで動的に書き換わる） --- */
+:root {
+  /* 推しカラー（デフォルト: ピンク） */
+  --oshi-color: #e91e8c;
+  --oshi-color-light: #f472b6;
+  --oshi-color-pale: rgba(233, 30, 140, 0.10);
+  --oshi-color-glow: rgba(233, 30, 140, 0.30);
+
+  /* ベースカラー */
+  --bg-primary: #0f0f1a;
+  --bg-secondary: #1a1a2e;
+  --bg-card: rgba(30, 30, 55, 0.85);
+  --text-primary: #f0f0f5;
+  --text-secondary: #a0a0c0;
+  --text-muted: #6a6a8a;
+  --border-color: rgba(255, 255, 255, 0.08);
+
+  /* レイアウト */
+  --max-width: 1100px;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+/* --- リセット＆ベース --- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  /* 背景グラデーション装飾 */
+  background-image:
+    radial-gradient(ellipse 600px 400px at 15% 10%, var(--oshi-color-glow), transparent),
+    radial-gradient(ellipse 500px 350px at 85% 80%, var(--oshi-color-pale), transparent);
+  background-attachment: fixed;
+}
+
+/* --- ヘッダー --- */
+.app-header {
+  padding: 24px 20px 16px;
+  text-align: center;
+  position: relative;
+}
+
+.header-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.app-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.title-emoji {
+  font-size: 2.2rem;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.title-sub {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--oshi-color-light);
+  letter-spacing: 0.5px;
+}
+
+/* キラキラパルスアニメーション */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* --- メインコンテンツ --- */
+.main-content {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+
+/* --- 合計金額セクション --- */
+.total-section {
+  margin-bottom: 32px;
+}
+
+.total-card {
+  background: linear-gradient(135deg, var(--oshi-color), var(--oshi-color-light));
+  border-radius: var(--radius);
+  padding: 36px 28px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 8px 32px var(--oshi-color-glow),
+    0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 合計カードのキラキラ装飾 */
+.total-card::before {
+  content: '✨';
+  position: absolute;
+  top: 12px;
+  left: 20px;
+  font-size: 1.6rem;
+  animation: sparkle 3s ease-in-out infinite;
+}
+
+.total-card::after {
+  content: '✨';
+  position: absolute;
+  bottom: 12px;
+  right: 20px;
+  font-size: 1.6rem;
+  animation: sparkle 3s ease-in-out infinite 1.5s;
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.4; transform: scale(0.8) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(15deg); }
+}
+
+.total-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.total-amount {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  letter-spacing: 1px;
+}
+
+.total-oshi-name {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+/* --- 2カラムレイアウト --- */
+.two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* --- カード共通 --- */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 28px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--oshi-color);
+  padding-bottom: 12px;
+}
+
+.card-icon {
+  font-size: 1.3rem;
+}
+
+/* --- フォーム要素 --- */
+.form-group {
+  margin-bottom: 18px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"] {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: inherit;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  outline: none;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus {
+  border-color: var(--oshi-color);
+  box-shadow: 0 0 0 3px var(--oshi-color-pale);
+}
+
+.form-group input[type="text"]::placeholder,
+.form-group input[type="number"]::placeholder {
+  color: var(--text-muted);
+}
+
+/* カラーピッカー */
+.color-picker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.form-group input[type="color"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 50px;
+  height: 50px;
+  border: 3px solid var(--border-color);
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 2px;
+  background: transparent;
+  transition: border-color 0.3s ease, transform 0.2s ease;
+}
+
+.form-group input[type="color"]:hover {
+  border-color: var(--oshi-color);
+  transform: scale(1.05);
+}
+
+.form-group input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-group input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 8px;
+}
+
+.color-preview {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-family: 'Inter', monospace;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+/* --- ボタン --- */
+.btn {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.btn:active::after {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-settings {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-settings:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: var(--oshi-color);
+}
+
+.btn-save {
+  background: linear-gradient(135deg, var(--oshi-color), var(--oshi-color-light));
+  color: #fff;
+  box-shadow: 0 4px 16px var(--oshi-color-glow);
+}
+
+.btn-save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px var(--oshi-color-glow);
+}
+
+.btn-save:active {
+  transform: translateY(0);
+}
+
+/* --- 履歴リスト --- */
+.history-card {
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-list {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* スクロールバーカスタマイズ */
+.history-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: var(--oshi-color-pale);
+  border-radius: 3px;
+}
+
+.history-list::-webkit-scrollbar-thumb:hover {
+  background: var(--oshi-color);
+}
+
+.history-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 40px 10px;
+  font-size: 0.95rem;
+}
+
+/* 履歴アイテム */
+.history-item {
+  padding: 14px 16px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  margin-bottom: 10px;
+  transition: background 0.2s ease;
+  animation: fadeSlideIn 0.4s ease forwards;
+}
+
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.history-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.history-item-amount {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--oshi-color-light);
+}
+
+.history-item-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.history-item-reason {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.history-item-reason::before {
+  content: '💬 ';
+}
+
+/* 履歴の削除ボタン */
+.history-item-delete {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.2s ease, background 0.2s ease;
+  margin-left: 8px;
+}
+
+.history-item-delete:hover {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+/* --- トースト通知 --- */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: 1px solid var(--oshi-color);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* --- フッター --- */
+.app-footer {
+  text-align: center;
+  padding: 24px 20px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+/* --- レスポンシブ --- */
+@media (max-width: 768px) {
+  .app-title {
+    font-size: 1.4rem;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .title-emoji {
+    font-size: 2rem;
+  }
+
+  .total-amount {
+    font-size: 2.2rem;
+  }
+
+  .total-card {
+    padding: 28px 20px;
+  }
+
+  .two-column {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    padding: 22px;
+  }
+
+  .history-card {
+    max-height: none;
+  }
+}
+
+@media (max-width: 400px) {
+  .app-title {
+    font-size: 1.2rem;
+  }
+
+  .total-amount {
+    font-size: 1.8rem;
+  }
+
+  .card {
+    padding: 18px;
+  }
+}

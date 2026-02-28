@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>推し活貯金箱 / Oshi Savings Box</title>
+  <meta name="description" content="推しのために楽しくお金を貯めるWebアプリ。推しカラーで彩られたポップなデザインで、貯金を楽しく記録しよう！">
+
+  <!-- ファビコン: 💖をSVG Data URIで表示 -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>">
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- スタイルシート読み込み -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== ヘッダー ===== -->
+  <header class="app-header">
+    <div class="header-inner">
+      <h1 class="app-title">
+        <span class="title-emoji">💖</span>
+        <span>推し活貯金箱</span>
+        <span class="title-sub">Oshi Savings Box</span>
+      </h1>
+    </div>
+  </header>
+
+  <!-- ===== メインコンテンツ ===== -->
+  <main class="main-content">
+
+    <!-- === 合計金額表示エリア === -->
+    <section class="total-section" id="total-section">
+      <div class="total-card">
+        <p class="total-label">合計貯金額 / Total Saved</p>
+        <p class="total-amount" id="total-amount">¥0</p>
+        <p class="total-oshi-name" id="total-oshi-name">推しのために貯めよう！</p>
+      </div>
+    </section>
+
+    <!-- === 2カラムレイアウト: 左側=設定＋貯金フォーム / 右側=履歴 === -->
+    <div class="two-column">
+
+      <!-- 左カラム -->
+      <div class="left-column">
+
+        <!-- 推し設定カード -->
+        <section class="card settings-card">
+          <h2 class="card-title">
+            <span class="card-icon">⚙️</span>
+            推し設定 / Oshi Settings
+          </h2>
+          <div class="form-group">
+            <label for="oshi-name">推しの名前 / Oshi Name</label>
+            <input type="text" id="oshi-name" placeholder="例: 星野アイ" maxlength="30">
+          </div>
+          <div class="form-group">
+            <label for="oshi-color">推しカラー / Oshi Color</label>
+            <div class="color-picker-wrapper">
+              <input type="color" id="oshi-color" value="#e91e8c">
+              <span class="color-preview" id="color-preview">#e91e8c</span>
+            </div>
+          </div>
+          <button class="btn btn-settings" id="btn-save-settings">
+            💾 設定を保存 / Save Settings
+          </button>
+        </section>
+
+        <!-- 貯金記録カード -->
+        <section class="card saving-card">
+          <h2 class="card-title">
+            <span class="card-icon">🐷</span>
+            貯金する / Add Savings
+          </h2>
+          <div class="form-group">
+            <label for="saving-amount">金額 / Amount (¥)</label>
+            <input type="number" id="saving-amount" placeholder="例: 500" min="1" step="1">
+          </div>
+          <div class="form-group">
+            <label for="saving-reason">理由 / Reason</label>
+            <input type="text" id="saving-reason" list="reason-list" placeholder="例: 尊かったから">
+            <!-- 過去の理由をサジェストするdatalist -->
+            <datalist id="reason-list">
+              <!-- JavaScriptで動的に追加される -->
+            </datalist>
+          </div>
+          <button class="btn btn-save" id="btn-add-saving">
+            💰 貯金する / Save
+          </button>
+        </section>
+
+      </div>
+
+      <!-- 右カラム: 履歴 -->
+      <div class="right-column">
+        <section class="card history-card">
+          <h2 class="card-title">
+            <span class="card-icon">📜</span>
+            貯金履歴 / Savings History
+          </h2>
+          <div class="history-list" id="history-list">
+            <!-- JavaScriptで動的に追加される -->
+            <p class="history-empty" id="history-empty">まだ記録がありません / No records yet 🌟</p>
+          </div>
+        </section>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ===== フッター ===== -->
+  <footer class="app-footer">
+    <p>Made with 💖 for your Oshi</p>
+  </footer>
+
+  <!-- トースト通知 -->
+  <div class="toast" id="toast"></div>
+
+  <!-- スクリプト読み込み -->
+  <script src="script.js"></script>
+
+</body>
+</html>
