@@ -54,6 +54,7 @@ Complete it. Ship it. Relax. ☕
 | 041 | 📱 Quick QR Generator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/041_QuickQRGenerator/) |
 | 042 | 🗑️ スマートゴミ出しリマインダー | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/042_SmartTrashReminder/) |
 | 043 | 🍔 ハンバーガーメニュービルダー | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/043_HamburgerMenuBuilder/) |
+| 044 | 💖 推し活貯金箱 | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/044_OshiSavingsBox/index.html) |
 
 ---
 
