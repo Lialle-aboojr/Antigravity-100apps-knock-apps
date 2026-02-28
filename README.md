@@ -56,6 +56,7 @@ Complete it. Ship it. Relax. ☕
 | 043 | 🍔 ハンバーガーメニュービルダー | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/043_HamburgerMenuBuilder/) |
 | 044 | 💖 推し活貯金箱 | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/044_OshiSavingsBox/index.html) |
 | 045 | 🔲 Flex & Grid Layout Simulator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/045_FlexGridSimulator/index.html) |
+| 046 | ✨ Digital Kaleidoscope | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/046_DigitalKaleidoscope/index.html) |
 
 ---
 
