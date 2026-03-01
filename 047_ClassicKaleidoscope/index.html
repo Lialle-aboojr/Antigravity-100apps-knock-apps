@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classic Kaleidoscope | クラシカル万華鏡</title>
+    <meta name="description" content="本物の万華鏡をブラウザで再現。ビーズが反射する美しいシンメトリーを楽しもう。A realistic kaleidoscope in your browser.">
+
+    <!-- ファビコン: 🔭絵文字をSVGに変換して表示 -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔭</text></svg>">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== アプリヘッダー ===== -->
+    <header class="app-header">
+        <h1 class="app-title">
+            <span class="title-icon">🔭</span>
+            Classic Kaleidoscope
+        </h1>
+        <p class="app-subtitle">クラシカル万華鏡</p>
+    </header>
+
+    <!-- ===== 万華鏡ビューポート ===== -->
+    <main class="kaleidoscope-wrapper">
+        <!-- フレーム（覗き穴の枠）-->
+        <div id="frame-container" class="frame-container frame-simple">
+            <canvas id="main-canvas" width="600" height="600"></canvas>
+            <!-- 録画中インジケーター -->
+            <div id="rec-indicator" class="rec-indicator hidden">
+                <span class="rec-dot"></span> REC
+            </div>
+        </div>
+    </main>
+
+    <!-- ===== ビーズ描画用オフスクリーンCanvas（非表示） ===== -->
+    <canvas id="off-canvas" width="600" height="600" style="display:none;"></canvas>
+
+    <!-- ===== 操作パネル ===== -->
+    <section class="control-panel">
+        <div class="controls-row">
+
+            <!-- 分割数 -->
+            <div class="control-group">
+                <label class="control-label" for="divisions">🔷 分割数 / Divisions</label>
+                <select id="divisions" class="control-select">
+                    <option value="6" selected>6</option>
+                    <option value="8">8</option>
+                    <option value="12">12</option>
+                </select>
+            </div>
+
+            <!-- テーマ -->
+            <div class="control-group">
+                <label class="control-label" for="theme">🎨 テーマ / Theme</label>
+                <select id="theme" class="control-select">
+                    <option value="retro" selected>🟫 レトロ / Retro</option>
+                    <option value="neon">💜 ネオン / Neon</option>
+                    <option value="pastel">🩷 パステル / Pastel</option>
+                </select>
+            </div>
+
+            <!-- フレーム -->
+            <div class="control-group">
+                <label class="control-label" for="frame-style">🖼️ フレーム / Frame</label>
+                <select id="frame-style" class="control-select">
+                    <option value="simple" selected>⬛ シンプル / Simple</option>
+                    <option value="brass">🥇 真鍮風 / Brass</option>
+                    <option value="wood">🪵 木目調 / Wood</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="controls-row">
+
+            <!-- 自動回転 -->
+            <div class="control-group">
+                <label class="control-label toggle-label" for="auto-rotate">
+                    <span>🔄 自動回転 / Rotate</span>
+                    <div class="switch-wrapper">
+                        <input type="checkbox" id="auto-rotate" class="switch-input" checked>
+                        <span class="switch-slider"></span>
+                    </div>
+                </label>
+            </div>
+
+            <!-- 回転スピード -->
+            <div class="control-group">
+                <label class="control-label" for="rotate-speed">
+                    ⚡ スピード / Speed: <span id="speed-value" class="accent-value">3</span>
+                </label>
+                <input type="range" id="rotate-speed" class="control-range" min="1" max="10" value="3">
+            </div>
+
+        </div>
+
+        <div class="controls-row action-row">
+            <!-- シャッフル -->
+            <button id="shuffle-btn" class="action-btn shuffle-btn">🎲 シャッフル / Shuffle</button>
+            <!-- 録画 -->
+            <button id="record-btn" class="action-btn record-btn">⏺️ 録画 / Record</button>
+        </div>
+    </section>
+
+    <!-- ===== ヒントメッセージ ===== -->
+    <div id="hint-message" class="hint-message">
+        🖱️ ドラッグでビーズを揺らそう / Drag to shake beads ✨
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
