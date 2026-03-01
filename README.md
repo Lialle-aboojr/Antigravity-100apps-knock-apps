@@ -57,6 +57,7 @@ Complete it. Ship it. Relax. ☕
 | 044 | 💖 推し活貯金箱 | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/044_OshiSavingsBox/index.html) |
 | 045 | 🔲 Flex & Grid Layout Simulator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/045_FlexGridSimulator/index.html) |
 | 046 | ✨ Digital Kaleidoscope | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/046_DigitalKaleidoscope/index.html) |
+| 047 | 🔭 Classic Kaleidoscope | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/047_ClassicKaleidoscope/index.html) |
 
 ---
 
