@@ -38,9 +38,6 @@ let globalRotation = 0;
 let isAutoRotating = true;
 let rotateSpeed = 3;
 let beads = [];
-let isDragging = false;
-let lastDragX = 0;
-let lastDragY = 0;
 let isRecording = false;
 let mediaRecorder = null;
 let recordedChunks = [];
@@ -54,6 +51,14 @@ let stepStartAngle = 0;
 let stepTimer = 0;
 let tubeIsRotating = false;
 let prevGlobalRotation = 0;
+
+// --- 手動クリック回転用の変数 ---
+let manualStepActive = false;
+let manualStepProgress = 0;
+let manualStepAngle = 0;
+let manualStepDuration = 0;
+let manualStepStartAngle = 0;
+let manualPrevGlobalRotation = 0;
 
 // --- カラーテーマの定義（4テーマ） ---
 const themes = {
@@ -145,15 +150,15 @@ class Bead {
 
         if (rotating) {
             // === 筒が回っている最中 ===
-            // 控えめなランダム衝撃（万華鏡を振るイメージ）
-            const intensity = Math.abs(angVel) * 6;
-            this.vx += (Math.random() - 0.5) * intensity * 1.5;
-            this.vy += (Math.random() - 0.5) * intensity * 1.5;
+            // 強烈なランダム衝撃（ガシャッ！と大きく崩れるイメージ）
+            const intensity = Math.abs(angVel) * 18;
+            this.vx += (Math.random() - 0.5) * intensity * 4;
+            this.vy += (Math.random() - 0.5) * intensity * 4;
             // 回転中は適度な摩擦
-            this.vx *= 0.90;
-            this.vy *= 0.90;
-            // 自転も加速
-            this.rotation += this.rotSpeed * 3;
+            this.vx *= 0.88;
+            this.vy *= 0.88;
+            // 自転も大きく加速
+            this.rotation += this.rotSpeed * 6;
         } else {
             // === 筒が止まっている ===
             // 強い摩擦でビーズを素早く停止
@@ -174,8 +179,8 @@ class Bead {
         if (this.y < edgeMargin) this.vy += restoreForce;
         if (this.y > BEAD_H - edgeMargin) this.vy -= restoreForce;
 
-        // 速度上限
-        const maxV = 2.5;
+        // 速度上限（ダイナミックな動きに対応して引き上げ）
+        const maxV = 6;
         this.vx = Math.max(-maxV, Math.min(maxV, this.vx));
         this.vy = Math.max(-maxV, Math.min(maxV, this.vy));
 
@@ -338,13 +343,34 @@ function generateBeads() {
 }
 
 // ===================================================
-// 断続回転アニメーション
+// 断続回転アニメーション（ダイナミック版）
 // ===================================================
-function easeInOutCubic(t) {
-    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+// よりシャープな緩急をつけるイージング（easeOutExpo寄り）
+function easeInOutQuart(t) {
+    return t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2;
 }
 
 function updateStepRotation() {
+    // --- 手動クリック回転処理 ---
+    if (manualStepActive) {
+        tubeIsRotating = true;
+        manualPrevGlobalRotation = globalRotation;
+        manualStepProgress += 1 / manualStepDuration;
+
+        if (manualStepProgress >= 1) {
+            manualStepProgress = 1;
+            manualStepActive = false;
+            tubeIsRotating = false;
+        }
+
+        const eased = easeInOutQuart(manualStepProgress);
+        globalRotation = manualStepStartAngle + manualStepAngle * eased;
+        const angularVelocity = globalRotation - manualPrevGlobalRotation;
+        return angularVelocity;
+    }
+
+    // --- 自動回転処理 ---
     if (!isAutoRotating) {
         tubeIsRotating = false;
         return 0;
@@ -360,9 +386,11 @@ function updateStepRotation() {
             stepProgress = 0;
             tubeIsRotating = true;
             const sectorAngle = (Math.PI * 2) / divisions;
-            const steps = 1 + Math.floor(Math.random() * 2);
+            // ダイナミック化: 2〜4セクター分 回転（大きく回る）
+            const steps = 2 + Math.floor(Math.random() * 3);
             stepAngle = sectorAngle * steps * (Math.random() < 0.5 ? 1 : -1);
-            stepDuration = Math.max(20, 70 - rotateSpeed * 5);
+            // 回転時間を短くしてキレのある動きに
+            stepDuration = Math.max(15, 50 - rotateSpeed * 4);
             stepStartAngle = globalRotation;
             prevGlobalRotation = globalRotation;
         }
@@ -375,11 +403,12 @@ function updateStepRotation() {
             stepProgress = 1;
             stepPhase = 'pause';
             tubeIsRotating = false;
-            const basePause = Math.max(50, 250 - rotateSpeed * 22);
-            stepTimer = basePause + Math.floor(Math.random() * 60);
+            // 停止のインパクトを出すため、少し長めのポーズ
+            const basePause = Math.max(60, 280 - rotateSpeed * 22);
+            stepTimer = basePause + Math.floor(Math.random() * 80);
         }
 
-        const eased = easeInOutCubic(stepProgress);
+        const eased = easeInOutQuart(stepProgress);
         globalRotation = stepStartAngle + stepAngle * eased;
         angularVelocity = globalRotation - prevGlobalRotation;
     }
@@ -391,6 +420,25 @@ function resetStepTimer() {
     stepPhase = 'pause';
     stepTimer = 30 + Math.floor(Math.random() * 30);
     tubeIsRotating = false;
+}
+
+// ===================================================
+// 手動クリック回転を発動する関数
+// ===================================================
+function triggerManualRotation() {
+    if (manualStepActive) return; // 回転中は無視
+
+    manualStepActive = true;
+    manualStepProgress = 0;
+    manualStepStartAngle = globalRotation;
+    manualPrevGlobalRotation = globalRotation;
+
+    const sectorAngle = (Math.PI * 2) / divisions;
+    // ダイナミック: 2〜4セクター分の大きな回転
+    const steps = 2 + Math.floor(Math.random() * 3);
+    manualStepAngle = sectorAngle * steps * (Math.random() < 0.5 ? 1 : -1);
+    // キレのある短い回転時間
+    manualStepDuration = Math.max(15, 50 - rotateSpeed * 4);
 }
 
 // ===================================================
@@ -480,71 +528,24 @@ function render() {
 }
 
 // ===================================================
-// マウス・タッチインタラクション
+// マウス・タッチインタラクション（クリック/タップで回転）
 // ===================================================
-function getCanvasPos(clientX, clientY) {
-    const rect = mainCanvas.getBoundingClientRect();
-    return {
-        x: (clientX - rect.left) / rect.width * SIZE,
-        y: (clientY - rect.top) / rect.height * SIZE
-    };
-}
-
-mainCanvas.addEventListener('mousedown', (e) => {
-    isDragging = true;
-    const pos = getCanvasPos(e.clientX, e.clientY);
-    lastDragX = pos.x;
-    lastDragY = pos.y;
+mainCanvas.addEventListener('click', (e) => {
+    // 自動回転OFF時のみ手動クリック回転を発動
+    if (!isAutoRotating) {
+        triggerManualRotation();
+    }
     hideHint();
 });
-
-mainCanvas.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    const pos = getCanvasPos(e.clientX, e.clientY);
-    const dx = pos.x - lastDragX;
-    const dy = pos.y - lastDragY;
-    applyForceToBeads(dx, dy);
-    lastDragX = pos.x;
-    lastDragY = pos.y;
-});
-
-mainCanvas.addEventListener('mouseup', () => { isDragging = false; });
-mainCanvas.addEventListener('mouseleave', () => { isDragging = false; });
 
 mainCanvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
-    isDragging = true;
-    const t = e.touches[0];
-    const pos = getCanvasPos(t.clientX, t.clientY);
-    lastDragX = pos.x;
-    lastDragY = pos.y;
+    // 自動回転OFF時のみ手動タップ回転を発動
+    if (!isAutoRotating) {
+        triggerManualRotation();
+    }
     hideHint();
 }, { passive: false });
-
-mainCanvas.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    if (!isDragging) return;
-    const t = e.touches[0];
-    const pos = getCanvasPos(t.clientX, t.clientY);
-    const dx = pos.x - lastDragX;
-    const dy = pos.y - lastDragY;
-    applyForceToBeads(dx, dy);
-    lastDragX = pos.x;
-    lastDragY = pos.y;
-}, { passive: false });
-
-mainCanvas.addEventListener('touchend', () => { isDragging = false; });
-
-function applyForceToBeads(dx, dy) {
-    const force = 0.12;
-    beads.forEach(bead => {
-        bead.vx += dx * force;
-        bead.vy += dy * force;
-        const maxV = 6;
-        bead.vx = Math.max(-maxV, Math.min(maxV, bead.vx));
-        bead.vy = Math.max(-maxV, Math.min(maxV, bead.vy));
-    });
-}
 
 // ===================================================
 // UIコントロール

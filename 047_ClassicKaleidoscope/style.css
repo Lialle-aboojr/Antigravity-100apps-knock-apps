@@ -88,12 +88,12 @@ body {
     width: 460px;
     height: 460px;
     border-radius: 50%;
-    cursor: grab;
+    cursor: pointer;
     touch-action: none;
 }
 
 #main-canvas:active {
-    cursor: grabbing;
+    cursor: pointer;
 }
 
 /* フレーム: シンプル黒 */
