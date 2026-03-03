@@ -219,6 +219,80 @@ function deleteItem(id, li) {
 }
 
 /**
+ * テキスト名が一致するアイテムを検索して削除する関数（音声コマンド用）
+ * @param {string} targetText - 削除対象のアイテム名
+ */
+function deleteItemByText(targetText) {
+    // リストの中からテキストが完全一致するアイテムを検索
+    const targetItem = items.find(item => item.text === targetText);
+
+    if (targetItem) {
+        // 該当アイテムのDOM要素を取得（アニメーション用）
+        const li = document.querySelector(`.shopping-item[data-id="${targetItem.id}"]`);
+
+        if (li) {
+            // 削除アニメーション付きで削除
+            li.classList.add('removing');
+            li.addEventListener('animationend', () => {
+                items = items.filter(item => item.id !== targetItem.id);
+                saveItems();
+                renderList();
+            });
+        } else {
+            // DOM要素が見つからない場合はデータだけ削除
+            items = items.filter(item => item.id !== targetItem.id);
+            saveItems();
+            renderList();
+        }
+    } else {
+        // 該当アイテムが見つからない場合はアラート表示
+        alert('「' + targetText + '」は見つかりませんでした / Item not found');
+    }
+}
+
+/**
+ * 音声認識結果を解析し、削除コマンドか通常追加かを判定する関数
+ * - 日本語: 末尾が「を削除」「を消して」→ 削除モード
+ * - 英語: 先頭が "Delete " "Remove " → 削除モード
+ * - それ以外 → 通常の追加モード
+ * @param {string} transcript - 音声認識されたテキスト
+ */
+function handleVoiceCommand(transcript) {
+    // --- 日本語の削除コマンド判定 ---
+    if (transcript.endsWith('を削除')) {
+        // 「〇〇を削除」→ 対象の単語を抽出して削除
+        const target = transcript.replace(/を削除$/, '').trim();
+        deleteItemByText(target);
+        return;
+    }
+    if (transcript.endsWith('を消して')) {
+        // 「〇〇を消して」→ 対象の単語を抽出して削除
+        const target = transcript.replace(/を消して$/, '').trim();
+        deleteItemByText(target);
+        return;
+    }
+
+    // --- 英語の削除コマンド判定（大文字・小文字を区別しない） ---
+    const lowerTranscript = transcript.toLowerCase();
+    if (lowerTranscript.startsWith('delete ')) {
+        // "Delete 〇〇" → 対象の単語を抽出して削除
+        const target = transcript.substring(7).trim();
+        deleteItemByText(target);
+        return;
+    }
+    if (lowerTranscript.startsWith('remove ')) {
+        // "Remove 〇〇" → 対象の単語を抽出して削除
+        const target = transcript.substring(7).trim();
+        deleteItemByText(target);
+        return;
+    }
+
+    // --- 通常モード: リストへの新規追加 ---
+    itemInput.value = transcript;
+    addItem();
+}
+
+/**
  * リストを全消去する関数
  * confirmダイアログで確認後、全アイテムを削除する
  */
@@ -274,10 +348,8 @@ function initSpeechRecognition() {
     recognition.onresult = (event) => {
         // 認識されたテキストを取得
         const transcript = event.results[0][0].transcript;
-        // 入力欄に自動入力
-        itemInput.value = transcript;
-        // 音声認識完了時に自動でリストへ追加（ボタンを押す手間を省く）
-        addItem();
+        // 音声コマンドを解析（削除コマンドか通常追加かを判定）
+        handleVoiceCommand(transcript);
     };
 
     // --- 認識が終了したときのイベント ---
