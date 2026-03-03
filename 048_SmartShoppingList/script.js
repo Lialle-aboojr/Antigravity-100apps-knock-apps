@@ -274,14 +274,10 @@ function initSpeechRecognition() {
     recognition.onresult = (event) => {
         // 認識されたテキストを取得
         const transcript = event.results[0][0].transcript;
-        // 入力欄に自動入力（既存のテキストに追加）
-        if (itemInput.value) {
-            itemInput.value += ' ' + transcript;
-        } else {
-            itemInput.value = transcript;
-        }
-        // 入力欄にフォーカス（ユーザーが確認してから追加ボタンを押すフロー）
-        itemInput.focus();
+        // 入力欄に自動入力
+        itemInput.value = transcript;
+        // 音声認識完了時に自動でリストへ追加（ボタンを押す手間を省く）
+        addItem();
     };
 
     // --- 認識が終了したときのイベント ---
@@ -357,8 +353,9 @@ function toggleVoice() {
 addBtn.addEventListener('click', addItem);
 
 // 入力欄でEnterキーを押した時にアイテムを追加
+// ※ IME変換中（日本語入力の確定操作）の場合は追加しない
 itemInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.isComposing) {
         addItem();
     }
 });
