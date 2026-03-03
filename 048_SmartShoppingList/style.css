@@ -225,6 +225,46 @@ body {
     font-size: 1rem;
 }
 
+/* 音声認識言語セレクター */
+.voice-lang-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--spacing-sm);
+}
+
+.voice-lang-label {
+    font-size: 0.78rem;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    font-weight: 400;
+}
+
+.voice-lang-select {
+    flex: 1;
+    padding: 6px 10px;
+    font-family: var(--font-family);
+    font-size: 0.82rem;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    cursor: pointer;
+    transition: border-color var(--transition);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8580'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+}
+
+.voice-lang-select:focus {
+    border-color: var(--color-accent);
+}
+
 /* 音声認識中の状態表示 */
 .voice-status {
     display: flex;

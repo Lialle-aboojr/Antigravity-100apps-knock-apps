@@ -50,6 +50,14 @@
                     <span class="voice-text">音声入力 / Voice</span>
                 </button>
             </div>
+            <!-- 音声認識言語セレクター -->
+            <div class="voice-lang-row">
+                <label for="voiceLang" class="voice-lang-label">🌐 認識言語 / Language:</label>
+                <select id="voiceLang" class="voice-lang-select">
+                    <option value="ja-JP" selected>日本語</option>
+                    <option value="en-US">English</option>
+                </select>
+            </div>
             <!-- 音声認識中の状態表示 -->
             <div id="voiceStatus" class="voice-status hidden">
                 <span class="pulse-dot"></span>

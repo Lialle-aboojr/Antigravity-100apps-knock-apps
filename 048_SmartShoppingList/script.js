@@ -17,6 +17,7 @@ const emptyMessage = document.getElementById('emptyMessage');
 const listInfo = document.getElementById('listInfo');
 const itemCount = document.getElementById('itemCount');
 const clearAllBtn = document.getElementById('clearAllBtn');
+const voiceLang = document.getElementById('voiceLang'); // 音声認識言語セレクター
 
 // --- アプリの状態（データ配列） ---
 // 各アイテムは { id: ユニークID, text: アイテム名, checked: 購入済みフラグ } の形式
@@ -258,33 +259,40 @@ function deleteItemByText(targetText) {
  * @param {string} transcript - 音声認識されたテキスト
  */
 function handleVoiceCommand(transcript) {
-    // --- 日本語の削除コマンド判定 ---
-    if (transcript.endsWith('を削除')) {
-        // 「〇〇を削除」→ 対象の単語を抽出して削除
-        const target = transcript.replace(/を削除$/, '').trim();
-        deleteItemByText(target);
-        return;
-    }
-    if (transcript.endsWith('を消して')) {
-        // 「〇〇を消して」→ 対象の単語を抽出して削除
-        const target = transcript.replace(/を消して$/, '').trim();
-        deleteItemByText(target);
-        return;
+    // 現在選択されている認識言語を取得
+    const currentLang = voiceLang.value;
+
+    // --- 日本語モードの削除コマンド判定 ---
+    if (currentLang === 'ja-JP') {
+        if (transcript.endsWith('を削除')) {
+            // 「〇〇を削除」→ 対象の単語を抽出して削除
+            const target = transcript.replace(/を削除$/, '').trim();
+            deleteItemByText(target);
+            return;
+        }
+        if (transcript.endsWith('を消して')) {
+            // 「〇〇を消して」→ 対象の単語を抽出して削除
+            const target = transcript.replace(/を消して$/, '').trim();
+            deleteItemByText(target);
+            return;
+        }
     }
 
-    // --- 英語の削除コマンド判定（大文字・小文字を区別しない） ---
-    const lowerTranscript = transcript.toLowerCase();
-    if (lowerTranscript.startsWith('delete ')) {
-        // "Delete 〇〇" → 対象の単語を抽出して削除
-        const target = transcript.substring(7).trim();
-        deleteItemByText(target);
-        return;
-    }
-    if (lowerTranscript.startsWith('remove ')) {
-        // "Remove 〇〇" → 対象の単語を抽出して削除
-        const target = transcript.substring(7).trim();
-        deleteItemByText(target);
-        return;
+    // --- 英語モードの削除コマンド判定（大文字・小文字を区別しない） ---
+    if (currentLang === 'en-US') {
+        const lowerTranscript = transcript.toLowerCase();
+        if (lowerTranscript.startsWith('delete ')) {
+            // "Delete 〇〇" → 対象の単語を抽出して削除
+            const target = transcript.substring(7).trim();
+            deleteItemByText(target);
+            return;
+        }
+        if (lowerTranscript.startsWith('remove ')) {
+            // "Remove 〇〇" → 対象の単語を抽出して削除
+            const target = transcript.substring(7).trim();
+            deleteItemByText(target);
+            return;
+        }
     }
 
     // --- 通常モード: リストへの新規追加 ---
@@ -383,6 +391,8 @@ function startListening() {
 
     // 音声認識を開始
     try {
+        // プルダウンで選択中の言語を音声認識にセット
+        recognition.lang = voiceLang.value;
         recognition.start();
     } catch (error) {
         // すでに認識中の場合のエラーをキャッチ
