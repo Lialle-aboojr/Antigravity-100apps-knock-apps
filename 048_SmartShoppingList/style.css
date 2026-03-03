@@ -1,0 +1,541 @@
+/* ===================================
+   Smart Shopping List / スマート買い物リスト
+   スタイルシート
+   テーマ: 無印良品風 シンプル・ナチュラル
+   =================================== */
+
+/* --- CSS変数の定義（カラーパレット・フォント） --- */
+:root {
+    /* メインカラー: 白・ベージュ・グレー基調 */
+    --color-bg: #f7f5f0;
+    /* ページ背景: あたたかみのあるオフホワイト */
+    --color-surface: #ffffff;
+    /* カード・入力欄の背景 */
+    --color-border: #e8e4dd;
+    /* ボーダー: うすいベージュグレー */
+    --color-border-light: #f0ece5;
+    /* 薄いボーダー */
+    --color-text: #3c3a37;
+    /* メインテキスト: ダークブラウン */
+    --color-text-secondary: #8a8580;
+    /* サブテキスト: 薄いグレーブラウン */
+    --color-text-muted: #b8b3ab;
+    /* ミューテッドテキスト */
+    --color-accent: #7c6f5b;
+    /* アクセント: 落ち着いたブラウン */
+    --color-accent-hover: #6b5f4d;
+    /* アクセントホバー */
+    --color-danger: #c4796a;
+    /* 削除・警告: くすんだ赤 */
+    --color-danger-hover: #b5695a;
+    /* 削除ホバー */
+    --color-checked-bg: #faf8f5;
+    /* チェック済みアイテム背景 */
+    --color-voice-active: #8ba68b;
+    /* 音声認識中: やさしい緑 */
+
+    /* フォント定義 */
+    --font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+
+    /* 角丸・間隔 */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --spacing-xs: 6px;
+    --spacing-sm: 12px;
+    --spacing-md: 20px;
+    --spacing-lg: 32px;
+
+    /* トランジション */
+    --transition: 0.2s ease;
+}
+
+/* --- リセットと基本スタイル --- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- メインコンテナ --- */
+.container {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+    padding-top: var(--spacing-lg);
+    padding-bottom: 100px;
+    /* フッター分の余白 */
+}
+
+/* === ヘッダー === */
+.header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.header-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-xs);
+    /* 微妙なバウンスアニメーション */
+    animation: gentleBounce 3s ease-in-out infinite;
+}
+
+@keyframes gentleBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+    letter-spacing: 0.02em;
+    margin-bottom: 2px;
+}
+
+.header-subtitle {
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--color-text-secondary);
+    letter-spacing: 0.05em;
+}
+
+/* === アイテム追加エリア === */
+.input-section {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+/* テキスト入力欄 */
+.input-row {
+    margin-bottom: var(--spacing-sm);
+}
+
+.item-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-family: var(--font-family);
+    font-size: 0.95rem;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    outline: none;
+    transition: border-color var(--transition);
+}
+
+.item-input::placeholder {
+    color: var(--color-text-muted);
+    font-weight: 300;
+}
+
+.item-input:focus {
+    border-color: var(--color-accent);
+}
+
+/* ボタン共通スタイル */
+.button-row {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.btn {
+    font-family: var(--font-family);
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+/* 追加ボタン */
+.btn-add {
+    flex: 1;
+    padding: 12px 16px;
+    background: var(--color-accent);
+    color: #ffffff;
+}
+
+.btn-add:hover {
+    background: var(--color-accent-hover);
+}
+
+.btn-add:active {
+    transform: scale(0.98);
+}
+
+/* 音声入力ボタン */
+.btn-voice {
+    flex: 1;
+    padding: 12px 16px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+}
+
+.btn-voice:hover {
+    background: var(--color-border-light);
+}
+
+.btn-voice:active {
+    transform: scale(0.98);
+}
+
+/* 音声認識中のボタン状態 */
+.btn-voice.listening {
+    background: var(--color-voice-active);
+    color: #ffffff;
+    border-color: var(--color-voice-active);
+}
+
+.voice-icon {
+    font-size: 1rem;
+}
+
+/* 音声認識中の状態表示 */
+.voice-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: var(--spacing-sm);
+    padding: 8px 12px;
+    background: var(--color-bg);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    color: var(--color-voice-active);
+    font-weight: 500;
+}
+
+.voice-status.hidden {
+    display: none;
+}
+
+/* パルス点アニメーション */
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-voice-active);
+    animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.4;
+        transform: scale(0.7);
+    }
+}
+
+/* === リスト表示エリア === */
+.list-section {
+    margin-bottom: var(--spacing-md);
+}
+
+/* リスト情報バー */
+.list-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+    padding: 0 4px;
+    font-size: 0.78rem;
+    color: var(--color-text-secondary);
+    font-weight: 400;
+}
+
+.list-info.hidden {
+    display: none;
+}
+
+/* 買い物リスト */
+.shopping-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* 個別アイテム */
+.shopping-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 12px 16px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition);
+    /* 追加時のアニメーション */
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* チェックボックスエリア */
+.item-checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--color-border);
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all var(--transition);
+    background: transparent;
+}
+
+.item-checkbox:hover {
+    border-color: var(--color-accent);
+}
+
+/* チェック済み状態のチェックボックス */
+.item-checkbox.checked {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+}
+
+/* チェックマーク */
+.item-checkbox.checked::after {
+    content: '';
+    width: 6px;
+    height: 10px;
+    border: 2px solid #fff;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) translateY(-1px);
+}
+
+/* アイテムテキスト */
+.item-text {
+    flex: 1;
+    font-size: 0.95rem;
+    color: var(--color-text);
+    transition: all var(--transition);
+    word-break: break-word;
+}
+
+/* 購入済みアイテム */
+.shopping-item.checked {
+    background: var(--color-checked-bg);
+    border-color: var(--color-border-light);
+}
+
+.shopping-item.checked .item-text {
+    text-decoration: line-through;
+    color: var(--color-text-muted);
+}
+
+/* 削除ボタン */
+.item-delete {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all var(--transition);
+    font-family: var(--font-family);
+}
+
+.item-delete:hover {
+    background: var(--color-danger);
+    color: #ffffff;
+}
+
+/* リストが空の時のメッセージ */
+.empty-message {
+    text-align: center;
+    padding: var(--spacing-lg) var(--spacing-md);
+    color: var(--color-text-secondary);
+}
+
+.empty-message.hidden {
+    display: none;
+}
+
+.empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-sm);
+    opacity: 0.6;
+}
+
+.empty-message p {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.empty-hint {
+    font-size: 0.78rem !important;
+    color: var(--color-text-muted) !important;
+    font-weight: 300;
+    line-height: 1.5;
+}
+
+/* === フッターエリア === */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: center;
+}
+
+/* 全消去ボタン */
+.btn-clear {
+    width: 100%;
+    max-width: 520px;
+    padding: 12px 16px;
+    background: var(--color-surface);
+    color: var(--color-danger);
+    border: 1px solid var(--color-border);
+}
+
+.btn-clear:hover {
+    background: var(--color-danger);
+    color: #ffffff;
+    border-color: var(--color-danger);
+}
+
+.btn-clear:active {
+    transform: scale(0.98);
+}
+
+/* === 削除アニメーション === */
+.shopping-item.removing {
+    animation: slideOut 0.25s ease forwards;
+}
+
+@keyframes slideOut {
+    to {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+}
+
+/* === レスポンシブ対応 === */
+
+/* タブレット以下 */
+@media (max-width: 600px) {
+    .container {
+        padding: var(--spacing-sm);
+        padding-top: var(--spacing-md);
+        padding-bottom: 80px;
+    }
+
+    .header {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .header-icon {
+        font-size: 2rem;
+    }
+
+    .header-title {
+        font-size: 1.3rem;
+    }
+
+    .input-section {
+        padding: var(--spacing-sm);
+    }
+
+    .item-input {
+        padding: 11px 14px;
+        font-size: 1rem;
+        /* スマホではやや大きく */
+    }
+
+    .button-row {
+        gap: 8px;
+    }
+
+    .btn-add,
+    .btn-voice {
+        padding: 11px 12px;
+        font-size: 0.82rem;
+    }
+
+    .shopping-item {
+        padding: 10px 12px;
+    }
+
+    .footer {
+        padding: 10px var(--spacing-sm);
+    }
+
+    .btn-clear {
+        padding: 11px 14px;
+    }
+}
+
+/* 非常に小さい画面 */
+@media (max-width: 360px) {
+    .header-title {
+        font-size: 1.15rem;
+    }
+
+    .voice-text {
+        font-size: 0.75rem;
+    }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Smart Shopping List - ブラウザにデータを保存し、音声入力も可能なスマート買い物メモアプリ">
+    <title>Smart Shopping List / スマート買い物リスト</title>
+    <!-- ファビコン: ショッピングカート絵文字をSVGで表示 -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>">
+    <!-- Google Fonts: ナチュラルで読みやすいフォント -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- スタイルシート読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- メインコンテナ -->
+    <div class="container">
+
+        <!-- ヘッダー -->
+        <header class="header">
+            <div class="header-icon">🛒</div>
+            <h1 class="header-title">Smart Shopping List</h1>
+            <p class="header-subtitle">スマート買い物リスト</p>
+        </header>
+
+        <!-- アイテム追加エリア -->
+        <section class="input-section">
+            <!-- テキスト入力欄 -->
+            <div class="input-row">
+                <input type="text" id="itemInput" class="item-input" placeholder="アイテムを入力 / Enter item..."
+                    autocomplete="off">
+            </div>
+            <!-- ボタンエリア -->
+            <div class="button-row">
+                <!-- 追加ボタン -->
+                <button id="addBtn" class="btn btn-add">
+                    追加 / Add
+                </button>
+                <!-- 音声入力ボタン -->
+                <button id="voiceBtn" class="btn btn-voice">
+                    <span class="voice-icon">🎙️</span>
+                    <span class="voice-text">音声入力 / Voice</span>
+                </button>
+            </div>
+            <!-- 音声認識中の状態表示 -->
+            <div id="voiceStatus" class="voice-status hidden">
+                <span class="pulse-dot"></span>
+                <span>音声を聞いています... / Listening...</span>
+            </div>
+        </section>
+
+        <!-- リスト表示エリア -->
+        <section class="list-section">
+            <!-- アイテム数の表示 -->
+            <div id="listInfo" class="list-info hidden">
+                <span id="itemCount"></span>
+            </div>
+            <!-- 買い物リスト -->
+            <ul id="shoppingList" class="shopping-list">
+                <!-- JavaScriptで動的に生成 -->
+            </ul>
+            <!-- リストが空の時の表示 -->
+            <div id="emptyMessage" class="empty-message">
+                <div class="empty-icon">📝</div>
+                <p>リストは空です / List is empty</p>
+                <p class="empty-hint">上の入力欄からアイテムを追加してください<br>Add items using the input above</p>
+            </div>
+        </section>
+
+        <!-- フッターエリア -->
+        <footer class="footer">
+            <!-- リスト全消去ボタン -->
+            <button id="clearAllBtn" class="btn btn-clear">
+                リストを全消去 / Clear All
+            </button>
+        </footer>
+
+    </div>
+
+    <!-- JavaScriptファイル読み込み -->
+    <script src="script.js"></script>
+</body>
+
+</html>
