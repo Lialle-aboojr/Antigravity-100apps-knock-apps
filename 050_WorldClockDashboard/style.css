@@ -275,7 +275,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
 }
 
 .city-info {
@@ -326,40 +326,237 @@ body {
     background-color: var(--night-icon-bg);
 }
 
-/* --- 時刻表示 --- */
-.time-display {
+/* ========================================
+   アナログ時計スタイル
+   ======================================== */
+
+/* 時計を中央に配置するラッパー */
+.analog-clock-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm) 0;
 }
 
-.time-value {
-    font-size: 3rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    font-variant-numeric: tabular-nums;
+/* 時計の文字盤（外枠） */
+.analog-clock {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    position: relative;
+    transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
 }
 
-.day .time-value {
-    color: var(--day-time-color);
+/* 昼の文字盤スタイル */
+.day .analog-clock {
+    background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f8f7f4 100%);
+    border: 2.5px solid #d0cdc7;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08), inset 0 1px 4px rgba(0, 0, 0, 0.04);
 }
 
-.night .time-value {
-    color: var(--night-time-color);
+/* 夜の文字盤スタイル */
+.night .analog-clock {
+    background: radial-gradient(circle at 50% 50%, #1e2a3a 0%, #0d1b2a 100%);
+    border: 2.5px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 4px rgba(255, 255, 255, 0.03);
 }
 
-.time-seconds {
-    font-size: 1.5rem;
-    font-weight: 400;
-    vertical-align: super;
-    margin-left: 2px;
+/* --- 文字盤の時間マーカー --- */
+.clock-marker {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0 0;
 }
 
-.day .time-seconds {
-    color: var(--day-text-secondary);
+/* 12時間の目盛り線 */
+.clock-marker-line {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.night .time-seconds {
-    color: var(--night-text-secondary);
+/* 主要マーカー（12, 3, 6, 9 時） */
+.marker-major {
+    width: 2.5px;
+    height: 12px;
+    top: 8px;
+    border-radius: 1px;
+}
+
+/* 通常マーカー（それ以外の時間） */
+.marker-minor {
+    width: 1.5px;
+    height: 7px;
+    top: 10px;
+    border-radius: 1px;
+}
+
+/* 昼のマーカー色 */
+.day .marker-major {
+    background-color: #3a3a3a;
+}
+
+.day .marker-minor {
+    background-color: #b0ada6;
+}
+
+/* 夜のマーカー色 */
+.night .marker-major {
+    background-color: #d0d0e0;
+}
+
+.night .marker-minor {
+    background-color: rgba(255, 255, 255, 0.25);
+}
+
+/* --- 文字盤の数字（12, 3, 6, 9） --- */
+.clock-number {
+    position: absolute;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-align: center;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.day .clock-number {
+    color: #3a3a3a;
+}
+
+.night .clock-number {
+    color: #c0c0d0;
+}
+
+/* 12時の数字 */
+.clock-number-12 {
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* 3時の数字 */
+.clock-number-3 {
+    top: 50%;
+    right: 14px;
+    transform: translateY(-50%);
+}
+
+/* 6時の数字 */
+.clock-number-6 {
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* 9時の数字 */
+.clock-number-9 {
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+}
+
+/* --- 時計の針（共通） --- */
+.clock-hand {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    border-radius: 2px;
+    transition: none;
+}
+
+/* 時針 */
+.hand-hour {
+    width: 3.5px;
+    height: 36px;
+    margin-left: -1.75px;
+    z-index: 3;
+}
+
+.day .hand-hour {
+    background-color: #2c2c2c;
+}
+
+.night .hand-hour {
+    background-color: #e0e0f0;
+}
+
+/* 分針 */
+.hand-minute {
+    width: 2.5px;
+    height: 50px;
+    margin-left: -1.25px;
+    z-index: 4;
+}
+
+.day .hand-minute {
+    background-color: #3a3a3a;
+}
+
+.night .hand-minute {
+    background-color: #d0d0e0;
+}
+
+/* 秒針 */
+.hand-second {
+    width: 1.2px;
+    height: 55px;
+    margin-left: -0.6px;
+    z-index: 5;
+}
+
+.day .hand-second {
+    background-color: #c0392b;
+}
+
+.night .hand-second {
+    background-color: #e74c3c;
+}
+
+/* 中央の軸ドット */
+.clock-center-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 6;
+}
+
+.day .clock-center-dot {
+    background-color: #2c2c2c;
+    box-shadow: 0 0 0 1.5px #ffffff;
+}
+
+.night .clock-center-dot {
+    background-color: #e0e0f0;
+    box-shadow: 0 0 0 1.5px #0d1b2a;
+}
+
+/* 秒針の尻尾（逆方向に伸びる部分） */
+.hand-second-tail {
+    width: 1.2px;
+    height: 16px;
+    margin-left: -0.6px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: top center;
+    z-index: 5;
+    border-radius: 1px;
+}
+
+.day .hand-second-tail {
+    background-color: #c0392b;
+}
+
+.night .hand-second-tail {
+    background-color: #e74c3c;
 }
 
 /* --- 日付表示 --- */
@@ -368,6 +565,7 @@ body {
     flex-direction: column;
     gap: 2px;
     margin-bottom: var(--spacing-md);
+    text-align: center;
 }
 
 .date-value {
@@ -380,6 +578,24 @@ body {
 }
 
 .night .date-value {
+    color: var(--night-text-secondary);
+}
+
+/* --- デジタル時刻テキスト（アナログ時計下部に小さく表示） --- */
+.digital-time-small {
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--spacing-sm);
+}
+
+.day .digital-time-small {
+    color: var(--day-text-secondary);
+}
+
+.night .digital-time-small {
     color: var(--night-text-secondary);
 }
 
@@ -540,16 +756,29 @@ body {
         gap: var(--spacing-md);
     }
 
-    .time-value {
-        font-size: 2.5rem;
-    }
-
-    .time-seconds {
-        font-size: 1.2rem;
-    }
-
     .clock-card {
         padding: var(--spacing-lg);
+    }
+
+    .analog-clock {
+        width: 140px;
+        height: 140px;
+    }
+
+    .hand-hour {
+        height: 30px;
+    }
+
+    .hand-minute {
+        height: 42px;
+    }
+
+    .hand-second {
+        height: 46px;
+    }
+
+    .hand-second-tail {
+        height: 13px;
     }
 }
 
@@ -585,7 +814,24 @@ body {
         padding: var(--spacing-md);
     }
 
-    .time-value {
-        font-size: 2.2rem;
+    .analog-clock {
+        width: 130px;
+        height: 130px;
+    }
+
+    .hand-hour {
+        height: 28px;
+    }
+
+    .hand-minute {
+        height: 38px;
+    }
+
+    .hand-second {
+        height: 42px;
+    }
+
+    .hand-second-tail {
+        height: 12px;
     }
 }

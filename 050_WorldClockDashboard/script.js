@@ -116,6 +116,45 @@ function handleAddCity() {
 }
 
 // ========================================
+// アナログ時計の文字盤HTMLを生成する
+// ========================================
+function createClockFaceHTML(cityKey) {
+    // 12個のマーカー（目盛り）を生成する
+    let markersHTML = '';
+    for (let i = 0; i < 12; i++) {
+        const angle = i * 30; // 各マーカーは30度間隔
+        const isMajor = i % 3 === 0; // 12, 3, 6, 9 時は主要マーカー
+        const markerClass = isMajor ? 'marker-major' : 'marker-minor';
+
+        markersHTML += `
+            <div class="clock-marker-line ${markerClass}"
+                 style="position: absolute; left: 50%; top: 0;
+                        transform-origin: center 80px;
+                        transform: translateX(-50%) rotate(${angle}deg);">
+            </div>`;
+    }
+
+    // 文字盤の数字（12, 3, 6, 9）
+    const numbersHTML = `
+        <span class="clock-number clock-number-12">12</span>
+        <span class="clock-number clock-number-3">3</span>
+        <span class="clock-number clock-number-6">6</span>
+        <span class="clock-number clock-number-9">9</span>
+    `;
+
+    // 時計の針と中央ドット
+    const handsHTML = `
+        <div class="clock-hand hand-hour" id="hand-hour-${cityKey}" style="transform: rotate(0deg);"></div>
+        <div class="clock-hand hand-minute" id="hand-minute-${cityKey}" style="transform: rotate(0deg);"></div>
+        <div class="clock-hand hand-second" id="hand-second-${cityKey}" style="transform: rotate(0deg);"></div>
+        <div class="hand-second-tail" id="hand-second-tail-${cityKey}" style="transform: rotate(0deg);"></div>
+        <div class="clock-center-dot"></div>
+    `;
+
+    return markersHTML + numbersHTML + handsHTML;
+}
+
+// ========================================
 // ダッシュボードに時計カードを追加する
 // ========================================
 function addCityToBoard(cityKey) {
@@ -133,7 +172,10 @@ function addCityToBoard(cityKey) {
     card.id = `card-${cityKey}`;
     card.dataset.cityKey = cityKey;
 
-    // カードのHTML構造を組み立てる
+    // アナログ時計の文字盤HTMLを取得する
+    const clockFaceHTML = createClockFaceHTML(cityKey);
+
+    // カードのHTML構造を組み立てる（デジタル時計をアナログ時計に置き換え）
     card.innerHTML = `
     <button class="remove-btn" onclick="removeCity('${cityKey}')" aria-label="削除 / Remove" title="削除 / Remove">✕</button>
     <div class="card-header">
@@ -143,10 +185,12 @@ function addCityToBoard(cityKey) {
       </div>
       <div class="daynight-icon" id="icon-${cityKey}"></div>
     </div>
-    <div class="time-display">
-      <span class="time-value" id="time-${cityKey}">--:--</span>
-      <span class="time-seconds" id="seconds-${cityKey}">--</span>
+    <div class="analog-clock-wrapper">
+      <div class="analog-clock" id="clock-face-${cityKey}">
+        ${clockFaceHTML}
+      </div>
     </div>
+    <div class="digital-time-small" id="digital-time-${cityKey}">--:--:--</div>
     <div class="date-display">
       <span class="date-value" id="date-${cityKey}">----/--/--</span>
     </div>
@@ -204,27 +248,60 @@ function updateClock(cityKey) {
     // 現在のDateオブジェクトを基に、指定タイムゾーンの日時情報を取得する
     const now = new Date();
 
-    // --- 時刻を取得する（Intl.DateTimeFormatを使用） ---
-    const timeFormatter = new Intl.DateTimeFormat('ja-JP', {
-        timeZone: city.timezone,
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-    });
-
-    const secondsFormatter = new Intl.DateTimeFormat('ja-JP', {
-        timeZone: city.timezone,
-        second: '2-digit',
-    });
-
-    // --- 時・分を個別に取得する（昼夜判定に使用） ---
+    // --- Intl.DateTimeFormat を使って各パーツの値を取得する ---
+    // 時（0-23）
     const hourFormatter = new Intl.DateTimeFormat('en-US', {
         timeZone: city.timezone,
         hour: 'numeric',
         hour12: false,
     });
+    const hour24 = parseInt(hourFormatter.format(now), 10);
 
-    const hour = parseInt(hourFormatter.format(now), 10);
+    // 分
+    const minuteFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: city.timezone,
+        minute: 'numeric',
+    });
+    const minute = parseInt(minuteFormatter.format(now), 10);
+
+    // 秒
+    const secondFormatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: city.timezone,
+        second: 'numeric',
+    });
+    const second = parseInt(secondFormatter.format(now), 10);
+
+    // --- アナログ時計の針の角度を計算する ---
+    // 時針: 12時間で360度 = 1時間で30度、さらに分による微調整（1分で0.5度）
+    const hour12 = hour24 % 12;
+    const hourAngle = (hour12 * 30) + (minute * 0.5);
+
+    // 分針: 60分で360度 = 1分で6度、秒による微調整（1秒で0.1度）
+    const minuteAngle = (minute * 6) + (second * 0.1);
+
+    // 秒針: 60秒で360度 = 1秒で6度
+    const secondAngle = second * 6;
+
+    // --- 針のDOM要素を取得して回転を適用する ---
+    const handHour = document.getElementById(`hand-hour-${cityKey}`);
+    const handMinute = document.getElementById(`hand-minute-${cityKey}`);
+    const handSecond = document.getElementById(`hand-second-${cityKey}`);
+    const handSecondTail = document.getElementById(`hand-second-tail-${cityKey}`);
+
+    if (handHour) handHour.style.transform = `rotate(${hourAngle}deg)`;
+    if (handMinute) handMinute.style.transform = `rotate(${minuteAngle}deg)`;
+    if (handSecond) handSecond.style.transform = `rotate(${secondAngle}deg)`;
+    // 秒針の尻尾は秒針と同じ角度（逆方向に表示されるのはtransform-originで制御）
+    if (handSecondTail) handSecondTail.style.transform = `rotate(${secondAngle}deg)`;
+
+    // --- デジタル時刻を小さく表示する ---
+    const digitalTimeEl = document.getElementById(`digital-time-${cityKey}`);
+    if (digitalTimeEl) {
+        const hh = String(hour24).padStart(2, '0');
+        const mm = String(minute).padStart(2, '0');
+        const ss = String(second).padStart(2, '0');
+        digitalTimeEl.textContent = `${hh}:${mm}:${ss}`;
+    }
 
     // --- 日付を取得する ---
     const dateFormatterJa = new Intl.DateTimeFormat('ja-JP', {
@@ -239,23 +316,17 @@ function updateClock(cityKey) {
     const utcOffset = getUTCOffset(city.timezone, now);
 
     // --- DOM要素を更新する ---
-    const timeEl = document.getElementById(`time-${cityKey}`);
-    const secondsEl = document.getElementById(`seconds-${cityKey}`);
     const dateEl = document.getElementById(`date-${cityKey}`);
     const iconEl = document.getElementById(`icon-${cityKey}`);
     const utcEl = document.getElementById(`utc-${cityKey}`);
     const card = document.getElementById(`card-${cityKey}`);
 
-    if (timeEl) timeEl.textContent = timeFormatter.format(now);
-    // 秒表示をゼロパディングして常に2桁にする
-    const secondsRaw = secondsFormatter.format(now).replace(/\D/g, '');
-    if (secondsEl) secondsEl.textContent = ':' + secondsRaw.padStart(2, '0');
     if (dateEl) dateEl.textContent = dateFormatterJa.format(now);
     if (utcEl) utcEl.textContent = utcOffset;
 
     // --- 昼/夜の判定とカードスタイルの切り替え ---
     // 昼: 6:00〜17:59、夜: 18:00〜5:59
-    const isDay = hour >= 6 && hour <= 17;
+    const isDay = hour24 >= 6 && hour24 <= 17;
 
     if (card) {
         card.classList.remove('day', 'night');
