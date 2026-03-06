@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>世界時計ダッシュボード / World Clock Dashboard</title>
+    <meta name="description"
+        content="主要都市のリアルタイム時刻を表示する世界時計ダッシュボード。Real-time world clock dashboard showing current time across major cities.">
+
+    <!-- ファビコンの設定 -->
+    <link rel="icon" href="favicon.png">
+
+    <!-- Google Fonts: Inter（クリーンなUIフォント） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== ヘッダーセクション ===== -->
+    <header class="header" id="header">
+        <div class="header-content">
+            <div class="header-icon">🌍</div>
+            <div class="header-text">
+                <h1>世界時計ダッシュボード</h1>
+                <p class="header-subtitle">World Clock Dashboard</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== メインコンテンツ ===== -->
+    <main class="main" id="main">
+
+        <!-- 都市追加セクション -->
+        <section class="add-city-section" id="add-city-section">
+            <div class="add-city-container">
+                <!-- プルダウンリスト -->
+                <select id="city-select" class="city-select" aria-label="都市を選択 / Select City">
+                    <option value="" disabled selected>都市を選択 / Select City</option>
+                </select>
+                <!-- 追加ボタン -->
+                <button id="add-city-btn" class="add-city-btn" aria-label="追加 / Add">
+                    <span class="btn-icon">＋</span>
+                    <span class="btn-text">追加 / Add</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 時計カードのグリッドコンテナ -->
+        <section class="clock-grid" id="clock-grid">
+            <!-- JavaScriptで動的にカードを生成 -->
+        </section>
+
+    </main>
+
+    <!-- ===== フッター ===== -->
+    <footer class="footer" id="footer">
+        <p>&copy; 2026 世界時計ダッシュボード / World Clock Dashboard</p>
+    </footer>
+
+    <!-- JavaScriptの読み込み -->
+    <script src="script.js"></script>
+</body>
+
+</html>

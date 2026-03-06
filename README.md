@@ -60,13 +60,14 @@ Complete it. Ship it. Relax. ☕
 | 047 | 🔭 Classic Kaleidoscope | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/047_ClassicKaleidoscope/index.html) |
 | 048 | 🛒 Smart Shopping List | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/048_SmartShoppingList/index.html) |
 | 049 | ✨ Particle Mirage | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/049_ParticleMirage/index.html) |
+| 050 | 🌍 World Clock Dashboard | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/050_WorldClockDashboard/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 39 / 100 ████████░░░░░░░░░░░░ 39%
+完成: 40 / 100 ████████░░░░░░░░░░░░ 40%
 ```
 
 ---
