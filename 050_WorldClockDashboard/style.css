@@ -14,7 +14,6 @@
 
 /* --- CSS カスタムプロパティ（デザイントークン） --- */
 :root {
-    /* メインカラー */
     --color-bg: #f5f3f0;
     --color-surface: #ffffff;
     --color-text-primary: #2c2c2c;
@@ -23,8 +22,6 @@
     --color-accent: #3a7ca5;
     --color-accent-hover: #2d6384;
     --color-border: #e8e5e1;
-
-    /* 昼テーマ */
     --day-bg: linear-gradient(135deg, #fffdf7 0%, #fef9ef 50%, #f0f4ff 100%);
     --day-text: #2c2c2c;
     --day-text-secondary: #5a5a5a;
@@ -32,8 +29,6 @@
     --day-border: #e8e5e1;
     --day-shadow: rgba(0, 0, 0, 0.06);
     --day-icon-bg: rgba(255, 193, 7, 0.12);
-
-    /* 夜テーマ */
     --night-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
     --night-text: #e0e0e0;
     --night-text-secondary: #a0a0b0;
@@ -41,31 +36,22 @@
     --night-border: rgba(255, 255, 255, 0.08);
     --night-shadow: rgba(0, 0, 0, 0.3);
     --night-icon-bg: rgba(100, 100, 255, 0.15);
-
-    /* フォント */
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-
-    /* スペーシング */
     --spacing-xs: 4px;
     --spacing-sm: 8px;
     --spacing-md: 16px;
     --spacing-lg: 24px;
     --spacing-xl: 32px;
     --spacing-xxl: 48px;
-
-    /* 角丸 */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 20px;
-
-    /* トランジション */
     --transition-fast: 0.2s ease;
     --transition-normal: 0.3s ease;
     --transition-slow: 0.5s ease;
 }
 
-/* --- ボディ --- */
 body {
     font-family: var(--font-family);
     background-color: var(--color-bg);
@@ -77,11 +63,8 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* ========================================
-   ヘッダー
-   ======================================== */
+/* ヘッダー */
 .header {
-    background: var(--color-surface);
     border-bottom: 1px solid var(--color-border);
     padding: var(--spacing-lg) var(--spacing-xl);
     position: sticky;
@@ -119,9 +102,7 @@ body {
     letter-spacing: 0.02em;
 }
 
-/* ========================================
-   メインコンテンツ
-   ======================================== */
+/* メイン */
 .main {
     flex: 1;
     max-width: 1200px;
@@ -130,23 +111,26 @@ body {
     padding: var(--spacing-xl);
 }
 
-/* ========================================
-   都市追加セクション
-   ======================================== */
-.add-city-section {
+/* コントロールセクション */
+.controls-section {
     margin-bottom: var(--spacing-xl);
+}
+
+.controls-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-lg);
+    flex-wrap: wrap;
 }
 
 .add-city-container {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
-    max-width: 480px;
 }
 
-/* プルダウンリスト */
 .city-select {
-    flex: 1;
     padding: 12px 16px;
     font-family: var(--font-family);
     font-size: 0.9rem;
@@ -156,13 +140,14 @@ body {
     border-radius: var(--radius-md);
     outline: none;
     cursor: pointer;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
     appearance: none;
     -webkit-appearance: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b6b' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 14px center;
     padding-right: 38px;
+    min-width: 220px;
 }
 
 .city-select:focus {
@@ -174,7 +159,6 @@ body {
     border-color: var(--color-accent);
 }
 
-/* 追加ボタン */
 .add-city-btn {
     display: flex;
     align-items: center;
@@ -208,18 +192,78 @@ body {
     line-height: 1;
 }
 
-/* ========================================
-   時計カードグリッド
-   ======================================== */
+/* トグルスイッチ */
+.mode-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.mode-label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    transition: color var(--transition-fast);
+    user-select: none;
+    white-space: nowrap;
+}
+
+.mode-label.active {
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 26px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-accent);
+    border-radius: 26px;
+    transition: background-color var(--transition-fast);
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: #ffffff;
+    border-radius: 50%;
+    transition: transform var(--transition-fast);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked+.toggle-slider::before {
+    transform: translateX(22px);
+}
+
+/* カードグリッド */
 .clock-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: var(--spacing-lg);
 }
 
-/* ========================================
-   時計カード共通スタイル
-   ======================================== */
+/* カード共通 */
 .clock-card {
     border-radius: var(--radius-xl);
     padding: var(--spacing-xl) var(--spacing-lg);
@@ -229,7 +273,6 @@ body {
     animation: cardAppear 0.4s ease forwards;
 }
 
-/* カード出現アニメーション */
 @keyframes cardAppear {
     from {
         opacity: 0;
@@ -246,7 +289,6 @@ body {
     transform: translateY(-4px);
 }
 
-/* --- 昼のカードスタイル --- */
 .clock-card.day {
     background: var(--day-bg);
     color: var(--day-text);
@@ -258,7 +300,6 @@ body {
     box-shadow: 0 8px 28px var(--day-shadow), 0 4px 12px var(--day-shadow);
 }
 
-/* --- 夜のカードスタイル --- */
 .clock-card.night {
     background: var(--night-bg);
     color: var(--night-text);
@@ -270,7 +311,7 @@ body {
     box-shadow: 0 8px 28px var(--night-shadow), 0 4px 12px rgba(15, 52, 96, 0.3);
 }
 
-/* --- カードヘッダー --- */
+/* カードヘッダー */
 .card-header {
     display: flex;
     justify-content: space-between;
@@ -305,7 +346,6 @@ body {
     color: var(--night-text-secondary);
 }
 
-/* 昼/夜アイコン */
 .daynight-icon {
     width: 42px;
     height: 42px;
@@ -326,223 +366,229 @@ body {
     background-color: var(--night-icon-bg);
 }
 
-/* ========================================
-   アナログ時計スタイル
-   ======================================== */
+/* モード切替表示制御 */
+.clock-card .digital-display {
+    display: none;
+}
 
-/* 時計を中央に配置するラッパー */
-.analog-clock-wrapper {
+.clock-card .analog-clock-wrapper {
     display: flex;
+}
+
+.clock-card .digital-time-sub {
+    display: block;
+}
+
+.mode-digital .clock-card .analog-clock-wrapper {
+    display: none;
+}
+
+.mode-digital .clock-card .digital-time-sub {
+    display: none;
+}
+
+.mode-digital .clock-card .digital-display {
+    display: block;
+}
+
+/* アナログ時計ラッパー */
+.analog-clock-wrapper {
     justify-content: center;
     align-items: center;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
     padding: var(--spacing-sm) 0;
 }
 
-/* 時計の文字盤（外枠） */
+/* アナログ文字盤 */
 .analog-clock {
-    width: 160px;
-    height: 160px;
+    width: 170px;
+    height: 170px;
     border-radius: 50%;
     position: relative;
-    transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
 }
 
-/* 昼の文字盤スタイル */
 .day .analog-clock {
-    background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f8f7f4 100%);
-    border: 2.5px solid #d0cdc7;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08), inset 0 1px 4px rgba(0, 0, 0, 0.04);
+    background: radial-gradient(circle at 40% 35%, #ffffff 0%, #f7f6f3 40%, #ece9e3 80%, #e0ddd7 100%);
+    border: 3px solid #c8c4bc;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 1px 4px rgba(0, 0, 0, 0.06), inset 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 -1px 3px rgba(255, 255, 255, 0.8);
 }
 
-/* 夜の文字盤スタイル */
 .night .analog-clock {
-    background: radial-gradient(circle at 50% 50%, #1e2a3a 0%, #0d1b2a 100%);
-    border: 2.5px solid rgba(255, 255, 255, 0.15);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 4px rgba(255, 255, 255, 0.03);
+    background: radial-gradient(circle at 40% 35%, #232d3f 0%, #1a2332 40%, #111a28 80%, #0a1220 100%);
+    border: 3px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4), 0 1px 4px rgba(0, 0, 0, 0.2), inset 0 2px 8px rgba(255, 255, 255, 0.03), inset 0 -1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* --- 文字盤の時間マーカー --- */
-.clock-marker {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform-origin: 0 0;
-}
-
-/* 12時間の目盛り線 */
-.clock-marker-line {
+/* 60目盛り */
+.tick {
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
+    top: 0;
+    transform-origin: 0px 85px;
 }
 
-/* 主要マーカー（12, 3, 6, 9 時） */
-.marker-major {
+.tick-minute {
+    width: 1px;
+    height: 6px;
+    margin-left: -0.5px;
+    margin-top: 6px;
+}
+
+.day .tick-minute {
+    background-color: #c0bdb6;
+}
+
+.night .tick-minute {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.tick-five {
+    width: 2px;
+    height: 10px;
+    margin-left: -1px;
+    margin-top: 6px;
+    border-radius: 1px;
+}
+
+.day .tick-five {
+    background-color: #7a7670;
+}
+
+.night .tick-five {
+    background-color: rgba(255, 255, 255, 0.35);
+}
+
+.tick-quarter {
     width: 2.5px;
-    height: 12px;
-    top: 8px;
+    height: 14px;
+    margin-left: -1.25px;
+    margin-top: 4px;
     border-radius: 1px;
 }
 
-/* 通常マーカー（それ以外の時間） */
-.marker-minor {
-    width: 1.5px;
-    height: 7px;
-    top: 10px;
-    border-radius: 1px;
+.day .tick-quarter {
+    background-color: #4a4640;
 }
 
-/* 昼のマーカー色 */
-.day .marker-major {
-    background-color: #3a3a3a;
+.night .tick-quarter {
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
-.day .marker-minor {
-    background-color: #b0ada6;
-}
-
-/* 夜のマーカー色 */
-.night .marker-major {
-    background-color: #d0d0e0;
-}
-
-.night .marker-minor {
-    background-color: rgba(255, 255, 255, 0.25);
-}
-
-/* --- 文字盤の数字（12, 3, 6, 9） --- */
+/* 文字盤数字 */
 .clock-number {
     position: absolute;
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
     text-align: center;
-    width: 20px;
-    height: 20px;
-    line-height: 20px;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
+    letter-spacing: -0.02em;
 }
 
 .day .clock-number {
-    color: #3a3a3a;
+    color: #3a3632;
 }
 
 .night .clock-number {
-    color: #c0c0d0;
+    color: #c8c8d8;
 }
 
-/* 12時の数字 */
 .clock-number-12 {
-    top: 18px;
+    top: 16px;
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* 3時の数字 */
 .clock-number-3 {
     top: 50%;
-    right: 14px;
+    right: 12px;
     transform: translateY(-50%);
 }
 
-/* 6時の数字 */
 .clock-number-6 {
-    bottom: 18px;
+    bottom: 16px;
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* 9時の数字 */
 .clock-number-9 {
     top: 50%;
-    left: 14px;
+    left: 12px;
     transform: translateY(-50%);
 }
 
-/* --- 時計の針（共通） --- */
-.clock-hand {
+/* 時針 — 剣型 */
+.hand-hour {
     position: absolute;
     bottom: 50%;
     left: 50%;
+    width: 5px;
+    height: 38px;
+    margin-left: -2.5px;
     transform-origin: bottom center;
-    border-radius: 2px;
-    transition: none;
-}
-
-/* 時針 */
-.hand-hour {
-    width: 3.5px;
-    height: 36px;
-    margin-left: -1.75px;
     z-index: 3;
+    clip-path: polygon(35% 0%, 65% 0%, 100% 100%, 0% 100%);
 }
 
 .day .hand-hour {
-    background-color: #2c2c2c;
+    background: linear-gradient(to top, #2a2a2a, #444);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .night .hand-hour {
-    background-color: #e0e0f0;
+    background: linear-gradient(to top, #d0d0e0, #f0f0ff);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-/* 分針 */
+/* 分針 — 剣型 */
 .hand-minute {
-    width: 2.5px;
-    height: 50px;
-    margin-left: -1.25px;
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 3.5px;
+    height: 52px;
+    margin-left: -1.75px;
+    transform-origin: bottom center;
     z-index: 4;
+    clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
 }
 
 .day .hand-minute {
-    background-color: #3a3a3a;
+    background: linear-gradient(to top, #2a2a2a, #3a3a3a);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 .night .hand-minute {
-    background-color: #d0d0e0;
+    background: linear-gradient(to top, #c0c0d0, #e0e0f0);
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* 秒針 */
 .hand-second {
-    width: 1.2px;
-    height: 55px;
-    margin-left: -0.6px;
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    width: 1.5px;
+    height: 58px;
+    margin-left: -0.75px;
+    transform-origin: bottom center;
     z-index: 5;
+    border-radius: 1px;
 }
 
 .day .hand-second {
-    background-color: #c0392b;
+    background: linear-gradient(to top, #b71c1c, #e53935);
 }
 
 .night .hand-second {
-    background-color: #e74c3c;
+    background: linear-gradient(to top, #c62828, #ef5350);
 }
 
-/* 中央の軸ドット */
-.clock-center-dot {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 6;
-}
-
-.day .clock-center-dot {
-    background-color: #2c2c2c;
-    box-shadow: 0 0 0 1.5px #ffffff;
-}
-
-.night .clock-center-dot {
-    background-color: #e0e0f0;
-    box-shadow: 0 0 0 1.5px #0d1b2a;
-}
-
-/* 秒針の尻尾（逆方向に伸びる部分） */
 .hand-second-tail {
-    width: 1.2px;
-    height: 16px;
-    margin-left: -0.6px;
+    width: 1.5px;
+    height: 18px;
+    margin-left: -0.75px;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -552,14 +598,114 @@ body {
 }
 
 .day .hand-second-tail {
-    background-color: #c0392b;
+    background: linear-gradient(to bottom, #b71c1c, #e53935);
 }
 
 .night .hand-second-tail {
-    background-color: #e74c3c;
+    background: linear-gradient(to bottom, #c62828, #ef5350);
 }
 
-/* --- 日付表示 --- */
+.hand-second-weight {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    position: absolute;
+    top: calc(50% + 14px);
+    left: 50%;
+    margin-left: -2.5px;
+    transform-origin: center -14px;
+    z-index: 5;
+}
+
+.day .hand-second-weight {
+    background-color: #e53935;
+}
+
+.night .hand-second-weight {
+    background-color: #ef5350;
+}
+
+/* メタリック中央キャップ */
+.clock-center-cap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 7;
+}
+
+.day .clock-center-cap {
+    background: radial-gradient(circle at 40% 35%, #e0e0e0, #888, #555);
+    border: 1px solid #444;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
+.night .clock-center-cap {
+    background: radial-gradient(circle at 40% 35%, #d0d0e0, #8888aa, #555566);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+/* アナログ下の小デジタル */
+.digital-time-sub {
+    text-align: center;
+    font-size: 0.82rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.04em;
+    margin-bottom: var(--spacing-sm);
+}
+
+.day .digital-time-sub {
+    color: var(--day-text-secondary);
+}
+
+.night .digital-time-sub {
+    color: var(--night-text-secondary);
+}
+
+/* デジタル大表示 */
+.digital-display {
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-md) 0;
+}
+
+.digital-time-large {
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+}
+
+.day .digital-time-large {
+    color: var(--day-time-color);
+}
+
+.night .digital-time-large {
+    color: var(--night-time-color);
+}
+
+.digital-seconds-large {
+    font-size: 1.5rem;
+    font-weight: 400;
+    vertical-align: super;
+    margin-left: 2px;
+}
+
+.day .digital-seconds-large {
+    color: var(--day-text-secondary);
+}
+
+.night .digital-seconds-large {
+    color: var(--night-text-secondary);
+}
+
+/* 日付 */
 .date-display {
     display: flex;
     flex-direction: column;
@@ -581,25 +727,7 @@ body {
     color: var(--night-text-secondary);
 }
 
-/* --- デジタル時刻テキスト（アナログ時計下部に小さく表示） --- */
-.digital-time-small {
-    text-align: center;
-    font-size: 0.82rem;
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    letter-spacing: 0.04em;
-    margin-bottom: var(--spacing-sm);
-}
-
-.day .digital-time-small {
-    color: var(--day-text-secondary);
-}
-
-.night .digital-time-small {
-    color: var(--night-text-secondary);
-}
-
-/* --- タイムゾーンとUTCオフセット --- */
+/* TZ情報 */
 .timezone-info {
     display: flex;
     align-items: center;
@@ -677,7 +805,6 @@ body {
     transform: scale(1.1);
 }
 
-/* カード消去アニメーション */
 .clock-card.removing {
     animation: cardRemove 0.3s ease forwards;
 }
@@ -689,9 +816,7 @@ body {
     }
 }
 
-/* ========================================
-   フッター
-   ======================================== */
+/* フッター */
 .footer {
     text-align: center;
     padding: var(--spacing-lg) var(--spacing-xl);
@@ -705,31 +830,7 @@ body {
     letter-spacing: 0.02em;
 }
 
-/* ========================================
-   空状態メッセージ
-   ======================================== */
-.empty-state {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: var(--spacing-xxl) var(--spacing-xl);
-    color: var(--color-text-muted);
-}
-
-.empty-state-icon {
-    font-size: 3rem;
-    margin-bottom: var(--spacing-md);
-}
-
-.empty-state-text {
-    font-size: 0.95rem;
-    line-height: 1.6;
-}
-
-/* ========================================
-   レスポンシブデザイン
-   ======================================== */
-
-/* タブレット以下 */
+/* レスポンシブ */
 @media (max-width: 768px) {
     .header {
         padding: var(--spacing-md) var(--spacing-lg);
@@ -747,8 +848,18 @@ body {
         padding: var(--spacing-lg);
     }
 
+    .controls-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
     .add-city-container {
-        max-width: 100%;
+        width: 100%;
+    }
+
+    .city-select {
+        flex: 1;
+        min-width: unset;
     }
 
     .clock-grid {
@@ -761,28 +872,44 @@ body {
     }
 
     .analog-clock {
-        width: 140px;
-        height: 140px;
+        width: 150px;
+        height: 150px;
+    }
+
+    .tick {
+        transform-origin: 0px 75px;
     }
 
     .hand-hour {
-        height: 30px;
+        height: 32px;
     }
 
     .hand-minute {
-        height: 42px;
+        height: 45px;
     }
 
     .hand-second {
-        height: 46px;
+        height: 50px;
     }
 
     .hand-second-tail {
-        height: 13px;
+        height: 15px;
+    }
+
+    .hand-second-weight {
+        top: calc(50% + 12px);
+        transform-origin: center -12px;
+    }
+
+    .digital-time-large {
+        font-size: 2.5rem;
+    }
+
+    .digital-seconds-large {
+        font-size: 1.2rem;
     }
 }
 
-/* スマートフォン */
 @media (max-width: 480px) {
     .header-content {
         gap: var(--spacing-sm);
@@ -815,23 +942,41 @@ body {
     }
 
     .analog-clock {
-        width: 130px;
-        height: 130px;
+        width: 140px;
+        height: 140px;
+    }
+
+    .tick {
+        transform-origin: 0px 70px;
     }
 
     .hand-hour {
-        height: 28px;
+        height: 30px;
     }
 
     .hand-minute {
-        height: 38px;
-    }
-
-    .hand-second {
         height: 42px;
     }
 
+    .hand-second {
+        height: 46px;
+    }
+
     .hand-second-tail {
-        height: 12px;
+        height: 13px;
+    }
+
+    .hand-second-weight {
+        top: calc(50% + 10px);
+        transform-origin: center -10px;
+    }
+
+    .mode-toggle-container {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .digital-time-large {
+        font-size: 2.2rem;
     }
 }

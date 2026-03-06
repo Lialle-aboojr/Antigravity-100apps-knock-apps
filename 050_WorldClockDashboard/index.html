@@ -36,18 +36,31 @@
     <!-- ===== メインコンテンツ ===== -->
     <main class="main" id="main">
 
-        <!-- 都市追加セクション -->
-        <section class="add-city-section" id="add-city-section">
-            <div class="add-city-container">
-                <!-- プルダウンリスト -->
-                <select id="city-select" class="city-select" aria-label="都市を選択 / Select City">
-                    <option value="" disabled selected>都市を選択 / Select City</option>
-                </select>
-                <!-- 追加ボタン -->
-                <button id="add-city-btn" class="add-city-btn" aria-label="追加 / Add">
-                    <span class="btn-icon">＋</span>
-                    <span class="btn-text">追加 / Add</span>
-                </button>
+        <!-- コントロールセクション（都市追加 + モード切替） -->
+        <section class="controls-section" id="controls-section">
+            <div class="controls-container">
+                <!-- 都市追加エリア -->
+                <div class="add-city-container">
+                    <!-- プルダウンリスト -->
+                    <select id="city-select" class="city-select" aria-label="都市を選択 / Select City">
+                        <option value="" disabled selected>都市を選択 / Select City</option>
+                    </select>
+                    <!-- 追加ボタン -->
+                    <button id="add-city-btn" class="add-city-btn" aria-label="追加 / Add">
+                        <span class="btn-icon">＋</span>
+                        <span class="btn-text">追加 / Add</span>
+                    </button>
+                </div>
+
+                <!-- 表示モード切替トグル -->
+                <div class="mode-toggle-container">
+                    <span class="mode-label mode-label-analog active" id="label-analog">アナログ / Analog</span>
+                    <label class="toggle-switch" id="mode-toggle" aria-label="表示モード切替 / Toggle Display Mode">
+                        <input type="checkbox" id="mode-checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="mode-label mode-label-digital" id="label-digital">デジタル / Digital</span>
+                </div>
             </div>
         </section>
 
