@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Mirage | パーティクル ミラージュ</title>
+    <meta name="description"
+        content="テキストをパーティクルで美しく描画するアニメーションツール。瞑想やリラクゼーションに。A beautiful particle text animation tool for meditation and relaxation.">
+
+    <!-- ファビコン: ✨絵文字をSVGに変換して表示 -->
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✨</text></svg>">
+
+    <!-- Google Fonts: Outfit（UI用）+ Noto Serif JP（明朝体表示用）+ Noto Sans JP（ゴシック体表示用） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Serif+JP:wght@400;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== メインCanvas（全画面背景） ===== -->
+    <canvas id="main-canvas"></canvas>
+
+    <!-- ===== アプリヘッダー ===== -->
+    <header class="app-header">
+        <h1 class="app-title">
+            <span class="title-icon">✨</span>
+            Particle Mirage
+        </h1>
+        <p class="app-subtitle">パーティクル ミラージュ</p>
+    </header>
+
+    <!-- ===== コントロールパネル（折りたたみ式） ===== -->
+    <aside id="control-panel" class="control-panel">
+        <!-- 開閉トグルボタン -->
+        <button id="panel-toggle" class="panel-toggle" aria-label="設定パネルの開閉">
+            <span class="toggle-icon">⚙️</span>
+            <span class="toggle-text">設定 / Settings</span>
+            <span class="toggle-arrow">▲</span>
+        </button>
+
+        <!-- パネル本体 -->
+        <div id="panel-body" class="panel-body">
+
+            <!-- ===== テキスト入力セクション ===== -->
+            <section class="panel-section">
+                <h2 class="section-title">📝 テキスト / Text</h2>
+                <textarea id="text-input" class="text-input" rows="3"
+                    placeholder="表示したいテキストを入力...&#10;Enter text to display...">呼吸
+Breathe</textarea>
+
+                <div class="control-row">
+                    <label class="control-label">表示単位 / Display Unit</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="display-unit" value="char" checked>
+                            <span class="radio-custom"></span>
+                            1文字 / Char
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="display-unit" value="line">
+                            <span class="radio-custom"></span>
+                            行 / Line
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== パーティクルの動き ===== -->
+            <section class="panel-section">
+                <h2 class="section-title">🌀 動き / Motion</h2>
+
+                <!-- 出現アニメーション -->
+                <div class="control-row">
+                    <label class="control-label" for="appear-mode">出現 / Appear</label>
+                    <select id="appear-mode" class="control-select">
+                        <option value="random" selected>🎲 ランダム集合 / Random</option>
+                        <option value="fall">🌧️ 上から降下 / Fall Down</option>
+                        <option value="vortex">🌀 渦巻き集合 / Vortex</option>
+                    </select>
+                </div>
+
+                <!-- 消失アニメーション -->
+                <div class="control-row">
+                    <label class="control-label" for="disappear-mode">消失 / Disappear</label>
+                    <select id="disappear-mode" class="control-select">
+                        <option value="evaporate" selected>💨 蒸発 / Evaporate</option>
+                        <option value="explode">💥 爆発 / Explode</option>
+                        <option value="float">🍃 漂い消滅 / Float Away</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- ===== タイミング調整 ===== -->
+            <section class="panel-section">
+                <h2 class="section-title">⏱️ タイミング / Timing</h2>
+
+                <!-- 集まる速度 -->
+                <div class="control-row">
+                    <label class="control-label" for="gather-speed">
+                        集合速度 / Gather Speed: <span id="gather-speed-val" class="accent-value">1.5s</span>
+                    </label>
+                    <input type="range" id="gather-speed" class="control-range" min="0.5" max="5" step="0.1"
+                        value="1.5">
+                </div>
+
+                <!-- 表示時間 -->
+                <div class="control-row">
+                    <label class="control-label" for="hold-time">
+                        静止時間 / Hold Time: <span id="hold-time-val" class="accent-value">2.0s</span>
+                    </label>
+                    <input type="range" id="hold-time" class="control-range" min="0.5" max="10" step="0.5" value="2.0">
+                </div>
+
+                <!-- 消える速度 -->
+                <div class="control-row">
+                    <label class="control-label" for="fade-speed">
+                        消失速度 / Fade Speed: <span id="fade-speed-val" class="accent-value">1.5s</span>
+                    </label>
+                    <input type="range" id="fade-speed" class="control-range" min="0.5" max="5" step="0.1" value="1.5">
+                </div>
+            </section>
+
+            <!-- ===== デザイン調整 ===== -->
+            <section class="panel-section">
+                <h2 class="section-title">🎨 デザイン / Design</h2>
+
+                <!-- フォント選択 -->
+                <div class="control-row">
+                    <label class="control-label" for="font-family">フォント / Font</label>
+                    <select id="font-family" class="control-select">
+                        <option value="'Noto Sans JP', sans-serif" selected>ゴシック体 / Gothic</option>
+                        <option value="'Noto Serif JP', serif">明朝体 / Mincho</option>
+                        <option value="'Outfit', sans-serif">Outfit (En)</option>
+                    </select>
+                </div>
+
+                <!-- 粒子サイズ -->
+                <div class="control-row">
+                    <label class="control-label" for="particle-size">
+                        粒子サイズ / Particle Size: <span id="particle-size-val" class="accent-value">2.0</span>
+                    </label>
+                    <input type="range" id="particle-size" class="control-range" min="0.5" max="5" step="0.1"
+                        value="2.0">
+                </div>
+
+                <!-- 粒子の細かさ -->
+                <div class="control-row">
+                    <label class="control-label" for="sampling-gap">
+                        粒子の細かさ / Resolution: <span id="sampling-gap-val" class="accent-value">3</span>
+                    </label>
+                    <input type="range" id="sampling-gap" class="control-range" min="1" max="8" step="1" value="3">
+                    <p class="control-hint">値が小さいほど細かい（負荷大） / Smaller = finer (heavier)</p>
+                </div>
+            </section>
+
+            <!-- ===== カラー設定 ===== -->
+            <section class="panel-section">
+                <h2 class="section-title">🌈 カラー / Color</h2>
+
+                <!-- カラーモード -->
+                <div class="control-row">
+                    <label class="control-label">モード / Mode</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="color-mode" value="single" checked>
+                            <span class="radio-custom"></span>
+                            単色 / Single
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="color-mode" value="preset">
+                            <span class="radio-custom"></span>
+                            プリセット / Preset
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="color-mode" value="rainbow">
+                            <span class="radio-custom"></span>
+                            虹色 / Rainbow
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 単色カラーピッカー -->
+                <div id="single-color-row" class="control-row">
+                    <label class="control-label" for="single-color">カラー / Color</label>
+                    <input type="color" id="single-color" class="control-color" value="#e8d5b7">
+                </div>
+
+                <!-- プリセットカラー -->
+                <div id="preset-color-row" class="control-row hidden">
+                    <label class="control-label">プリセット / Preset</label>
+                    <div class="preset-buttons">
+                        <button class="preset-btn active" data-colors='["#f4a460","#daa520","#cd853f"]'
+                            title="暖色ゴールド / Warm Gold">
+                            <span class="preset-swatch"
+                                style="background: linear-gradient(135deg, #f4a460, #daa520, #cd853f);"></span>
+                            暖色 / Warm
+                        </button>
+                        <button class="preset-btn" data-colors='["#4a90d9","#5bb3e0","#87ceeb"]'
+                            title="寒色ブルー / Cool Blue">
+                            <span class="preset-swatch"
+                                style="background: linear-gradient(135deg, #4a90d9, #5bb3e0, #87ceeb);"></span>
+                            寒色 / Cool
+                        </button>
+                        <button class="preset-btn" data-colors='["#c9a0dc","#e8b4d8","#f0c8e0"]' title="桜色 / Sakura">
+                            <span class="preset-swatch"
+                                style="background: linear-gradient(135deg, #c9a0dc, #e8b4d8, #f0c8e0);"></span>
+                            桜 / Sakura
+                        </button>
+                        <button class="preset-btn" data-colors='["#a8e6cf","#88d8a8","#69c98e"]' title="翡翠 / Jade">
+                            <span class="preset-swatch"
+                                style="background: linear-gradient(135deg, #a8e6cf, #88d8a8, #69c98e);"></span>
+                            翡翠 / Jade
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== 再生ボタン ===== -->
+            <div class="action-row">
+                <button id="play-btn" class="action-btn play-btn">
+                    ▶ 再生 / Play
+                </button>
+                <button id="stop-btn" class="action-btn stop-btn">
+                    ■ 停止 / Stop
+                </button>
+            </div>
+
+        </div>
+        <!-- /.panel-body -->
+    </aside>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
