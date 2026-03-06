@@ -166,7 +166,7 @@ class Particle {
             case 'vortex':
                 // 渦巻き: 目標座標を中心とした大きな円周上にランダムに配置
                 const angle = Math.random() * Math.PI * 2;
-                const radius = 250 + Math.random() * 300;
+                const radius = 300 + Math.random() * 300;
                 this.x = targetX + Math.cos(angle) * radius;
                 this.y = targetY + Math.sin(angle) * radius;
                 break;
@@ -191,8 +191,8 @@ class Particle {
         this.vortexRadius = Math.sqrt(
             Math.pow(this.x - targetX, 2) + Math.pow(this.y - targetY, 2)
         );
-        // 渦巻きの回転回数（個別にランダム化して自然に見せる）
-        this.vortexSpins = 2 + Math.random() * 3;
+        // 渦巻きの回転回数（十分な回転で明確なスパイラルを描く）
+        this.vortexSpins = 4 + Math.random() * 3;
 
         // 漂い消滅用のランダムパラメータ
         this.driftAngle = Math.random() * Math.PI * 2;
@@ -335,10 +335,12 @@ function updateGathering(progress) {
 
         if (appear === 'vortex') {
             // ===== 渦巻き: 明確なスパイラル軌道 =====
-            // 半径を eased に応じて縮める
-            const currentRadius = p.vortexRadius * (1 - eased);
-            // 角度を eased に応じて回転させる（個別の回転回数を使用）
-            const currentAngle = p.vortexAngle + eased * Math.PI * 2 * p.vortexSpins;
+            // 半径の縮小: ease-out（最初に大きく近づき、最後はゆっくり収束）
+            const radiusEased = 1 - Math.pow(1 - adjustedProgress, 3);
+            const currentRadius = p.vortexRadius * (1 - radiusEased);
+            // 角度の回転: ease-in quadratic（最初ゆっくり、終盤に加速して渦を巻く）
+            const angleEased = Math.pow(adjustedProgress, 2);
+            const currentAngle = p.vortexAngle + angleEased * Math.PI * 2 * p.vortexSpins;
             // 目標座標を中心にスパイラル座標を計算
             p.x = p.targetX + Math.cos(currentAngle) * currentRadius;
             p.y = p.targetY + Math.sin(currentAngle) * currentRadius;

@@ -143,16 +143,16 @@ Breathe</textarea>
                     </select>
                 </div>
 
-                <!-- 粒子サイズ -->
+                <!-- 粒子サイズ（min を 1.0 に引き上げ） -->
                 <div class="control-row">
                     <label class="control-label" for="particle-size">
                         粒子サイズ / Particle Size: <span id="particle-size-val" class="accent-value">2.0</span>
                     </label>
-                    <input type="range" id="particle-size" class="control-range" min="0.5" max="5" step="0.1"
+                    <input type="range" id="particle-size" class="control-range" min="1.0" max="5" step="0.1"
                         value="2.0">
                 </div>
 
-                <!-- 粒子の密度（ラベル変更済み） -->
+                <!-- 粒子の密度（min を 3 に制限） -->
                 <div class="control-row">
                     <label class="control-label" for="sampling-gap">
                         粒子の密度 / Particle Density: <span id="sampling-gap-val" class="accent-value">3</span>
@@ -194,7 +194,7 @@ Breathe</textarea>
                     <input type="color" id="single-color" class="control-color" value="#e8d5b7">
                 </div>
 
-                <!-- プリセットカラー（鮮やかネオンカラーに変更） -->
+                <!-- プリセットカラー（鮮やかネオンカラー） -->
                 <div id="preset-color-row" class="control-row hidden">
                     <label class="control-label">プリセット / Preset</label>
                     <div class="preset-buttons">
