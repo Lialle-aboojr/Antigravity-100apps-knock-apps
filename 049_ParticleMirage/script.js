@@ -7,6 +7,9 @@
 // グローバル変数・定数
 // ============================================
 
+// パフォーマンス安全装置: パーティクル最大数
+const MAX_PARTICLES = 6000;
+
 // メインCanvas要素と2Dコンテキスト
 const canvas = document.getElementById('main-canvas');
 const ctx = canvas.getContext('2d');
@@ -155,12 +158,17 @@ class Particle {
                 this.x = targetX + (Math.random() - 0.5) * 100;
                 this.y = -Math.random() * h * 0.5 - 50;
                 break;
+            case 'rise':
+                // 下から上昇: 目標X付近にランダム幅、Yは画面下部の外
+                this.x = targetX + (Math.random() - 0.5) * 100;
+                this.y = h + Math.random() * h * 0.5 + 50;
+                break;
             case 'vortex':
-                // 渦巻き: 中心からの角度でランダムに配置
+                // 渦巻き: 目標座標を中心とした大きな円周上にランダムに配置
                 const angle = Math.random() * Math.PI * 2;
-                const radius = Math.max(w, h) * 0.4 + Math.random() * 200;
-                this.x = w / 2 + Math.cos(angle) * radius;
-                this.y = h / 2 + Math.sin(angle) * radius;
+                const radius = 250 + Math.random() * 300;
+                this.x = targetX + Math.cos(angle) * radius;
+                this.y = targetY + Math.sin(angle) * radius;
                 break;
             case 'random':
             default:
@@ -178,11 +186,13 @@ class Particle {
         this.vx = 0;
         this.vy = 0;
 
-        // 渦巻きの回転角度（vortex用）
-        this.vortexAngle = Math.atan2(this.y - h / 2, this.x - w / 2);
+        // 渦巻き用パラメータ: 目標座標からの相対的な角度と半径
+        this.vortexAngle = Math.atan2(this.y - targetY, this.x - targetX);
         this.vortexRadius = Math.sqrt(
-            Math.pow(this.x - w / 2, 2) + Math.pow(this.y - h / 2, 2)
+            Math.pow(this.x - targetX, 2) + Math.pow(this.y - targetY, 2)
         );
+        // 渦巻きの回転回数（個別にランダム化して自然に見せる）
+        this.vortexSpins = 2 + Math.random() * 3;
 
         // 漂い消滅用のランダムパラメータ
         this.driftAngle = Math.random() * Math.PI * 2;
@@ -190,18 +200,25 @@ class Particle {
 
         // 個別の遅延（パーティクルが一斉に動かないように少しランダムなオフセット）
         this.delay = Math.random() * 0.15;
+
+        // 落下用: 個別の重力加速度
+        this.gravity = 0.15 + Math.random() * 0.25;
     }
 }
 
 // ============================================
 // テキストからパーティクル目標座標を生成
+// （安全装置付き: MAX_PARTICLES制限）
 // ============================================
 function generateParticles(text) {
     // 設定値を取得
-    const gap = parseInt(samplingGapSlider.value);
+    let gap = parseInt(samplingGapSlider.value);
     const pSize = parseFloat(particleSizeSlider.value);
     const font = fontFamily.value;
     const appear = appearMode.value;
+
+    // 安全装置: サンプリング間隔の最小値を3以上に強制
+    gap = Math.max(3, gap);
 
     // オフスクリーンCanvas作成
     const offCanvas = document.createElement('canvas');
@@ -232,7 +249,30 @@ function generateParticles(text) {
     // ピクセルデータを取得してパーティクル位置を決定
     const imageData = offCtx.getImageData(0, 0, w, h);
     const data = imageData.data;
-    const newParticles = [];
+
+    // まず候補座標を収集してからパーティクルを生成（上限チェック付き）
+    const candidatePositions = [];
+
+    for (let y = 0; y < h; y += gap) {
+        for (let x = 0; x < w; x += gap) {
+            // ピクセルのアルファ値をチェック（描画されている部分のみ）
+            const index = (y * w + x) * 4;
+            if (data[index + 3] > 128) {
+                candidatePositions.push({ x, y });
+            }
+        }
+    }
+
+    // 安全装置: 候補数がMAX_PARTICLESを超える場合は均等にサンプリング
+    let positions = candidatePositions;
+    if (candidatePositions.length > MAX_PARTICLES) {
+        // ランダムにMAX_PARTICLES個を選び出す
+        positions = [];
+        const step = candidatePositions.length / MAX_PARTICLES;
+        for (let i = 0; i < MAX_PARTICLES; i++) {
+            positions.push(candidatePositions[Math.floor(i * step)]);
+        }
+    }
 
     // カラーモードの取得
     const colorMode = document.querySelector('input[name="color-mode"]:checked').value;
@@ -245,37 +285,32 @@ function generateParticles(text) {
         if (activePreset) {
             presetColors = JSON.parse(activePreset.dataset.colors);
         } else {
-            presetColors = ['#f4a460', '#daa520', '#cd853f'];
+            presetColors = ['#ffaa00', '#ff6600', '#ffdd44'];
         }
     }
 
-    // ピクセルをサンプリングしてパーティクルを生成
-    for (let y = 0; y < h; y += gap) {
-        for (let x = 0; x < w; x += gap) {
-            // ピクセルのアルファ値をチェック（描画されている部分のみ）
-            const index = (y * w + x) * 4;
-            if (data[index + 3] > 128) {
-                // カラーモードに応じた色を決定
-                let color;
-                switch (colorMode) {
-                    case 'rainbow':
-                        // 虹色: HSLでパーティクルの位置に応じた色相
-                        const hue = (x / w * 360 + Math.random() * 30) % 360;
-                        color = `hsl(${hue}, 80%, 65%)`;
-                        break;
-                    case 'preset':
-                        // プリセット: ランダムに選択
-                        color = presetColors[Math.floor(Math.random() * presetColors.length)];
-                        break;
-                    case 'single':
-                    default:
-                        color = baseColor;
-                        break;
-                }
-
-                newParticles.push(new Particle(x, y, color, pSize, appear));
-            }
+    // パーティクルを生成
+    const newParticles = [];
+    for (const pos of positions) {
+        // カラーモードに応じた色を決定
+        let color;
+        switch (colorMode) {
+            case 'rainbow':
+                // 虹色: HSLで鮮やかなネオンカラー（彩度・明度を高めに）
+                const hue = (pos.x / w * 360 + Math.random() * 40) % 360;
+                color = `hsl(${hue}, 100%, 60%)`;
+                break;
+            case 'preset':
+                // プリセット: ランダムに選択
+                color = presetColors[Math.floor(Math.random() * presetColors.length)];
+                break;
+            case 'single':
+            default:
+                color = baseColor;
+                break;
         }
+
+        newParticles.push(new Particle(pos.x, pos.y, color, pSize, appear));
     }
 
     return newParticles;
@@ -291,8 +326,6 @@ function generateParticles(text) {
  */
 function updateGathering(progress) {
     const appear = appearMode.value;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
 
     particles.forEach(p => {
         // 個別の遅延を適用したプログレス
@@ -301,18 +334,16 @@ function updateGathering(progress) {
         const eased = 1 - Math.pow(1 - adjustedProgress, 3);
 
         if (appear === 'vortex') {
-            // 渦巻き: 半径を縮めながら回転して目標位置へ
+            // ===== 渦巻き: 明確なスパイラル軌道 =====
+            // 半径を eased に応じて縮める
             const currentRadius = p.vortexRadius * (1 - eased);
-            const currentAngle = p.vortexAngle + eased * Math.PI * 4;
-            const centerX = w / 2;
-            const centerY = h / 2;
-            const spiralX = centerX + Math.cos(currentAngle) * currentRadius;
-            const spiralY = centerY + Math.sin(currentAngle) * currentRadius;
-            // スパイラル座標と目標座標を補間
-            p.x = spiralX + (p.targetX - spiralX) * eased;
-            p.y = spiralY + (p.targetY - spiralY) * eased;
+            // 角度を eased に応じて回転させる（個別の回転回数を使用）
+            const currentAngle = p.vortexAngle + eased * Math.PI * 2 * p.vortexSpins;
+            // 目標座標を中心にスパイラル座標を計算
+            p.x = p.targetX + Math.cos(currentAngle) * currentRadius;
+            p.y = p.targetY + Math.sin(currentAngle) * currentRadius;
         } else {
-            // ランダム・降下: 初期位置から目標位置へ直接補間
+            // ランダム・降下・上昇: 初期位置から目標位置へ直接補間
             p.x = p.startX + (p.targetX - p.startX) * eased;
             p.y = p.startY + (p.targetY - p.startY) * eased;
         }
@@ -374,6 +405,13 @@ function updateFading(progress) {
                 p.x += Math.cos(p.driftAngle + progress * 4) * p.driftSpeed;
                 p.y += Math.sin(p.driftAngle + progress * 4) * p.driftSpeed - 0.5;
                 break;
+            case 'gravity':
+                // 下に落下: 重力に従ってパラパラと落ちる
+                p.vy += p.gravity * (1 + eased * 2);
+                p.vx += (Math.random() - 0.5) * 0.3;
+                p.x += p.vx;
+                p.y += p.vy;
+                break;
         }
         // 透明度を下げる
         p.alpha = Math.max(0, 1 - eased);
@@ -381,7 +419,7 @@ function updateFading(progress) {
 }
 
 // ============================================
-// 描画処理
+// 描画処理（軽量グロウ効果 - shadowBlur不使用）
 // ============================================
 function draw() {
     // Canvas全体をクリア（論理サイズで）
@@ -393,19 +431,30 @@ function draw() {
     ctx.fillStyle = '#0a0a0f';
     ctx.fillRect(0, 0, w, h);
 
-    // パーティクルを描画
+    // グロウ効果: 加算合成モードを有効化（粒子が重なると明るく輝く）
+    ctx.globalCompositeOperation = 'lighter';
+
+    // パーティクルを描画（shadowBlur不使用・軽量グロウ）
     particles.forEach(p => {
         if (p.alpha <= 0.01) return;
 
+        // --- 軽量グロウ: 半透明の大きめ円を先に描画 ---
+        ctx.globalAlpha = p.alpha * 0.15;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        ctx.fill();
+
+        // --- メインの粒子 ---
+        ctx.globalAlpha = p.alpha;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = p.alpha;
         ctx.fill();
     });
 
-    // globalAlphaを元に戻す
+    // 描画設定をリセット
     ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
 }
 
 // ============================================
@@ -528,6 +577,11 @@ function startAnimation() {
 
     currentQueueIndex = 0;
     isPlaying = true;
+
+    // 【修正①】再生ボタン押下時にコントロールパネルを自動的に閉じる
+    if (!controlPanel.classList.contains('collapsed')) {
+        controlPanel.classList.add('collapsed');
+    }
 
     // 最初のテキストを開始
     startNextText();

@@ -76,23 +76,25 @@ Breathe</textarea>
             <section class="panel-section">
                 <h2 class="section-title">🌀 動き / Motion</h2>
 
-                <!-- 出現アニメーション -->
+                <!-- 出現アニメーション（4種） -->
                 <div class="control-row">
                     <label class="control-label" for="appear-mode">出現 / Appear</label>
                     <select id="appear-mode" class="control-select">
                         <option value="random" selected>🎲 ランダム集合 / Random</option>
                         <option value="fall">🌧️ 上から降下 / Fall Down</option>
+                        <option value="rise">🫧 下から上昇 / Rise Up</option>
                         <option value="vortex">🌀 渦巻き集合 / Vortex</option>
                     </select>
                 </div>
 
-                <!-- 消失アニメーション -->
+                <!-- 消失アニメーション（4種） -->
                 <div class="control-row">
                     <label class="control-label" for="disappear-mode">消失 / Disappear</label>
                     <select id="disappear-mode" class="control-select">
                         <option value="evaporate" selected>💨 蒸発 / Evaporate</option>
                         <option value="explode">💥 爆発 / Explode</option>
                         <option value="float">🍃 漂い消滅 / Float Away</option>
+                        <option value="gravity">⬇️ 下に落下 / Fall Down</option>
                     </select>
                 </div>
             </section>
@@ -150,13 +152,13 @@ Breathe</textarea>
                         value="2.0">
                 </div>
 
-                <!-- 粒子の細かさ -->
+                <!-- 粒子の密度（ラベル変更済み） -->
                 <div class="control-row">
                     <label class="control-label" for="sampling-gap">
-                        粒子の細かさ / Resolution: <span id="sampling-gap-val" class="accent-value">3</span>
+                        粒子の密度 / Particle Density: <span id="sampling-gap-val" class="accent-value">3</span>
                     </label>
-                    <input type="range" id="sampling-gap" class="control-range" min="1" max="8" step="1" value="3">
-                    <p class="control-hint">値が小さいほど細かい（負荷大） / Smaller = finer (heavier)</p>
+                    <input type="range" id="sampling-gap" class="control-range" min="3" max="8" step="1" value="3">
+                    <p class="control-hint">値が小さいほど高密度（負荷大） / Smaller = denser (heavier)</p>
                 </div>
             </section>
 
@@ -192,31 +194,33 @@ Breathe</textarea>
                     <input type="color" id="single-color" class="control-color" value="#e8d5b7">
                 </div>
 
-                <!-- プリセットカラー -->
+                <!-- プリセットカラー（鮮やかネオンカラーに変更） -->
                 <div id="preset-color-row" class="control-row hidden">
                     <label class="control-label">プリセット / Preset</label>
                     <div class="preset-buttons">
-                        <button class="preset-btn active" data-colors='["#f4a460","#daa520","#cd853f"]'
-                            title="暖色ゴールド / Warm Gold">
+                        <button class="preset-btn active" data-colors='["#ffaa00","#ff6600","#ffdd44"]'
+                            title="輝くゴールド / Neon Gold">
                             <span class="preset-swatch"
-                                style="background: linear-gradient(135deg, #f4a460, #daa520, #cd853f);"></span>
-                            暖色 / Warm
+                                style="background: linear-gradient(135deg, #ffaa00, #ff6600, #ffdd44);"></span>
+                            煌金 / Gold
                         </button>
-                        <button class="preset-btn" data-colors='["#4a90d9","#5bb3e0","#87ceeb"]'
-                            title="寒色ブルー / Cool Blue">
+                        <button class="preset-btn" data-colors='["#00ccff","#0088ff","#44eeff"]'
+                            title="ネオンブルー / Neon Blue">
                             <span class="preset-swatch"
-                                style="background: linear-gradient(135deg, #4a90d9, #5bb3e0, #87ceeb);"></span>
-                            寒色 / Cool
+                                style="background: linear-gradient(135deg, #00ccff, #0088ff, #44eeff);"></span>
+                            蒼光 / Blue
                         </button>
-                        <button class="preset-btn" data-colors='["#c9a0dc","#e8b4d8","#f0c8e0"]' title="桜色 / Sakura">
+                        <button class="preset-btn" data-colors='["#ff44cc","#cc22ff","#ff88ee"]'
+                            title="ネオンピンク / Neon Pink">
                             <span class="preset-swatch"
-                                style="background: linear-gradient(135deg, #c9a0dc, #e8b4d8, #f0c8e0);"></span>
-                            桜 / Sakura
+                                style="background: linear-gradient(135deg, #ff44cc, #cc22ff, #ff88ee);"></span>
+                            桜炎 / Pink
                         </button>
-                        <button class="preset-btn" data-colors='["#a8e6cf","#88d8a8","#69c98e"]' title="翡翠 / Jade">
+                        <button class="preset-btn" data-colors='["#00ff88","#44ffaa","#00cc66"]'
+                            title="ネオングリーン / Neon Green">
                             <span class="preset-swatch"
-                                style="background: linear-gradient(135deg, #a8e6cf, #88d8a8, #69c98e);"></span>
-                            翡翠 / Jade
+                                style="background: linear-gradient(135deg, #00ff88, #44ffaa, #00cc66);"></span>
+                            翠光 / Green
                         </button>
                     </div>
                 </div>
