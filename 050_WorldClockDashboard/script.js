@@ -214,6 +214,10 @@ function addCityToBoard(cityKey) {
     </div>
   `;
 
+    // ドラッグ＆ドロップ機能を有効化する
+    card.setAttribute('draggable', 'true');
+    setupDragEvents(card);
+
     clockGrid.appendChild(card);
     updateClock(cityKey);
 }
@@ -344,6 +348,114 @@ function getUTCOffset(timezone, date) {
 
     if (minutes === 0) return `UTC${sign}${hours}`;
     return `UTC${sign}${hours}:${String(minutes).padStart(2, '0')}`;
+}
+
+// ========================================
+// DOMContentLoaded 後に初期化を実行する
+// ========================================
+// ========================================
+// ドラッグ＆ドロップによるカード並び替え
+// ========================================
+
+// 現在ドラッグ中のカード要素を保持する変数
+let draggedCard = null;
+
+// カードにドラッグイベントリスナーを設定する
+function setupDragEvents(card) {
+    // ドラッグ開始
+    card.addEventListener('dragstart', handleDragStart);
+    // ドラッグ終了
+    card.addEventListener('dragend', handleDragEnd);
+    // ドラッグ中の要素が上に来た時
+    card.addEventListener('dragover', handleDragOver);
+    // ドラッグ中の要素が入った時
+    card.addEventListener('dragenter', handleDragEnter);
+    // ドラッグ中の要素が出た時
+    card.addEventListener('dragleave', handleDragLeave);
+    // ドロップされた時
+    card.addEventListener('drop', handleDrop);
+}
+
+// ドラッグ開始ハンドラ
+function handleDragStart(e) {
+    draggedCard = this;
+    // ドラッグデータを設定する（必須）
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', this.dataset.cityKey);
+
+    // 少し遅延させてドラッグ中スタイルを適用する（即時だとゴーストにも適用されるため）
+    requestAnimationFrame(() => {
+        this.classList.add('dragging');
+        clockGrid.classList.add('drag-active');
+    });
+}
+
+// ドラッグ終了ハンドラ
+function handleDragEnd(e) {
+    this.classList.remove('dragging');
+    clockGrid.classList.remove('drag-active');
+
+    // すべてのカードからドラッグ関連クラスを除去する
+    document.querySelectorAll('.clock-card').forEach(card => {
+        card.classList.remove('drag-over');
+    });
+
+    draggedCard = null;
+}
+
+// ドラッグオーバーハンドラ（ドロップを許可するために必須）
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+// ドラッグエンターハンドラ（ハイライト表示）
+function handleDragEnter(e) {
+    e.preventDefault();
+    if (this !== draggedCard && this.classList.contains('clock-card')) {
+        this.classList.add('drag-over');
+    }
+}
+
+// ドラッグリーブハンドラ（ハイライト解除）
+function handleDragLeave(e) {
+    // relatedTarget がこのカードの子要素でない場合のみハイライトを解除する
+    if (!this.contains(e.relatedTarget)) {
+        this.classList.remove('drag-over');
+    }
+}
+
+// ドロップハンドラ（カードの入れ替えを実行する）
+function handleDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    this.classList.remove('drag-over');
+
+    // 自分自身にドロップした場合は何もしない
+    if (!draggedCard || draggedCard === this) return;
+
+    // DOM上でカードの位置を入れ替える
+    const allCards = Array.from(clockGrid.querySelectorAll('.clock-card'));
+    const draggedIndex = allCards.indexOf(draggedCard);
+    const droppedIndex = allCards.indexOf(this);
+
+    if (draggedIndex < droppedIndex) {
+        // ドラッグ元が前方、ドロップ先が後方の場合
+        clockGrid.insertBefore(draggedCard, this.nextSibling);
+    } else {
+        // ドラッグ元が後方、ドロップ先が前方の場合
+        clockGrid.insertBefore(draggedCard, this);
+    }
+
+    // activeCities配列の順序もDOMに合わせて更新する
+    syncActiveCitiesOrder();
+}
+
+// DOMの並び順に合わせてactiveCities配列を同期する
+function syncActiveCitiesOrder() {
+    const cards = clockGrid.querySelectorAll('.clock-card');
+    activeCities = Array.from(cards).map(card => card.dataset.cityKey);
 }
 
 // ========================================

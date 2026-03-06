@@ -816,6 +816,40 @@ body {
     }
 }
 
+/* ========================================
+   ドラッグ＆ドロップ
+   ======================================== */
+
+/* ドラッグ可能なカードのカーソル */
+.clock-card[draggable="true"] {
+    cursor: grab;
+}
+
+.clock-card[draggable="true"]:active {
+    cursor: grabbing;
+}
+
+/* ドラッグ中のカード（半透明＋スケールダウン） */
+.clock-card.dragging {
+    opacity: 0.4;
+    transform: scale(0.95);
+    box-shadow: none !important;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* ドロップ可能な位置のハイライト */
+.clock-card.drag-over {
+    outline: 2.5px dashed var(--color-accent);
+    outline-offset: 4px;
+    transform: translateY(-2px) scale(1.02);
+    transition: outline 0.15s ease, transform 0.15s ease;
+}
+
+/* ドラッグ中のグリッド全体ヒント */
+.clock-grid.drag-active {
+    min-height: 200px;
+}
+
 /* フッター */
 .footer {
     text-align: center;
