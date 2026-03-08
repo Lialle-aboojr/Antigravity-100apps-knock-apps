@@ -317,6 +317,45 @@ body {
     }
 }
 
+/* --- 【機能追加】Quitボタン（右上に配置） --- */
+.btn-quit {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    font-family: var(--font-pixel);
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 30px;
+    padding: 8px 16px;
+    cursor: pointer;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition-fast);
+}
+
+.btn-quit:hover {
+    background: var(--color-danger);
+    color: white;
+    border-color: var(--color-danger);
+    box-shadow: 0 4px 12px rgba(239, 71, 111, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-quit:active {
+    transform: translateY(1px);
+}
+
+.btn-quit .btn-icon {
+    margin: 0;
+    font-size: 0.7rem;
+}
+
 /* --- ステータスバー --- */
 .status-bar {
     position: fixed;
@@ -769,6 +808,13 @@ body {
     .btn-start {
         font-size: 0.7rem;
         padding: 14px 32px;
+    }
+
+    .btn-quit {
+        top: 12px;
+        right: 12px;
+        padding: 6px 12px;
+        font-size: 0.5rem;
     }
 
     .result-container {

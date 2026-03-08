@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ボタンと入力
     const btnStart = document.getElementById('btn-start');
     const btnRetry = document.getElementById('btn-retry');
+    const btnQuit = document.getElementById('btn-quit'); // 【追加】Quitボタン
     const modeSelect = document.getElementById('game-mode');
 
     // ゲーム画面の要素
@@ -36,10 +37,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const rankTitle = document.getElementById('rank-title');
     const rankTitleEn = document.getElementById('rank-title-en');
 
-    // --- 【機能追加】ランダムモンスターの配列 ---
+    // --- ランダムモンスターの配列 ---
     const randomMonsters = ['👾', '👻', '👹', '👽', '🐉', '🦇', '🕷️', '🧟', '🧛', '🦖', '🦂', '🦈'];
 
-    // --- 【機能追加】モード別の単語リスト（各50個以上、合計200個以上） ---
+    // --- モード別の単語リスト（各50個以上、合計200個以上） ---
     const allWordLists = {
         // == モード1: 単語（日本語） - 50個 ==
         words_ja: [
@@ -339,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const word = shuffledWords[currentWordIndex];
         currentCharIndex = 0;
 
-        // 【機能変更】ランダムなモンスターを選択し表示
+        // ランダムなモンスターを選択し表示
         const randomEmoji = randomMonsters[Math.floor(Math.random() * randomMonsters.length)];
         monsterEmoji.textContent = randomEmoji;
         monsterEmoji.classList.remove('shake', 'defeated');
@@ -450,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const word = shuffledWords[currentWordIndex];
 
-        // 【エラー回避（バグ修正）】
+        // 【エラー回避】
         // 単語が未定義の場合や、単語の文字をすべて打ち終えた後に
         // 連続してキーを叩いた場合に備える（配列範囲外アクセスの回避）
         if (!word || currentCharIndex >= word.romaji.length) {
@@ -560,6 +561,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 500);
     }
 
+    // --- 【機能追加】ゲーム強制リセット処理 ---
+    function resetGame() {
+        isPlaying = false;
+
+        // タイマー等をクリア
+        if (timerInterval) clearInterval(timerInterval);
+        if (flashTimeout) clearTimeout(flashTimeout);
+        flashOverlay.classList.remove('flash');
+
+        // スタート画面に戻す
+        showScreen(screenStart);
+    }
+
     // --- イベントリスナーの登録 ---
 
     // スタートボタン
@@ -570,6 +584,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // スタート画面に戻してモード選択できるようにする
         showScreen(screenStart);
     });
+
+    // 【追加】Quitボタン
+    btnQuit.addEventListener('click', resetGame);
 
     // キー入力（ゲーム全体でリスン）
     document.addEventListener('keydown', handleKeyPress);
