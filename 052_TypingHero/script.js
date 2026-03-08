@@ -36,90 +36,172 @@ document.addEventListener('DOMContentLoaded', () => {
     const rankTitle = document.getElementById('rank-title');
     const rankTitleEn = document.getElementById('rank-title-en');
 
-    // --- 【機能追加】モード別の単語リスト（20個以上用意） ---
+    // --- 【機能追加】ランダムモンスターの配列 ---
+    const randomMonsters = ['👾', '👻', '👹', '👽', '🐉', '🦇', '🕷️', '🧟', '🧛', '🦖', '🦂', '🦈'];
+
+    // --- 【機能追加】モード別の単語リスト（各50個以上、合計200個以上） ---
     const allWordLists = {
-        // == モード1: 日本語（単語） ==
+        // == モード1: 単語（日本語） - 50個 ==
         words_ja: [
-            { japanese: 'ねこ', romaji: 'neko', monster: '🐱' },
-            { japanese: 'いぬ', romaji: 'inu', monster: '🐶' },
-            { japanese: 'うさぎ', romaji: 'usagi', monster: '🐰' },
-            { japanese: 'くま', romaji: 'kuma', monster: '🐻' },
-            { japanese: 'さる', romaji: 'saru', monster: '🐵' },
-            { japanese: 'とり', romaji: 'tori', monster: '🐦' },
-            { japanese: 'さかな', romaji: 'sakana', monster: '🐟' },
-            { japanese: 'りんご', romaji: 'ringo', monster: '🍎' },
-            { japanese: 'ばなな', romaji: 'banana', monster: '🍌' },
-            { japanese: 'すいか', romaji: 'suika', monster: '🍉' },
-            { japanese: 'ぶどう', romaji: 'budou', monster: '🍇' },
-            { japanese: 'ケーキ', romaji: 'keeki', monster: '🍰' },
-            { japanese: 'ラーメン', romaji: 'raamen', monster: '🍜' },
-            { japanese: 'おにぎり', romaji: 'onigiri', monster: '🍙' },
-            { japanese: 'あか', romaji: 'aka', monster: '🔴' },
-            { japanese: 'あお', romaji: 'ao', monster: '🔵' },
-            { japanese: 'みどり', romaji: 'midori', monster: '🟢' },
-            { japanese: 'きいろ', romaji: 'kiiro', monster: '🟡' },
-            { japanese: 'ドラゴン', romaji: 'doragon', monster: '🐉' },
-            { japanese: 'おばけ', romaji: 'obake', monster: '👻' },
-            { japanese: 'がいこつ', romaji: 'gaikotsu', monster: '💀' },
-            { japanese: 'あくま', romaji: 'akuma', monster: '😈' },
-            { japanese: 'ロボット', romaji: 'robotto', monster: '🤖' },
-            { japanese: 'エイリアン', romaji: 'eirian', monster: '👾' },
-            { japanese: 'はな', romaji: 'hana', monster: '🌸' },
-            { japanese: 'やま', romaji: 'yama', monster: '⛰️' },
-            { japanese: 'うみ', romaji: 'umi', monster: '🌊' },
-            { japanese: 'ほし', romaji: 'hoshi', monster: '⭐' },
-            { japanese: 'たいよう', romaji: 'taiyou', monster: '☀️' },
-            { japanese: 'つき', romaji: 'tsuki', monster: '🌙' }
+            { japanese: 'ねこ', romaji: 'neko' }, { japanese: 'いぬ', romaji: 'inu' },
+            { japanese: 'うさぎ', romaji: 'usagi' }, { japanese: 'くま', romaji: 'kuma' },
+            { japanese: 'さる', romaji: 'saru' }, { japanese: 'とり', romaji: 'tori' },
+            { japanese: 'さかな', romaji: 'sakana' }, { japanese: 'りんご', romaji: 'ringo' },
+            { japanese: 'ばなな', romaji: 'banana' }, { japanese: 'すいか', romaji: 'suika' },
+            { japanese: 'ぶどう', romaji: 'budou' }, { japanese: 'ケーキ', romaji: 'keeki' },
+            { japanese: 'ラーメン', romaji: 'raamen' }, { japanese: 'おにぎり', romaji: 'onigiri' },
+            { japanese: 'あか', romaji: 'aka' }, { japanese: 'あお', romaji: 'ao' },
+            { japanese: 'みどり', romaji: 'midori' }, { japanese: 'きいろ', romaji: 'kiiro' },
+            { japanese: 'ドラゴン', romaji: 'doragon' }, { japanese: 'おばけ', romaji: 'obake' },
+            { japanese: 'がいこつ', romaji: 'gaikotsu' }, { japanese: 'あくま', romaji: 'akuma' },
+            { japanese: 'ロボット', romaji: 'robotto' }, { japanese: 'エイリアン', romaji: 'eirian' },
+            { japanese: 'はな', romaji: 'hana' }, { japanese: 'やま', romaji: 'yama' },
+            { japanese: 'うみ', romaji: 'umi' }, { japanese: 'ほし', romaji: 'hoshi' },
+            { japanese: 'たいよう', romaji: 'taiyou' }, { japanese: 'つき', romaji: 'tsuki' },
+            { japanese: 'くるま', romaji: 'kuruma' }, { japanese: 'でんしゃ', romaji: 'densha' },
+            { japanese: 'ひこうき', romaji: 'hikouki' }, { japanese: 'ふね', romaji: 'fune' },
+            { japanese: 'じてんしゃ', romaji: 'jitensha' }, { japanese: 'とけい', romaji: 'tokei' },
+            { japanese: 'めがね', romaji: 'megane' }, { japanese: 'かばん', romaji: 'kaban' },
+            { japanese: 'くつ', romaji: 'kutsu' }, { japanese: 'ぼうし', romaji: 'boushi' },
+            { japanese: 'えんぴつ', romaji: 'enpitsu' }, { japanese: 'けしゴム', romaji: 'keshigomu' },
+            { japanese: 'はさみ', romaji: 'hasami' }, { japanese: 'ノート', romaji: 'noto' },
+            { japanese: 'いし', romaji: 'ishi' }, { japanese: 'みず', romaji: 'mizu' },
+            { japanese: 'ひ', romaji: 'hi' }, { japanese: 'かぜ', romaji: 'kaze' },
+            { japanese: 'つち', romaji: 'tsuchi' }, { japanese: 'そら', romaji: 'sora' }
         ],
-        // == モード2: 英語（English Words） ==
+        // == モード2: 短文・フレーズ（日本語） - 50個 ==
+        phrases_ja: [
+            { japanese: 'おはよう ございます', romaji: 'ohayou gozaimasu' },
+            { japanese: 'こんにちは', romaji: 'konnichiwa' },
+            { japanese: 'こんばんは', romaji: 'konbanwa' },
+            { japanese: 'ありがとう ございます', romaji: 'arigatou gozaimasu' },
+            { japanese: 'さようなら', romaji: 'sayounara' },
+            { japanese: 'おやすみ なさい', romaji: 'oyasumi nasai' },
+            { japanese: 'いただきます', romaji: 'itadakimasu' },
+            { japanese: 'ごちそうさま', romaji: 'gochisousama' },
+            { japanese: 'ただいま', romaji: 'tadaima' },
+            { japanese: 'おかえり なさい', romaji: 'okaeri nasai' },
+            { japanese: 'いってらっしゃい', romaji: 'itterasshai' },
+            { japanese: 'いってきます', romaji: 'ittekimasu' },
+            { japanese: 'すみません', romaji: 'sumimasen' },
+            { japanese: 'ごめんなさい', romaji: 'gomennasai' },
+            { japanese: 'よろしく おねがいします', romaji: 'yoroshiku onegaishimasu' },
+            { japanese: 'わかりました', romaji: 'wakarimashita' },
+            { japanese: 'わかりません', romaji: 'wakarimasen' },
+            { japanese: 'しりません', romaji: 'shirimasen' },
+            { japanese: 'だいじょうぶ です', romaji: 'daijoubu desu' },
+            { japanese: 'ほんとう です', romaji: 'hontou desu' },
+            { japanese: 'うそでしょ', romaji: 'usodesho' },
+            { japanese: 'まじで', romaji: 'mazide' },
+            { japanese: 'きもちいい', romaji: 'kimochiii' },
+            { japanese: 'たのしい', romaji: 'tanoshii' },
+            { japanese: 'うれしい', romaji: 'ureshii' },
+            { japanese: 'かなしい', romaji: 'kanashii' },
+            { japanese: 'さびしい', romaji: 'sabishii' },
+            { japanese: 'いたい', romaji: 'itai' },
+            { japanese: 'あつい', romaji: 'atsui' },
+            { japanese: 'さむい', romaji: 'samui' },
+            { japanese: 'つかれた', romaji: 'tsukareta' },
+            { japanese: 'ねむい', romaji: 'nemui' },
+            { japanese: 'おなかが すいた', romaji: 'onakaga suita' },
+            { japanese: 'のどが かわいた', romaji: 'nodoga kawaita' },
+            { japanese: 'あいしている', romaji: 'aishiteiru' },
+            { japanese: 'すき です', romaji: 'suki desu' },
+            { japanese: 'きらい です', romaji: 'kirai desu' },
+            { japanese: 'きれい ですね', romaji: 'kirei desune' },
+            { japanese: 'かわいい', romaji: 'kawaii' },
+            { japanese: 'かっこいい', romaji: 'kakkoii' },
+            { japanese: 'やばい', romaji: 'yabai' },
+            { japanese: 'すごい', romaji: 'sugoi' },
+            { japanese: 'おもしろい', romaji: 'omoshiroi' },
+            { japanese: 'つまらない', romaji: 'tsumaranai' },
+            { japanese: 'むずかしい', romaji: 'muzukashii' },
+            { japanese: 'かんたん', romaji: 'kantan' },
+            { japanese: 'いそがしい', romaji: 'isogashii' },
+            { japanese: 'ひま です', romaji: 'hima desu' },
+            { japanese: 'はやく して', romaji: 'hayaku shite' },
+            { japanese: 'ゆっくり でいいよ', romaji: 'yukkuri deiiyo' }
+        ],
+        // == モード3: 単語（英語） - 50個 ==
         words_en: [
-            { japanese: 'りんご (Apple)', romaji: 'apple', monster: '🍎' },
-            { japanese: '水 (Water)', romaji: 'water', monster: '💧' },
-            { japanese: '火 (Fire)', romaji: 'fire', monster: '🔥' },
-            { japanese: '山 (Mountain)', romaji: 'mountain', monster: '⛰️' },
-            { japanese: '星 (Star)', romaji: 'star', monster: '⭐' },
-            { japanese: '犬 (Dog)', romaji: 'dog', monster: '🐶' },
-            { japanese: '猫 (Cat)', romaji: 'cat', monster: '🐱' },
-            { japanese: '家 (House)', romaji: 'house', monster: '🏠' },
-            { japanese: '車 (Car)', romaji: 'car', monster: '🚗' },
-            { japanese: '本 (Book)', romaji: 'book', monster: '📖' },
-            { japanese: '時計 (Clock)', romaji: 'clock', monster: '⏰' },
-            { japanese: '月 (Moon)', romaji: 'moon', monster: '🌙' },
-            { japanese: '太陽 (Sun)', romaji: 'sun', monster: '☀️' },
-            { japanese: '木 (Tree)', romaji: 'tree', monster: '🌳' },
-            { japanese: '雪 (Snow)', romaji: 'snow', monster: '❄️' },
-            { japanese: '花 (Flower)', romaji: 'flower', monster: '🌸' },
-            { japanese: '鳥 (Bird)', romaji: 'bird', monster: '🐦' },
-            { japanese: '魚 (Fish)', romaji: 'fish', monster: '🐟' },
-            { japanese: '魔法 (Magic)', romaji: 'magic', monster: '✨' },
-            { japanese: '剣 (Sword)', romaji: 'sword', monster: '🗡️' },
-            { japanese: '盾 (Shield)', romaji: 'shield', monster: '🛡️' },
-            { japanese: '鍵 (Key)', romaji: 'key', monster: '🔑' },
-            { japanese: '勇者 (Hero)', romaji: 'hero', monster: '⚔️' }
+            { japanese: 'りんご (Apple)', romaji: 'apple' }, { japanese: '水 (Water)', romaji: 'water' },
+            { japanese: '火 (Fire)', romaji: 'fire' }, { japanese: '山 (Mountain)', romaji: 'mountain' },
+            { japanese: '星 (Star)', romaji: 'star' }, { japanese: '犬 (Dog)', romaji: 'dog' },
+            { japanese: '猫 (Cat)', romaji: 'cat' }, { japanese: '家 (House)', romaji: 'house' },
+            { japanese: '車 (Car)', romaji: 'car' }, { japanese: '本 (Book)', romaji: 'book' },
+            { japanese: '時計 (Clock)', romaji: 'clock' }, { japanese: '月 (Moon)', romaji: 'moon' },
+            { japanese: '太陽 (Sun)', romaji: 'sun' }, { japanese: '木 (Tree)', romaji: 'tree' },
+            { japanese: '雪 (Snow)', romaji: 'snow' }, { japanese: '花 (Flower)', romaji: 'flower' },
+            { japanese: '鳥 (Bird)', romaji: 'bird' }, { japanese: '魚 (Fish)', romaji: 'fish' },
+            { japanese: '魔法 (Magic)', romaji: 'magic' }, { japanese: '剣 (Sword)', romaji: 'sword' },
+            { japanese: '盾 (Shield)', romaji: 'shield' }, { japanese: '鍵 (Key)', romaji: 'key' },
+            { japanese: '勇者 (Hero)', romaji: 'hero' }, { japanese: '海 (Ocean)', romaji: 'ocean' },
+            { japanese: '虎 (Tiger)', romaji: 'tiger' }, { japanese: 'ライオン (Lion)', romaji: 'lion' },
+            { japanese: '熊 (Bear)', romaji: 'bear' }, { japanese: '馬 (Horse)', romaji: 'horse' },
+            { japanese: '王 (King)', romaji: 'king' }, { japanese: '女王 (Queen)', romaji: 'queen' },
+            { japanese: '騎士 (Knight)', romaji: 'knight' }, { japanese: 'ドラゴン (Dragon)', romaji: 'dragon' },
+            { japanese: '城 (Castle)', romaji: 'castle' }, { japanese: '森 (Forest)', romaji: 'forest' },
+            { japanese: '川 (River)', romaji: 'river' }, { japanese: '石 (Stone)', romaji: 'stone' },
+            { japanese: '風 (Wind)', romaji: 'wind' }, { japanese: '光 (Light)', romaji: 'light' },
+            { japanese: '闇 (Dark)', romaji: 'dark' }, { japanese: '影 (Shadow)', romaji: 'shadow' },
+            { japanese: '友達 (Friend)', romaji: 'friend' }, { japanese: '敵 (Enemy)', romaji: 'enemy' },
+            { japanese: '戦い (Battle)', romaji: 'battle' }, { japanese: '勝利 (Victory)', romaji: 'victory' },
+            { japanese: '平和 (Peace)', romaji: 'peace' }, { japanese: '愛 (Love)', romaji: 'love' },
+            { japanese: '命 (Life)', romaji: 'life' }, { japanese: '時間 (Time)', romaji: 'time' },
+            { japanese: '宇宙 (Space)', romaji: 'space' }, { japanese: '世界 (World)', romaji: 'world' }
         ],
-        // == モード3: フレーズ・短文（Phrases） ==
-        phrases: [
-            { japanese: 'おはよう (Good morning)', romaji: 'good morning', monster: '🌅' },
-            { japanese: 'ありがとう (Thank you)', romaji: 'thank you', monster: '🙏' },
-            { japanese: 'さようなら (Goodbye)', romaji: 'good bye', monster: '👋' },
-            { japanese: 'はい、お願いします (Yes please)', romaji: 'yes please', monster: '👍' },
-            { japanese: 'お元気ですか？ (How are you)', romaji: 'how are you', monster: '🙂' },
-            { japanese: 'すみません (Excuse me)', romaji: 'excuse me', monster: '🙇' },
-            { japanese: 'ごめんなさい (I am sorry)', romaji: 'i am sorry', monster: '🥺' },
-            { japanese: 'これは何ですか？ (What is this)', romaji: 'what is this', monster: '❓' },
-            { japanese: '見せてください (Show me)', romaji: 'show me', monster: '👀' },
-            { japanese: 'わかりました (I understand)', romaji: 'i understand', monster: '💡' },
-            { japanese: 'わかりません (I dont know)', romaji: 'i dont know', monster: '🤷' },
-            { japanese: '助けて！ (Help me)', romaji: 'help me', monster: '🆘' },
-            { japanese: 'いい天気ですね (Nice weather)', romaji: 'nice weather', monster: '☀️' },
-            { japanese: 'お腹が空きました (I am hungry)', romaji: 'i am hungry', monster: '🤤' },
-            { japanese: '喉が渇きました (I am thirsty)', romaji: 'i am thirsty', monster: '🚰' },
-            { japanese: '一緒に遊ぼう (Lets play)', romaji: 'lets play', monster: '🎮' },
-            { japanese: 'またね (See you soon)', romaji: 'see you soon', monster: '👋' },
-            { japanese: 'よくできました (Well done)', romaji: 'well done', monster: '💮' },
-            { japanese: '気をつけて (Take care)', romaji: 'take care', monster: '💚' },
-            { japanese: 'おやすみなさい (Good night)', romaji: 'good night', monster: '😴' },
-            { japanese: '頑張って！ (Do your best)', romaji: 'do your best', monster: '💪' }
+        // == モード4: 短文・フレーズ（英語） - 50個 ==
+        phrases_en: [
+            { japanese: 'おはよう (Good morning)', romaji: 'good morning' },
+            { japanese: 'ありがとう (Thank you)', romaji: 'thank you' },
+            { japanese: 'さようなら (Good bye)', romaji: 'good bye' },
+            { japanese: 'はい、お願いします (Yes please)', romaji: 'yes please' },
+            { japanese: 'お元気ですか？ (How are you)', romaji: 'how are you' },
+            { japanese: 'すみません (Excuse me)', romaji: 'excuse me' },
+            { japanese: 'ごめんなさい (I am sorry)', romaji: 'i am sorry' },
+            { japanese: 'これは何ですか？ (What is this)', romaji: 'what is this' },
+            { japanese: '見せてください (Show me)', romaji: 'show me' },
+            { japanese: 'わかりました (I understand)', romaji: 'i understand' },
+            { japanese: 'わかりません (I dont know)', romaji: 'i dont know' },
+            { japanese: '助けて！ (Help me)', romaji: 'help me' },
+            { japanese: 'いい天気ですね (Nice weather)', romaji: 'nice weather' },
+            { japanese: 'お腹が空きました (I am hungry)', romaji: 'i am hungry' },
+            { japanese: '喉が渇きました (I am thirsty)', romaji: 'i am thirsty' },
+            { japanese: '一緒に遊ぼう (Lets play)', romaji: 'lets play' },
+            { japanese: 'またね (See you soon)', romaji: 'see you soon' },
+            { japanese: 'よくできました (Well done)', romaji: 'well done' },
+            { japanese: '気をつけて (Take care)', romaji: 'take care' },
+            { japanese: 'おやすみなさい (Good night)', romaji: 'good night' },
+            { japanese: '頑張って！ (Do your best)', romaji: 'do your best' },
+            { japanese: '幸運を (Good luck)', romaji: 'good luck' },
+            { japanese: 'また後で (See you later)', romaji: 'see you later' },
+            { japanese: '初めまして (Nice to meet you)', romaji: 'nice to meet you' },
+            { japanese: 'どういたしまして (You are welcome)', romaji: 'you are welcome' },
+            { japanese: '問題ないよ (No problem)', romaji: 'no problem' },
+            { japanese: 'いくらですか (How much)', romaji: 'how much' },
+            { japanese: 'いくつですか (How many)', romaji: 'how many' },
+            { japanese: 'どこですか (Where is it)', romaji: 'where is it' },
+            { japanese: '何時ですか (What time)', romaji: 'what time' },
+            { japanese: 'まさか (No way)', romaji: 'no way' },
+            { japanese: 'もちろんです (Of course)', romaji: 'of course' },
+            { japanese: 'ちょっと待って (Just a moment)', romaji: 'just a moment' },
+            { japanese: '待ってて (Wait for me)', romaji: 'wait for me' },
+            { japanese: '戻ってきて (Come back)', romaji: 'come back' },
+            { japanese: 'どうぞ (Go ahead)', romaji: 'go ahead' },
+            { japanese: '気をつけて！(Watch out)', romaji: 'watch out' },
+            { japanese: '注意して (Be careful)', romaji: 'be careful' },
+            { japanese: 'まだです (Not yet)', romaji: 'not yet' },
+            { japanese: '今すぐ (Right now)', romaji: 'right now' },
+            { japanese: 'あそこです (Over there)', romaji: 'over there' },
+            { japanese: 'ここです (Right here)', romaji: 'right here' },
+            { japanese: 'たぶん後で (Maybe later)', romaji: 'maybe later' },
+            { japanese: '私も (Me too)', romaji: 'me too' },
+            { japanese: '久しぶり (Long time no see)', romaji: 'long time no see' },
+            { japanese: '元気を出して (Cheer up)', romaji: 'cheer up' },
+            { japanese: '気にしないで (Dont worry)', romaji: 'dont worry' },
+            { japanese: '愛してるよ (I love you)', romaji: 'i love you' },
+            { japanese: 'いい夢を (Sweet dreams)', romaji: 'sweet dreams' },
+            { japanese: '誕生日おめでとう (Happy birthday)', romaji: 'happy birthday' }
         ]
     };
 
@@ -220,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedMode = modeSelect.value;
         activeWordList = allWordLists[selectedMode];
 
-        // 単語リストをシャッフル
+        // 単語リストをシャッフル（最低50個確保ずみ）
         shuffledWords = shuffleArray(activeWordList);
 
         // 最初の単語を設定
@@ -257,15 +339,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const word = shuffledWords[currentWordIndex];
         currentCharIndex = 0;
 
-        // モンスター絵文字の表示
-        monsterEmoji.textContent = word.monster;
+        // 【機能変更】ランダムなモンスターを選択し表示
+        const randomEmoji = randomMonsters[Math.floor(Math.random() * randomMonsters.length)];
+        monsterEmoji.textContent = randomEmoji;
         monsterEmoji.classList.remove('shake', 'defeated');
 
         // HPバーをリセット
         monsterHpFill.style.width = '100%';
         monsterHpFill.classList.remove('hp-mid', 'hp-low');
 
-        // 日本語の意味を表示
+        // 日本語の意味（または問題文）を表示
         wordMeaning.textContent = word.japanese;
 
         // ローマ字を1文字ずつspan要素で表示
@@ -321,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
         damagePopup.classList.add('show');
     }
 
-    // --- 【バグ修正】赤フラッシュ演出 ---
+    // --- 赤フラッシュ演出 ---
     function showFlash() {
         // 既存のタイマーがあればクリアする
         if (flashTimeout) {
@@ -366,6 +449,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.key.length !== 1) return;
 
         const word = shuffledWords[currentWordIndex];
+
+        // 【エラー回避（バグ修正）】
+        // 単語が未定義の場合や、単語の文字をすべて打ち終えた後に
+        // 連続してキーを叩いた場合に備える（配列範囲外アクセスの回避）
+        if (!word || currentCharIndex >= word.romaji.length) {
+            return;
+        }
+
         const expectedChar = word.romaji[currentCharIndex];
         // スペースも判定できるように toLowerCase() して判定
         const pressedChar = event.key.toLowerCase();
@@ -425,7 +516,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 少し待ってからミス表示を解除
             setTimeout(() => {
-                charSpans[currentCharIndex].classList.remove('miss');
+                // ここでも念のため、ゲームリセット等で消滅している可能性を考慮
+                if (charSpans[currentCharIndex]) {
+                    charSpans[currentCharIndex].classList.remove('miss');
+                }
             }, 300);
         }
     }

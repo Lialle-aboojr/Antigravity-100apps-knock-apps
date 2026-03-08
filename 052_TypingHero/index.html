@@ -40,13 +40,14 @@
                 Defeat monsters by typing words!
             </p>
 
-            <!-- モード選択の追加 -->
+            <!-- モード選択の追加（4種類に細分化） -->
             <div class="mode-selection">
                 <label for="game-mode" class="mode-label">🔽 プレイモードを選択 / Select Mode</label>
                 <select id="game-mode" class="mode-select">
-                    <option value="words_ja">日本語（単語） / Japanese Words</option>
-                    <option value="words_en">英語（English Words）</option>
-                    <option value="phrases">フレーズ・短文（Phrases）</option>
+                    <option value="words_ja">単語（日本語） / Japanese Words</option>
+                    <option value="phrases_ja">短文・フレーズ（日本語） / Japanese Phrases</option>
+                    <option value="words_en">単語（英語） / English Words</option>
+                    <option value="phrases_en">短文・フレーズ（英語） / English Phrases</option>
                 </select>
             </div>
 
@@ -94,7 +95,7 @@
 
         <!-- タイピングエリア -->
         <div class="typing-area" id="typing-area">
-            <!-- 日本語の意味 -->
+            <!-- 日本語の意味（または問題文） -->
             <p class="word-meaning" id="word-meaning">りんご</p>
             <!-- ローマ字表示（1文字ずつspan化） -->
             <div class="word-romaji" id="word-romaji"></div>

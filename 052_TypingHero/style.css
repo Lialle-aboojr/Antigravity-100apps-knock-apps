@@ -151,13 +151,18 @@ body {
     }
 }
 
-/* --- ファビコン画像をメインビジュアルとして表示 --- */
+/* --- ファビコン画像を角丸のアプリアイコン風に装飾 --- */
 .start-hero-image {
     width: 120px;
     height: 120px;
     margin-bottom: 12px;
-    border-radius: 20px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-radius: 25%;
+    background-color: #ffffff;
+    /* 透過背景を白で塗りつぶす */
+    border: 4px solid #ffffff;
+    /* アイコンの白いフチ */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15),
+        inset 0 0 0 2px rgba(0, 0, 0, 0.05);
     animation: floatImage 3s ease-in-out infinite;
     object-fit: cover;
 }
@@ -289,7 +294,6 @@ body {
 /* ===== ゲーム画面 ===== */
 
 /* --- 赤フラッシュ演出 --- */
-/* バグ修正: flashクラスが付与されていない時は確実に非表示にする */
 .flash-overlay {
     position: fixed;
     inset: 0;
@@ -299,7 +303,6 @@ body {
     z-index: 100;
 }
 
-/* ミスタイプ時にJavaScriptでこのクラスが一瞬だけ付与される */
 .flash-overlay.flash {
     animation: flashAnim 0.3s ease-out;
 }
@@ -521,6 +524,7 @@ body {
 /* フレーズモードのための空白対応 */
 .romaji-char.space-char {
     width: 16px;
+    border-bottom: none !important;
 }
 
 /* 正解した文字 */
