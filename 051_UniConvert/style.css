@@ -1,0 +1,462 @@
+/* ============================================
+   UniConvert — 単位変換ツール / Unit Converter
+   スタイルシート (style.css)
+   ============================================ */
+
+/* --- CSS変数（デザイントークン） --- */
+:root {
+    /* メインカラー */
+    --color-primary: #6366f1;
+    --color-primary-light: #818cf8;
+    --color-primary-dark: #4f46e5;
+    --color-accent: #f472b6;
+    --color-accent-light: #f9a8d4;
+
+    /* 背景グラデーション */
+    --bg-gradient-start: #0f0c29;
+    --bg-gradient-mid: #302b63;
+    --bg-gradient-end: #24243e;
+
+    /* グラスモーフィズム用 */
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-bg-hover: rgba(255, 255, 255, 0.12);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-shadow: rgba(0, 0, 0, 0.25);
+
+    /* テキストカラー */
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    /* フォント */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+    /* サイズ */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+
+    /* トランジション */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- リセットと基本設定 --- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family);
+    color: var(--text-primary);
+    /* 背景のグラデーション + 装飾的な光の玉 */
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(244, 114, 182, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 100%, rgba(56, 189, 248, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-mid), var(--bg-gradient-end));
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- ヘッダー --- */
+.header {
+    width: 100%;
+    padding: 28px 20px 20px;
+    text-align: center;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+}
+
+.header-icon {
+    font-size: 2.6rem;
+    /* アイコンを少し弾むアニメーション */
+    animation: bounceIn 0.8s ease-out;
+}
+
+.header-text h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    /* テキストにグラデーションを適用 */
+    background: linear-gradient(135deg, var(--color-primary-light), var(--color-accent-light));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+}
+
+.header-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+    letter-spacing: 0.03em;
+}
+
+/* ヘッダーアイコンの登場アニメーション */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    70% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* --- メインコンテンツ --- */
+.main {
+    width: 100%;
+    max-width: 560px;
+    padding: 0 20px 40px;
+    flex: 1;
+}
+
+/* --- カテゴリタブナビゲーション --- */
+.tab-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+    /* グラスモーフィズムのタブバー */
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 6px;
+}
+
+.tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 8px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-family);
+    font-size: 0.78rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.tab-btn .tab-icon {
+    font-size: 1.4rem;
+    transition: transform var(--transition-fast);
+}
+
+.tab-btn .tab-label {
+    white-space: nowrap;
+    line-height: 1.3;
+}
+
+/* タブのホバー状態 */
+.tab-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.tab-btn:hover .tab-icon {
+    transform: scale(1.15);
+}
+
+/* タブのアクティブ状態 */
+.tab-btn.active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(244, 114, 182, 0.2));
+    color: var(--text-primary);
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.2);
+}
+
+.tab-btn.active .tab-icon {
+    transform: scale(1.1);
+}
+
+/* --- 変換カードエリア --- */
+.converter-area {
+    position: relative;
+}
+
+/* --- 変換カード（グラスモーフィズム） --- */
+.converter-card {
+    /* デフォルトは非表示 */
+    display: none;
+    flex-direction: column;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow:
+        0 8px 32px var(--glass-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    /* カードの登場アニメーション */
+    animation: cardFadeIn 0.4s ease-out;
+}
+
+/* アクティブなカードのみ表示 */
+.converter-card.active {
+    display: flex;
+}
+
+/* カード登場アニメーション */
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* --- カードヘッダー --- */
+.card-header {
+    padding: 28px 28px 8px;
+    text-align: center;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+}
+
+.card-description {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* --- カードボディ（入力エリア） --- */
+.card-body {
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+/* --- 入力グループ --- */
+.input-group {
+    width: 100%;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    padding-left: 4px;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+/* --- 入力フィールド --- */
+.convert-input {
+    width: 100%;
+    padding: 16px 60px 16px 20px;
+    font-family: var(--font-family);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-md);
+    outline: none;
+    transition: all var(--transition-normal);
+    /* 数値入力のスピンボタンを非表示 */
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* Webkit系ブラウザのスピンボタン非表示 */
+.convert-input::-webkit-outer-spin-button,
+.convert-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* 入力フィールドのフォーカス状態 */
+.convert-input:focus {
+    border-color: var(--color-primary-light);
+    background: rgba(99, 102, 241, 0.08);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15), 0 4px 16px rgba(99, 102, 241, 0.1);
+}
+
+/* プレースホルダーのスタイル */
+.convert-input::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+/* --- 単位ラベル（入力フィールド右端） --- */
+.input-unit {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-primary-light);
+    pointer-events: none;
+    letter-spacing: 0.02em;
+}
+
+/* --- 変換矢印アイコン --- */
+.swap-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    color: #fff;
+    font-size: 1.3rem;
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+    margin: 4px 0;
+    /* 常にゆっくり回転するアニメーション */
+    animation: gentlePulse 3s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 4px 24px rgba(99, 102, 241, 0.5), 0 0 8px rgba(244, 114, 182, 0.2);
+    }
+}
+
+/* --- カードフッター（変換式表示） --- */
+.card-footer {
+    padding: 16px 28px 24px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.formula {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+/* --- フッター --- */
+.footer {
+    width: 100%;
+    text-align: center;
+    padding: 24px 20px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
+}
+
+/* ===== レスポンシブ対応 ===== */
+
+/* タブレット以下（600px以下） */
+@media (max-width: 600px) {
+    .header-text h1 {
+        font-size: 1.6rem;
+    }
+
+    .header-icon {
+        font-size: 2.2rem;
+    }
+
+    .tab-btn {
+        padding: 10px 4px;
+        font-size: 0.7rem;
+    }
+
+    .tab-btn .tab-icon {
+        font-size: 1.2rem;
+    }
+
+    .card-body {
+        padding: 20px 20px;
+    }
+
+    .card-header {
+        padding: 24px 20px 8px;
+    }
+
+    .card-footer {
+        padding: 14px 20px 20px;
+    }
+
+    .convert-input {
+        font-size: 1.3rem;
+        padding: 14px 55px 14px 16px;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* 小さいスマートフォン（380px以下） */
+@media (max-width: 380px) {
+    .header-content {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .tab-btn .tab-label {
+        font-size: 0.65rem;
+    }
+
+    .convert-input {
+        font-size: 1.15rem;
+        padding: 12px 50px 12px 14px;
+    }
+}

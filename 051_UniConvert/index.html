@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniConvert — 単位変換ツール / Unit Converter</title>
+    <meta name="description"
+        content="長さ・重さ・温度をリアルタイムで双方向変換できるツール。A real-time bidirectional unit converter for length, weight, and temperature.">
+
+    <!-- ファビコンの設定 -->
+    <link rel="icon" href="favicon.png">
+
+    <!-- Google Fonts: Inter（クリーンなUIフォント） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== ヘッダーセクション ===== -->
+    <header class="header" id="header">
+        <div class="header-content">
+            <div class="header-icon">⚖️</div>
+            <div class="header-text">
+                <h1>UniConvert</h1>
+                <p class="header-subtitle">単位変換ツール / Unit Converter</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== メインコンテンツ ===== -->
+    <main class="main" id="main">
+
+        <!-- カテゴリタブ切り替え -->
+        <nav class="tab-nav" id="tab-nav" aria-label="カテゴリ選択 / Category Selection">
+            <button class="tab-btn active" data-category="length" id="tab-length" aria-selected="true">
+                <span class="tab-icon">📏</span>
+                <span class="tab-label">長さ / Length</span>
+            </button>
+            <button class="tab-btn" data-category="weight" id="tab-weight" aria-selected="false">
+                <span class="tab-icon">⚖️</span>
+                <span class="tab-label">重さ / Weight</span>
+            </button>
+            <button class="tab-btn" data-category="temperature" id="tab-temperature" aria-selected="false">
+                <span class="tab-icon">🌡️</span>
+                <span class="tab-label">温度 / Temperature</span>
+            </button>
+        </nav>
+
+        <!-- ===== 変換カードエリア ===== -->
+        <div class="converter-area" id="converter-area">
+
+            <!-- 長さ変換カード -->
+            <div class="converter-card active" id="card-length" data-category="length">
+                <div class="card-header">
+                    <h2 class="card-title">📏 長さ / Length</h2>
+                    <p class="card-description">センチメートルとインチの変換 / Convert between centimeters and inches</p>
+                </div>
+                <div class="card-body">
+                    <!-- 左入力（cm） -->
+                    <div class="input-group">
+                        <label class="input-label" for="input-cm">センチメートル / Centimeters</label>
+                        <div class="input-wrapper">
+                            <input type="number" class="convert-input" id="input-cm" placeholder="0" step="any"
+                                inputmode="decimal" aria-label="センチメートル入力">
+                            <span class="input-unit">cm</span>
+                        </div>
+                    </div>
+                    <!-- 変換アイコン -->
+                    <div class="swap-icon" aria-hidden="true">
+                        <span>⇄</span>
+                    </div>
+                    <!-- 右入力（inch） -->
+                    <div class="input-group">
+                        <label class="input-label" for="input-inch">インチ / Inches</label>
+                        <div class="input-wrapper">
+                            <input type="number" class="convert-input" id="input-inch" placeholder="0" step="any"
+                                inputmode="decimal" aria-label="インチ入力">
+                            <span class="input-unit">inch</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 変換式の参考表示 -->
+                <div class="card-footer">
+                    <span class="formula">1 cm = 0.393701 inch ｜ 1 inch = 2.54 cm</span>
+                </div>
+            </div>
+
+            <!-- 重さ変換カード -->
+            <div class="converter-card" id="card-weight" data-category="weight">
+                <div class="card-header">
+                    <h2 class="card-title">⚖️ 重さ / Weight</h2>
+                    <p class="card-description">キログラムとポンドの変換 / Convert between kilograms and pounds</p>
+                </div>
+                <div class="card-body">
+                    <!-- 左入力（kg） -->
+                    <div class="input-group">
+                        <label class="input-label" for="input-kg">キログラム / Kilograms</label>
+                        <div class="input-wrapper">
+                            <input type="number" class="convert-input" id="input-kg" placeholder="0" step="any"
+                                inputmode="decimal" aria-label="キログラム入力">
+                            <span class="input-unit">kg</span>
+                        </div>
+                    </div>
+                    <!-- 変換アイコン -->
+                    <div class="swap-icon" aria-hidden="true">
+                        <span>⇄</span>
+                    </div>
+                    <!-- 右入力（lb） -->
+                    <div class="input-group">
+                        <label class="input-label" for="input-lb">ポンド / Pounds</label>
+                        <div class="input-wrapper">
+                            <input type="number" class="convert-input" id="input-lb" placeholder="0" step="any"
+                                inputmode="decimal" aria-label="ポンド入力">
+                            <span class="input-unit">lb</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 変換式の参考表示 -->
+                <div class="card-footer">
+                    <span class="formula">1 kg = 2.20462 lb ｜ 1 lb = 0.453592 kg</span>
+                </div>
+            </div>
+
+            <!-- 温度変換カード -->
+            <div class="converter-card" id="card-temperature" data-category="temperature">
+                <div class="card-header">
+                    <h2 class="card-title">🌡️ 温度 / Temperature</h2>
+                    <p class="card-description">摂氏と華氏の変換 / Convert between Celsius and Fahrenheit</p>
+                </div>
+                <div class="card-body">
+                    <!-- 左入力（℃） -->
+                    <div class="input-group">
+                        <label class="input-label" for="input-celsius">摂氏 / Celsius</label>
+                        <div class="input-wrapper">
+                            <input type="number" class="convert-input" id="input-celsius" placeholder="0" step="any"
+                                inputmode="decimal" aria-label="摂氏入力">
+                            <span class="input-unit">℃</span>
+                        </div>
+                    </div>
+                    <!-- 変換アイコン -->
+                    <div class="swap-icon" aria-hidden="true">
+                        <span>⇄</span>
+                    </div>
+                    <!-- 右入力（℉） -->
+                    <div class="input-group">
+                        <label class="input-label" for="input-fahrenheit">華氏 / Fahrenheit</label>
+                        <div class="input-wrapper">
+                            <input type="number" class="convert-input" id="input-fahrenheit" placeholder="0" step="any"
+                                inputmode="decimal" aria-label="華氏入力">
+                            <span class="input-unit">℉</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- 変換式の参考表示 -->
+                <div class="card-footer">
+                    <span class="formula">℃ → ℉: ℃ × 9/5 + 32 ｜ ℉ → ℃: (℉ − 32) × 5/9</span>
+                </div>
+            </div>
+
+        </div>
+        <!-- /converter-area -->
+
+    </main>
+
+    <!-- ===== フッター ===== -->
+    <footer class="footer" id="footer">
+        <p>&copy; 2026 UniConvert — 単位変換ツール / Unit Converter</p>
+    </footer>
+
+    <!-- JavaScriptの読み込み -->
+    <script src="script.js"></script>
+</body>
+
+</html>
