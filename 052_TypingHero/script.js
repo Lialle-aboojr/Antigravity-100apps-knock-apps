@@ -13,9 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const screenGame = document.getElementById('screen-game');
     const screenResult = document.getElementById('screen-result');
 
-    // ボタン
+    // ボタンと入力
     const btnStart = document.getElementById('btn-start');
     const btnRetry = document.getElementById('btn-retry');
+    const modeSelect = document.getElementById('game-mode');
 
     // ゲーム画面の要素
     const monsterEmoji = document.getElementById('monster-emoji');
@@ -35,44 +36,92 @@ document.addEventListener('DOMContentLoaded', () => {
     const rankTitle = document.getElementById('rank-title');
     const rankTitleEn = document.getElementById('rank-title-en');
 
-    // --- 単語リスト（20個以上：日本語の意味 + ローマ字 + モンスター絵文字） ---
-    const wordList = [
-        // 動物
-        { japanese: 'ねこ', romaji: 'neko', monster: '🐱' },
-        { japanese: 'いぬ', romaji: 'inu', monster: '🐶' },
-        { japanese: 'うさぎ', romaji: 'usagi', monster: '🐰' },
-        { japanese: 'くま', romaji: 'kuma', monster: '🐻' },
-        { japanese: 'さる', romaji: 'saru', monster: '🐵' },
-        { japanese: 'とり', romaji: 'tori', monster: '🐦' },
-        { japanese: 'さかな', romaji: 'sakana', monster: '🐟' },
-        // 食べ物
-        { japanese: 'りんご', romaji: 'ringo', monster: '🍎' },
-        { japanese: 'ばなな', romaji: 'banana', monster: '🍌' },
-        { japanese: 'すいか', romaji: 'suika', monster: '🍉' },
-        { japanese: 'ぶどう', romaji: 'budou', monster: '🍇' },
-        { japanese: 'ケーキ', romaji: 'keeki', monster: '🍰' },
-        { japanese: 'ラーメン', romaji: 'raamen', monster: '🍜' },
-        { japanese: 'おにぎり', romaji: 'onigiri', monster: '🍙' },
-        // 色
-        { japanese: 'あか', romaji: 'aka', monster: '🔴' },
-        { japanese: 'あお', romaji: 'ao', monster: '🔵' },
-        { japanese: 'みどり', romaji: 'midori', monster: '🟢' },
-        { japanese: 'きいろ', romaji: 'kiiro', monster: '🟡' },
-        // モンスター系
-        { japanese: 'ドラゴン', romaji: 'doragon', monster: '🐉' },
-        { japanese: 'おばけ', romaji: 'obake', monster: '👻' },
-        { japanese: 'がいこつ', romaji: 'gaikotsu', monster: '💀' },
-        { japanese: 'あくま', romaji: 'akuma', monster: '😈' },
-        { japanese: 'ロボット', romaji: 'robotto', monster: '🤖' },
-        { japanese: 'エイリアン', romaji: 'eirian', monster: '👾' },
-        // 自然
-        { japanese: 'はな', romaji: 'hana', monster: '🌸' },
-        { japanese: 'やま', romaji: 'yama', monster: '⛰️' },
-        { japanese: 'うみ', romaji: 'umi', monster: '🌊' },
-        { japanese: 'ほし', romaji: 'hoshi', monster: '⭐' },
-        { japanese: 'たいよう', romaji: 'taiyou', monster: '☀️' },
-        { japanese: 'つき', romaji: 'tsuki', monster: '🌙' },
-    ];
+    // --- 【機能追加】モード別の単語リスト（20個以上用意） ---
+    const allWordLists = {
+        // == モード1: 日本語（単語） ==
+        words_ja: [
+            { japanese: 'ねこ', romaji: 'neko', monster: '🐱' },
+            { japanese: 'いぬ', romaji: 'inu', monster: '🐶' },
+            { japanese: 'うさぎ', romaji: 'usagi', monster: '🐰' },
+            { japanese: 'くま', romaji: 'kuma', monster: '🐻' },
+            { japanese: 'さる', romaji: 'saru', monster: '🐵' },
+            { japanese: 'とり', romaji: 'tori', monster: '🐦' },
+            { japanese: 'さかな', romaji: 'sakana', monster: '🐟' },
+            { japanese: 'りんご', romaji: 'ringo', monster: '🍎' },
+            { japanese: 'ばなな', romaji: 'banana', monster: '🍌' },
+            { japanese: 'すいか', romaji: 'suika', monster: '🍉' },
+            { japanese: 'ぶどう', romaji: 'budou', monster: '🍇' },
+            { japanese: 'ケーキ', romaji: 'keeki', monster: '🍰' },
+            { japanese: 'ラーメン', romaji: 'raamen', monster: '🍜' },
+            { japanese: 'おにぎり', romaji: 'onigiri', monster: '🍙' },
+            { japanese: 'あか', romaji: 'aka', monster: '🔴' },
+            { japanese: 'あお', romaji: 'ao', monster: '🔵' },
+            { japanese: 'みどり', romaji: 'midori', monster: '🟢' },
+            { japanese: 'きいろ', romaji: 'kiiro', monster: '🟡' },
+            { japanese: 'ドラゴン', romaji: 'doragon', monster: '🐉' },
+            { japanese: 'おばけ', romaji: 'obake', monster: '👻' },
+            { japanese: 'がいこつ', romaji: 'gaikotsu', monster: '💀' },
+            { japanese: 'あくま', romaji: 'akuma', monster: '😈' },
+            { japanese: 'ロボット', romaji: 'robotto', monster: '🤖' },
+            { japanese: 'エイリアン', romaji: 'eirian', monster: '👾' },
+            { japanese: 'はな', romaji: 'hana', monster: '🌸' },
+            { japanese: 'やま', romaji: 'yama', monster: '⛰️' },
+            { japanese: 'うみ', romaji: 'umi', monster: '🌊' },
+            { japanese: 'ほし', romaji: 'hoshi', monster: '⭐' },
+            { japanese: 'たいよう', romaji: 'taiyou', monster: '☀️' },
+            { japanese: 'つき', romaji: 'tsuki', monster: '🌙' }
+        ],
+        // == モード2: 英語（English Words） ==
+        words_en: [
+            { japanese: 'りんご (Apple)', romaji: 'apple', monster: '🍎' },
+            { japanese: '水 (Water)', romaji: 'water', monster: '💧' },
+            { japanese: '火 (Fire)', romaji: 'fire', monster: '🔥' },
+            { japanese: '山 (Mountain)', romaji: 'mountain', monster: '⛰️' },
+            { japanese: '星 (Star)', romaji: 'star', monster: '⭐' },
+            { japanese: '犬 (Dog)', romaji: 'dog', monster: '🐶' },
+            { japanese: '猫 (Cat)', romaji: 'cat', monster: '🐱' },
+            { japanese: '家 (House)', romaji: 'house', monster: '🏠' },
+            { japanese: '車 (Car)', romaji: 'car', monster: '🚗' },
+            { japanese: '本 (Book)', romaji: 'book', monster: '📖' },
+            { japanese: '時計 (Clock)', romaji: 'clock', monster: '⏰' },
+            { japanese: '月 (Moon)', romaji: 'moon', monster: '🌙' },
+            { japanese: '太陽 (Sun)', romaji: 'sun', monster: '☀️' },
+            { japanese: '木 (Tree)', romaji: 'tree', monster: '🌳' },
+            { japanese: '雪 (Snow)', romaji: 'snow', monster: '❄️' },
+            { japanese: '花 (Flower)', romaji: 'flower', monster: '🌸' },
+            { japanese: '鳥 (Bird)', romaji: 'bird', monster: '🐦' },
+            { japanese: '魚 (Fish)', romaji: 'fish', monster: '🐟' },
+            { japanese: '魔法 (Magic)', romaji: 'magic', monster: '✨' },
+            { japanese: '剣 (Sword)', romaji: 'sword', monster: '🗡️' },
+            { japanese: '盾 (Shield)', romaji: 'shield', monster: '🛡️' },
+            { japanese: '鍵 (Key)', romaji: 'key', monster: '🔑' },
+            { japanese: '勇者 (Hero)', romaji: 'hero', monster: '⚔️' }
+        ],
+        // == モード3: フレーズ・短文（Phrases） ==
+        phrases: [
+            { japanese: 'おはよう (Good morning)', romaji: 'good morning', monster: '🌅' },
+            { japanese: 'ありがとう (Thank you)', romaji: 'thank you', monster: '🙏' },
+            { japanese: 'さようなら (Goodbye)', romaji: 'good bye', monster: '👋' },
+            { japanese: 'はい、お願いします (Yes please)', romaji: 'yes please', monster: '👍' },
+            { japanese: 'お元気ですか？ (How are you)', romaji: 'how are you', monster: '🙂' },
+            { japanese: 'すみません (Excuse me)', romaji: 'excuse me', monster: '🙇' },
+            { japanese: 'ごめんなさい (I am sorry)', romaji: 'i am sorry', monster: '🥺' },
+            { japanese: 'これは何ですか？ (What is this)', romaji: 'what is this', monster: '❓' },
+            { japanese: '見せてください (Show me)', romaji: 'show me', monster: '👀' },
+            { japanese: 'わかりました (I understand)', romaji: 'i understand', monster: '💡' },
+            { japanese: 'わかりません (I dont know)', romaji: 'i dont know', monster: '🤷' },
+            { japanese: '助けて！ (Help me)', romaji: 'help me', monster: '🆘' },
+            { japanese: 'いい天気ですね (Nice weather)', romaji: 'nice weather', monster: '☀️' },
+            { japanese: 'お腹が空きました (I am hungry)', romaji: 'i am hungry', monster: '🤤' },
+            { japanese: '喉が渇きました (I am thirsty)', romaji: 'i am thirsty', monster: '🚰' },
+            { japanese: '一緒に遊ぼう (Lets play)', romaji: 'lets play', monster: '🎮' },
+            { japanese: 'またね (See you soon)', romaji: 'see you soon', monster: '👋' },
+            { japanese: 'よくできました (Well done)', romaji: 'well done', monster: '💮' },
+            { japanese: '気をつけて (Take care)', romaji: 'take care', monster: '💚' },
+            { japanese: 'おやすみなさい (Good night)', romaji: 'good night', monster: '😴' },
+            { japanese: '頑張って！ (Do your best)', romaji: 'do your best', monster: '💪' }
+        ]
+    };
 
     // --- 称号リスト（撃破数に応じて変わる） ---
     const rankList = [
@@ -96,8 +145,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let correctKeystrokes = 0;      // 正解キー入力数
     let timeLeft = 60;              // 残り時間（秒）
     let timerInterval = null;       // タイマーのインターバルID
+    let flashTimeout = null;        // フラッシュ解除用のタイマーID
     let isPlaying = false;          // ゲーム中かどうか
-    let shuffledWords = [];         // シャッフル済みの単語リスト
+    let activeWordList = [];        // 選択されたモードの単語全件
+    let shuffledWords = [];         // シャッフル済みの出題リスト
 
     // --- 背景パーティクルの生成 ---
     function createBgParticles() {
@@ -165,8 +216,12 @@ document.addEventListener('DOMContentLoaded', () => {
         timerDisplay.textContent = '60';
         timerDisplay.classList.remove('timer-danger');
 
+        // 選択されたモードの単語リストを取得
+        const selectedMode = modeSelect.value;
+        activeWordList = allWordLists[selectedMode];
+
         // 単語リストをシャッフル
-        shuffledWords = shuffleArray(wordList);
+        shuffledWords = shuffleArray(activeWordList);
 
         // 最初の単語を設定
         setNewWord();
@@ -193,9 +248,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 新しい単語を設定する関数 ---
     function setNewWord() {
-        // 単語リストを使い切ったら再シャッフル
+        // 全部の単語を使い切ったら再シャッフル
         if (currentWordIndex >= shuffledWords.length) {
-            shuffledWords = shuffleArray(wordList);
+            shuffledWords = shuffleArray(activeWordList);
             currentWordIndex = 0;
         }
 
@@ -218,7 +273,15 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < word.romaji.length; i++) {
             const span = document.createElement('span');
             span.classList.add('romaji-char');
-            span.textContent = word.romaji[i];
+
+            // スペースの対応（フレーズモード用）
+            if (word.romaji[i] === ' ') {
+                span.textContent = '\u00A0'; // Non-breaking space
+                span.classList.add('space-char');
+            } else {
+                span.textContent = word.romaji[i];
+            }
+
             // 最初の文字にcurrentクラスを付与
             if (i === 0) {
                 span.classList.add('current');
@@ -258,11 +321,22 @@ document.addEventListener('DOMContentLoaded', () => {
         damagePopup.classList.add('show');
     }
 
-    // --- 赤フラッシュ演出 ---
+    // --- 【バグ修正】赤フラッシュ演出 ---
     function showFlash() {
+        // 既存のタイマーがあればクリアする
+        if (flashTimeout) {
+            clearTimeout(flashTimeout);
+        }
+
+        // CSSアニメーションを再起動するために一度外して即座に追加
         flashOverlay.classList.remove('flash');
         void flashOverlay.offsetWidth;
         flashOverlay.classList.add('flash');
+
+        // アニメーションが完了する頃（0.3秒後）に確実にクラスを削除
+        flashTimeout = setTimeout(() => {
+            flashOverlay.classList.remove('flash');
+        }, 300);
     }
 
     // --- モンスター撃破処理 ---
@@ -293,6 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const word = shuffledWords[currentWordIndex];
         const expectedChar = word.romaji[currentCharIndex];
+        // スペースも判定できるように toLowerCase() して判定
         const pressedChar = event.key.toLowerCase();
 
         totalKeystrokes++;
@@ -345,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 現在の文字をミス表示にする
             charSpans[currentCharIndex].classList.add('miss');
 
-            // 赤フラッシュ演出
+            // 赤フラッシュ演出を呼ぶ
             showFlash();
 
             // 少し待ってからミス表示を解除
@@ -359,6 +434,10 @@ document.addEventListener('DOMContentLoaded', () => {
     function endGame() {
         isPlaying = false;
         clearInterval(timerInterval);
+
+        // 念のためフラッシュ状態を解除
+        if (flashTimeout) clearTimeout(flashTimeout);
+        flashOverlay.classList.remove('flash');
 
         // リザルト画面に値を反映
         resultScore.textContent = score;
@@ -393,7 +472,10 @@ document.addEventListener('DOMContentLoaded', () => {
     btnStart.addEventListener('click', startGame);
 
     // リトライボタン
-    btnRetry.addEventListener('click', startGame);
+    btnRetry.addEventListener('click', () => {
+        // スタート画面に戻してモード選択できるようにする
+        showScreen(screenStart);
+    });
 
     // キー入力（ゲーム全体でリスン）
     document.addEventListener('keydown', handleKeyPress);

@@ -30,18 +30,32 @@
     <!-- ===== スタート画面 ===== -->
     <div class="screen active" id="screen-start">
         <div class="start-container">
-            <div class="start-icon">⚔️</div>
+            <!-- ファビコン画像をスタート画面のメインビジュアルとして表示 -->
+            <img src="favicon.png" alt="Hero Icon" class="start-hero-image">
+
             <h1 class="start-title">タイピング勇者</h1>
             <p class="start-subtitle">Typing Hero</p>
             <p class="start-description">
                 モンスターを倒してタイピングを練習しよう！<br>
                 Defeat monsters by typing words!
             </p>
+
+            <!-- モード選択の追加 -->
+            <div class="mode-selection">
+                <label for="game-mode" class="mode-label">🔽 プレイモードを選択 / Select Mode</label>
+                <select id="game-mode" class="mode-select">
+                    <option value="words_ja">日本語（単語） / Japanese Words</option>
+                    <option value="words_en">英語（English Words）</option>
+                    <option value="phrases">フレーズ・短文（Phrases）</option>
+                </select>
+            </div>
+
             <div class="start-rules">
                 <p>⏱️ 制限時間 / Time Limit: <strong>60秒</strong></p>
                 <p>⌨️ ローマ字でタイプ / Type in Romaji</p>
                 <p>🎯 たくさん倒して称号をゲット！/ Get titles!</p>
             </div>
+
             <button class="btn-start" id="btn-start">
                 <span class="btn-icon">▶</span>
                 スタート / Start

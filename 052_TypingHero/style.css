@@ -125,9 +125,11 @@ body {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-radius: var(--radius-xl);
-    padding: 48px 40px;
+    padding: 40px 40px;
     max-width: 520px;
     width: 100%;
+    max-height: 95vh;
+    overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
         0 0 0 1px rgba(255, 255, 255, 0.3);
     animation: popIn 0.6s ease-out;
@@ -149,21 +151,26 @@ body {
     }
 }
 
-.start-icon {
-    font-size: 4rem;
-    margin-bottom: 8px;
-    animation: swordSwing 2s ease-in-out infinite;
+/* --- ファビコン画像をメインビジュアルとして表示 --- */
+.start-hero-image {
+    width: 120px;
+    height: 120px;
+    margin-bottom: 12px;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    animation: floatImage 3s ease-in-out infinite;
+    object-fit: cover;
 }
 
-@keyframes swordSwing {
+@keyframes floatImage {
 
     0%,
     100% {
-        transform: rotate(-10deg);
+        transform: translateY(0);
     }
 
     50% {
-        transform: rotate(10deg);
+        transform: translateY(-8px);
     }
 }
 
@@ -181,14 +188,52 @@ body {
     font-size: 0.7rem;
     color: var(--color-purple);
     letter-spacing: 0.15em;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .start-description {
     font-size: 0.9rem;
     color: var(--text-muted);
     line-height: 1.8;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
+}
+
+/* --- モード選択 UI --- */
+.mode-selection {
+    margin-bottom: 20px;
+    text-align: left;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(240, 244, 255, 0.6));
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.mode-label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-dark);
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.mode-select {
+    width: 100%;
+    font-family: var(--font-jp);
+    font-size: 0.95rem;
+    padding: 10px 12px;
+    border: 2px solid var(--color-primary-light);
+    border-radius: var(--radius-sm);
+    background-color: #fff;
+    color: var(--text-dark);
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    transition: all var(--transition-fast);
+}
+
+.mode-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.2);
 }
 
 .start-rules {
@@ -196,7 +241,7 @@ body {
     border: 2px dashed var(--color-secondary);
     border-radius: var(--radius-md);
     padding: 16px 20px;
-    margin-bottom: 28px;
+    margin-bottom: 24px;
     text-align: left;
 }
 
@@ -219,7 +264,7 @@ body {
     background: linear-gradient(135deg, var(--color-primary), var(--color-danger));
     border: none;
     border-radius: 60px;
-    padding: 18px 48px;
+    padding: 16px 40px;
     cursor: pointer;
     box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4),
         inset 0 2px 0 rgba(255, 255, 255, 0.2);
@@ -244,18 +289,18 @@ body {
 /* ===== ゲーム画面 ===== */
 
 /* --- 赤フラッシュ演出 --- */
+/* バグ修正: flashクラスが付与されていない時は確実に非表示にする */
 .flash-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(239, 71, 111, 0.5);
+    background: rgba(239, 71, 111, 0.6);
     pointer-events: none;
     opacity: 0;
     z-index: 100;
-    transition: opacity 0.1s ease;
 }
 
+/* ミスタイプ時にJavaScriptでこのクラスが一瞬だけ付与される */
 .flash-overlay.flash {
-    opacity: 1;
     animation: flashAnim 0.3s ease-out;
 }
 
@@ -439,7 +484,7 @@ body {
     -webkit-backdrop-filter: blur(12px);
     border-radius: var(--radius-lg);
     padding: 32px 40px;
-    max-width: 560px;
+    max-width: 650px;
     width: 100%;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12),
         0 0 0 1px rgba(255, 255, 255, 0.3);
@@ -451,6 +496,7 @@ body {
     font-weight: 900;
     color: var(--color-purple);
     margin-bottom: 16px;
+    word-break: break-all;
 }
 
 .word-romaji {
@@ -470,6 +516,11 @@ body {
     padding: 4px 2px;
     transition: all var(--transition-fast);
     text-transform: uppercase;
+}
+
+/* フレーズモードのための空白対応 */
+.romaji-char.space-char {
+    width: 16px;
 }
 
 /* 正解した文字 */
@@ -665,7 +716,13 @@ body {
 
 @media (max-width: 600px) {
     .start-container {
-        padding: 32px 24px;
+        padding: 24px 20px;
+    }
+
+    .start-hero-image {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 8px;
     }
 
     .start-title {
@@ -685,11 +742,11 @@ body {
     }
 
     .word-meaning {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .romaji-char {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
 
     .status-bar {
@@ -724,6 +781,11 @@ body {
 }
 
 @media (max-width: 380px) {
+    .start-hero-image {
+        width: 80px;
+        height: 80px;
+    }
+
     .start-title {
         font-size: 1rem;
     }
@@ -733,6 +795,6 @@ body {
     }
 
     .romaji-char {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 }
