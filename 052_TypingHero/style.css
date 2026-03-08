@@ -1,0 +1,738 @@
+/* ============================================
+   タイピング勇者 / Typing Hero
+   スタイルシート (style.css)
+   ============================================ */
+
+/* --- CSS変数（デザイントークン） --- */
+:root {
+    /* メインカラー（ポップRPG風） */
+    --color-primary: #ff6b35;
+    --color-primary-light: #ff8c5a;
+    --color-secondary: #ffd23f;
+    --color-secondary-light: #ffe066;
+    --color-accent: #06d6a0;
+    --color-accent-dark: #05b384;
+    --color-danger: #ef476f;
+    --color-info: #118ab2;
+    --color-purple: #7b2ff7;
+
+    /* 背景（明るいグラデーション） */
+    --bg-gradient-start: #667eea;
+    --bg-gradient-end: #764ba2;
+    --bg-light: #f0f4ff;
+
+    /* テキスト */
+    --text-dark: #2d3436;
+    --text-light: #ffffff;
+    --text-muted: #636e72;
+
+    /* フォント */
+    --font-pixel: 'Press Start 2P', 'DotGothic16', cursive;
+    --font-jp: 'Noto Sans JP', 'DotGothic16', sans-serif;
+
+    /* サイズ */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+
+    /* トランジション */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- リセットと基本設定 --- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-jp);
+    color: var(--text-dark);
+    /* 明るいグラデーション背景 */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* --- 背景パーティクル（星の装飾） --- */
+.bg-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.bg-particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.4;
+    animation: floatParticle linear infinite;
+}
+
+@keyframes floatParticle {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.6;
+    }
+
+    90% {
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translateY(-20px) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+/* --- 画面切り替え --- */
+.screen {
+    position: fixed;
+    inset: 0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    padding: 20px;
+}
+
+.screen.active {
+    display: flex;
+}
+
+/* ===== スタート画面 ===== */
+.start-container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    padding: 48px 40px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.3);
+    animation: popIn 0.6s ease-out;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    70% {
+        transform: scale(1.03);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.start-icon {
+    font-size: 4rem;
+    margin-bottom: 8px;
+    animation: swordSwing 2s ease-in-out infinite;
+}
+
+@keyframes swordSwing {
+
+    0%,
+    100% {
+        transform: rotate(-10deg);
+    }
+
+    50% {
+        transform: rotate(10deg);
+    }
+}
+
+.start-title {
+    font-family: var(--font-pixel);
+    font-size: 1.6rem;
+    color: var(--color-primary);
+    text-shadow: 3px 3px 0 var(--color-secondary);
+    margin-bottom: 4px;
+    line-height: 1.6;
+}
+
+.start-subtitle {
+    font-family: var(--font-pixel);
+    font-size: 0.7rem;
+    color: var(--color-purple);
+    letter-spacing: 0.15em;
+    margin-bottom: 20px;
+}
+
+.start-description {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.8;
+    margin-bottom: 24px;
+}
+
+.start-rules {
+    background: linear-gradient(135deg, #fff9e6, #f0f4ff);
+    border: 2px dashed var(--color-secondary);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    text-align: left;
+}
+
+.start-rules p {
+    font-size: 0.82rem;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+    line-height: 1.6;
+}
+
+.start-rules p:last-child {
+    margin-bottom: 0;
+}
+
+/* --- スタートボタン --- */
+.btn-start {
+    font-family: var(--font-pixel);
+    font-size: 0.85rem;
+    color: var(--text-light);
+    background: linear-gradient(135deg, var(--color-primary), var(--color-danger));
+    border: none;
+    border-radius: 60px;
+    padding: 18px 48px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2);
+    transition: all var(--transition-normal);
+    letter-spacing: 0.05em;
+}
+
+.btn-start:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 30px rgba(255, 107, 53, 0.5),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-start:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.btn-icon {
+    margin-right: 8px;
+}
+
+/* ===== ゲーム画面 ===== */
+
+/* --- 赤フラッシュ演出 --- */
+.flash-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(239, 71, 111, 0.5);
+    pointer-events: none;
+    opacity: 0;
+    z-index: 100;
+    transition: opacity 0.1s ease;
+}
+
+.flash-overlay.flash {
+    opacity: 1;
+    animation: flashAnim 0.3s ease-out;
+}
+
+@keyframes flashAnim {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* --- ステータスバー --- */
+.status-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+}
+
+.status-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 90px;
+}
+
+.status-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status-value {
+    font-family: var(--font-pixel);
+    font-size: 1.3rem;
+    color: var(--color-primary);
+    font-weight: 700;
+}
+
+#timer {
+    color: var(--color-info);
+}
+
+#combo {
+    color: var(--color-accent-dark);
+}
+
+/* タイマー残り10秒以下で赤く点滅 */
+.timer-danger {
+    color: var(--color-danger) !important;
+    animation: timerBlink 0.5s ease-in-out infinite;
+}
+
+@keyframes timerBlink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+}
+
+/* --- モンスターエリア --- */
+.monster-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 80px;
+    margin-bottom: 16px;
+}
+
+.monster-emoji {
+    font-size: 6rem;
+    transition: transform var(--transition-fast);
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.15));
+    cursor: default;
+}
+
+/* モンスターにダメージを与えた時の揺れ */
+.monster-emoji.shake {
+    animation: monsterShake 0.4s ease;
+}
+
+@keyframes monsterShake {
+
+    0%,
+    100% {
+        transform: translateX(0) rotate(0);
+    }
+
+    20% {
+        transform: translateX(-12px) rotate(-5deg);
+    }
+
+    40% {
+        transform: translateX(12px) rotate(5deg);
+    }
+
+    60% {
+        transform: translateX(-8px) rotate(-3deg);
+    }
+
+    80% {
+        transform: translateX(8px) rotate(3deg);
+    }
+}
+
+/* モンスター撃破時の演出 */
+.monster-emoji.defeated {
+    animation: monsterDefeat 0.6s ease-out forwards;
+}
+
+@keyframes monsterDefeat {
+    0% {
+        transform: scale(1) rotate(0);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.3) rotate(15deg);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(0) rotate(45deg);
+        opacity: 0;
+    }
+}
+
+/* --- モンスターHPバー --- */
+.monster-hp-bar {
+    width: 200px;
+    height: 14px;
+    background: #e0e0e0;
+    border-radius: 7px;
+    margin-top: 12px;
+    overflow: hidden;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.monster-hp-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, var(--color-accent), #2ecc71);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+/* HP50%以下で黄色 */
+.monster-hp-fill.hp-mid {
+    background: linear-gradient(90deg, var(--color-secondary), #f39c12);
+}
+
+/* HP25%以下で赤 */
+.monster-hp-fill.hp-low {
+    background: linear-gradient(90deg, var(--color-danger), #e74c3c);
+}
+
+/* --- タイピングエリア --- */
+.typing-area {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-lg);
+    padding: 32px 40px;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+
+.word-meaning {
+    font-family: var(--font-jp);
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--color-purple);
+    margin-bottom: 16px;
+}
+
+.word-romaji {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    min-height: 48px;
+}
+
+/* ローマ字の各文字 */
+.romaji-char {
+    font-family: var(--font-pixel);
+    font-size: 1.6rem;
+    color: #b0b0b0;
+    padding: 4px 2px;
+    transition: all var(--transition-fast);
+    text-transform: uppercase;
+}
+
+/* 正解した文字 */
+.romaji-char.correct {
+    color: var(--color-accent-dark);
+    text-shadow: 0 0 8px rgba(6, 214, 160, 0.4);
+    transform: scale(1.1);
+}
+
+/* 現在入力中の文字 */
+.romaji-char.current {
+    color: var(--color-primary);
+    border-bottom: 3px solid var(--color-primary);
+    animation: currentPulse 1s ease-in-out infinite;
+}
+
+@keyframes currentPulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* ミスした文字 */
+.romaji-char.miss {
+    color: var(--color-danger);
+    animation: missBounce 0.3s ease;
+}
+
+@keyframes missBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.typing-guide {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* --- ダメージポップアップ --- */
+.damage-popup {
+    position: fixed;
+    font-family: var(--font-pixel);
+    font-size: 1.5rem;
+    color: var(--color-secondary);
+    text-shadow: 2px 2px 0 var(--color-primary);
+    pointer-events: none;
+    z-index: 60;
+    opacity: 0;
+}
+
+.damage-popup.show {
+    animation: damageFloat 0.8s ease-out forwards;
+}
+
+@keyframes damageFloat {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-60px) scale(1.5);
+    }
+}
+
+/* ===== リザルト画面 ===== */
+.result-container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-xl);
+    padding: 40px 36px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    animation: popIn 0.6s ease-out;
+}
+
+.result-title-icon {
+    font-size: 3.5rem;
+    margin-bottom: 8px;
+    animation: trophyBounce 1.5s ease-in-out infinite;
+}
+
+@keyframes trophyBounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+.result-title {
+    font-family: var(--font-pixel);
+    font-size: 1rem;
+    color: var(--color-primary);
+    text-shadow: 2px 2px 0 var(--color-secondary);
+    margin-bottom: 24px;
+}
+
+.result-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.result-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #f8f9ff, #fff4e6);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.result-stat-label {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.result-stat-value {
+    font-family: var(--font-pixel);
+    font-size: 1.1rem;
+    color: var(--color-primary);
+}
+
+/* --- 称号エリア --- */
+.result-rank {
+    background: linear-gradient(135deg, #ffd23f22, #ff6b3522);
+    border: 3px solid var(--color-secondary);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 24px;
+}
+
+.rank-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.rank-title {
+    font-family: var(--font-jp);
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--color-primary);
+    margin-bottom: 4px;
+}
+
+.rank-title-en {
+    font-family: var(--font-pixel);
+    font-size: 0.6rem;
+    color: var(--color-purple);
+    letter-spacing: 0.08em;
+}
+
+/* --- リトライボタン --- */
+.btn-retry {
+    background: linear-gradient(135deg, var(--color-info), var(--color-purple));
+    box-shadow: 0 6px 20px rgba(17, 138, 178, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-retry:hover {
+    box-shadow: 0 10px 30px rgba(17, 138, 178, 0.5),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ===== レスポンシブ対応 ===== */
+
+@media (max-width: 600px) {
+    .start-container {
+        padding: 32px 24px;
+    }
+
+    .start-title {
+        font-size: 1.2rem;
+    }
+
+    .start-subtitle {
+        font-size: 0.6rem;
+    }
+
+    .monster-emoji {
+        font-size: 4.5rem;
+    }
+
+    .typing-area {
+        padding: 24px 20px;
+    }
+
+    .word-meaning {
+        font-size: 1.2rem;
+    }
+
+    .romaji-char {
+        font-size: 1.3rem;
+    }
+
+    .status-bar {
+        gap: 8px;
+        padding: 8px 12px;
+    }
+
+    .status-value {
+        font-size: 1rem;
+    }
+
+    .status-label {
+        font-size: 0.55rem;
+    }
+
+    .btn-start {
+        font-size: 0.7rem;
+        padding: 14px 32px;
+    }
+
+    .result-container {
+        padding: 28px 20px;
+    }
+
+    .result-title {
+        font-size: 0.85rem;
+    }
+
+    .rank-title {
+        font-size: 1.2rem;
+    }
+}
+
+@media (max-width: 380px) {
+    .start-title {
+        font-size: 1rem;
+    }
+
+    .monster-emoji {
+        font-size: 3.5rem;
+    }
+
+    .romaji-char {
+        font-size: 1.1rem;
+    }
+}

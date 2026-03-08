@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タイピング勇者 / Typing Hero</title>
+    <meta name="description"
+        content="モンスターを倒してタイピングを楽しく練習するRPG風ゲーム。A fun RPG-style typing game where you defeat monsters by typing words.">
+
+    <!-- ファビコンの設定 -->
+    <link rel="icon" href="favicon.png">
+
+    <!-- Google Fonts: ドット絵風フォント + 読みやすい日本語フォント -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&family=Noto+Sans+JP:wght@400;700;900&display=swap"
+        rel="stylesheet">
+
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== 背景の装飾パーティクル ===== -->
+    <div class="bg-particles" id="bg-particles" aria-hidden="true"></div>
+
+    <!-- ===== スタート画面 ===== -->
+    <div class="screen active" id="screen-start">
+        <div class="start-container">
+            <div class="start-icon">⚔️</div>
+            <h1 class="start-title">タイピング勇者</h1>
+            <p class="start-subtitle">Typing Hero</p>
+            <p class="start-description">
+                モンスターを倒してタイピングを練習しよう！<br>
+                Defeat monsters by typing words!
+            </p>
+            <div class="start-rules">
+                <p>⏱️ 制限時間 / Time Limit: <strong>60秒</strong></p>
+                <p>⌨️ ローマ字でタイプ / Type in Romaji</p>
+                <p>🎯 たくさん倒して称号をゲット！/ Get titles!</p>
+            </div>
+            <button class="btn-start" id="btn-start">
+                <span class="btn-icon">▶</span>
+                スタート / Start
+            </button>
+        </div>
+    </div>
+
+    <!-- ===== ゲーム画面 ===== -->
+    <div class="screen" id="screen-game">
+        <!-- 赤フラッシュ演出用オーバーレイ -->
+        <div class="flash-overlay" id="flash-overlay"></div>
+
+        <!-- ステータスバー（スコア・タイマー） -->
+        <div class="status-bar" id="status-bar">
+            <div class="status-item">
+                <span class="status-label">🗡️ 撃破 / Defeated</span>
+                <span class="status-value" id="score">0</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">⏱️ 残り / Time</span>
+                <span class="status-value" id="timer">60</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">🔥 コンボ / Combo</span>
+                <span class="status-value" id="combo">0</span>
+            </div>
+        </div>
+
+        <!-- モンスター表示エリア -->
+        <div class="monster-area" id="monster-area">
+            <div class="monster-emoji" id="monster-emoji">🐉</div>
+            <div class="monster-hp-bar">
+                <div class="monster-hp-fill" id="monster-hp-fill"></div>
+            </div>
+        </div>
+
+        <!-- タイピングエリア -->
+        <div class="typing-area" id="typing-area">
+            <!-- 日本語の意味 -->
+            <p class="word-meaning" id="word-meaning">りんご</p>
+            <!-- ローマ字表示（1文字ずつspan化） -->
+            <div class="word-romaji" id="word-romaji"></div>
+            <!-- 入力ガイド -->
+            <p class="typing-guide">⌨️ キーボードでタイプ！/ Type on your keyboard!</p>
+        </div>
+
+        <!-- ダメージ表示用 -->
+        <div class="damage-popup" id="damage-popup" aria-hidden="true"></div>
+    </div>
+
+    <!-- ===== リザルト画面 ===== -->
+    <div class="screen" id="screen-result">
+        <div class="result-container">
+            <div class="result-title-icon">🏆</div>
+            <h2 class="result-title">結果発表 / Results</h2>
+
+            <div class="result-stats">
+                <div class="result-stat">
+                    <span class="result-stat-label">🗡️ 撃破数 / Defeated</span>
+                    <span class="result-stat-value" id="result-score">0</span>
+                </div>
+                <div class="result-stat">
+                    <span class="result-stat-label">🔥 最大コンボ / Max Combo</span>
+                    <span class="result-stat-value" id="result-max-combo">0</span>
+                </div>
+                <div class="result-stat">
+                    <span class="result-stat-label">⌨️ 正確率 / Accuracy</span>
+                    <span class="result-stat-value" id="result-accuracy">0%</span>
+                </div>
+            </div>
+
+            <!-- 称号表示 -->
+            <div class="result-rank" id="result-rank">
+                <p class="rank-label">あなたの称号 / Your Title</p>
+                <p class="rank-title" id="rank-title">見習い剣士</p>
+                <p class="rank-title-en" id="rank-title-en">Apprentice Swordsman</p>
+            </div>
+
+            <button class="btn-start btn-retry" id="btn-retry">
+                <span class="btn-icon">🔄</span>
+                もう一度 / Retry
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScriptの読み込み -->
+    <script src="script.js"></script>
+</body>
+
+</html>
