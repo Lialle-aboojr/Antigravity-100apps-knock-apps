@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ボタンと入力
     const btnStart = document.getElementById('btn-start');
     const btnRetry = document.getElementById('btn-retry');
-    const btnQuit = document.getElementById('btn-quit'); // 【追加】Quitボタン
+    const btnQuit = document.getElementById('btn-quit'); // Quitボタン
     const modeSelect = document.getElementById('game-mode');
 
     // ゲーム画面の要素
@@ -563,15 +563,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 【機能追加】ゲーム強制リセット処理 ---
     function resetGame() {
-        isPlaying = false;
+        // 確認ダイアログを表示
+        const isConfirmed = confirm('ゲームを終了してトップ画面に戻りますか？\nAre you sure you want to quit?');
 
-        // タイマー等をクリア
-        if (timerInterval) clearInterval(timerInterval);
-        if (flashTimeout) clearTimeout(flashTimeout);
-        flashOverlay.classList.remove('flash');
+        if (isConfirmed) {
+            // OKならリセットして戻る
+            isPlaying = false;
 
-        // スタート画面に戻す
-        showScreen(screenStart);
+            // タイマー等をクリア
+            if (timerInterval) clearInterval(timerInterval);
+            if (flashTimeout) clearTimeout(flashTimeout);
+            flashOverlay.classList.remove('flash');
+
+            // スタート画面に戻す
+            showScreen(screenStart);
+        }
+        // キャンセルなら何もしない（そのままゲーム継続）
     }
 
     // --- イベントリスナーの登録 ---
@@ -585,9 +592,16 @@ document.addEventListener('DOMContentLoaded', () => {
         showScreen(screenStart);
     });
 
-    // 【追加】Quitボタン
+    // Quitボタン（クリックで確認ダイアログ発生）
     btnQuit.addEventListener('click', resetGame);
 
     // キー入力（ゲーム全体でリスン）
-    document.addEventListener('keydown', handleKeyPress);
+    // Quitボタンなどへの不要なフォーカスによる誤作動を防ぐため。
+    document.addEventListener('keydown', (e) => {
+        // エンターキーやスペースキーでボタンを押してしまうのを防ぐ (フォーカスを外す)
+        if (document.activeElement === btnQuit || document.activeElement === btnStart || document.activeElement === btnRetry) {
+            document.activeElement.blur();
+        }
+        handleKeyPress(e);
+    });
 });

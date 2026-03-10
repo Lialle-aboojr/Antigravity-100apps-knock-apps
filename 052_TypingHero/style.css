@@ -317,43 +317,25 @@ body {
     }
 }
 
-/* --- 【機能追加】Quitボタン（右上に配置） --- */
+/* --- 【配置変更】Quitエリア --- */
+.quit-area {
+    margin-top: 24px;
+    text-align: center;
+}
+
 .btn-quit {
-    position: fixed;
-    top: 16px;
-    right: 20px;
-    font-family: var(--font-pixel);
-    font-size: 0.6rem;
-    color: var(--text-muted);
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 30px;
-    padding: 8px 16px;
-    cursor: pointer;
-    z-index: 60;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all var(--transition-fast);
+    /* btn-startをベースにしつつ、色を変える */
+    background: linear-gradient(135deg, var(--text-muted), #95a5a6);
+    box-shadow: 0 6px 20px rgba(99, 110, 114, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2);
+    font-size: 0.7rem;
+    padding: 12px 28px;
 }
 
 .btn-quit:hover {
-    background: var(--color-danger);
-    color: white;
-    border-color: var(--color-danger);
-    box-shadow: 0 4px 12px rgba(239, 71, 111, 0.3);
-    transform: translateY(-1px);
-}
-
-.btn-quit:active {
-    transform: translateY(1px);
-}
-
-.btn-quit .btn-icon {
-    margin: 0;
-    font-size: 0.7rem;
+    background: linear-gradient(135deg, var(--color-danger), #ff6b35);
+    box-shadow: 0 10px 30px rgba(239, 71, 111, 0.5),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2);
 }
 
 /* --- ステータスバー --- */

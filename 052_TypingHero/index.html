@@ -19,7 +19,7 @@
         rel="stylesheet">
 
     <!-- スタイルシートの読み込み -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
 </head>
 
 <body>
@@ -69,12 +69,6 @@
         <!-- 赤フラッシュ演出用オーバーレイ -->
         <div class="flash-overlay" id="flash-overlay"></div>
 
-        <!-- 【機能追加】トップへ戻る（Quit）ボタン -->
-        <button class="btn-quit" id="btn-quit" aria-label="トップへ戻る">
-            <span class="btn-icon">✖</span>
-            Quit
-        </button>
-
         <!-- ステータスバー（スコア・タイマー） -->
         <div class="status-bar" id="status-bar">
             <div class="status-item">
@@ -107,6 +101,14 @@
             <div class="word-romaji" id="word-romaji"></div>
             <!-- 入力ガイド -->
             <p class="typing-guide">⌨️ キーボードでタイプ！/ Type on your keyboard!</p>
+        </div>
+
+        <!-- 【配置変更】トップへ戻る（Quit）ボタン -->
+        <div class="quit-area">
+            <button class="btn-start btn-quit" id="btn-quit" aria-label="トップへ戻る">
+                <span class="btn-icon">✖</span>
+                トップへ戻る / Quit
+            </button>
         </div>
 
         <!-- ダメージ表示用 -->
