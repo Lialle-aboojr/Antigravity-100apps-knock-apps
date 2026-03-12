@@ -1,0 +1,562 @@
+/* ============================================
+   Memento Time — 人生の残り時間時計
+   スタイルシート (style.css)
+   ============================================ */
+
+/* --- CSS変数（デザイントークン） --- */
+:root {
+    /* ダーク＆ミニマル カラーパレット */
+    --bg-primary: #1a1a1e;
+    --bg-secondary: #232327;
+    --bg-card: #2a2a2f;
+    --bg-card-hover: #32323a;
+    --bg-input: #1e1e22;
+
+    /* テキスト */
+    --text-primary: #e8e6e3;
+    --text-secondary: #9a968f;
+    --text-muted: #6b675f;
+    --text-accent: #d4a574;
+
+    /* アクセントカラー */
+    --accent-gold: #c9a96e;
+    --accent-gold-light: #d4b88a;
+    --accent-cherry: #d4839b;
+    --accent-cherry-light: #e8a3b6;
+
+    /* ボーダー */
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-focus: rgba(201, 169, 110, 0.4);
+
+    /* フォント */
+    --font-serif: 'Cormorant Garamond', 'Noto Sans JP', serif;
+    --font-sans: 'Noto Sans JP', sans-serif;
+    --font-mono: 'DM Mono', monospace;
+
+    /* サイズ */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+
+    /* トランジション */
+    --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- リセットと基本設定 --- */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background-color: var(--bg-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- 背景パーティクル（桜の花びら） --- */
+.bg-petals {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.petal {
+    position: absolute;
+    width: 12px;
+    height: 8px;
+    background: radial-gradient(ellipse, var(--accent-cherry) 0%, var(--accent-cherry-light) 70%, transparent 100%);
+    border-radius: 50% 50% 50% 0;
+    opacity: 0;
+    animation: petalFall linear infinite;
+}
+
+@keyframes petalFall {
+    0% {
+        transform: translateY(-10px) rotate(0deg) scale(0.8);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.3;
+    }
+
+    90% {
+        opacity: 0.15;
+    }
+
+    100% {
+        transform: translateY(100vh) rotate(720deg) scale(0.4);
+        opacity: 0;
+    }
+}
+
+/* --- アプリコンテナ --- */
+.app-container {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 24px 60px;
+    min-height: 100vh;
+}
+
+/* --- ヘッダー --- */
+.app-header {
+    text-align: center;
+    margin-bottom: 56px;
+    padding-top: 24px;
+}
+
+.app-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    animation: iconFloat 4s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.app-title {
+    font-family: var(--font-serif);
+    font-size: 2.8rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.app-subtitle {
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+}
+
+/* ===== 入力セクション ===== */
+.input-section {
+    margin-bottom: 40px;
+}
+
+.input-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+}
+
+.section-heading {
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 32px;
+    letter-spacing: 0.03em;
+}
+
+.input-group {
+    margin-bottom: 24px;
+}
+
+.input-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+}
+
+.input-field {
+    width: 100%;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    color: var(--text-primary);
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    outline: none;
+    transition: all var(--transition-smooth);
+    -webkit-appearance: none;
+}
+
+.input-field:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.1);
+}
+
+/* 日付入力のカラースキーム（ダークモードに合わせる） */
+.input-field[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
+    cursor: pointer;
+}
+
+.lifespan-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.input-lifespan {
+    max-width: 140px;
+    text-align: center;
+}
+
+.input-unit {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* --- 保存ボタン --- */
+.btn-save {
+    display: block;
+    width: 100%;
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--bg-primary);
+    background: linear-gradient(135deg, var(--accent-gold), var(--accent-gold-light));
+    border: none;
+    border-radius: 60px;
+    padding: 16px 32px;
+    cursor: pointer;
+    margin-top: 32px;
+    letter-spacing: 0.05em;
+    transition: all var(--transition-smooth);
+    box-shadow: 0 4px 16px rgba(201, 169, 110, 0.25);
+}
+
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(201, 169, 110, 0.35);
+}
+
+.btn-save:active {
+    transform: translateY(0);
+}
+
+.input-note {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 20px;
+    line-height: 1.8;
+    opacity: 0.7;
+}
+
+/* ===== カウントダウンセクション ===== */
+.countdown-section {
+    display: none;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.countdown-section.active {
+    display: block;
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- プログレスバー --- */
+.progress-area {
+    margin-bottom: 48px;
+}
+
+.progress-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.progress-label-left,
+.progress-label-right {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+}
+
+.progress-bar-track {
+    width: 100%;
+    height: 6px;
+    background: var(--bg-card);
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent-gold), var(--accent-cherry));
+    border-radius: 3px;
+    transition: width 1s ease;
+}
+
+.progress-percent {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 8px;
+}
+
+/* --- カウントダウングリッド --- */
+.countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 56px;
+}
+
+.countdown-item {
+    text-align: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 24px 8px;
+    transition: all var(--transition-smooth);
+}
+
+.countdown-item:hover {
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+}
+
+.countdown-value {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+}
+
+.countdown-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    line-height: 1.5;
+}
+
+/* 秒のカードだけ特殊スタイル（6列幅のアイテムをまたぐ形ではなく、3列目のspanで下に置く） */
+.countdown-item-seconds {
+    grid-column: 2 / 4;
+}
+
+.countdown-item-seconds .countdown-value {
+    font-size: 2.4rem;
+    color: var(--accent-gold);
+}
+
+/* --- ライフイベントの残り回数 --- */
+.life-events {
+    margin-bottom: 48px;
+}
+
+.life-events .section-heading {
+    margin-bottom: 28px;
+}
+
+.events-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.event-card {
+    text-align: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 24px 8px 20px;
+    transition: all var(--transition-smooth);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.event-card:hover {
+    background: var(--bg-card-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.event-emoji {
+    font-size: 1.8rem;
+    line-height: 1;
+}
+
+.event-value {
+    font-family: var(--font-mono);
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--accent-gold);
+    letter-spacing: 0.02em;
+}
+
+.event-label {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+}
+
+/* --- 設定変更ボタン --- */
+.settings-area {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.btn-reset {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    border-radius: 60px;
+    padding: 12px 28px;
+    cursor: pointer;
+    transition: all var(--transition-smooth);
+    letter-spacing: 0.03em;
+}
+
+.btn-reset:hover {
+    color: var(--text-secondary);
+    border-color: rgba(255, 255, 255, 0.15);
+    background: var(--bg-card);
+}
+
+/* ===== フッター ===== */
+.app-footer {
+    text-align: center;
+    padding: 40px 0 20px;
+    border-top: 1px solid var(--border-subtle);
+}
+
+.footer-quote {
+    font-family: var(--font-serif);
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--text-muted);
+    line-height: 2;
+    letter-spacing: 0.02em;
+    font-style: italic;
+}
+
+.footer-quote em {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+/* ===== レスポンシブ対応 ===== */
+
+@media (max-width: 700px) {
+    .app-container {
+        padding: 32px 16px 48px;
+    }
+
+    .app-title {
+        font-size: 2.2rem;
+    }
+
+    .input-card {
+        padding: 28px 20px;
+    }
+
+    .countdown-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .countdown-item-seconds {
+        grid-column: 1 / 4;
+    }
+
+    .countdown-value {
+        font-size: 1.5rem;
+    }
+
+    .events-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+    }
+
+    .event-value {
+        font-size: 1.2rem;
+    }
+
+    .event-label {
+        font-size: 0.55rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-title {
+        font-size: 1.8rem;
+    }
+
+    .app-subtitle {
+        font-size: 0.75rem;
+    }
+
+    .countdown-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .countdown-item-seconds {
+        grid-column: 1 / 3;
+    }
+
+    .events-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .footer-quote {
+        font-size: 0.78rem;
+    }
+}

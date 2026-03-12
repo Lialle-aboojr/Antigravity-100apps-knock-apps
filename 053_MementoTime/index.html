@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memento Time — 人生の残り時間時計</title>
+    <meta name="description"
+        content="あなたの残り時間を視覚化する、静謐なカウントダウンタイマー。A serene countdown timer that visualizes the time remaining in your life.">
+
+    <!-- ファビコンの設定 -->
+    <link rel="icon" href="favicon.png">
+
+    <!-- Google Fonts: 洗練されたタイポグラフィ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@300;400&display=swap"
+        rel="stylesheet">
+
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== 背景の装飾（桜の花びらパーティクル） ===== -->
+    <div class="bg-petals" id="bg-petals" aria-hidden="true"></div>
+
+    <!-- ===== メインコンテナ ===== -->
+    <div class="app-container">
+
+        <!-- ===== ヘッダー ===== -->
+        <header class="app-header">
+            <img src="favicon.png" alt="Memento Time Icon" class="app-icon">
+            <h1 class="app-title">Memento Time</h1>
+            <p class="app-subtitle">人生の残り時間時計 / Life Countdown Timer</p>
+        </header>
+
+        <!-- ===== 入力セクション ===== -->
+        <section class="input-section" id="input-section">
+            <div class="input-card">
+                <h2 class="section-heading">⏳ あなたの情報 / Your Information</h2>
+
+                <div class="input-group">
+                    <label for="birthday" class="input-label">生年月日 / Date of Birth</label>
+                    <input type="date" id="birthday" class="input-field" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="lifespan" class="input-label">想定寿命（年齢） / Expected Lifespan (Age)</label>
+                    <div class="lifespan-input-wrapper">
+                        <input type="number" id="lifespan" class="input-field input-lifespan" min="1" max="150"
+                            value="80" required>
+                        <span class="input-unit">歳 / years old</span>
+                    </div>
+                </div>
+
+                <button class="btn-save" id="btn-save">
+                    保存して開始 / Save & Start
+                </button>
+
+                <p class="input-note">
+                    ※ 入力データはブラウザのローカルストレージに保存され、外部送信されません。<br>
+                    Data is saved locally and never sent externally.
+                </p>
+            </div>
+        </section>
+
+        <!-- ===== カウントダウンセクション（初期非表示） ===== -->
+        <section class="countdown-section" id="countdown-section">
+
+            <!-- 経過と残りのプログレスバー -->
+            <div class="progress-area">
+                <div class="progress-labels">
+                    <span class="progress-label-left">経過 / Elapsed</span>
+                    <span class="progress-label-right">残り / Remaining</span>
+                </div>
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" id="progress-bar-fill"></div>
+                </div>
+                <p class="progress-percent" id="progress-percent">0%</p>
+            </div>
+
+            <!-- カウントダウン表示 -->
+            <div class="countdown-grid" id="countdown-grid">
+                <div class="countdown-item">
+                    <span class="countdown-value" id="cd-years">--</span>
+                    <span class="countdown-label">年 / Years</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="cd-months">--</span>
+                    <span class="countdown-label">月 / Months</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="cd-weeks">--</span>
+                    <span class="countdown-label">週 / Weeks</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="cd-days">--</span>
+                    <span class="countdown-label">日 / Days</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="cd-hours">--</span>
+                    <span class="countdown-label">時間 / Hours</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="cd-minutes">--</span>
+                    <span class="countdown-label">分 / Minutes</span>
+                </div>
+                <div class="countdown-item countdown-item-seconds">
+                    <span class="countdown-value" id="cd-seconds">--</span>
+                    <span class="countdown-label">秒 / Seconds</span>
+                </div>
+            </div>
+
+            <!-- ライフイベントの残り回数 -->
+            <div class="life-events">
+                <h2 class="section-heading">✨ あなたに残された体験 / Experiences Left</h2>
+                <div class="events-grid">
+                    <div class="event-card">
+                        <span class="event-emoji">🌸</span>
+                        <span class="event-value" id="ev-cherry">--</span>
+                        <span class="event-label">桜を見る回数<br>Cherry Blossoms</span>
+                    </div>
+                    <div class="event-card">
+                        <span class="event-emoji">🍚</span>
+                        <span class="event-value" id="ev-meals">--</span>
+                        <span class="event-label">食事の回数<br>Meals</span>
+                    </div>
+                    <div class="event-card">
+                        <span class="event-emoji">☕</span>
+                        <span class="event-value" id="ev-weekends">--</span>
+                        <span class="event-label">週末の回数<br>Weekends</span>
+                    </div>
+                    <div class="event-card">
+                        <span class="event-emoji">🌕</span>
+                        <span class="event-value" id="ev-fullmoons">--</span>
+                        <span class="event-label">満月を見る回数<br>Full Moons</span>
+                    </div>
+                    <div class="event-card">
+                        <span class="event-emoji">📚</span>
+                        <span class="event-value" id="ev-books">--</span>
+                        <span class="event-label">新しい本との出会い<br>New Books</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 設定変更ボタン -->
+            <div class="settings-area">
+                <button class="btn-reset" id="btn-reset">
+                    設定を変更する / Change Settings
+                </button>
+            </div>
+        </section>
+
+        <!-- ===== フッター ===== -->
+        <footer class="app-footer">
+            <p class="footer-quote">
+                "あなたの時間は限られている。他の誰かの人生を生きることに、それを費やしてはいけない。"<br>
+                <em>"Your time is limited, don't waste it living someone else's life." — Steve Jobs</em>
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- JavaScriptの読み込み -->
+    <script src="script.js"></script>
+</body>
+
+</html>
