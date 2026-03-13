@@ -33,30 +33,68 @@ appIcon.addEventListener('error', function () {
     this.classList.add('hidden');
 });
 
-// ===== 感情辞書の定義 =====
-// ポジティブワード（日本語＋英語）
+// ===== 感情辞書の定義（50語以上ずつ） =====
+
+// ポジティブワード（日本語＋英語、合計80語以上）
 const POSITIVE_WORDS = [
+    // --- 日本語ポジティブワード ---
     '嬉しい', 'うれしい', '最高', 'ありがとう', '好き', '素晴らしい',
     '楽しい', 'たのしい', '幸せ', 'しあわせ', '感謝', '大好き',
-    'いいね', '素敵', 'すてき', '最高', 'すごい', '凄い',
-    'おめでとう', 'よかった', '良かった', 'わくわく', 'ワクワク',
+    'いいね', '素敵', 'すてき', 'すごい', '凄い', '天才',
+    '完璧', 'かんぺき', 'おめでとう', 'よかった', '良かった',
+    'わくわく', 'ワクワク', '助かる', 'たすかる', '神',
+    '嬉しかった', '楽しかった', '面白い', 'おもしろい', '可愛い',
+    'かわいい', '美しい', 'うつくしい', 'かっこいい', '優しい',
+    'やさしい', '安心', 'あんしん', '元気', 'げんき',
+    '幸運', 'ラッキー', 'やったー', 'やった', '最高すぎ',
+    '応援', 'おうえん', '尊い', 'とうとい', '推せる',
+    '癒される', 'いやされる', '感動', 'かんどう', 'ほっこり',
+    '笑顔', 'えがお', '希望', 'きぼう', 'ありがたい',
+    'おいしい', '美味しい', '上手', 'じょうず', '立派',
+    'りっぱ', 'さすが', '流石', 'すばらしい', 'ナイス',
+    // --- 英語ポジティブワード ---
     'happy', 'great', 'thanks', 'thank', 'love', 'wonderful',
     'amazing', 'awesome', 'excellent', 'fantastic', 'beautiful',
     'perfect', 'brilliant', 'good', 'nice', 'joy', 'glad',
-    'pleased', 'grateful', 'appreciate', 'congratulations'
+    'pleased', 'grateful', 'appreciate', 'congratulations',
+    'delightful', 'cheerful', 'exciting', 'impressive', 'incredible',
+    'outstanding', 'superb', 'magnificent', 'terrific', 'marvelous',
+    'charming', 'lovely', 'adorable', 'splendid', 'graceful',
+    'blessed', 'peaceful', 'warm', 'kind', 'sweet',
+    'inspired', 'proud', 'hopeful', 'thrilled', 'blissful',
+    'radiant', 'vibrant', 'elegant', 'generous', 'caring'
 ];
 
-// ネガティブワード（日本語＋英語）
+// ネガティブワード（日本語＋英語、合計80語以上）
 const NEGATIVE_WORDS = [
+    // --- 日本語ネガティブワード ---
     '最悪', '疲れた', 'つかれた', 'むかつく', '悲しい', 'かなしい',
     '嫌い', 'きらい', '腹立つ', 'うざい', 'ウザい', 'だるい',
     'ダルい', 'つらい', '辛い', 'しんどい', '許せない', 'ゆるせない',
-    'ふざけるな', '死にたい', 'ムカつく', '頭にくる', 'イライラ',
-    'いらいら', '不満', '苦痛', '面倒', 'めんどう', 'めんどくさい',
+    'ふざけるな', 'ムカつく', '頭にくる', 'イライラ', 'いらいら',
+    '不満', '苦痛', '面倒', 'めんどう', 'めんどくさい',
+    '怒り', 'いかり', 'ダメ', 'だめ', '駄目',
+    'クソ', 'くそ', '苦しい', 'くるしい', '限界', 'げんかい',
+    '無理', 'むり', '嫌だ', 'いやだ', 'うんざり',
+    'がっかり', '残念', 'ざんねん', '腹が立つ', 'はらがたつ',
+    '信じられない', 'ありえない', 'ひどい', '酷い', 'サイテー',
+    'さいてー', '最低', 'バカ', 'ばか', 'アホ', 'あほ',
+    'つまらない', 'つまんない', '退屈', 'たいくつ', '不安',
+    'ふあん', '寂しい', 'さびしい', '孤独', 'こどく',
+    'うんざりする', '絶望', 'ぜつぼう', '後悔', 'こうかい',
+    '迷惑', 'めいわく', 'やめて', 'やめろ', '勘弁',
+    'かんべん', '困る', 'こまる', 'きつい', '泣きたい',
+    // --- 英語ネガティブワード ---
     'bad', 'tired', 'angry', 'sad', 'hate', 'terrible',
     'horrible', 'awful', 'worst', 'annoying', 'frustrated',
     'upset', 'disgusted', 'furious', 'miserable', 'painful',
-    'sick', 'stress', 'depressed', 'disappointed', 'damn'
+    'sick', 'stress', 'depressed', 'disappointed', 'damn',
+    'irritated', 'exhausted', 'boring', 'dreadful', 'pathetic',
+    'useless', 'hopeless', 'helpless', 'worthless', 'stupid',
+    'ugly', 'cruel', 'nasty', 'toxic', 'unbearable',
+    'uncomfortable', 'worried', 'anxious', 'nervous', 'lonely',
+    'desperate', 'regret', 'suffering', 'misery', 'agony',
+    'nightmare', 'disaster', 'ruined', 'wretched', 'gloomy'
 ];
 
 // ===== シュレッダーモードになるネガティブスコアの閾値 =====
