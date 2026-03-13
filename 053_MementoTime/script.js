@@ -1,6 +1,6 @@
 /* ============================================
    Memento Time — 人生の残り時間時計
-   メインスクリプト (script.js)
+   メインスクリプト (script.js) v3
    ============================================ */
 
 // ===== DOMの読み込み完了後に初期化 =====
@@ -17,6 +17,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // カウントダウンセクション
     const countdownSection = document.getElementById('countdown-section');
     const btnReset = document.getElementById('btn-reset');
+
+    // ステータスバー
+    const stToday = document.getElementById('st-today');
+    const stAge = document.getElementById('st-age');
+    const stLifespan = document.getElementById('st-lifespan');
 
     // カウントダウン表示
     const cdYears = document.getElementById('cd-years');
@@ -41,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 格言エリア
     const footerQuote = document.getElementById('footer-quote');
 
-    // --- ゲーム状態 ---
+    // --- 状態管理 ---
     let timerInterval = null; // カウントダウンのインターバルID
 
     // --- ローカルストレージのキー ---
@@ -132,27 +137,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
-    // --- 背景パーティクル（桜の花びら）の生成 ---
+    // --- 背景パーティクル（桜の花びら・強化版）の生成 ---
     function createPetals() {
         const container = document.getElementById('bg-petals');
-        // 15枚の花びらを生成（明るい背景には控えめに）
-        for (let i = 0; i < 15; i++) {
+        // 花びらのバリエーション
+        const variants = ['petal--a', 'petal--b', 'petal--c'];
+        // 40枚の花びらを生成（以前の約2.5倍）
+        for (let i = 0; i < 40; i++) {
             const petal = document.createElement('div');
             petal.classList.add('petal');
+            // ランダムにバリエーションを付与
+            petal.classList.add(variants[Math.floor(Math.random() * variants.length)]);
 
-            // ランダムなサイズ（幅: 8-16px）
-            const width = Math.random() * 8 + 8;
+            // ランダムなサイズ（幅: 8-18px）
+            const width = Math.random() * 10 + 8;
             petal.style.width = `${width}px`;
             petal.style.height = `${width * 0.6}px`;
 
             // ランダムな水平位置
             petal.style.left = `${Math.random() * 100}%`;
 
-            // ランダムなアニメーション時間（14-28秒）
-            petal.style.animationDuration = `${Math.random() * 14 + 14}s`;
+            // ランダムなアニメーション時間（10-22秒 → 少し速めに）
+            petal.style.animationDuration = `${Math.random() * 12 + 10}s`;
 
-            // ランダムな遅延（0-18秒）
-            petal.style.animationDelay = `${Math.random() * 18}s`;
+            // ランダムな遅延（0-20秒）
+            petal.style.animationDelay = `${Math.random() * 20}s`;
 
             container.appendChild(petal);
         }
@@ -174,13 +183,43 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初期表示
     displayRandomQuote();
 
+    // --- 今日の日付をフォーマット ---
+    function formatToday(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}/${m}/${d}`;
+    }
+
+    // --- 現在の年齢を正確に計算（整数） ---
+    function calcAge(birthDate, now) {
+        let age = now.getFullYear() - birthDate.getFullYear();
+        const monthDiff = now.getMonth() - birthDate.getMonth();
+        // まだ誕生日を迎えていなければ1歳引く
+        if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    // --- ステータスバーの更新 ---
+    function updateStatusBar(birthDate, lifespanYears) {
+        const now = new Date();
+        // 今日の日付
+        stToday.textContent = formatToday(now);
+        // 現在の年齢
+        const age = calcAge(birthDate, now);
+        stAge.textContent = `${age}歳 / years old`;
+        // 想定寿命
+        stLifespan.textContent = `${lifespanYears}歳 / years old`;
+    }
+
     // --- 保存データの読み込み ---
     function loadSavedData() {
         const savedBirthday = localStorage.getItem(STORAGE_KEY_BIRTHDAY);
         const savedLifespan = localStorage.getItem(STORAGE_KEY_LIFESPAN);
 
         if (savedBirthday && savedLifespan) {
-            // 保存済データがあればフォームに復元し、カウントダウンを開始
             birthdayInput.value = savedBirthday;
             lifespanInput.value = savedLifespan;
             startCountdown(savedBirthday, parseInt(savedLifespan, 10));
@@ -227,11 +266,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // 画面を切り替え
         showCountdownScreen();
 
-        // 初回更新
+        // ステータスバーの初回更新
+        updateStatusBar(birthDate, lifespanYears);
+
+        // カウントダウンの初回更新
         updateCountdown(birthDate, deathDate);
 
-        // 1秒ごとにカウントダウンを更新
+        // 1秒ごとにカウントダウンとステータスを更新
         timerInterval = setInterval(() => {
+            updateStatusBar(birthDate, lifespanYears);
             updateCountdown(birthDate, deathDate);
         }, 1000);
     }
@@ -281,7 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 残り時間を年月日時分秒に分解する関数 ---
     function calcRemainingTime(now, deathDate) {
-        // 年の差を計算
         let years = deathDate.getFullYear() - now.getFullYear();
         let months = deathDate.getMonth() - now.getMonth();
         let days = deathDate.getDate() - now.getDate();
@@ -309,7 +351,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 日が負なら繰り下がり（前月の日数を足す）
         if (days < 0) {
-            // 前月の最後の日を取得して加算
             const prevMonth = new Date(deathDate.getFullYear(), deathDate.getMonth(), 0);
             days += prevMonth.getDate();
             months--;
@@ -350,7 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- ライフイベントの残り回数を更新 ---
     function updateLifeEvents(totalRemainingDays) {
-        // 残り年数（小数含む）
         const remainingYears = totalRemainingDays / 365.25;
 
         // 🌸 桜を見る回数（年1回）
@@ -361,15 +401,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const meals = Math.max(0, totalRemainingDays * 3);
         evMeals.textContent = meals.toLocaleString();
 
-        // ☕ 週末の回数（年52回 → 7日に1回）
+        // ☕ 週末の回数（7日に1回）
         const weekends = Math.max(0, Math.floor(totalRemainingDays / 7));
         evWeekends.textContent = weekends.toLocaleString();
 
-        // 🌕 満月を見る回数（年12回 → 約29.5日に1回）
+        // 🌕 満月を見る回数（約29.5日に1回）
         const fullmoons = Math.max(0, Math.floor(totalRemainingDays / 29.53));
         evFullmoons.textContent = fullmoons.toLocaleString();
 
-        // 📚 新しい本との出会い（月1冊 → 約30.44日に1冊）
+        // 📚 新しい本との出会い（約30.44日に1冊）
         const books = Math.max(0, Math.floor(totalRemainingDays / 30.44));
         evBooks.textContent = books.toLocaleString();
     }
@@ -409,13 +449,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 設定変更ボタン
     btnReset.addEventListener('click', () => {
-        // タイマーを停止
         if (timerInterval) {
             clearInterval(timerInterval);
             timerInterval = null;
         }
-
-        // 入力画面に戻す
         showInputScreen();
     });
 

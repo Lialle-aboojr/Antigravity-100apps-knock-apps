@@ -70,6 +70,24 @@
         <!-- ===== カウントダウンセクション（初期非表示） ===== -->
         <section class="countdown-section" id="countdown-section">
 
+            <!-- ===== 現在地と目的地のステータス表示 ===== -->
+            <div class="status-bar" id="status-bar">
+                <div class="status-item">
+                    <span class="status-label">今日 / Today</span>
+                    <span class="status-value" id="st-today">--</span>
+                </div>
+                <span class="status-divider">|</span>
+                <div class="status-item">
+                    <span class="status-label">現在 / Current</span>
+                    <span class="status-value" id="st-age">--</span>
+                </div>
+                <span class="status-divider">|</span>
+                <div class="status-item">
+                    <span class="status-label">寿命 / Expected</span>
+                    <span class="status-value" id="st-lifespan">--</span>
+                </div>
+            </div>
+
             <!-- 経過と残りのプログレスバー -->
             <div class="progress-area">
                 <div class="progress-labels">
