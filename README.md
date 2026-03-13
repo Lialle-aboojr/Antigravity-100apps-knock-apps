@@ -65,13 +65,14 @@ Complete it. Ship it. Relax. ☕
 | 052 | ⚔️ タイピング勇者 / Typing Hero | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/052_TypingHero/index.html) |
 | 053 | ⏳ Memento Time | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/053_MementoTime/index.html) |
 | 054 | 🔄 String Replacer | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/054_StringReplacer/index.html) |
+| 055 | 📝 Mood & Shred Contact | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/055_mood-shred-contact/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 54 / 100 ██████████░░░░░░░░░░ 54%
+完成: 55 / 100 ███████████░░░░░░░░░ 55%
 ```
 
 ---

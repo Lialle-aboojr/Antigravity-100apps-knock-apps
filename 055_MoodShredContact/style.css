@@ -1,0 +1,502 @@
+/* =========================================
+   Mood & Shred Contact / エモ・シュレッダー・フォーム
+   スタイルシート
+   
+   感情で色が変わるお問い合わせフォーム＋シュレッダーアニメーション
+   ========================================= */
+
+/* --- CSSカスタムプロパティ（デザイントークン） --- */
+:root {
+    /* ニュートラル（デフォルト）カラー */
+    --color-bg-start: #f8f8f8;
+    --color-bg-end: #eaeaea;
+    --color-surface: #ffffff;
+    --color-border: #e0e0e0;
+    --color-border-focus: #b0b0b0;
+    --color-text-primary: #1a1a1a;
+    --color-text-secondary: #6b6b6b;
+    --color-text-tertiary: #999999;
+
+    /* アクセントカラー */
+    --color-accent: #4a6fa5;
+    --color-accent-hover: #3d5f8f;
+    --color-danger: #c0392b;
+    --color-danger-hover: #a93226;
+    --color-success: #27ae60;
+
+    /* フォント */
+    --font-main: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+    /* サイズ */
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --spacing-xs: 6px;
+    --spacing-sm: 12px;
+    --spacing-md: 20px;
+    --spacing-lg: 32px;
+
+    /* トランジション */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.4s ease;
+    --transition-slow: 0.8s ease;
+}
+
+/* --- リセットと基本スタイル --- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    font-family: var(--font-main);
+    color: var(--color-text-primary);
+    line-height: 1.7;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* --- 背景グラデーションレイヤー --- */
+.mood-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: linear-gradient(135deg, var(--color-bg-start), var(--color-bg-end));
+    transition: background var(--transition-slow);
+    pointer-events: none;
+}
+
+/* 感情ごとの背景色クラス */
+.mood-positive .mood-bg,
+body.mood-positive .mood-bg {
+    background: linear-gradient(135deg, #fff7e6, #ffe0b2, #ffccbc);
+}
+
+.mood-negative .mood-bg,
+body.mood-negative .mood-bg {
+    background: linear-gradient(135deg, #e8eaf6, #c5cae9, #b0bec5);
+}
+
+.mood-very-negative .mood-bg,
+body.mood-very-negative .mood-bg {
+    background: linear-gradient(135deg, #cfd8dc, #90a4ae, #78909c);
+}
+
+/* --- メインコンテナ --- */
+.app-container {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: var(--spacing-lg) var(--spacing-md);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+}
+
+/* --- ヘッダー --- */
+.app-header {
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.app-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-sm);
+    object-fit: cover;
+}
+
+.app-icon.hidden {
+    display: none;
+}
+
+.app-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+}
+
+.app-subtitle {
+    font-size: 0.82rem;
+    font-weight: 300;
+    color: var(--color-text-secondary);
+}
+
+/* --- ムード表示エリア --- */
+.mood-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 50px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    transition: all var(--transition-normal);
+    align-self: center;
+}
+
+.mood-emoji {
+    font-size: 1.6rem;
+    line-height: 1;
+    transition: transform var(--transition-fast);
+}
+
+.mood-label {
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+}
+
+/* --- フォームカード --- */
+.form-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg) var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    transition: box-shadow var(--transition-normal), transform var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.form-card:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+/* --- フォームグループ --- */
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+    width: 100%;
+    font-family: var(--font-main);
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+    background: rgba(248, 248, 248, 0.8);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 12px var(--spacing-sm);
+    outline: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: var(--color-text-tertiary);
+    font-weight: 300;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.12);
+    background: #ffffff;
+}
+
+.form-select {
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.8;
+}
+
+/* --- 送信/シュレッダーボタン --- */
+.btn-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px var(--spacing-md);
+    font-family: var(--font-main);
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+    background: var(--color-accent);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    letter-spacing: 0.02em;
+    margin-top: var(--spacing-sm);
+}
+
+.btn-submit:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(74, 111, 165, 0.3);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* シュレッダーモードのボタン */
+.btn-submit.shred-mode {
+    background: var(--color-danger);
+    animation: shred-pulse 1.5s ease-in-out infinite;
+}
+
+.btn-submit.shred-mode:hover {
+    background: var(--color-danger-hover);
+    box-shadow: 0 4px 16px rgba(192, 57, 43, 0.35);
+}
+
+/* シュレッダーボタンの脈動アニメーション */
+@keyframes shred-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(192, 57, 43, 0.3); }
+    50% { box-shadow: 0 0 0 8px rgba(192, 57, 43, 0); }
+}
+
+.btn-submit-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+/* --- シュレッダーコンテナ --- */
+.shredder-container {
+    display: none;
+    position: relative;
+    width: 100%;
+    min-height: 300px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-md);
+}
+
+.shredder-container.active {
+    display: block;
+}
+
+/* シュレッダーの各ストライプ */
+.shred-strip {
+    position: absolute;
+    top: 0;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border-left: 1px solid rgba(0, 0, 0, 0.06);
+    border-right: 1px solid rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transform-origin: top center;
+    /* アニメーションはJSで個別に設定 */
+}
+
+/* ストライプ内のテキスト断片 */
+.shred-strip-content {
+    padding: 8px 4px;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* シュレッダー落下アニメーション */
+@keyframes shred-fall {
+    0% {
+        transform: translateY(0) rotateZ(0deg) scaleY(1);
+        opacity: 1;
+    }
+    20% {
+        transform: translateY(0) rotateZ(0deg) scaleY(1);
+        opacity: 1;
+    }
+    40% {
+        transform: translateY(30px) rotateZ(var(--shred-rotation, 2deg)) scaleY(0.95);
+        opacity: 0.9;
+    }
+    100% {
+        transform: translateY(600px) rotateZ(var(--shred-rotation, 5deg)) scaleY(0.7);
+        opacity: 0;
+    }
+}
+
+/* --- 完了メッセージ --- */
+.completion-message {
+    display: none;
+    text-align: center;
+    padding: var(--spacing-lg) var(--spacing-md);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-md);
+    animation: fade-in-up 0.6s ease forwards;
+}
+
+.completion-message.active {
+    display: block;
+}
+
+.completion-emoji {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    animation: bounce-in 0.6s ease forwards;
+}
+
+@keyframes bounce-in {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.2); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.completion-text {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.8;
+}
+
+@keyframes fade-in-up {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* リセットボタン */
+.btn-reset {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 28px;
+    font-family: var(--font-main);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    background: rgba(248, 248, 248, 0.9);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-reset:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-focus);
+    background: #f0f0f0;
+    transform: translateY(-1px);
+}
+
+/* --- フッター --- */
+.app-footer {
+    margin-top: auto;
+    padding-top: var(--spacing-lg);
+    text-align: center;
+}
+
+.footer-text {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--color-text-tertiary);
+}
+
+/* =========================================
+   レスポンシブ対応
+   ========================================= */
+
+@media (max-width: 768px) {
+    .app-container {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+
+    .app-title {
+        font-size: 1.4rem;
+    }
+
+    .form-card {
+        padding: var(--spacing-md) var(--spacing-sm);
+    }
+}
+
+@media (max-width: 480px) {
+    .app-container {
+        padding: var(--spacing-sm) 10px;
+    }
+
+    .app-title {
+        font-size: 1.2rem;
+    }
+
+    .app-subtitle {
+        font-size: 0.75rem;
+    }
+
+    .app-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .mood-indicator {
+        gap: 6px;
+        padding: 8px 16px;
+    }
+
+    .mood-emoji {
+        font-size: 1.3rem;
+    }
+
+    .mood-label {
+        font-size: 0.75rem;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+        font-size: 0.85rem;
+        padding: 10px;
+    }
+
+    .btn-submit {
+        font-size: 0.9rem;
+        padding: 12px;
+    }
+}

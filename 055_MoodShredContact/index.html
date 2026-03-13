@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood & Shred Contact — エモ・シュレッダー・フォーム</title>
+    <meta name="description"
+        content="感情で色が変わるお問い合わせフォーム。ネガティブな内容はシュレッダーで粉砕！ An emotional contact form that shreds your negativity.">
+
+    <!-- ファビコンの設定（画像が読み込めない場合はSVG Data URIでフォールバック） -->
+    <link rel="icon" href="favicon.png">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>"
+        type="image/svg+xml">
+
+    <!-- Google Fonts: クリーンなサンセリフ体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=DM+Mono:wght@300;400&display=swap"
+        rel="stylesheet">
+
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== 背景グラデーションレイヤー（感情に合わせて変化する） ===== -->
+    <div class="mood-bg" id="mood-bg"></div>
+
+    <!-- ===== メインコンテナ ===== -->
+    <div class="app-container" id="app-container">
+
+        <!-- ===== ヘッダー ===== -->
+        <header class="app-header">
+            <img src="favicon.png" alt="Mood & Shred Icon" class="app-icon" id="app-icon">
+            <h1 class="app-title">Mood & Shred Contact</h1>
+            <p class="app-subtitle">エモ・シュレッダー・フォーム / Emotional Contact Form</p>
+        </header>
+
+        <!-- ===== ムード表示エリア ===== -->
+        <div class="mood-indicator" id="mood-indicator">
+            <span class="mood-emoji" id="mood-emoji">😐</span>
+            <span class="mood-label" id="mood-label">ニュートラル / Neutral</span>
+        </div>
+
+        <!-- ===== フォームカード ===== -->
+        <div class="form-card" id="form-card">
+            <form id="contact-form" novalidate>
+
+                <!-- 名前 -->
+                <div class="form-group">
+                    <label for="user-name" class="form-label">名前 / Name</label>
+                    <input type="text" id="user-name" class="form-input"
+                        placeholder="山田 太郎 / Taro Yamada" required>
+                </div>
+
+                <!-- メールアドレス -->
+                <div class="form-group">
+                    <label for="user-email" class="form-label">メールアドレス / Email</label>
+                    <input type="email" id="user-email" class="form-input"
+                        placeholder="taro@example.com" required>
+                </div>
+
+                <!-- カテゴリ -->
+                <div class="form-group">
+                    <label for="category" class="form-label">カテゴリ / Category</label>
+                    <select id="category" class="form-select" required>
+                        <option value="" disabled selected>選択してください / Select...</option>
+                        <option value="question">❓ 質問 / Question</option>
+                        <option value="opinion">💡 意見 / Opinion</option>
+                        <option value="vent">😤 愚痴・不満 / Vent & Rant</option>
+                    </select>
+                </div>
+
+                <!-- メッセージ本文 -->
+                <div class="form-group">
+                    <label for="message" class="form-label">メッセージ / Message</label>
+                    <textarea id="message" class="form-textarea"
+                        placeholder="あなたのメッセージを入力してください...&#10;Type your message here..."
+                        rows="6" required></textarea>
+                </div>
+
+                <!-- 送信 / シュレッダーボタン -->
+                <button type="submit" class="btn-submit" id="btn-submit">
+                    <span class="btn-submit-icon" id="btn-submit-icon">✉️</span>
+                    <span class="btn-submit-text" id="btn-submit-text">送信 / Send</span>
+                </button>
+
+            </form>
+        </div>
+
+        <!-- ===== シュレッダー・アニメーション用のコンテナ（初期非表示） ===== -->
+        <div class="shredder-container" id="shredder-container"></div>
+
+        <!-- ===== 完了メッセージ（初期非表示） ===== -->
+        <div class="completion-message" id="completion-message">
+            <span class="completion-emoji" id="completion-emoji"></span>
+            <p class="completion-text" id="completion-text"></p>
+            <button class="btn-reset" id="btn-reset">もう一度 / Try Again</button>
+        </div>
+
+        <!-- ===== フッター ===== -->
+        <footer class="app-footer">
+            <p class="footer-text">
+                Mood & Shred Contact — 気持ちを吐き出して、スッキリしよう。
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- JavaScriptの読み込み -->
+    <script src="script.js"></script>
+</body>
+
+</html>
