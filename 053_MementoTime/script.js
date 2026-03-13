@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const evFullmoons = document.getElementById('ev-fullmoons');
     const evBooks = document.getElementById('ev-books');
 
+    // 格言エリア
+    const footerQuote = document.getElementById('footer-quote');
+
     // --- ゲーム状態 ---
     let timerInterval = null; // カウントダウンのインターバルID
 
@@ -45,11 +48,95 @@ document.addEventListener('DOMContentLoaded', () => {
     const STORAGE_KEY_BIRTHDAY = 'mementoTime_birthday';
     const STORAGE_KEY_LIFESPAN = 'mementoTime_lifespan';
 
+    // --- 格言データ（20個・日本語＆英語併記） ---
+    const quotes = [
+        {
+            ja: '「あなたの時間は限られている。他の誰かの人生を生きることに、それを費やしてはいけない。」 — スティーブ・ジョブズ',
+            en: '"Your time is limited, don\'t waste it living someone else\'s life." — Steve Jobs'
+        },
+        {
+            ja: '「一日一日を、最後の日のように生きよ。」 — マルクス・アウレリウス',
+            en: '"Live each day as if it were your last." — Marcus Aurelius'
+        },
+        {
+            ja: '「死ぬことを恐れるのではない。生きていないことを恐れるのだ。」 — マルクス・アウレリウス',
+            en: '"It is not death that a man should fear, but he should fear never beginning to live." — Marcus Aurelius'
+        },
+        {
+            ja: '「人生とは、自分を見つけることではない。人生とは、自分を創ることである。」 — ジョージ・バーナード・ショー',
+            en: '"Life isn\'t about finding yourself. Life is about creating yourself." — George Bernard Shaw'
+        },
+        {
+            ja: '「最終的に重要なのは、あなたの人生の年数ではなく、あなたの年数の中の人生だ。」 — エイブラハム・リンカーン',
+            en: '"In the end, it\'s not the years in your life that count. It\'s the life in your years." — Abraham Lincoln'
+        },
+        {
+            ja: '「人生は短い。だから友よ、空騒ぎはやめて、生きることに時間を使おう。」 — シェイクスピア',
+            en: '"Life is short. Let\'s stop the fuss and spend time living." — Shakespeare'
+        },
+        {
+            ja: '「千里の道も一歩から。」 — 老子',
+            en: '"A journey of a thousand miles begins with a single step." — Lao Tzu'
+        },
+        {
+            ja: '「未来は、今日始めたことで決まる。」 — マハトマ・ガンジー',
+            en: '"The future depends on what you do today." — Mahatma Gandhi'
+        },
+        {
+            ja: '「幸福は完成品ではない。自分自身の行動から生まれるものだ。」 — ダライ・ラマ14世',
+            en: '"Happiness is not something readymade. It comes from your own actions." — Dalai Lama'
+        },
+        {
+            ja: '「今日という日は、残りの人生の最初の日である。」 — チャールズ・ディードリッヒ',
+            en: '"Today is the first day of the rest of your life." — Charles Dederich'
+        },
+        {
+            ja: '「大切なのは、疑わずに生きることだ。何が起こっても、それで良いのだ、と。」 — ライナー・マリア・リルケ',
+            en: '"The point is to live everything. Live the questions now." — Rainer Maria Rilke'
+        },
+        {
+            ja: '「時を刻む音は、人生が前に進んでいる証拠だ。」 — 作者不詳',
+            en: '"The ticking of the clock is proof that life is moving forward." — Unknown'
+        },
+        {
+            ja: '「人は必ず死ぬ。だからこそ人生は美しいのだ。」 — 手塚治虫',
+            en: '"Everyone dies eventually. That is what makes life beautiful." — Osamu Tezuka'
+        },
+        {
+            ja: '「明日死ぬかのように生きよ。永遠に生きるかのように学べ。」 — マハトマ・ガンジー',
+            en: '"Live as if you were to die tomorrow. Learn as if you were to live forever." — Mahatma Gandhi'
+        },
+        {
+            ja: '「人生で最も大切な日は二日ある。生まれた日と、なぜ生まれたかを知る日だ。」 — マーク・トウェイン',
+            en: '"The two most important days in your life are the day you are born and the day you find out why." — Mark Twain'
+        },
+        {
+            ja: '「変えられないことを嘆くより、変えられることに集中せよ。」 — セネカ',
+            en: '"We suffer more often in imagination than in reality." — Seneca'
+        },
+        {
+            ja: '「散りぬべき時知りてこそ、世の中の花は花なれ、人は人なれ。」 — 細川ガラシャ',
+            en: '"Knowing when to fall is what makes a flower a flower, and a person a person." — Hosokawa Gracia'
+        },
+        {
+            ja: '「人生は、勇気を持って挑む限り、退屈にはならない。」 — エレノア・ルーズベルト',
+            en: '"Life was meant to be lived, and curiosity must be kept alive." — Eleanor Roosevelt'
+        },
+        {
+            ja: '「この瞬間を大切にしなさい。この瞬間こそが、あなたの人生なのだから。」 — オマル・ハイヤーム',
+            en: '"Be happy for this moment. This moment is your life." — Omar Khayyam'
+        },
+        {
+            ja: '「行く川の流れは絶えずして、しかももとの水にあらず。」 — 鴨長明',
+            en: '"The flowing river never stops, and yet the water never stays the same." — Kamo no Chōmei'
+        }
+    ];
+
     // --- 背景パーティクル（桜の花びら）の生成 ---
     function createPetals() {
         const container = document.getElementById('bg-petals');
-        // 20枚の花びらを生成
-        for (let i = 0; i < 20; i++) {
+        // 15枚の花びらを生成（明るい背景には控えめに）
+        for (let i = 0; i < 15; i++) {
             const petal = document.createElement('div');
             petal.classList.add('petal');
 
@@ -61,11 +148,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // ランダムな水平位置
             petal.style.left = `${Math.random() * 100}%`;
 
-            // ランダムなアニメーション時間（12-25秒）
-            petal.style.animationDuration = `${Math.random() * 13 + 12}s`;
+            // ランダムなアニメーション時間（14-28秒）
+            petal.style.animationDuration = `${Math.random() * 14 + 14}s`;
 
-            // ランダムな遅延（0-15秒）
-            petal.style.animationDelay = `${Math.random() * 15}s`;
+            // ランダムな遅延（0-18秒）
+            petal.style.animationDelay = `${Math.random() * 18}s`;
 
             container.appendChild(petal);
         }
@@ -73,6 +160,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 花びらを初期化
     createPetals();
+
+    // --- ランダム格言を表示 ---
+    function displayRandomQuote() {
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        const quote = quotes[randomIndex];
+        footerQuote.innerHTML = `
+            <span class="quote-ja">${quote.ja}</span>
+            <span class="quote-en">${quote.en}</span>
+        `;
+    }
+
+    // 初期表示
+    displayRandomQuote();
 
     // --- 保存データの読み込み ---
     function loadSavedData() {
@@ -273,9 +373,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const books = Math.max(0, Math.floor(totalRemainingDays / 30.44));
         evBooks.textContent = books.toLocaleString();
     }
-
-    // --- 数値のフォーマット（3桁カンマ区切り） ---
-    // ※ toLocaleString() を使用済みのため不要だが、念のため残す
 
     // --- イベントリスナーの登録 ---
 

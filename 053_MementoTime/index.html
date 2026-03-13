@@ -11,11 +11,11 @@
     <!-- ファビコンの設定 -->
     <link rel="icon" href="favicon.png">
 
-    <!-- Google Fonts: 洗練されたタイポグラフィ -->
+    <!-- Google Fonts: 無印良品風のクリーンなサンセリフ体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Noto+Sans+JP:wght@300;400;500;700&family=DM+Mono:wght@300;400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@200;300;400;500;700&family=DM+Mono:wght@300;400&display=swap"
         rel="stylesheet">
 
     <!-- スタイルシートの読み込み -->
@@ -85,32 +85,32 @@
             <!-- カウントダウン表示 -->
             <div class="countdown-grid" id="countdown-grid">
                 <div class="countdown-item">
-                    <span class="countdown-value" id="cd-years">--</span>
                     <span class="countdown-label">年 / Years</span>
+                    <span class="countdown-value" id="cd-years">--</span>
                 </div>
                 <div class="countdown-item">
-                    <span class="countdown-value" id="cd-months">--</span>
                     <span class="countdown-label">月 / Months</span>
+                    <span class="countdown-value" id="cd-months">--</span>
                 </div>
                 <div class="countdown-item">
-                    <span class="countdown-value" id="cd-weeks">--</span>
                     <span class="countdown-label">週 / Weeks</span>
+                    <span class="countdown-value" id="cd-weeks">--</span>
                 </div>
                 <div class="countdown-item">
-                    <span class="countdown-value" id="cd-days">--</span>
                     <span class="countdown-label">日 / Days</span>
+                    <span class="countdown-value" id="cd-days">--</span>
                 </div>
                 <div class="countdown-item">
-                    <span class="countdown-value" id="cd-hours">--</span>
                     <span class="countdown-label">時間 / Hours</span>
+                    <span class="countdown-value" id="cd-hours">--</span>
                 </div>
                 <div class="countdown-item">
-                    <span class="countdown-value" id="cd-minutes">--</span>
                     <span class="countdown-label">分 / Minutes</span>
+                    <span class="countdown-value" id="cd-minutes">--</span>
                 </div>
                 <div class="countdown-item countdown-item-seconds">
-                    <span class="countdown-value" id="cd-seconds">--</span>
                     <span class="countdown-label">秒 / Seconds</span>
+                    <span class="countdown-value" id="cd-seconds">--</span>
                 </div>
             </div>
 
@@ -120,28 +120,28 @@
                 <div class="events-grid">
                     <div class="event-card">
                         <span class="event-emoji">🌸</span>
-                        <span class="event-value" id="ev-cherry">--</span>
                         <span class="event-label">桜を見る回数<br>Cherry Blossoms</span>
+                        <span class="event-value" id="ev-cherry">--</span>
                     </div>
                     <div class="event-card">
                         <span class="event-emoji">🍚</span>
-                        <span class="event-value" id="ev-meals">--</span>
                         <span class="event-label">食事の回数<br>Meals</span>
+                        <span class="event-value" id="ev-meals">--</span>
                     </div>
                     <div class="event-card">
                         <span class="event-emoji">☕</span>
-                        <span class="event-value" id="ev-weekends">--</span>
                         <span class="event-label">週末の回数<br>Weekends</span>
+                        <span class="event-value" id="ev-weekends">--</span>
                     </div>
                     <div class="event-card">
                         <span class="event-emoji">🌕</span>
-                        <span class="event-value" id="ev-fullmoons">--</span>
                         <span class="event-label">満月を見る回数<br>Full Moons</span>
+                        <span class="event-value" id="ev-fullmoons">--</span>
                     </div>
                     <div class="event-card">
                         <span class="event-emoji">📚</span>
-                        <span class="event-value" id="ev-books">--</span>
                         <span class="event-label">新しい本との出会い<br>New Books</span>
+                        <span class="event-value" id="ev-books">--</span>
                     </div>
                 </div>
             </div>
@@ -154,12 +154,11 @@
             </div>
         </section>
 
-        <!-- ===== フッター ===== -->
+        <!-- ===== フッター（格言） ===== -->
         <footer class="app-footer">
-            <p class="footer-quote">
-                "あなたの時間は限られている。他の誰かの人生を生きることに、それを費やしてはいけない。"<br>
-                <em>"Your time is limited, don't waste it living someone else's life." — Steve Jobs</em>
-            </p>
+            <div class="footer-quote" id="footer-quote">
+                <!-- JSでランダム表示 -->
+            </div>
         </footer>
 
     </div>
