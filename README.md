@@ -64,13 +64,14 @@ Complete it. Ship it. Relax. ☕
 | 051 | 📏 UniConvert | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/051_UniConvert/index.html) |
 | 052 | ⚔️ タイピング勇者 / Typing Hero | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/052_TypingHero/index.html) |
 | 053 | ⏳ Memento Time | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/053_MementoTime/index.html) |
+| 054 | 🔄 String Replacer | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/054_StringReplacer/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 53 / 100 ██████████░░░░░░░░░░ 53%
+完成: 54 / 100 ██████████░░░░░░░░░░ 54%
 ```
 
 ---

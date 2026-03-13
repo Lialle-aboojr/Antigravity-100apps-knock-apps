@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String Replacer — 文字列一括置換ツール</title>
+    <meta name="description"
+        content="テキストの文字列を一括で置換するシンプルなツール。A simple tool to find and replace strings in your text at once.">
+
+    <!-- ファビコンの設定（画像が読み込めない場合はSVG Data URIでフォールバック） -->
+    <link rel="icon" href="favicon.png">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔄</text></svg>"
+        type="image/svg+xml">
+
+    <!-- Google Fonts: 無印良品風のクリーンなサンセリフ体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@200;300;400;500;600&family=DM+Mono:wght@300;400&display=swap"
+        rel="stylesheet">
+
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ===== メインコンテナ ===== -->
+    <div class="app-container">
+
+        <!-- ===== ヘッダー ===== -->
+        <header class="app-header">
+            <img src="favicon.png" alt="String Replacer Icon" class="app-icon" id="app-icon">
+            <h1 class="app-title">String Replacer</h1>
+            <p class="app-subtitle">文字列一括置換ツール / Bulk Text Find & Replace</p>
+        </header>
+
+        <!-- ===== 入力セクション ===== -->
+        <section class="input-section">
+            <div class="section-card">
+                <label for="original-text" class="section-label">
+                    📄 元のテキスト / Original Text
+                </label>
+                <textarea id="original-text" class="text-area text-area-input"
+                    placeholder="ここにテキストを入力または貼り付けてください...&#10;Paste or type your text here..."
+                    rows="8"></textarea>
+            </div>
+        </section>
+
+        <!-- ===== 置換設定セクション ===== -->
+        <section class="replace-settings">
+            <div class="section-card">
+                <h2 class="section-label">
+                    🔍 置換設定 / Replace Settings
+                </h2>
+
+                <!-- 検索する文字列の入力欄 -->
+                <div class="input-group">
+                    <label for="find-text" class="input-label">検索する文字列 / Find</label>
+                    <input type="text" id="find-text" class="input-field"
+                        placeholder="検索したい文字列... / Text to find...">
+                </div>
+
+                <!-- 置換後の文字列の入力欄 -->
+                <div class="input-group">
+                    <label for="replace-text" class="input-label">置換後の文字列 / Replace with</label>
+                    <input type="text" id="replace-text" class="input-field"
+                        placeholder="置換後の文字列... / Replacement text...">
+                </div>
+
+                <!-- 大文字・小文字を区別するかのチェックボックス -->
+                <div class="checkbox-group">
+                    <input type="checkbox" id="case-sensitive" class="checkbox-input">
+                    <label for="case-sensitive" class="checkbox-label">
+                        大文字・小文字を区別する / Case-Sensitive
+                    </label>
+                </div>
+
+                <!-- 置換実行ボタン -->
+                <button class="btn-replace" id="btn-replace">
+                    <span class="btn-icon">🔄</span>
+                    一括置換 / Replace All
+                </button>
+            </div>
+        </section>
+
+        <!-- ===== 結果出力セクション ===== -->
+        <section class="result-section">
+            <div class="section-card">
+                <div class="result-header">
+                    <label for="result-text" class="section-label">
+                        ✅ 置換結果 / Result Text
+                    </label>
+                    <!-- コピーボタン -->
+                    <button class="btn-copy" id="btn-copy" title="結果をコピー / Copy result">
+                        <span class="btn-copy-text" id="btn-copy-text">📋 コピー / Copy</span>
+                    </button>
+                </div>
+                <textarea id="result-text" class="text-area text-area-result" readonly
+                    placeholder="置換結果がここに表示されます...&#10;Replaced text will appear here..."
+                    rows="8"></textarea>
+            </div>
+        </section>
+
+        <!-- ===== フッター ===== -->
+        <footer class="app-footer">
+            <p class="footer-text">
+                String Replacer — テキストの置換をもっとシンプルに。
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- JavaScriptの読み込み -->
+    <script src="script.js"></script>
+</body>
+
+</html>
