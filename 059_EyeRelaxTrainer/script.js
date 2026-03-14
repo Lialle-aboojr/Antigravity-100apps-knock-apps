@@ -422,8 +422,36 @@ document.addEventListener('DOMContentLoaded', () => {
     let blinkPhase = 0; // 0=Open, 1=Close
     let phaseTime = 3000; // 3 seconds per phase
 
+    let blinkAudioCtx = null;
+    
+    // Play short beep (Web Audio API)
+    function playBlinkTick(high = false) {
+        if (!blinkAudioCtx) {
+            blinkAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (blinkAudioCtx.state === 'suspended') blinkAudioCtx.resume();
+        
+        const osc = blinkAudioCtx.createOscillator();
+        const gain = blinkAudioCtx.createGain();
+        osc.type = 'sine';
+        // 'high' for phase change (action), 'low' for countdown ticks
+        osc.frequency.setValueAtTime(high ? 880 : 440, blinkAudioCtx.currentTime); 
+        
+        gain.gain.setValueAtTime(0, blinkAudioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.3, blinkAudioCtx.currentTime + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, blinkAudioCtx.currentTime + 0.2);
+        
+        osc.connect(gain);
+        gain.connect(blinkAudioCtx.destination);
+        osc.start();
+        osc.stop(blinkAudioCtx.currentTime + 0.2);
+    }
+
     function runBlinkCycle() {
         if (!isBlinkActive) return;
+
+        // Play high pitch on action boundary ("ポーン")
+        playBlinkTick(true);
 
         if (blinkPhase === 0) {
             // Instruct to Close
@@ -438,6 +466,10 @@ document.addEventListener('DOMContentLoaded', () => {
             blinkCircle.classList.add('is-opening');
             blinkPhase = 0;
         }
+
+        // Ticks at 1s and 2s ("ピッ", "ピッ")
+        setTimeout(() => isBlinkActive && playBlinkTick(false), 1000);
+        setTimeout(() => isBlinkActive && playBlinkTick(false), 2000);
 
         // Schedule next phase
         bkReqId = setTimeout(runBlinkCycle, phaseTime);

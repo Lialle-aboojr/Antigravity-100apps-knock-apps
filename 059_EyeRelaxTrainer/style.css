@@ -291,6 +291,19 @@ body {
     color: var(--clr-primary);
 }
 
+.description-text {
+    width: 100%;
+    margin-top: 4px;
+    font-size: 0.9rem;
+    color: var(--clr-text-sub);
+    line-height: 1.5;
+}
+
+.description-text .en {
+    font-size: 0.8rem;
+    margin-top: 2px;
+}
+
 /* Forms & Selects */
 .pattern-selector {
     display: flex;
