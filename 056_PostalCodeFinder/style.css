@@ -456,9 +456,10 @@ body {
 }
 
 /* --- ローディング表示 --- */
+/* 初期状態は非表示。JavaScriptで検索中のみ display: flex に切り替える */
 .loading-area {
   margin-top: 24px;
-  display: flex;
+  display: none;
   flex-direction: column;
   align-items: center;
   gap: 16px;

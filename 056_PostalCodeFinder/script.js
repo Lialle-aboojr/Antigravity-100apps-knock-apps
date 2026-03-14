@@ -42,25 +42,36 @@ function escapeHtml(str) {
 
 // ==============================
 // 入力フィールドのリアルタイムフォーマット
-// ユーザーが入力するたびに、自動でハイフンを挿入する
+// ユーザーが入力するたびに、半角数字のみの場合は自動でハイフンを挿入する
+// 半角数字・ハイフン以外の文字が含まれている場合はフォーマットせず
+// そのまま表示し、検索ボタン押下時にエラーとして通知する
 // 例: "1000001" → "100-0001"
 // ==============================
 postalCodeInput.addEventListener('input', function (e) {
-  // 入力値から数字以外を全て除去
-  let value = this.value.replace(/[^0-9]/g, '');
+  // 入力値を取得
+  let value = this.value;
+
+  // 半角数字とハイフン以外の文字が含まれている場合はフォーマットしない
+  // （検索ボタン押下時にバリデーションでエラーとして処理する）
+  if (/[^0-9\-]/.test(value)) {
+    return;
+  }
+
+  // 半角数字のみの入力の場合、自動フォーマットを行う
+  let digits = value.replace(/[^0-9]/g, '');
 
   // 7桁を超えた分は切り捨て
-  if (value.length > 7) {
-    value = value.substring(0, 7);
+  if (digits.length > 7) {
+    digits = digits.substring(0, 7);
   }
 
   // 4桁以上入力されたらハイフンを自動挿入
-  if (value.length > 3) {
-    value = value.substring(0, 3) + '-' + value.substring(3);
+  if (digits.length > 3) {
+    digits = digits.substring(0, 3) + '-' + digits.substring(3);
   }
 
   // フォーマット済みの値を入力欄にセット
-  this.value = value;
+  this.value = digits;
 });
 
 // ==============================
@@ -69,14 +80,23 @@ postalCodeInput.addEventListener('input', function (e) {
 // 不正であればnullを返す
 // ==============================
 function validatePostalCode(input) {
+  // まず、半角数字とハイフン以外の文字が含まれていないかチェック
+  if (/[^0-9\-]/.test(input)) {
+    showError(
+      '半角数字とハイフンで入力してください。\n' +
+      'Please enter half-width numbers and hyphens.'
+    );
+    return null;
+  }
+
   // 入力からハイフン・スペースを除去し、数字のみ取り出す
   const cleaned = input.replace(/[-\s\u3000]/g, '');
 
   // 数字のみかチェック
   if (!/^[0-9]+$/.test(cleaned)) {
     showError(
-      '数字のみ入力してください。\n' +
-      'Please enter numbers only.'
+      '半角数字とハイフンで入力してください。\n' +
+      'Please enter half-width numbers and hyphens.'
     );
     return null;
   }
@@ -142,16 +162,23 @@ function hideResult() {
 
 // ==============================
 // ローディング表示の切り替え
+// display プロパティで表示/非表示を制御し、
+// hidden属性と併用して確実にスピナーを制御する
 // ==============================
 function setLoading(isLoading) {
-  loadingArea.hidden = !isLoading;
-  searchButton.disabled = isLoading;
-
   if (isLoading) {
+    // ローディングを表示
+    loadingArea.hidden = false;
+    loadingArea.style.display = 'flex';
     // 検索中は結果とエラーを非表示
     hideResult();
     hideError();
+  } else {
+    // ローディングを非表示
+    loadingArea.hidden = true;
+    loadingArea.style.display = 'none';
   }
+  searchButton.disabled = isLoading;
 }
 
 // ==============================
