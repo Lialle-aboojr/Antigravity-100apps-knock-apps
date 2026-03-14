@@ -67,7 +67,7 @@
                 <div class="people-group-container">
                     <div class="input-group" id="groupAContainer">
                         <label for="groupAPeople" class="input-label">
-                            <span class="group-badge badge-a" id="badgeA" hidden>A</span>
+                            <span class="group-badge badge-a" id="badgeA" style="display: none;">A</span>
                             <span class="ja" id="labelAJa">人数</span>
                             <span class="en" id="labelAEn">People</span>
                         </label>
@@ -77,7 +77,7 @@
                         </div>
                     </div>
                     
-                    <div class="input-group" id="groupBContainer" hidden>
+                    <div class="input-group" id="groupBContainer" style="display: none;">
                         <label for="groupBPeople" class="input-label">
                             <span class="group-badge badge-b">B</span>
                             <span class="ja">グループB 人数</span>
@@ -91,7 +91,7 @@
                 </div>
 
                 <!-- 支払い割合（傾斜）の設定スライダー -->
-                <div class="input-group" id="ratioContainer" hidden>
+                <div class="input-group" id="ratioContainer" style="display: none;">
                     <label for="ratioSlider" class="input-label">
                         <span class="ja">支払い割合（A : B）</span>
                         <span class="en">Payment Ratio (A : B)</span>
@@ -152,19 +152,19 @@
                 </button>
 
                 <!-- エラーメッセージ表示領域 -->
-                <div id="errorMessage" class="error-message" hidden aria-live="polite"></div>
+                <div id="errorMessage" class="error-message" style="display: none;" aria-live="polite"></div>
 
             </section>
 
             <!-- 結果表示エリア -->
-            <section id="resultArea" class="card result-section" hidden aria-label="計算結果 / Result">
+            <section id="resultArea" class="card result-section" style="display: none;" aria-label="計算結果 / Result">
                 <h2 class="result-title">
                     <span class="ja">計算結果</span>
                     <span class="en">Result</span>
                 </h2>
 
                 <!-- おみくじ結果発表 -->
-                <div id="omikujiResultArea" class="omikuji-result" hidden>
+                <div id="omikujiResultArea" class="omikuji-result" style="display: none;">
                     <div class="omikuji-icon">🎉</div>
                     <div class="omikuji-text" id="omikujiText">おみくじ結果が表示されます</div>
                 </div>
@@ -172,7 +172,7 @@
                 <!-- 各グループの支払い結果 -->
                 <div class="result-group result-a">
                     <div class="result-group-header">
-                        <span class="group-badge badge-a" hidden>A</span>
+                        <span class="group-badge badge-a" style="display: none;">A</span>
                         <span class="ja">1人あたり</span>
                         <span class="en">Per Person</span>
                     </div>
@@ -187,7 +187,7 @@
                     </div>
                 </div>
 
-                <div class="result-group result-b" hidden>
+                <div class="result-group result-b" style="display: none;">
                     <div class="result-group-header">
                         <span class="group-badge badge-b">B</span>
                         <span class="ja">グループ B</span>
@@ -205,7 +205,7 @@
                 </div>
 
                 <!-- おみくじ当選者の表示領域（存在する場合） -->
-                <div id="specialPersonArea" class="result-group result-special" hidden>
+                <div id="specialPersonArea" class="result-group result-special" style="display: none;">
                     <div class="result-group-header">
                         <span class="group-badge badge-special">⭐</span>
                         <span class="ja" id="specialPersonLabelJa">特別枠</span>

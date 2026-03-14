@@ -41,6 +41,11 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* hidden属性をより強力に非表示に適用 */
+[hidden] {
+    display: none !important;
+}
+
 /* Utility / Typographic */
 .ja { display: block; font-size: 1rem; }
 .en { display: block; font-size: 0.75rem; color: var(--text-sub); margin-top: 2px; }
@@ -146,17 +151,6 @@ input[type="number"], select {
     background-color: var(--bg-color);
 }
 
-/* Number Input Spinner Hiding */
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    appearance: none;
-    margin: 0;
-}
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-
 input[type="number"]:focus, select:focus {
     border-color: var(--primary-blue);
     background-color: #fff;
@@ -184,11 +178,19 @@ input[type="number"]:focus, select:focus {
     color: var(--text-sub);
 }
 
+.input-with-suffix input {
+    /* スピナーと単位テキストの表示領域を十分に確保（文字と矢印が被らないように広めに確保） */
+    padding-right: 64px !important;
+}
+
 .input-with-suffix .suffix {
     position: absolute;
-    right: 16px;
+    /* スピナー（右端）の手前に文字が来るように右からの位置を調整 */
+    right: 36px; 
     color: var(--text-sub);
     font-size: 1rem;
+    /* 表示専用にし、下のスピナーのクリック操作を邪魔しないようにする */
+    pointer-events: none; 
 }
 
 /* Mode Toggle Container */
