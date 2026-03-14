@@ -327,7 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultAmountSpecial.classList.remove('anim-bling');
     }
 
-    // 鑑定団風ルーレットアニメーション
+    // 仕様に忠実な鑑定団風ルーレットアニメーション
     function runRouletteAnimation(isNormalMode, payA, payB, paySpecial, omikujiResult) {
         
         // アニメーション対象のDOM要素と最終目標値のペア
@@ -342,19 +342,14 @@ document.addEventListener('DOMContentLoaded', () => {
             targets.push({ elem: resultAmountSpecial, finalValue: paySpecial });
         }
 
-        // 各ターゲットごとにアニメーションを設定
-        let maxLen = 0;
+        // 各ターゲットごとにアニメーションを設定し、最大時間を取得
+        let maxAnimTime = 0;
         targets.forEach(target => {
-            animateDigitByDigit(target.elem, target.finalValue);
-            const len = target.finalValue.toString().length;
-            if (len > maxLen) maxLen = len;
+            const time = animateStrictRoulette(target.elem, target.finalValue);
+            if (time > maxAnimTime) maxAnimTime = time;
         });
 
         // 全てのアニメーションが終わるであろう頃に、合計金額を表示する
-        // アニメーション計算式: 500 + ((maxLen - 1) * 400) + (maxLen > 1 ? 800 : 0)
-        let maxAnimTime = 500 + ((maxLen - 1) * 400);
-        if (maxLen > 1) maxAnimTime += 800; // 最上位桁の溜め時間
-
         setTimeout(() => {
             const numA = parseInt(toHalfWidthNum(groupAPeopleInput.value), 10) || 0;
             const numB = isNormalMode ? 0 : (parseInt(toHalfWidthNum(groupBPeopleInput.value), 10) || 0);
@@ -373,65 +368,81 @@ document.addEventListener('DOMContentLoaded', () => {
         }, maxAnimTime + 200);
     }
 
-    // 桁ごとに下からストップしていくアニメーション処理
-    function animateDigitByDigit(elem, finalValue) {
+    // 仕様に忠実なルーレットアニメーション（1文字ずつspanで制御）
+    function animateStrictRoulette(elem, finalValue) {
+        // エフェクトを一旦リセット
+        elem.classList.remove('anim-bling');
+        
         if (finalValue === 0) {
-            elem.textContent = "0";
+            elem.innerHTML = `<span>0</span>`;
             elem.classList.add('anim-bling');
-            return;
+            return 0; // すぐ終わる
         }
 
-        const finalStr = finalValue.toString();
-        const len = finalStr.length;
+        const formattedStr = formatCurrency(finalValue); // 例: "16,667"
+        elem.innerHTML = '';
         
-        // 現在表示している文字列（配列として管理）
-        const currentDisplay = new Array(len).fill(0);
+        // spanを生成してDOMに挿入し、管理用配列に保持
+        const spanElements = [];
         
-        // ルーレット用のsetInterval ID
-        const intervalId = setInterval(() => {
-            // ランダムに数字を書き換える
-            for (let i = 0; i < len; i++) {
-                if (currentDisplay[i] !== finalStr[i]) {
-                    currentDisplay[i] = Math.floor(Math.random() * 10).toString();
-                }
-            }
-            elem.textContent = formatCurrency(parseInt(currentDisplay.join(''), 10));
-        }, 50); // 50msごとに更新で素早い回転
-
-        // 桁ごとのストップ処理の予約（下の桁=右側から順番にストップ）
-        for (let i = 0; i < len; i++) {
-            // 右側の桁ほど早く止まる。一番上の桁が最後まで回る
-            const reverseIndex = len - 1 - i; 
+        for (let i = 0; i < formattedStr.length; i++) {
+            const char = formattedStr[i];
+            const span = document.createElement('span');
             
-            // 例：1の位(reverseIndex=0)は 500ms後
-            // 10の位(reverseIndex=1)は 500+400=900ms後
-            // 100の位(reverseIndex=2)は 500+800=1300ms後...というしっかりした溜め
-            let stopDelay = 500 + (reverseIndex * 400);
-
-            // 一番上の桁（最後の桁）の場合は、追加で長く回して「最大の溜め」を作る
-            if (i === 0 && len > 1) {
-                stopDelay += 800; // さらに800ms長く回す
+            if (char === ',') {
+                // カンマはアニメーションさせずそのまま表示
+                span.textContent = ',';
+                elem.appendChild(span);
+                spanElements.push({ isDigit: false, span: span, correctChar: ',' });
+            } else {
+                // 初期値はランダムな数字
+                span.textContent = Math.floor(Math.random() * 10).toString();
+                elem.appendChild(span);
+                spanElements.push({ isDigit: true, span: span, correctChar: char });
             }
-            
+        }
+        
+        // 数値のspanだけを抽出 (右側=下の桁 から順番に処理するため reverse する)
+        const digitSpans = [...spanElements].filter(item => item.isDigit).reverse();
+        
+        // 全桁に対して一斉にくるくる回す setInterval を開始 (約30ms間隔)
+        digitSpans.forEach(item => {
+            item.intervalId = setInterval(() => {
+                item.span.textContent = Math.floor(Math.random() * 10).toString();
+            }, 30);
+        });
+
+        let currentDelay = 800; // 最初の桁（1の位）のストップ時間
+        let lastDelay = 0;
+
+        digitSpans.forEach((item, index) => {
+            // ストップ時間を算出
+            if (index === 0) {
+                // 1の位：800ms
+                // そのまま
+            } else if (index === digitSpans.length - 1) {
+                // 一番上の桁（最後の桁）：直前の桁 + 1200ms
+                currentDelay += 1200;
+            } else {
+                // その他の中間の桁：直前の桁 + 500ms
+                currentDelay += 500;
+            }
+
             setTimeout(() => {
-                // その桁の数字を正解の値で固定する
-                currentDisplay[i] = finalStr[i];
-            }, stopDelay);
-        }
+                clearInterval(item.intervalId);
+                item.span.textContent = item.correctChar;
+                
+                // 最後の桁が止まったらコンテナ全体に完了演出 (anim-bling クラス付与)
+                if (index === digitSpans.length - 1) {
+                    elem.classList.add('anim-bling');
+                }
+            }, currentDelay);
+            
+            lastDelay = currentDelay;
+        });
 
-        // すべての桁が確定する、一番最後の時間
-        let maxDelay = 500 + ((len - 1) * 400);
-        if (len > 1) {
-            maxDelay += 800;
-        }
-        
-        setTimeout(() => {
-            clearInterval(intervalId);
-            // 念のため最終的な数値をカンマ区切りでセット
-            elem.textContent = formatCurrency(finalValue);
-            // シャキーン！というエフェクトを付与
-            elem.classList.add('anim-bling');
-        }, maxDelay + 100);
+        // 完走までの時間を返す
+        return lastDelay;
     }
 
     // アニメーションなしですぐに結果を表示する
