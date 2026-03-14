@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="リアルタイムで404エラーページのデザインを生成できるツール / 404 Error Page Maker">
+    <title>404 Error Page Maker</title>
+    <!-- ファビコンの指定（万が一画像ファイルがない場合の絵文字フォールバック機能はJSで補完） -->
+    <link rel="icon" href="favicon.png">
+    
+    <!-- Google Fonts の読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ヘッダー -->
+    <header class="app-header">
+        <div class="header-content">
+            <h1 class="app-title">
+                <span class="icon">🚧</span>
+                <span class="text ja">404エラーページメーカー</span>
+                <span class="text en">404 Error Page Maker</span>
+            </h1>
+            <p class="app-description">
+                <span class="ja">リアルタイムでデザインを確認＆カスタマイズして、HTML/CSSコードを生成します。</span>
+                <span class="en">Customize and preview in real-time to generate HTML/CSS code.</span>
+            </p>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="app-main">
+        <div class="dashboard">
+            
+            <!-- コントロールパネル（設定入力欄） -->
+            <section class="control-panel card" aria-label="設定パネル / Settings Panel">
+                
+                <h2 class="panel-title">
+                    <span class="ja">1. デザインを設定する</span>
+                    <span class="en">Customize Design</span>
+                </h2>
+
+                <!-- テキスト設定 -->
+                <div class="setting-group text-settings">
+                    <h3 class="group-title">
+                        <span class="ja">テキスト設定</span>
+                        <span class="en">Text Settings</span>
+                    </h3>
+                    
+                    <div class="input-row">
+                        <label for="inputHeading">
+                            <span class="ja">見出し</span>
+                            <span class="en">Heading</span>
+                        </label>
+                        <!-- 入力値のサニタイズはJS側で行います -->
+                        <input type="text" id="inputHeading" value="404" placeholder="404 または Error">
+                    </div>
+                    
+                    <div class="input-row">
+                        <label for="inputMessage">
+                            <span class="ja">メインメッセージ</span>
+                            <span class="en">Main Message</span>
+                        </label>
+                        <input type="text" id="inputMessage" value="Oops! お探しのページは見つかりませんでした。" placeholder="エラーメッセージ">
+                    </div>
+                    
+                    <div class="input-row">
+                        <label for="inputBtnText">
+                            <span class="ja">ボタンのテキスト</span>
+                            <span class="en">Button Text</span>
+                        </label>
+                        <input type="text" id="inputBtnText" value="ホームへ戻る" placeholder="ホームに戻る">
+                    </div>
+                </div>
+
+                <!-- アイコン・イラスト設定 -->
+                <div class="setting-group icon-settings">
+                    <h3 class="group-title">
+                        <span class="ja">アイコン設定</span>
+                        <span class="en">Icon Settings</span>
+                    </h3>
+                    
+                    <div class="input-row">
+                        <label for="selectIcon">
+                            <span class="ja">メインビジュアルを選択</span>
+                            <span class="en">Select Main Visual</span>
+                        </label>
+                        <select id="selectIcon" class="custom-select">
+                            <option value="🔍">🔍 迷子・探索 (Search)</option>
+                            <option value="🛸">🛸 SF・トラブル (Sci-Fi)</option>
+                            <option value="👻">👻 キャラクター (Character)</option>
+                            <option value="⚠️">⚠️ シンプル・警告 (Warning)</option>
+                            <option value="🚧">🚧 工事中 (Construction)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- カラー設定 -->
+                <div class="setting-group color-settings">
+                    <h3 class="group-title">
+                        <span class="ja">カラー設定</span>
+                        <span class="en">Color Settings</span>
+                    </h3>
+                    
+                    <div class="color-pickers-container">
+                        <div class="color-input-wrapper">
+                            <label for="colorBg">
+                                <span class="ja">背景色</span>
+                                <span class="en">Background</span>
+                            </label>
+                            <div class="color-picker-box">
+                                <input type="color" id="colorBg" value="#f8f9fa">
+                                <span class="color-value" id="valColorBg">#f8f9fa</span>
+                            </div>
+                        </div>
+                        
+                        <div class="color-input-wrapper">
+                            <label for="colorText">
+                                <span class="ja">文字色</span>
+                                <span class="en">Text Color</span>
+                            </label>
+                            <div class="color-picker-box">
+                                <input type="color" id="colorText" value="#222222">
+                                <span class="color-value" id="valColorText">#222222</span>
+                            </div>
+                        </div>
+                        
+                        <div class="color-input-wrapper">
+                            <label for="colorAccent">
+                                <span class="ja">アクセント色（ボタン等）</span>
+                                <span class="en">Accent Color</span>
+                            </label>
+                            <div class="color-picker-box">
+                                <input type="color" id="colorAccent" value="#00a7e9">
+                                <span class="color-value" id="valColorAccent">#00a7e9</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- アクションボタンエリア -->
+                <div class="action-area">
+                    <h2 class="panel-title" style="margin-top: 24px;">
+                        <span class="ja">2. コードを書き出す</span>
+                        <span class="en">Export Output</span>
+                    </h2>
+                    <p class="export-note ja">右側のプレビューを確認し、完成したらコピーしてください。</p>
+                    <button id="copyCodeBtn" class="primary-btn">
+                        <span class="btn-icon">📋</span>
+                        <span class="ja">コードをコピーする</span>
+                        <span class="en">Copy HTML/CSS Code</span>
+                    </button>
+                    <!-- コピー完了メッセージ（デフォルト非表示） -->
+                    <div id="copySuccessMsg" class="success-message" aria-live="polite">
+                        <span>✅</span> コードをクリップボードにコピーしました！
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- プレビューとコード表示エリア（右側） -->
+            <section class="preview-panel" aria-label="プレビュー / Preview">
+                
+                <h2 class="panel-title preview-header">
+                    <span class="ja">リアルタイムプレビュー</span>
+                    <span class="en">Real-time Preview</span>
+                </h2>
+
+                <!-- プレビュー枠 -->
+                <div class="preview-container frame shadow-lg" id="previewContainer">
+                    <!-- ここに JS でインジェクション（または直接CSS変更）してプレビューを描画 -->
+                    <div class="preview-content" id="previewBox">
+                        <div class="preview-icon" id="prvIcon">🔍</div>
+                        <h1 class="preview-heading" id="prvHeading">404</h1>
+                        <p class="preview-message" id="prvMessage">Oops! お探しのページは見つかりませんでした。</p>
+                        <a href="#" class="preview-button" id="prvBtn" onclick="return false;">ホームへ戻る</a>
+                    </div>
+                </div>
+
+                <!-- 生成されたコードを可視化するエリア（トグルで表示） -->
+                <details class="code-details card">
+                    <summary class="code-summary">
+                        <span class="ja">生成されるコードを表示する</span>
+                        <span class="en">Show Generated Code</span>
+                    </summary>
+                    <div class="code-wrapper">
+                        <pre><code id="generatedCodeDisplay" class="language-html">
+<!-- コードがここに表示されます -->
+                        </code></pre>
+                    </div>
+                </details>
+
+            </section>
+
+        </div>
+    </main>
+    
+    <!-- フッター -->
+    <footer class="app-footer">
+        <p>&copy; 2026 404 Error Page Maker created by Antigravity</p>
+    </footer>
+
+    <!-- JavaScriptの読み込み -->
+    <script src="script.js"></script>
+</body>
+</html>

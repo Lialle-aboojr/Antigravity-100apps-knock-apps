@@ -1,0 +1,346 @@
+/* 
+ * 404 Error Page Maker - App Styles
+ * アプリ自体のUIスタイル定義（※生成される404ページのCSSはJSで動的に適用されます）
+ */
+
+:root {
+    /* アプリのカラーパレット */
+    --app-primary: #1e293b;
+    --app-secondary: #0f172a;
+    --app-accent: #3b82f6;
+    --app-bg: #f1f5f9;
+    --app-surface: #ffffff;
+    --app-text-main: #334155;
+    --app-text-sub: #64748b;
+    --app-border: #e2e8f0;
+    
+    /* フォント設定 */
+    --font-main: 'Noto Sans JP', 'Inter', sans-serif;
+    --font-mono: 'Fira Code', monospace;
+    
+    /* シャドウと丸み */
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+}
+
+/* Base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--app-bg);
+    color: var(--app-text-main);
+    line-height: 1.5;
+}
+
+/* Utilities */
+.ja { display: block; font-size: 1rem; }
+.en { display: block; font-size: 0.75rem; color: var(--app-text-sub); margin-top: 2px; }
+
+/* Layout */
+.app-header {
+    background-color: var(--app-primary);
+    color: white;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: var(--shadow-md);
+}
+
+.header-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.app-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.app-title .icon {
+    font-size: 2.5rem;
+}
+
+.app-title .ja {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.app-title .en {
+    color: #94a3b8;
+}
+
+.app-description {
+    color: #cbd5e1;
+}
+.app-description .ja { font-size: 0.95rem; }
+.app-description .en { font-size: 0.8rem; }
+
+.app-main {
+    max-width: 1200px;
+    margin: 32px auto;
+    padding: 0 20px;
+}
+
+/* Dashboard Grid */
+.dashboard {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 768px) {
+    .dashboard {
+        grid-template-columns: 350px 1fr;
+    }
+}
+
+/* Cards */
+.card {
+    background: var(--app-surface);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--app-border);
+}
+
+.panel-title {
+    font-size: 1.2rem;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--app-border);
+    padding-bottom: 8px;
+}
+.panel-title .ja { font-weight: 700; color: var(--app-primary); }
+
+/* Form Elements */
+.setting-group {
+    margin-bottom: 24px;
+}
+
+.group-title {
+    margin-bottom: 16px;
+    font-size: 1rem;
+}
+
+.group-title .ja { font-weight: bold; }
+
+.input-row {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-row label .ja { font-size: 0.9rem; font-weight: 600; }
+.input-row label .en { font-size: 0.7rem; }
+
+input[type="text"], select.custom-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--radius-md);
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    outline: none;
+}
+
+input[type="text"]:focus, select.custom-select:focus {
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* カラー設定エリア（Color Pickers） */
+.color-settings {
+    background-color: #f8fafc;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px dashed #cbd5e1;
+}
+
+.color-pickers-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.color-input-wrapper {
+    flex: 1;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.color-input-wrapper label .ja { font-size: 0.85rem; font-weight: bold; }
+
+.color-picker-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    padding: 6px;
+    border: 1px solid var(--app-border);
+    border-radius: var(--radius-md);
+}
+
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+    overflow: hidden;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+input[type="color"]::-webkit-color-swatch { 
+    border: 1px solid rgba(0,0,0,0.1); 
+    border-radius: 4px; 
+}
+
+.color-value {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--app-text-sub);
+}
+
+/* Copy Button */
+.export-note {
+    font-size: 0.85rem;
+    color: var(--app-text-sub);
+    margin-bottom: 12px;
+}
+
+.primary-btn {
+    width: 100%;
+    background: var(--app-primary);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+}
+
+.primary-btn:hover {
+    background: var(--app-secondary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+.primary-btn:active {
+    transform: translateY(1px);
+}
+
+.primary-btn .btn-icon {
+    font-size: 1.2rem;
+}
+
+.primary-btn .ja { color: white; display: inline-block;}
+.primary-btn .en { color: rgba(255,255,255,0.7); display: inline-block; margin-top:0;}
+
+.success-message {
+    margin-top: 12px;
+    padding: 12px;
+    background: #dcfce7;
+    color: #166534;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: bold;
+    text-align: center;
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Preview Area */
+.preview-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.preview-container {
+    width: 100%;
+    min-height: 480px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    background: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.5" fill="%23e2e8f0"/></pattern></defs><rect width="100%" height="100%" fill="url(%23dots)"/></svg>') white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+/* Code Display Details */
+.code-details {
+    padding: 16px;
+    margin-top: 24px;
+}
+.code-summary {
+    cursor: pointer;
+    font-weight: bold;
+    outline: none;
+    list-style: none; /* Hide default arrow */
+    position: relative;
+    padding-left: 24px;
+}
+.code-summary::-webkit-details-marker { display: none; }
+.code-summary::before {
+    content: "▶";
+    position: absolute;
+    left: 0;
+    font-size: 0.8rem;
+    top: 5px;
+    transition: transform 0.2s;
+}
+.code-details[open] .code-summary::before {
+    transform: rotate(90deg);
+}
+.code-wrapper {
+    margin-top: 16px;
+    background: #1e293b;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    overflow-x: auto;
+    max-height: 400px;
+    overflow-y: auto;
+}
+#generatedCodeDisplay {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: #f8fafc;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* Footer */
+.app-footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--app-text-sub);
+    font-size: 0.85rem;
+}
