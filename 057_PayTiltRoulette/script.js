@@ -327,8 +327,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resultAmountSpecial.classList.remove('anim-bling');
     }
 
-    // 最新の鑑定団風ルーレットアニメーション
-    // 「下の桁から順番に確定していく」という演出を加える
+    // 鑑定団風ルーレットアニメーション
     function runRouletteAnimation(isNormalMode, payA, payB, paySpecial, omikujiResult) {
         
         // アニメーション対象のDOM要素と最終目標値のペア
@@ -343,13 +342,19 @@ document.addEventListener('DOMContentLoaded', () => {
             targets.push({ elem: resultAmountSpecial, finalValue: paySpecial });
         }
 
-        // 各ターゲットごとに桁ごとにアニメーションを設定
+        // 各ターゲットごとにアニメーションを設定
+        let maxLen = 0;
         targets.forEach(target => {
             animateDigitByDigit(target.elem, target.finalValue);
+            const len = target.finalValue.toString().length;
+            if (len > maxLen) maxLen = len;
         });
 
         // 全てのアニメーションが終わるであろう頃に、合計金額を表示する
-        const MAX_ANIMATION_TIME = 2000; // 最長およそ2秒
+        // アニメーション計算式: 500 + ((maxLen - 1) * 400) + (maxLen > 1 ? 800 : 0)
+        let maxAnimTime = 500 + ((maxLen - 1) * 400);
+        if (maxLen > 1) maxAnimTime += 800; // 最上位桁の溜め時間
+
         setTimeout(() => {
             const numA = parseInt(toHalfWidthNum(groupAPeopleInput.value), 10) || 0;
             const numB = isNormalMode ? 0 : (parseInt(toHalfWidthNum(groupBPeopleInput.value), 10) || 0);
@@ -365,7 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalAmount = parseInt(totalAmountStr, 10);
             
             calculateTotals(payA, normalNumA, payB, normalNumB, paySpecial, omikujiResult, totalAmount);
-        }, MAX_ANIMATION_TIME + 200);
+        }, maxAnimTime + 200);
     }
 
     // 桁ごとに下からストップしていくアニメーション処理
@@ -391,15 +396,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             elem.textContent = formatCurrency(parseInt(currentDisplay.join(''), 10));
-        }, 30); // 30msごとに更新で素早い回転
+        }, 50); // 50msごとに更新で素早い回転
 
         // 桁ごとのストップ処理の予約（下の桁=右側から順番にストップ）
         for (let i = 0; i < len; i++) {
             // 右側の桁ほど早く止まる。一番上の桁が最後まで回る
             const reverseIndex = len - 1 - i; 
             
-            // 例：下から1桁目は 500ms後、2桁目は 800ms後、3桁目は 1100ms後...一番上は一番最後
-            const stopDelay = 500 + (reverseIndex * 300);
+            // 例：1の位(reverseIndex=0)は 500ms後
+            // 10の位(reverseIndex=1)は 500+400=900ms後
+            // 100の位(reverseIndex=2)は 500+800=1300ms後...というしっかりした溜め
+            let stopDelay = 500 + (reverseIndex * 400);
+
+            // 一番上の桁（最後の桁）の場合は、追加で長く回して「最大の溜め」を作る
+            if (i === 0 && len > 1) {
+                stopDelay += 800; // さらに800ms長く回す
+            }
             
             setTimeout(() => {
                 // その桁の数字を正解の値で固定する
@@ -408,7 +420,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // すべての桁が確定する、一番最後の時間
-        const maxDelay = 500 + ((len - 1) * 300);
+        let maxDelay = 500 + ((len - 1) * 400);
+        if (len > 1) {
+            maxDelay += 800;
+        }
         
         setTimeout(() => {
             clearInterval(intervalId);
