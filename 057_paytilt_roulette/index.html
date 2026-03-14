@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="エンタメ割り勘電卓 (PayTilt & Roulette) - アニメーションとおみくじ機能付きの割り勘アプリ">
+    <title>エンタメ割り勘電卓 / PayTilt & Roulette</title>
+    <!-- ファビコンの指定 -->
+    <link rel="icon" href="favicon.png">
+    
+    <!-- Google Fonts の読み込み -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&family=M+PLUS+Rounded+1c:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- アプリケーションの全体を包むコンテナ -->
+    <div class="app-container">
+        
+        <!-- ヘッダー -->
+        <header class="app-header">
+            <h1 class="app-title">
+                <span class="ja">エンタメ割り勘電卓</span>
+                <span class="en">PayTilt & Roulette</span>
+            </h1>
+        </header>
+
+        <!-- メインのコンテンツ領域 -->
+        <main class="app-main">
+            <!-- 入力フォームエリア -->
+            <section class="card input-section" aria-label="入力フォーム / Input Form">
+                
+                <!-- 支払総額の入力 -->
+                <div class="input-group">
+                    <label for="totalAmount" class="input-label">
+                        <span class="ja">支払総額</span>
+                        <span class="en">Total Amount</span>
+                    </label>
+                    <div class="input-with-prefix">
+                        <span class="prefix">¥</span>
+                        <input type="number" id="totalAmount" class="large-input" placeholder="0" min="0" step="1" required>
+                    </div>
+                </div>
+
+                <!-- 参加人数の入力 -->
+                <div class="people-group-container">
+                    <div class="input-group">
+                        <label for="groupAPeople" class="input-label">
+                            <span class="group-badge badge-a">A</span>
+                            <span class="ja">グループA 人数</span>
+                            <span class="en">Group A People</span>
+                        </label>
+                        <div class="input-with-suffix">
+                            <input type="number" id="groupAPeople" class="medium-input" placeholder="0" min="0" step="1">
+                            <span class="suffix ja">人</span>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="groupBPeople" class="input-label">
+                            <span class="group-badge badge-b">B</span>
+                            <span class="ja">グループB 人数</span>
+                            <span class="en">Group B People</span>
+                        </label>
+                        <div class="input-with-suffix">
+                            <input type="number" id="groupBPeople" class="medium-input" placeholder="0" min="0" step="1">
+                            <span class="suffix ja">人</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 支払い割合（傾斜）の設定スライダー -->
+                <div class="input-group">
+                    <label for="ratioSlider" class="input-label">
+                        <span class="ja">支払い割合（A : B）</span>
+                        <span class="en">Payment Ratio (A : B)</span>
+                    </label>
+                    <div class="slider-container">
+                        <span class="ratio-label badge-a" id="ratioLabelA">5</span>
+                        <input type="range" id="ratioSlider" class="ratio-slider" min="1" max="9" value="5" step="1">
+                        <span class="ratio-label badge-b" id="ratioLabelB">5</span>
+                    </div>
+                </div>
+
+                <!-- 端数丸めの設定 -->
+                <div class="input-group">
+                    <label for="roundingSelect" class="input-label">
+                        <span class="ja">端数処理（切り上げ）</span>
+                        <span class="en">Rounding Up</span>
+                    </label>
+                    <select id="roundingSelect" class="select-input">
+                        <option value="1">1円単位 / 1 Yen</option>
+                        <option value="10" selected>10円単位 / 10 Yen</option>
+                        <option value="100">100円単位 / 100 Yen</option>
+                        <option value="500">500円単位 / 500 Yen</option>
+                        <option value="1000">1000円単位 / 1,000 Yen</option>
+                    </select>
+                </div>
+
+                <!-- エンタメ機能トグル -->
+                <div class="toggles-container">
+                    <!-- おみくじモード -->
+                    <label class="toggle-switch-wrapper">
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="omikujiToggle" aria-label="おみくじモード">
+                            <span class="slider round"></span>
+                        </div>
+                        <div class="toggle-label-text">
+                            <span class="ja font-bold accent-color">🎲 おみくじモード (誰か1人無料/ゴチ)</span>
+                            <span class="en">Omikuji Mode (Random Free/Treat)</span>
+                        </div>
+                    </label>
+                    
+                    <!-- アニメーションモード -->
+                    <label class="toggle-switch-wrapper">
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="animationToggle" checked aria-label="アニメーション">
+                            <span class="slider round"></span>
+                        </div>
+                        <div class="toggle-label-text">
+                            <span class="ja">✨ 鑑定団風アニメーション</span>
+                            <span class="en">Roulette Animation</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- 計算ボタン -->
+                <button id="calculateBtn" class="primary-btn">
+                    <span class="ja">計算する</span>
+                    <span class="en">Calculate</span>
+                </button>
+
+                <!-- エラーメッセージ表示領域 -->
+                <div id="errorMessage" class="error-message" hidden aria-live="polite"></div>
+
+            </section>
+
+            <!-- 結果表示エリア -->
+            <section id="resultArea" class="card result-section" hidden aria-label="計算結果 / Result">
+                <h2 class="result-title">
+                    <span class="ja">計算結果</span>
+                    <span class="en">Result</span>
+                </h2>
+
+                <!-- おみくじ結果発表 -->
+                <div id="omikujiResultArea" class="omikuji-result" hidden>
+                    <div class="omikuji-icon">🎉</div>
+                    <div class="omikuji-text" id="omikujiText">おみくじ結果が表示されます</div>
+                </div>
+
+                <!-- 各グループの支払い結果 -->
+                <div class="result-group result-a">
+                    <div class="result-group-header">
+                        <span class="group-badge badge-a">A</span>
+                        <span class="ja">グループ A</span>
+                        <span class="en">Group A</span>
+                    </div>
+                    <div class="result-amount-display">
+                        <span class="result-prefix">¥</span>
+                        <!-- ここの数値をアニメーションさせる -->
+                        <span class="anim-number" id="resultAmountA" data-value="0">0</span>
+                        <span class="result-suffix ja">/ 人</span>
+                    </div>
+                    <div class="result-sub-info" id="resultSubA">
+                        <span class="ja">（0人）</span>
+                    </div>
+                </div>
+
+                <div class="result-group result-b">
+                    <div class="result-group-header">
+                        <span class="group-badge badge-b">B</span>
+                        <span class="ja">グループ B</span>
+                        <span class="en">Group B</span>
+                    </div>
+                    <div class="result-amount-display">
+                        <span class="result-prefix">¥</span>
+                        <!-- ここの数値をアニメーションさせる -->
+                        <span class="anim-number" id="resultAmountB" data-value="0">0</span>
+                        <span class="result-suffix ja">/ 人</span>
+                    </div>
+                    <div class="result-sub-info" id="resultSubB">
+                        <span class="ja">（0人）</span>
+                    </div>
+                </div>
+
+                <!-- おみくじ当選者の表示領域（存在する場合） -->
+                <div id="specialPersonArea" class="result-group result-special" hidden>
+                    <div class="result-group-header">
+                        <span class="group-badge badge-special">⭐</span>
+                        <span class="ja" id="specialPersonLabelJa">特別枠</span>
+                        <span class="en" id="specialPersonLabelEn">Special</span>
+                    </div>
+                    <div class="result-amount-display">
+                        <span class="result-prefix">¥</span>
+                        <span class="anim-number" id="resultAmountSpecial" data-value="0">0</span>
+                    </div>
+                    <div class="result-sub-info">
+                        <span class="ja">（1名）</span>
+                    </div>
+                </div>
+
+                <!-- 総括（幹事情報） -->
+                <div class="result-summary">
+                    <div class="summary-row">
+                        <span class="ja">集金合計額</span>
+                        <span class="en">Total Collected</span>
+                        <span class="summary-val" id="totalCollectedVal">¥0</span>
+                    </div>
+                    <div class="summary-row highlight-row">
+                        <span class="ja">過不足金 (おつり/幹事の余り)</span>
+                        <span class="en">Balance (Change/Remaining)</span>
+                        <span class="summary-val accent-color font-bold" id="balanceVal">¥0</span>
+                    </div>
+                </div>
+                
+                <button id="resetBtn" class="secondary-btn">
+                    <span class="ja">もう一度計算する</span>
+                    <span class="en">Reset</span>
+                </button>
+            </section>
+        </main>
+        
+        <!-- フッター -->
+        <footer class="app-footer">
+            <p>&copy; 2026 PayTilt & Roulette (エンタメ割り勘電卓)</p>
+        </footer>
+    </div>
+    
+    <!-- JavaScriptの読み込み -->
+    <script src="script.js"></script>
+</body>
+</html>

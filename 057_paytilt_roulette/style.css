@@ -1,0 +1,505 @@
+/* 
+ * エンタメ割り勘電卓 (PayTilt & Roulette)
+ * スタイルシート - PayPay風のモダン・ポップなデザイン
+ */
+
+:root {
+    /* カラーパレット (PayPay風の白・水色・赤を基調) */
+    --primary-blue: #00A7E9;   /* PayPayアプリに近い水色 */
+    --primary-red: #E60012;    /* はっきりとした赤色 */
+    --bg-color: #F8F9FA;       /* 全体の背景（ごく薄いグレー） */
+    --card-bg: #FFFFFF;        /* カード要素の背景（純白） */
+    --text-main: #222222;      /* メインテキスト（濃いグレー） */
+    --text-sub: #666666;       /* サブテキスト（少し薄いグレー） */
+    --border-color: #E2E8F0;   /* 境界線 */
+    
+    /* フォント設定 (視認性の高いゴシック、数字は丸みを帯びたポップなもの) */
+    --font-main: 'Noto Sans JP', 'Inter', sans-serif;
+    --font-number: 'M PLUS Rounded 1c', sans-serif;
+    
+    /* シャドウと丸み */
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+}
+
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Utility / Typographic */
+.ja { display: block; font-size: 1rem; }
+.en { display: block; font-size: 0.75rem; color: var(--text-sub); margin-top: 2px; }
+.font-bold { font-weight: 700; }
+.accent-color { color: var(--primary-red) !important; }
+
+/* Layout Containers */
+.app-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.app-header {
+    background: var(--primary-red);
+    background: linear-gradient(135deg, var(--primary-red), #ff3b50);
+    color: white;
+    padding: 24px 20px 32px;
+    text-align: center;
+    border-bottom-left-radius: var(--radius-xl);
+    border-bottom-right-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+}
+
+.app-header .app-title .ja {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.app-header .app-title .en {
+    color: rgba(255,255,255,0.8);
+    font-size: 0.85rem;
+}
+
+/* Main Area */
+.app-main {
+    flex: 1;
+    padding: 20px;
+    margin-top: -24px; /* ヘッダーに少し重ねるデザイン */
+}
+
+/* Card Style */
+.card {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 24px;
+    border: 1px solid var(--border-color);
+}
+
+/* Input Forms */
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.input-label .group-badge {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+}
+.badge-a { background-color: var(--primary-blue); }
+.badge-b { background-color: var(--primary-red); }
+.badge-special { background-color: #FFB100; font-size: 1rem; }
+
+/* Inpus Base Styling */
+input[type="number"], select {
+    width: 100%;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    font-size: 1.25rem;
+    font-family: var(--font-number);
+    transition: all 0.2s;
+    outline: none;
+    color: var(--text-main);
+    background-color: var(--bg-color);
+}
+
+input[type="number"]:focus, select:focus {
+    border-color: var(--primary-blue);
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 167, 233, 0.1);
+}
+
+.large-input {
+    font-size: 1.75rem !important;
+    font-weight: bold;
+    padding-left: 48px !important;
+}
+
+/* Prefix & Suffix wrapper for Inputs */
+.input-with-prefix, .input-with-suffix {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-prefix .prefix {
+    position: absolute;
+    left: 16px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-sub);
+}
+
+.input-with-suffix .suffix {
+    position: absolute;
+    right: 16px;
+    color: var(--text-sub);
+    font-size: 1rem;
+}
+
+/* Group people row */
+.people-group-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Ratio Slider */
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.ratio-label {
+    min-width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    border-radius: 50%;
+    color: white;
+    font-weight: bold;
+}
+input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--border-color);
+    outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--primary-blue);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: background 0.15s;
+}
+
+/* Select Box */
+.select-input {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 1em;
+}
+
+/* Toggle Switches */
+.toggles-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: var(--bg-color);
+    padding: 16px;
+    border-radius: var(--radius-md);
+}
+
+.toggle-switch-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider */
+.toggle-switch .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+.toggle-switch .slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+    background-color: var(--primary-red); /* おみくじやエンタメ系は赤で強調 */
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* Buttons */
+.primary-btn, .secondary-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    border: none;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.primary-btn {
+    background: var(--primary-blue);
+    background: linear-gradient(135deg, var(--primary-blue), #00d2ff);
+    color: white;
+    margin-top: 8px;
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,167,233,0.3);
+}
+
+.primary-btn:active {
+    transform: translateY(1px);
+}
+
+.secondary-btn {
+    background: white;
+    color: var(--text-main);
+    border: 2px solid var(--border-color);
+    margin-top: 24px;
+}
+
+.secondary-btn:hover {
+    background: var(--bg-color);
+}
+
+/* Error Message */
+.error-message {
+    color: var(--primary-red);
+    background: #FFEDED;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* Result Area */
+.result-section {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.result-title {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.result-title .ja {
+    font-size: 1.3rem;
+    color: var(--primary-red);
+}
+
+.omikuji-result {
+    background: linear-gradient(135deg, #FFF6E5, #FFE7B3);
+    border: 2px solid #FFBE26;
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-md);
+}
+
+.omikuji-icon {
+    font-size: 2rem;
+    animation: bounce 1s infinite alternate;
+}
+
+@keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-8px); }
+}
+
+.omikuji-text {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #D35400;
+}
+
+/* Each Result Card */
+.result-group {
+    background: var(--bg-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 16px;
+    border-left: 6px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.result-a { border-left-color: var(--primary-blue); }
+.result-b { border-left-color: var(--primary-red); }
+.result-special { border-left-color: #FFB100; background: #FFFDF5; }
+
+.result-group-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.result-amount-display {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    color: var(--text-main);
+}
+
+.result-prefix {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.anim-number {
+    font-family: var(--font-number);
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--text-main);
+    /* ルーレットアニメ中の数字がブレないように等幅フォント的扱いにする工夫 */
+    font-variant-numeric: tabular-nums;
+}
+
+/* シャキーン演出のアニメーション用クラス */
+.anim-bling {
+    animation: bling 0.6s ease-out;
+    color: var(--primary-red);
+}
+
+@keyframes bling {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 1; text-shadow: 0 0 20px gold; }
+    100% { transform: scale(1); opacity: 1; text-shadow: none; }
+}
+
+.result-suffix {
+    font-size: 1rem;
+    color: var(--text-sub);
+}
+
+.result-sub-info {
+    color: var(--text-sub);
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
+/* Summary Row */
+.result-summary {
+    border-top: 2px dashed var(--border-color);
+    margin-top: 24px;
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.summary-row .ja { font-size: 0.95rem; font-weight: bold; display: inline-block;}
+.summary-row .en { font-size: 0.75rem; color: var(--text-sub); display: block; }
+.summary-val {
+    font-family: var(--font-number);
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.highlight-row {
+    background: rgba(0, 167, 233, 0.05);
+    padding: 12px;
+    border-radius: var(--radius-md);
+}
+.highlight-row .summary-val {
+    font-size: 1.4rem;
+}
+
+/* Footer */
+.app-footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-sub);
+    font-size: 0.8rem;
+}
