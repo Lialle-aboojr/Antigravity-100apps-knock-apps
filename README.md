@@ -69,13 +69,14 @@ Complete it. Ship it. Relax. ☕
 | 056 | 📮 郵便番号かんたん検索 (Postal Code Finder) | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/056_PostalCodeFinder/index.html) |
 | 057 | 🎲 エンタメ割り勘電卓 | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/057_PayTiltRoulette/index.html) |
 | 058 | 🚧 404 Error Page Maker | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/058_ErrorPageMaker/index.html) |
+| 059 | 👀 EyeRelax Trainer | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/059_EyeRelaxTrainer/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 58 / 100 ███████████░░░░░░░░░ 58%
+完成: 59 / 100 ███████████░░░░░░░░░ 59%
 ```
 
 ---
