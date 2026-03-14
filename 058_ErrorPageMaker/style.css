@@ -164,7 +164,7 @@ body {
     border-color: var(--app-accent);
 }
 
-input[type="text"], select.custom-select {
+input[type="text"], select.custom-select, select.preset-select {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #cbd5e1;
@@ -176,15 +176,14 @@ input[type="text"], select.custom-select {
     background-color: #fff;
 }
 
-/* datalistの矢印を表示しやすくするためのスタイル（ブラウザ依存） */
-input[type="text"]::-webkit-calendar-picker-indicator {
-    opacity: 1;
-    cursor: pointer;
-}
-
-input[type="text"]:focus, select.custom-select:focus {
+input[type="text"]:focus, select.custom-select:focus, select.preset-select:focus {
     border-color: var(--app-accent);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+select.preset-select {
+    cursor: pointer;
+    background-color: #f8fafc;
 }
 
 /* カラー設定エリア（Color Pickers） */

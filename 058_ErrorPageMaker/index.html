@@ -63,13 +63,14 @@
                                 <option value="small">小 / Small</option>
                             </select>
                         </div>
-                        <input type="text" id="inputHeading" list="headingList" value="404" placeholder="404 または Error">
-                        <datalist id="headingList">
-                            <option value="404"></option>
-                            <option value="Not Found"></option>
-                            <option value="Error 404"></option>
-                            <option value="お探しのページはありません"></option>
-                        </datalist>
+                        <select id="presetHeading" class="preset-select" aria-label="見出しのプリセット選択">
+                            <option value="">--- 選択してください ---</option>
+                            <option value="404 エラー">(日本語) 404 エラー</option>
+                            <option value="お探しのページはありません">(日本語) お探しのページはありません</option>
+                            <option value="404 Not Found">(英語) 404 Not Found</option>
+                            <option value="Error 404">(英語) Error 404</option>
+                        </select>
+                        <input type="text" id="inputHeading" value="404" placeholder="404 または Error">
                     </div>
                     
                     <div class="input-row">
@@ -84,12 +85,14 @@
                                 <option value="small">小 / Small</option>
                             </select>
                         </div>
-                        <input type="text" id="inputMessage" list="messageList" value="Oops! お探しのページは見つかりませんでした。" placeholder="エラーメッセージ">
-                        <datalist id="messageList">
-                            <option value="Oops! お探しのページは見つかりませんでした。"></option>
-                            <option value="The page you requested was not found."></option>
-                            <option value="URLが間違っているか、ページが移動・削除された可能性があります。"></option>
-                        </datalist>
+                        <select id="presetMessage" class="preset-select" aria-label="メッセージのプリセット選択">
+                            <option value="">--- 選択してください ---</option>
+                            <option value="Oops! お探しのページは見つかりませんでした。">(日本語) Oops! お探しのページは見つかりませんでした。</option>
+                            <option value="URLが間違っているか、ページが移動・削除された可能性があります。">(日本語) URLが間違っているか、ページが移動・削除された可能性があります。</option>
+                            <option value="The page you requested was not found.">(英語) The page you requested was not found.</option>
+                            <option value="Sorry, the page you are looking for does not exist.">(英語) Sorry, the page you are looking for does not exist.</option>
+                        </select>
+                        <input type="text" id="inputMessage" value="Oops! お探しのページは見つかりませんでした。" placeholder="エラーメッセージ">
                     </div>
                     
                     <div class="input-row">
@@ -104,12 +107,14 @@
                                 <option value="small">小 / Small</option>
                             </select>
                         </div>
-                        <input type="text" id="inputBtnText" list="btnList" value="ホームへ戻る" placeholder="ホームに戻る">
-                        <datalist id="btnList">
-                            <option value="ホームへ戻る"></option>
-                            <option value="Go to Homepage"></option>
-                            <option value="トップページへ (Top Page)"></option>
-                        </datalist>
+                        <select id="presetBtnText" class="preset-select" aria-label="ボタンテキストのプリセット選択">
+                            <option value="">--- 選択してください ---</option>
+                            <option value="ホームへ戻る">(日本語) ホームへ戻る</option>
+                            <option value="トップページへ">(日本語) トップページへ</option>
+                            <option value="Go to Homepage">(英語) Go to Homepage</option>
+                            <option value="Back to Home">(英語) Back to Home</option>
+                        </select>
+                        <input type="text" id="inputBtnText" value="ホームへ戻る" placeholder="ホームに戻る">
                     </div>
                 </div>
 

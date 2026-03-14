@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const sizeMessage = document.getElementById('sizeMessage');
     const sizeBtn = document.getElementById('sizeBtn');
     
+    // プリセット用セレクトボックス
+    const presetHeading = document.getElementById('presetHeading');
+    const presetMessage = document.getElementById('presetMessage');
+    const presetBtnText = document.getElementById('presetBtnText');
+
     // 入力要素（カラー）
     const colorBg = document.getElementById('colorBg');
     const colorText = document.getElementById('colorText');
@@ -315,6 +320,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if(input.tagName === 'SELECT') {
             input.addEventListener('change', updatePreview);
         }
+    });
+
+    // プリセット用セレクトボックスの値変更時の処理
+    const presets = [
+        { select: presetHeading, input: inputHeading },
+        { select: presetMessage, input: inputMessage },
+        { select: presetBtnText, input: inputBtnText }
+    ];
+    presets.forEach(item => {
+        item.select.addEventListener('change', (e) => {
+            if (e.target.value !== "") {
+                item.input.value = e.target.value;
+                updatePreview();
+            }
+        });
     });
 
     // 初期化時の描画
