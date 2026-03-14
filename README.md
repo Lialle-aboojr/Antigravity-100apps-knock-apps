@@ -66,6 +66,7 @@ Complete it. Ship it. Relax. ☕
 | 053 | ⏳ Memento Time | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/053_MementoTime/index.html) |
 | 054 | 🔄 String Replacer | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/054_StringReplacer/index.html) |
 | 055 | 🗄️ Mood & Shred Contact | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/055_MoodShredContact/index.html) |
+| 056 | 📮 郵便番号かんたん検索 (Postal Code Finder) | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/056_PostalCodeFinder/index.html) |
 
 ---
 
