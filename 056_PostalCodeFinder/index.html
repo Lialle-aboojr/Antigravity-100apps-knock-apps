@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- 文字エンコーディングの指定 -->
+  <meta charset="UTF-8">
+  <!-- レスポンシブ対応のためのビューポート設定 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- SEO用のメタ説明 -->
+  <meta name="description" content="郵便番号を入力して住所を瞬時に検索・コピーできるツール。Postal Code Finder - Search Japanese postal codes and copy addresses instantly.">
+  <!-- ページタイトル -->
+  <title>郵便番号かんたん検索 / Postal Code Finder</title>
+  <!-- ファビコン設定 -->
+  <link rel="icon" href="favicon.png">
+  <!-- Google Fonts: Noto Sans JP（日本語）と Inter（英語） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- 外部CSSファイルの読み込み -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== ヘッダー ===== -->
+  <header class="header">
+    <div class="header-inner">
+      <!-- ロゴアイコン（〒マーク） -->
+      <div class="header-logo">
+        <span class="header-logo-icon">〒</span>
+      </div>
+      <!-- アプリ名（日英併記） -->
+      <div class="header-text">
+        <h1 class="header-title">郵便番号かんたん検索</h1>
+        <p class="header-subtitle">Postal Code Finder</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== メインコンテンツ ===== -->
+  <main class="main">
+
+    <!-- 検索カード -->
+    <section class="search-card" aria-label="郵便番号検索フォーム">
+      <!-- カードヘッダー -->
+      <div class="card-header">
+        <span class="card-header-icon">🔍</span>
+        <h2 class="card-header-title">郵便番号を入力 / Enter Postal Code</h2>
+      </div>
+
+      <!-- 検索フォーム -->
+      <form id="searchForm" class="search-form" autocomplete="off">
+        <div class="input-group">
+          <!-- 郵便番号入力欄 -->
+          <div class="input-wrapper">
+            <span class="input-prefix">〒</span>
+            <input
+              type="text"
+              id="postalCodeInput"
+              class="postal-input"
+              placeholder="例 / e.g. 100-0001"
+              maxlength="8"
+              inputmode="numeric"
+              aria-label="郵便番号入力"
+            >
+          </div>
+          <!-- 検索ボタン -->
+          <button type="submit" id="searchButton" class="search-button">
+            <span class="button-icon">🔎</span>
+            <span class="button-text">検索 / Search</span>
+          </button>
+        </div>
+        <!-- 入力ヒント -->
+        <p class="input-hint">
+          ハイフンあり・なし両方OK（例: 100-0001 または 1000001）<br>
+          With or without hyphen (e.g. 100-0001 or 1000001)
+        </p>
+      </form>
+    </section>
+
+    <!-- エラーメッセージ表示エリア -->
+    <div id="errorArea" class="error-area" role="alert" aria-live="polite" hidden>
+      <div class="error-content">
+        <span class="error-icon">⚠️</span>
+        <p id="errorMessage" class="error-message"></p>
+      </div>
+    </div>
+
+    <!-- 検索結果表示エリア -->
+    <section id="resultArea" class="result-area" aria-label="検索結果" hidden>
+      <div class="result-card">
+        <!-- 結果ヘッダー -->
+        <div class="result-header">
+          <span class="result-header-icon">📍</span>
+          <h3 class="result-header-title">検索結果 / Result</h3>
+        </div>
+
+        <!-- 郵便番号表示 -->
+        <div class="result-postal">
+          <span class="result-postal-label">〒</span>
+          <span id="resultPostalCode" class="result-postal-code"></span>
+        </div>
+
+        <!-- 住所表示 -->
+        <div class="result-address-wrapper">
+          <p id="resultAddress" class="result-address"></p>
+        </div>
+
+        <!-- コピーボタン -->
+        <button type="button" id="copyButton" class="copy-button">
+          <span class="copy-icon" id="copyIcon">📋</span>
+          <span class="copy-text" id="copyText">住所をコピー / Copy Address</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ローディングインジケーター -->
+    <div id="loadingArea" class="loading-area" hidden>
+      <div class="loading-spinner"></div>
+      <p class="loading-text">検索中... / Searching...</p>
+    </div>
+
+  </main>
+
+  <!-- ===== フッター ===== -->
+  <footer class="footer">
+    <p class="footer-text">&copy; 2025 郵便番号かんたん検索 / Postal Code Finder</p>
+    <p class="footer-api-credit">
+      Powered by <a href="https://zipcloud.ibsnet.co.jp/" target="_blank" rel="noopener noreferrer">zipcloud API</a>
+    </p>
+  </footer>
+
+  <!-- 外部JavaScriptファイルの読み込み -->
+  <script src="script.js"></script>
+</body>
+</html>
