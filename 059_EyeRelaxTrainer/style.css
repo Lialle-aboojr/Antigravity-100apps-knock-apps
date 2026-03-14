@@ -1,0 +1,488 @@
+/* 
+ * EyeRelax Trainer - Styles
+ * Theme: Relaxing Green & Blue, Clean Healthcare look
+ */
+
+:root {
+    /* Colors */
+    --clr-bg: #f4f9f4; /* Very light mint */
+    --clr-surface: #ffffff;
+    --clr-primary: #2d6a4f; /* Forest green */
+    --clr-secondary: #52b788; /* Soft green */
+    --clr-accent: #0077b6; /* Calming blue */
+    --clr-text-main: #1b4332;
+    --clr-text-sub: #40916c;
+    --clr-border: #d8e2dc;
+    
+    /* Layout */
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --shadow-sm: 0 2px 8px rgba(45, 106, 79, 0.08);
+    --shadow-md: 0 4px 16px rgba(45, 106, 79, 0.12);
+    --shadow-inner: inset 0 2px 4px rgba(0,0,0,0.05);
+
+    /* Typography */
+    --font-main: 'Noto Sans JP', 'Inter', sans-serif;
+    
+    /* Transition */
+    --trans-fast: 0.15s ease;
+    --trans-normal: 0.3s ease;
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --clr-bg: #0f1a15;
+        --clr-surface: #172a21;
+        --clr-primary: #74c69d;
+        --clr-secondary: #40916c;
+        --clr-accent: #48cae4;
+        --clr-text-main: #e9f5f0;
+        --clr-text-sub: #b7e4c7;
+        --clr-border: #2d4a3e;
+        --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+}
+
+/* Basic Reset & Typography */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-main);
+    background-color: var(--app-bg);
+    color: var(--app-text-main);
+    line-height: 1.6;
+    background-color: var(--clr-bg);
+    color: var(--clr-text-main);
+}
+
+/* Bilingual Text Utilities */
+.ja { display: block; font-size: 1rem; font-weight: 600; }
+.en { display: block; font-size: 0.75rem; color: var(--clr-text-sub); margin-top: 2px; }
+
+/* Global Utilities */
+.hidden {
+    display: none !important;
+}
+
+/* Container */
+.app-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 16px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--clr-border);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+}
+
+.title-group h1 {
+    font-size: 1.5rem;
+    color: var(--clr-primary);
+    letter-spacing: -0.5px;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.title-group .subtitle {
+    font-size: 0.85rem;
+    color: var(--clr-text-sub);
+}
+
+/* Timer Display */
+.timer-display {
+    background: var(--clr-surface);
+    padding: 8px 24px;
+    border-radius: 50px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--clr-border);
+    min-width: 120px;
+}
+
+.time-label {
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.time-value {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--clr-accent);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.time-value.urgent {
+    color: #e63946; /* Red when time is almost up */
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.card {
+    background: var(--clr-surface);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--clr-border);
+}
+
+.section-title {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Menu Grid */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.menu-btn {
+    background: var(--clr-bg);
+    border: 2px solid var(--clr-border);
+    border-radius: var(--radius-md);
+    padding: 20px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+    transition: var(--trans-normal);
+    color: var(--clr-text-main);
+}
+
+.menu-btn:hover {
+    border-color: var(--clr-secondary);
+    background: var(--clr-surface);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.menu-btn.active {
+    border-color: var(--clr-primary);
+    background: rgba(82, 183, 136, 0.1);
+    box-shadow: 0 0 0 2px var(--clr-primary);
+}
+
+.menu-icon {
+    font-size: 2rem;
+    background: var(--clr-surface);
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Timer Settings (inside menu area) */
+.timer-settings {
+    background: var(--clr-bg);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px dashed var(--clr-border);
+    text-align: center;
+}
+
+.setting-label {
+    margin-bottom: 12px;
+}
+
+.duration-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+}
+
+.duration-btn {
+    background: var(--clr-surface);
+    border: 1px solid var(--clr-border);
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--clr-text-sub);
+    transition: var(--trans-fast);
+}
+
+.duration-btn:hover {
+    background: var(--clr-bg);
+    border-color: var(--clr-secondary);
+}
+
+.duration-btn.active {
+    background: var(--clr-primary);
+    color: white;
+    border-color: var(--clr-primary);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Training Views */
+.training-display-section {
+    position: relative;
+    overflow: hidden;
+}
+
+.view-panel {
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.view-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 16px;
+    gap: 16px;
+}
+
+.view-header h3 .ja {
+    font-size: 1.2rem;
+    color: var(--clr-primary);
+}
+
+/* Forms & Selects */
+.pattern-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--clr-bg);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--clr-border);
+}
+
+.custom-select {
+    padding: 6px 32px 6px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--clr-border);
+    background-color: var(--clr-surface);
+    color: var(--clr-text-main);
+    font-family: var(--font-main);
+    font-size: 0.95rem;
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2340916c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+}
+
+.custom-select:focus {
+    border-color: var(--clr-primary);
+    box-shadow: 0 0 0 2px rgba(45, 106, 79, 0.2);
+}
+
+.score-display {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--clr-accent);
+    background: rgba(0, 119, 182, 0.1);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+}
+
+/* Canvas Wrappers */
+.canvas-wrapper {
+    position: relative;
+    width: 100%;
+    /* Keep aspect ratio of 800x400 (2:1) */
+    aspect-ratio: 2 / 1;
+    background: var(--clr-bg);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--clr-border);
+    overflow: hidden;
+    box-shadow: var(--shadow-inner);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* Gabor Patch adjustments */
+.gabor-wrapper canvas {
+    cursor: pointer;
+}
+
+/* Overlays (Start Buttons) */
+.overlay-controls {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255, 255, 255, 0.85); /* Light blur effect background */
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    transition: opacity 0.3s ease;
+}
+
+@media (prefers-color-scheme: dark) {
+    .overlay-controls {
+        background: rgba(23, 42, 33, 0.85);
+    }
+}
+
+.start-btn {
+    background: var(--clr-accent);
+    color: white;
+    border: none;
+    padding: 16px 48px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
+    transition: var(--trans-normal);
+}
+
+.start-btn:hover {
+    transform: scale(1.05);
+    background: #023e8a;
+    box-shadow: 0 6px 16px rgba(0, 119, 182, 0.4);
+}
+.start-btn .en {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Blink Training Specifics */
+.blink-animation-area {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2 / 1;
+    background: var(--clr-bg);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--clr-border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+}
+
+.blink-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background-color: var(--clr-secondary);
+    transition: all 0.3s ease;
+    box-shadow: 0 0 40px rgba(82, 183, 136, 0.4);
+}
+
+/* Animation classes for JS to toggle */
+.blink-circle.is-closing {
+    /* Compress to a line */
+    transform: scaleY(0.1) scaleX(1.2);
+    /* Darken to signify tightly closed eye */
+    background-color: var(--clr-primary);
+    box-shadow: 0 0 10px rgba(45, 106, 79, 0.6);
+}
+
+.blink-circle.is-opening {
+    /* Expand widely */
+    transform: scale(1.2);
+    background-color: var(--clr-secondary);
+    box-shadow: 0 0 60px rgba(82, 183, 136, 0.6);
+}
+
+.blink-instruction {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--clr-primary);
+    text-align: center;
+    min-height: 60px; /* Prevent jitter */
+}
+.blink-instruction .en { font-size: 1rem; }
+
+.blink-tips {
+    margin-top: 16px;
+    list-style: none;
+    color: var(--clr-text-sub);
+    font-size: 0.95rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Footer */
+.app-footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--clr-text-sub);
+    font-size: 0.85rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .menu-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .canvas-wrapper, .blink-animation-area {
+        aspect-ratio: auto;
+        height: 300px; /* Fixed height for small screens */
+    }
+    
+    .view-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

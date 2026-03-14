@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="長時間のPC・スマホ作業で目の疲れや視力低下を感じている人のためのリラックス＆眼球トレーニングアプリ / EyeRelax Trainer">
+    <title>EyeRelax Trainer</title>
+    
+    <!-- ファビコンの指定 (フォールバック用SVG絵文字込み) -->
+    <link rel="icon" href="favicon.png" type="image/png">
+    <!-- ファビコンが読み込めなかった場合のフォールバック（JSで処理します） -->
+    
+    <!-- フォント読み込み (Google Fonts: Noto Sans JP & Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- スタイルシート -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- ヘッダー -->
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="logo-icon">🌿</span>
+                <div class="title-group">
+                    <h1>EyeRelax Trainer</h1>
+                    <span class="subtitle ja">目の疲れリセット＆トレーニング</span>
+                </div>
+            </div>
+            <div class="timer-display" id="globalTimer" aria-live="polite">
+                <span class="time-label en">Time Left</span>
+                <span class="time-value">00:00</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            
+            <!-- トレーニングメニュー選択 -->
+            <section class="menu-section card">
+                <h2 class="section-title">
+                    <span class="ja">トレーニングを選ぶ</span>
+                    <span class="en">Select Training</span>
+                </h2>
+                
+                <div class="menu-grid">
+                    <!-- Menu 1: Eye Tracking -->
+                    <button class="menu-btn active" data-target="trackingView" aria-pressed="true">
+                        <span class="menu-icon">👀</span>
+                        <div class="menu-text">
+                            <span class="ja">眼球運動</span>
+                            <span class="en">Eye Tracking</span>
+                        </div>
+                    </button>
+                    
+                    <!-- Menu 2: Gabor Patch -->
+                    <button class="menu-btn" data-target="gaborView" aria-pressed="false">
+                        <span class="menu-icon">🎯</span>
+                        <div class="menu-text">
+                            <span class="ja">ガボール・パッチ</span>
+                            <span class="en">Gabor Patch</span>
+                        </div>
+                    </button>
+                    
+                    <!-- Menu 3: Blink Training -->
+                    <button class="menu-btn" data-target="blinkView" aria-pressed="false">
+                        <span class="menu-icon">😌</span>
+                        <div class="menu-text">
+                            <span class="ja">眼輪筋トレ（まばたき）</span>
+                            <span class="en">Blink Training</span>
+                        </div>
+                    </button>
+                </div>
+                
+                <!-- 共通のタイマー設定エリア -->
+                <div class="timer-settings">
+                    <label class="setting-label">
+                        <span class="ja">セッション時間</span>
+                        <span class="en">Session Duration</span>
+                    </label>
+                    <div class="duration-options">
+                        <button class="duration-btn active" data-time="60">1 Min</button>
+                        <button class="duration-btn" data-time="180">3 Min</button>
+                        <button class="duration-btn" data-time="300">5 Min</button>
+                        <button class="duration-btn" data-time="0">Free (No Timer)</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- トレーニング表示エリア（コンテンツ切り替え） -->
+            <section class="training-display-section card">
+                
+                <!-- 1. Eye Tracking View -->
+                <div id="trackingView" class="view-panel active">
+                    <div class="view-header">
+                        <h3>
+                            <span class="ja">画面上のターゲットを目で追ってください</span>
+                            <span class="en">Follow the moving target with your eyes</span>
+                        </h3>
+                        <div class="pattern-selector">
+                            <label for="trackingPattern">
+                                <span class="ja">動きのパターン:</span>
+                                <span class="en">Pattern:</span>
+                            </label>
+                            <select id="trackingPattern" class="custom-select">
+                                <option value="random">ランダム / Random</option>
+                                <option value="figure8">8の字 / Figure-8</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="trackingCanvas" width="800" height="400" aria-label="眼球運動キャンバス"></canvas>
+                        <div class="overlay-controls" id="trackingOverlay">
+                            <button class="start-btn" id="startTrackingBtn">
+                                <span class="ja">スタート</span>
+                                <span class="en">Start</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Gabor Patch View -->
+                <div id="gaborView" class="view-panel hidden">
+                    <div class="view-header">
+                        <h3>
+                            <span class="ja">中央の模様と同じものを探してタップしてください</span>
+                            <span class="en">Find and tap the pattern matching the center one</span>
+                        </h3>
+                        <div class="score-display">
+                            <span class="ja">スコア: <span id="gaborScore">0</span></span>
+                            <span class="en">Score: <span id="gaborScoreEn">0</span></span>
+                        </div>
+                    </div>
+                    <div class="canvas-wrapper gabor-wrapper">
+                        <canvas id="gaborCanvas" width="800" height="400" aria-label="ガボールパッチキャンバス"></canvas>
+                        <div class="overlay-controls" id="gaborOverlay">
+                            <button class="start-btn" id="startGaborBtn">
+                                <span class="ja">スタート</span>
+                                <span class="en">Start</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Blink Training View -->
+                <div id="blinkView" class="view-panel hidden">
+                    <div class="view-header">
+                        <h3>
+                            <span class="ja">円のアニメーションに合わせてまばたきをします</span>
+                            <span class="en">Blink in sync with the circle animation</span>
+                        </h3>
+                    </div>
+                    <div class="blink-animation-area">
+                        <div class="blink-circle" id="blinkCircle"></div>
+                        <p class="blink-instruction" id="blinkInstruction">
+                            <span class="ja">準備ができたらスタート</span>
+                            <span class="en">Press Start when ready</span>
+                        </p>
+                        <div class="overlay-controls" id="blinkOverlay">
+                            <button class="start-btn" id="startBlinkBtn">
+                                <span class="ja">スタート</span>
+                                <span class="en">Start</span>
+                            </button>
+                        </div>
+                    </div>
+                    <ul class="blink-tips ja">
+                        <li>※ 3秒間「ギュッ！」と強く目を閉じます。</li>
+                        <li>※ 3秒間「パッ！」と大きく目を開きます。</li>
+                        <li>※ 呼吸を止めずにリラックスして行いましょう。</li>
+                    </ul>
+                </div>
+
+            </section>
+        </main>
+        
+        <footer class="app-footer">
+            <p>&copy; 2026 EyeRelax Trainer - Antigravity 100 Apps Knock</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript 読み込み -->
+    <script src="script.js"></script>
+</body>
+</html>
