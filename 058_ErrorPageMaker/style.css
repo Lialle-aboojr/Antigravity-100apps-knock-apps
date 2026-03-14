@@ -98,9 +98,9 @@ body {
     gap: 24px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 800px) {
     .dashboard {
-        grid-template-columns: 350px 1fr;
+        grid-template-columns: 380px 1fr;
     }
 }
 
@@ -134,14 +134,35 @@ body {
 .group-title .ja { font-weight: bold; }
 
 .input-row {
-    margin-bottom: 16px;
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.input-row label .ja { font-size: 0.9rem; font-weight: 600; }
-.input-row label .en { font-size: 0.7rem; }
+.input-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.input-header label .ja { font-size: 0.9rem; font-weight: 600; }
+.input-header label .en { font-size: 0.7rem; }
+
+/* サイズ選択用のセレクトボックスのスタイル */
+.size-select {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--radius-md);
+    background-color: var(--app-bg);
+    color: var(--app-text-main);
+    cursor: pointer;
+    outline: none;
+}
+.size-select:focus {
+    border-color: var(--app-accent);
+}
 
 input[type="text"], select.custom-select {
     width: 100%;
@@ -152,6 +173,13 @@ input[type="text"], select.custom-select {
     font-size: 0.95rem;
     transition: all 0.2s;
     outline: none;
+    background-color: #fff;
+}
+
+/* datalistの矢印を表示しやすくするためのスタイル（ブラウザ依存） */
+input[type="text"]::-webkit-calendar-picker-indicator {
+    opacity: 1;
+    cursor: pointer;
 }
 
 input[type="text"]:focus, select.custom-select:focus {
@@ -202,6 +230,7 @@ input[type="color"] {
     cursor: pointer;
     padding: 0;
     overflow: hidden;
+    background: none;
 }
 
 input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }

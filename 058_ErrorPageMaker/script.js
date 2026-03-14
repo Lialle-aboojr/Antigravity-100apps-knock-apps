@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputMessage = document.getElementById('inputMessage');
     const inputBtnText = document.getElementById('inputBtnText');
     const selectIcon = document.getElementById('selectIcon');
+
+    // フォントサイズ選択要素（追加）
+    const sizeHeading = document.getElementById('sizeHeading');
+    const sizeMessage = document.getElementById('sizeMessage');
+    const sizeBtn = document.getElementById('sizeBtn');
     
     // 入力要素（カラー）
     const colorBg = document.getElementById('colorBg');
@@ -53,6 +58,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- 各サイズのCSSマッピング ---
+    const headingSizeMap = {
+        large: '10rem',
+        medium: '8rem',
+        small: '5rem'
+    };
+    const headingMHSizeMap = {
+        large: '7rem',
+        medium: '5rem',
+        small: '3.5rem'
+    }
+    const messageSizeMap = {
+        large: '1.5rem',
+        medium: '1.2rem',
+        small: '1rem'
+    };
+    const btnSizeMap = {
+        large: '1.25rem',
+        medium: '1.1rem',
+        small: '0.95rem'
+    };
+    const btnPaddingMap = {
+        large: '18px 48px',
+        medium: '15px 40px',
+        small: '12px 32px'
+    };
+
     // --- 3. リアルタイム・プレビューの更新処理 ---
     function updatePreview() {
         // 現在の入力値を取得してサニタイズ
@@ -63,6 +95,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const bg = colorBg.value;
         const text = colorText.value;
         const accent = colorAccent.value;
+
+        // サイズ選択の取得
+        const sH = sizeHeading.value;
+        const sM = sizeMessage.value;
+        const sB = sizeBtn.value;
 
         // カラーコードのラベル表示を更新
         valColorBg.textContent = bg;
@@ -76,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         prvMessage.innerHTML = message;
         prvBtn.innerHTML = btnText;
 
-        // 【2】プレビューDOMのスタイルを直接変更（背景・文字色・アクセント色）
+        // 【2】プレビューDOMのスタイルを直接変更（背景・文字色・アクセント色・フォントサイズ）
         // アプリケーション内のコンテナに対するスタイル適用
         previewContainer.style.backgroundColor = bg;
         previewContainer.style.color = text;
@@ -85,25 +122,28 @@ document.addEventListener('DOMContentLoaded', () => {
         prvIcon.style.marginBottom = '20px';
         prvIcon.style.filter = 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))';
         
-        prvHeading.style.fontSize = '8rem';
+        // 見出しの適用
+        prvHeading.style.fontSize = headingSizeMap[sH];
         prvHeading.style.fontWeight = '900';
         prvHeading.style.lineHeight = '1';
         prvHeading.style.margin = '0 0 10px 0';
         prvHeading.style.color = text;
+        prvHeading.style.letterSpacing = '-2px';
         
-        prvMessage.style.fontSize = '1.25rem';
+        // メッセージの適用
+        prvMessage.style.fontSize = messageSizeMap[sM];
         prvMessage.style.marginBottom = '40px';
         prvMessage.style.opacity = '0.8';
         
-        // ボタンのスタイル
+        // ボタンのスタイルとサイズの適用
         prvBtn.style.display = 'inline-block';
-        prvBtn.style.padding = '14px 32px';
+        prvBtn.style.padding = btnPaddingMap[sB];
         prvBtn.style.backgroundColor = accent;
         prvBtn.style.color = '#ffffff';
         prvBtn.style.textDecoration = 'none';
         prvBtn.style.borderRadius = '50px'; // pill shape
         prvBtn.style.fontWeight = 'bold';
-        prvBtn.style.fontSize = '1.1rem';
+        prvBtn.style.fontSize = btnSizeMap[sB];
         prvBtn.style.transition = 'transform 0.2s, box-shadow 0.2s';
         prvBtn.style.boxShadow = `0 4px 14px ${accent}66`; // 発光エフェクト
 
@@ -117,12 +157,19 @@ document.addEventListener('DOMContentLoaded', () => {
         prvContent.style.padding = '40px';
 
         // 生成されるコードを再生成する
-        generateCode(heading, message, btnText, icon, bg, text, accent);
+        generateCode(heading, message, btnText, icon, bg, text, accent, sH, sM, sB);
     }
 
     // --- 4. 完全なHTML/CSSコードの生成 ---
     // ここで生成された文字列が、ユーザーがコピーする最終成果物となります。
-    function generateCode(heading, message, btnText, icon, bg, text, accent) {
+    function generateCode(heading, message, btnText, icon, bg, text, accent, sH, sM, sB) {
+        
+        const cssHeadingSize = headingSizeMap[sH];
+        const cssHeadingMHSize = headingMHSizeMap[sH];
+        const cssMessageSize = messageSizeMap[sM];
+        const cssBtnSize = btnSizeMap[sB];
+        const cssBtnPadding = btnPaddingMap[sB];
+
         const fullHTML = `<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -160,7 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         .error-container {
             padding: 40px 20px;
-            max-width: 600px;
+            max-width: 800px;
             animation: fadeIn 0.8s ease-out;
         }
 
@@ -173,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         .heading {
-            font-size: 8rem;
+            font-size: ${cssHeadingSize};
             font-weight: 900;
             margin: 0 0 10px 0;
             line-height: 1;
@@ -181,7 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         .message {
-            font-size: 1.2rem;
+            font-size: ${cssMessageSize};
             opacity: 0.8;
             margin-bottom: 40px;
             line-height: 1.6;
@@ -189,13 +236,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         .home-btn {
             display: inline-block;
-            padding: 16px 40px;
+            padding: ${cssBtnPadding};
             background-color: var(--accent-color);
             color: #ffffff;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: ${cssBtnSize};
             transition: all 0.2s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
@@ -220,9 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         /* レスポンシブ対応 */
         @media (max-width: 600px) {
-            .heading { font-size: 6rem; }
+            .heading { font-size: ${cssHeadingMHSize}; }
             .icon { font-size: 80px; }
-            .message { font-size: 1rem; }
         }
     </style>
 </head>
@@ -257,10 +303,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 6. イベントリスナーの登録 ---
     // 全ての入力要素（テキスト・セレクト・カラー）の変更時にプレビューを更新する
-    const inputs = [inputHeading, inputMessage, inputBtnText, selectIcon, colorBg, colorText, colorAccent];
+    const inputs = [
+        inputHeading, inputMessage, inputBtnText, selectIcon, 
+        sizeHeading, sizeMessage, sizeBtn,
+        colorBg, colorText, colorAccent
+    ];
     inputs.forEach(input => {
-        // キー入力をリアルタイムで取得するため 'input' イベントを使用
+        // キー入力をリアルタイムで取得するため 'input' などをイベントとして使用
         input.addEventListener('input', updatePreview);
+        // セレクトボックスの変更検知用に 'change' も追加
+        if(input.tagName === 'SELECT') {
+            input.addEventListener('change', updatePreview);
+        }
     });
 
     // 初期化時の描画

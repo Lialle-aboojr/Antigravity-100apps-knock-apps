@@ -52,28 +52,64 @@
                     </h3>
                     
                     <div class="input-row">
-                        <label for="inputHeading">
-                            <span class="ja">見出し</span>
-                            <span class="en">Heading</span>
-                        </label>
-                        <!-- 入力値のサニタイズはJS側で行います -->
-                        <input type="text" id="inputHeading" value="404" placeholder="404 または Error">
+                        <div class="input-header">
+                            <label for="inputHeading">
+                                <span class="ja">見出し</span>
+                                <span class="en">Heading</span>
+                            </label>
+                            <select id="sizeHeading" class="size-select" aria-label="見出しのフォントサイズ">
+                                <option value="large">大 / Large</option>
+                                <option value="medium" selected>中 / Medium</option>
+                                <option value="small">小 / Small</option>
+                            </select>
+                        </div>
+                        <input type="text" id="inputHeading" list="headingList" value="404" placeholder="404 または Error">
+                        <datalist id="headingList">
+                            <option value="404"></option>
+                            <option value="Not Found"></option>
+                            <option value="Error 404"></option>
+                            <option value="お探しのページはありません"></option>
+                        </datalist>
                     </div>
                     
                     <div class="input-row">
-                        <label for="inputMessage">
-                            <span class="ja">メインメッセージ</span>
-                            <span class="en">Main Message</span>
-                        </label>
-                        <input type="text" id="inputMessage" value="Oops! お探しのページは見つかりませんでした。" placeholder="エラーメッセージ">
+                        <div class="input-header">
+                            <label for="inputMessage">
+                                <span class="ja">メインメッセージ</span>
+                                <span class="en">Main Message</span>
+                            </label>
+                            <select id="sizeMessage" class="size-select" aria-label="メッセージのフォントサイズ">
+                                <option value="large">大 / Large</option>
+                                <option value="medium" selected>中 / Medium</option>
+                                <option value="small">小 / Small</option>
+                            </select>
+                        </div>
+                        <input type="text" id="inputMessage" list="messageList" value="Oops! お探しのページは見つかりませんでした。" placeholder="エラーメッセージ">
+                        <datalist id="messageList">
+                            <option value="Oops! お探しのページは見つかりませんでした。"></option>
+                            <option value="The page you requested was not found."></option>
+                            <option value="URLが間違っているか、ページが移動・削除された可能性があります。"></option>
+                        </datalist>
                     </div>
                     
                     <div class="input-row">
-                        <label for="inputBtnText">
-                            <span class="ja">ボタンのテキスト</span>
-                            <span class="en">Button Text</span>
-                        </label>
-                        <input type="text" id="inputBtnText" value="ホームへ戻る" placeholder="ホームに戻る">
+                        <div class="input-header">
+                            <label for="inputBtnText">
+                                <span class="ja">ボタンのテキスト</span>
+                                <span class="en">Button Text</span>
+                            </label>
+                            <select id="sizeBtn" class="size-select" aria-label="ボタンテキストのフォントサイズ">
+                                <option value="large">大 / Large</option>
+                                <option value="medium" selected>中 / Medium</option>
+                                <option value="small">小 / Small</option>
+                            </select>
+                        </div>
+                        <input type="text" id="inputBtnText" list="btnList" value="ホームへ戻る" placeholder="ホームに戻る">
+                        <datalist id="btnList">
+                            <option value="ホームへ戻る"></option>
+                            <option value="Go to Homepage"></option>
+                            <option value="トップページへ (Top Page)"></option>
+                        </datalist>
                     </div>
                 </div>
 
