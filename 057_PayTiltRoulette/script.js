@@ -6,6 +6,14 @@
 //=========================================================
 // DOM要素の取得
 //=========================================================
+// 割り勘モード切り替え
+const splitModes = document.querySelectorAll('input[name="splitMode"]');
+const groupBContainer = document.getElementById('groupBContainer');
+const ratioContainer = document.getElementById('ratioContainer');
+const badgeA = document.getElementById('badgeA');
+const labelAJa = document.getElementById('labelAJa');
+const labelAEn = document.getElementById('labelAEn');
+
 // 入力要素
 const totalAmountInput = document.getElementById('totalAmount');
 const groupAPeopleInput = document.getElementById('groupAPeople');
@@ -43,6 +51,28 @@ const balanceVal = document.getElementById('balanceVal');
 // イベントリスナーの設定
 //=========================================================
 
+// 割り勘モードの切り替えによってUI操作
+splitModes.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+        if (e.target.value === 'normal') {
+            // 通常割り勘
+            groupBContainer.hidden = true;
+            ratioContainer.hidden = true;
+            badgeA.hidden = true;
+            labelAJa.textContent = "人数";
+            labelAEn.textContent = "People";
+            groupBPeopleInput.value = ""; // リセットしておく
+        } else {
+            // グループ・傾斜割り勘
+            groupBContainer.hidden = false;
+            ratioContainer.hidden = false;
+            badgeA.hidden = false;
+            labelAJa.textContent = "グループA 人数";
+            labelAEn.textContent = "Group A People";
+        }
+    });
+});
+
 // スライダーを動かした時にAとBの比率をUIに即座に反映する
 ratioSlider.addEventListener('input', (e) => {
     const valA = parseInt(e.target.value, 10);
@@ -52,15 +82,28 @@ ratioSlider.addEventListener('input', (e) => {
     ratioLabelB.textContent = valB;
 });
 
+// 全角半角変換（数字のみ）の補助関数
+const toHalfWidthNum = (val) => {
+    if (!val && val !== 0) return 0;
+    // 全角数字を半角数字に変換
+    const str = String(val).replace(/[０-９]/g, (s) => String.fromCharCode(s.charCodeAt(0) - 0xfee0));
+    // 半角数字以外を除去（ハイフンなども防御）
+    const numPart = str.replace(/[^0-9]/g, '');
+    return parseInt(numPart, 10) || 0;
+};
+
 // 計算ボタンが押された時の処理
 calculateBtn.addEventListener('click', () => {
-    // 既存のエラーを隠す
     hideError();
     
-    // 1. 入力値の取得とバリデーション (検証)
-    const total = parseInt(totalAmountInput.value, 10);
-    const numA = parseInt(groupAPeopleInput.value, 10) || 0;
-    const numB = parseInt(groupBPeopleInput.value, 10) || 0;
+    // 現在のモードを取得
+    const isNormalMode = document.querySelector('input[name="splitMode"]:checked').value === 'normal';
+    
+    // 1. 入力値の取得とバリデーション (全角入力からの変換を挟む)
+    const total = toHalfWidthNum(totalAmountInput.value);
+    const numA = toHalfWidthNum(groupAPeopleInput.value);
+    const numB = isNormalMode ? 0 : toHalfWidthNum(groupBPeopleInput.value);
+    
     const ratioA = parseInt(ratioSlider.value, 10);
     const ratioB = 10 - ratioA;
     const roundStep = parseInt(roundingSelect.value, 10);
@@ -69,12 +112,12 @@ calculateBtn.addEventListener('click', () => {
 
     const totalPeople = numA + numB;
 
-    if (isNaN(total) || total <= 0) {
+    if (total <= 0) {
         showError("支払総額を正しく入力してください。");
         return;
     }
     if (totalPeople === 0) {
-        showError("グループAかB、少なくとも1人以上の人数を入力してください。");
+        showError(isNormalMode ? "人数を入力してください。" : "グループAかB、少なくとも1人以上の人数を入力してください。");
         return;
     }
 
@@ -83,15 +126,12 @@ calculateBtn.addEventListener('click', () => {
     let effNumA = numA; // 計算上の重み考慮用人数
     let effNumB = numB;
 
+    // おみくじモードがONで、かつ参加者が2名以上いる場合のみ抽選
     if (isOmikuji && totalPeople > 1) {
-        // 無料(TADA) か ゴチ(GOCHI) をランダム抽選。
-        // TADA: その人の支払いは0円。
-        // GOCHI: その人の支払いは、通常の同じグループの人の「2倍」の重みとする（エンタメ的な多め負担）。
         const options = [];
         if (numA > 0) { options.push('A_TADA', 'A_GOCHI'); }
         if (numB > 0) { options.push('B_TADA', 'B_GOCHI'); }
         
-        // 当たりハズレをランダムに決定 (20%の確率で「何も起きない（NONE）」を含めるのもアリだが、エンタメ全振りのため必ず何か起きる仕様)
         const choice = options[Math.floor(Math.random() * options.length)];
         
         switch(choice) {
@@ -113,15 +153,15 @@ calculateBtn.addEventListener('click', () => {
                 omikujiResult = { group: 'B', type: 'GOCHI', labelJa: 'ゴチ(多め)', labelEn: 'Treat' };
                 break;
         }
-    } else if (isOmikuji && totalPeople <= 1) {
-        // 1人しかいない時はおみくじ無効
+    } else {
+        // 例えトグルがONでも処理条件を満たさなければOFFに
         isOmikuji = false;
+        omikujiResult = null;
     }
 
     // 3. 傾斜計算の実行
-    // 各グループのトータル重み
-    const weightA = effNumA * ratioA;
-    const weightB = effNumB * ratioB;
+    const weightA = isNormalMode ? effNumA : effNumA * ratioA;
+    const weightB = isNormalMode ? 0 : effNumB * ratioB;
     const totalWeight = weightA + weightB;
 
     let basePayA = 0;
@@ -130,8 +170,8 @@ calculateBtn.addEventListener('click', () => {
     if (totalWeight > 0) {
         // 1重みあたりの金額
         const unitRate = total / totalWeight;
-        basePayA = unitRate * ratioA;
-        basePayB = unitRate * ratioB;
+        basePayA = isNormalMode ? unitRate : unitRate * ratioA;
+        basePayB = isNormalMode ? 0 : unitRate * ratioB;
     }
 
     // 端数処理（切り上げ）
@@ -146,7 +186,6 @@ calculateBtn.addEventListener('click', () => {
         if (omikujiResult.type === 'TADA') {
             paySpecial = 0; // 無料
         } else if (omikujiResult.type === 'GOCHI') {
-            // ゴチの人は自分の属するグループのベース単価×2 を払う（重み付けに対応）
             if (omikujiResult.group === 'A') paySpecial = roundUp(basePayA * 2, roundStep);
             if (omikujiResult.group === 'B') paySpecial = roundUp(basePayB * 2, roundStep);
         }
@@ -167,7 +206,7 @@ calculateBtn.addEventListener('click', () => {
     const balance = totalCollected - total;
 
     // 5. 結果画面への描画準備
-    prepareResultUI(numA, numB, normalNumA, normalNumB, payA, payB, paySpecial, omikujiResult, totalCollected, balance);
+    prepareResultUI(isNormalMode, normalNumA, normalNumB, omikujiResult, totalCollected, balance);
 
     // 6. 結果の表示とアニメーションの実行
     resultArea.hidden = false;
@@ -176,7 +215,7 @@ calculateBtn.addEventListener('click', () => {
 
     if (doAnimation) {
         // 鑑定団風ルーレットアニメーション
-        runRouletteAnimation(payA, payB, paySpecial, omikujiResult);
+        runRouletteAnimation(isNormalMode, payA, payB, paySpecial, omikujiResult);
     } else {
         // アニメなしで即座に数値を表示
         resultAmountA.textContent = payA.toLocaleString();
@@ -213,43 +252,67 @@ function hideError() {
 }
 
 // UI要素の更新（数値を入れる前の準備）
-function prepareResultUI(numA, numB, normalNumA, normalNumB, payA, payB, paySpecial, omikujiResult, totalCollected, balance) {
+function prepareResultUI(isNormalMode, normalNumA, normalNumB, omikujiResult, totalCollected, balance) {
+    const resultBSection = document.querySelector('.result-b');
+    const headerAJa = document.querySelector('.result-a .result-group-header .ja');
+    const headerAEn = document.querySelector('.result-a .result-group-header .en');
+    const badgeAElem = document.querySelector('.result-a .group-badge');
+    
     // サブ情報の更新（人数表記）
     resultSubA.textContent = `（${normalNumA}名）`;
-    resultSubB.textContent = `（${normalNumB}名）`;
 
-    // 0人のグループは薄く表示などしたいため一応リセット
-    document.querySelector('.result-a').style.opacity = normalNumA > 0 ? "1" : "0.5";
-    document.querySelector('.result-b').style.opacity = normalNumB > 0 ? "1" : "0.5";
+    // 通常モードとグループモードでの表示切替
+    if (isNormalMode) {
+        resultBSection.hidden = true;
+        
+        headerAJa.textContent = "1人あたり";
+        headerAEn.textContent = "Per Person";
+        badgeAElem.hidden = true;
+        
+        document.querySelector('.result-a').style.opacity = normalNumA > 0 ? "1" : "0.5";
+    } else {
+        resultBSection.hidden = false;
+        resultSubB.textContent = `（${normalNumB}名）`;
+        document.querySelector('.result-b').style.opacity = normalNumB > 0 ? "1" : "0.5";
+        
+        headerAJa.textContent = "グループ A";
+        headerAEn.textContent = "Group A";
+        badgeAElem.hidden = false;
+        
+        document.querySelector('.result-a').style.opacity = normalNumA > 0 ? "1" : "0.5";
+    }
 
     // 集金合計金額と過不足の表示
     totalCollectedVal.textContent = `¥ ${totalCollected.toLocaleString()}`;
     balanceVal.textContent = `¥ ${balance.toLocaleString()}`;
     
-    // 過不足金がマイナス（不足）の場合は赤色にするなどの処理（原則切り上げなので発生しないが念の為）
+    // マイナス（不足）の赤文字対応
     if(balance < 0) {
         balanceVal.style.color = "red";
     } else {
         balanceVal.style.color = "var(--primary-red)";
     }
 
-    // おみくじ表示の切り替え
+    // おみくじ表示の切り替え（ONで対象者がいれば表示、いなければ完全に隠す）
     if (omikujiResult) {
         omikujiResultArea.hidden = false;
         specialPersonArea.hidden = false;
 
-        const groupName = omikujiResult.group === 'A' ? 'グループA' : 'グループB';
+        let groupName = omikujiResult.group === 'A' ? 'グループA' : 'グループB';
+        if (isNormalMode) {
+            groupName = '参加者';
+        }
         const typeJa = omikujiResult.type === 'TADA' ? '無料（タダ）！' : 'ゴチ（多め）！';
         
         omikujiText.textContent = `大当たり！${groupName}の1名様が ${typeJa}`;
         specialPersonLabelJa.textContent = `${groupName}の1名 ${omikujiResult.labelJa}`;
-        specialPersonLabelEn.textContent = `Special 1 in ${groupName}`;
+        specialPersonLabelEn.textContent = `Special 1 in ${isNormalMode ? 'Members' : groupName}`;
     } else {
         omikujiResultArea.hidden = true;
         specialPersonArea.hidden = true;
     }
     
-    // アニメーション用にいったん表示を 0 等にリセットしておく
+    // アニメーション用にいったん表示を 0 にリセットしておく
     resultAmountA.textContent = "0";
     resultAmountB.textContent = "0";
     resultAmountSpecial.textContent = "0";
@@ -258,52 +321,96 @@ function prepareResultUI(numA, numB, normalNumA, normalNumB, payA, payB, paySpec
 //=========================================================
 // 鑑定団風・ルーレットアニメーション関数
 //=========================================================
-// requestAnimationFrame または setInterval を利用して高速に数字を回す
-function runRouletteAnimation(payA, payB, paySpecial, hasOmikuji) {
-    // アニメーションを適用する対象要素と最終値のリスト
-    const targets = [
-        { element: resultAmountA, finalValue: payA },
-        { element: resultAmountB, finalValue: payB }
-    ];
-    if (hasOmikuji) {
-        targets.push({ element: resultAmountSpecial, finalValue: paySpecial });
+// 1の位から順番に「ピタッ、ピタッ」と止まり、最後の桁が最も長く回ってからシャキーンと確定する
+function runRouletteAnimation(isNormalMode, payA, payB, paySpecial, omikujiResult) {
+    const targets = [];
+    targets.push({ element: resultAmountA, finalValue: payA, finalStr: payA.toString() });
+    
+    if (!isNormalMode) {
+        targets.push({ element: resultAmountB, finalValue: payB, finalStr: payB.toString() });
     }
 
-    // くるくる回すアニメーションの全体時間等
-    const DURATION = 2000; // 約2秒
-    const INTERVAL = 50;   // 50msごとに数字を更新
-    const startTime = Date.now();
+    if (omikujiResult) {
+        targets.push({ element: resultAmountSpecial, finalValue: paySpecial, finalStr: paySpecial.toString() });
+    }
 
-    // シャキーン演出のリセット
-    targets.forEach(t => t.element.classList.remove('anim-bling'));
+    const TOTAL_DURATION = 2500; // 2.5秒
+    const INTERVAL = 50;         // 50msごとに数字を更新
+    const startTime = Date.now();
+    
+    // すべての目的値の中で最大の桁数を調べる
+    let maxDigits = 0;
+    targets.forEach(t => {
+        t.element.classList.remove('anim-bling');
+        maxDigits = Math.max(maxDigits, t.finalStr.length);
+    });
+
+    // 右（ゼロの位）から何桁目までが確定するか、その時間（ms）のしきい値を計算する
+    // ex) 4桁の場合: 0桁=0ms, 1桁=500ms, 2桁=1000ms, 3桁=1500ms, 最後4桁は2500ms(ここだけタメる)
+    const lockTimes = [0];
+    for (let i = 0; i < maxDigits; i++) {
+        if (i === maxDigits - 1) {
+            lockTimes.push(TOTAL_DURATION); // 最後は全体の終了時間まで粘る
+        } else {
+            lockTimes.push((TOTAL_DURATION * 0.6) / Math.max(1, maxDigits - 1) * (i + 1));
+        }
+    }
 
     const timerId = setInterval(() => {
         const elapsed = Date.now() - startTime;
         
-        targets.forEach((target, index) => {
-            // 要素ごとに少しずつ確定タイミングをずらすと「ピタッ、ピタッ」という感じになる
-            // 例: Aは1500ms後、Bは1700ms後、Specialは1900ms後
-            const fixTime = DURATION - (targets.length - index - 1) * 300; 
+        // 現時点で何桁目までロック（確定）されたか
+        let globalLockedDigits = 0;
+        for(let i = 1; i <= maxDigits; i++) {
+            if (elapsed >= lockTimes[i]) {
+                globalLockedDigits = i;
+            }
+        }
+        
+        // 指定の時間が経過したら全体終了
+        const allFinished = elapsed >= TOTAL_DURATION;
+
+        targets.forEach(t => {
+            const strLen = t.finalStr.length;
+            let displayStr = "";
+            let lockedForThisTarget = Math.min(globalLockedDigits, strLen);
             
-            if (elapsed < fixTime) {
-                // まだ確定前：ランダムな数字の文字列を作成して表示
-                // 最終値の桁数＋αくらいのランダム数
-                const randomVal = Math.floor(Math.random() * 90000) + 10000;
-                target.element.textContent = randomVal.toLocaleString();
-            } else {
-                // 確定：最終値を入れてシャキーン効果を付与
-                // ※ 重複してクラス付与やDOM更新しないようにチェック
-                if (target.element.textContent !== target.finalValue.toLocaleString()) {
-                    target.element.textContent = target.finalValue.toLocaleString();
-                    target.element.classList.add('anim-bling');
+            // 全て完了したらそのまま確定値を入れて終了
+            if (allFinished) {
+                 t.element.textContent = parseInt(t.finalStr, 10).toLocaleString();
+                 return;
+            }
+
+            // 1文字ずつ文字列を組み立てる
+            for (let i = 0; i < strLen; i++) {
+                const digitFromRight = strLen - i; // 1-indexed (右端が1)
+                
+                if (digitFromRight <= lockedForThisTarget) {
+                    // 確定した桁
+                    displayStr += t.finalStr[i];
+                } else {
+                    // まだくるくる回る桁
+                    if (i === 0) {
+                        displayStr += Math.floor(Math.random() * 9 + 1).toString(); // 一番最初の桁は0にしない
+                    } else {
+                        displayStr += Math.floor(Math.random() * 10).toString();
+                    }
                 }
+            }
+            
+            // カンマ区切りの文字列にしてDOMにセット
+            let valWithComma = parseInt(displayStr, 10).toLocaleString();
+            if (t.element.textContent !== valWithComma) {
+                t.element.textContent = valWithComma;
             }
         });
 
-        // 全て確定したらタイマーを止める
-        if (elapsed >= DURATION) {
+        // 終了後、シャキーンエフェクトを付与
+        if (allFinished) {
             clearInterval(timerId);
-            targets.forEach(t => t.element.textContent = t.finalValue.toLocaleString());
+            targets.forEach(t => {
+                t.element.classList.add('anim-bling');
+            });
         }
     }, INTERVAL);
 }

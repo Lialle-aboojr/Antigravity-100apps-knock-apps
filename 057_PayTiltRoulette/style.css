@@ -132,7 +132,7 @@ body {
 .badge-b { background-color: var(--primary-red); }
 .badge-special { background-color: #FFB100; font-size: 1rem; }
 
-/* Inpus Base Styling */
+/* Inputs Base Styling */
 input[type="number"], select {
     width: 100%;
     border: 2px solid var(--border-color);
@@ -144,6 +144,17 @@ input[type="number"], select {
     outline: none;
     color: var(--text-main);
     background-color: var(--bg-color);
+}
+
+/* Number Input Spinner Hiding */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
 }
 
 input[type="number"]:focus, select:focus {
@@ -180,11 +191,47 @@ input[type="number"]:focus, select:focus {
     font-size: 1rem;
 }
 
+/* Mode Toggle Container */
+.mode-toggle-container {
+    display: flex;
+    gap: 8px;
+    background: var(--bg-color);
+    padding: 8px;
+    border-radius: var(--radius-md);
+    margin-bottom: 8px;
+}
+.radio-label {
+    flex: 1;
+    cursor: pointer;
+    text-align: center;
+}
+.radio-label input[type="radio"] {
+    display: none;
+}
+.radio-label .radio-text {
+    display: block;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-sub);
+    font-weight: bold;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+.radio-label input[type="radio"]:checked + .radio-text {
+    background: white;
+    color: var(--primary-red);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
 /* Group people row */
 .people-group-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: flex;
     gap: 16px;
+}
+.people-group-container .input-group {
+    flex: 1;
 }
 
 /* Ratio Slider */
