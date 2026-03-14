@@ -217,6 +217,25 @@ body {
     justify-content: center;
     border-radius: 50%;
     box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+}
+
+.audio-notice {
+    display: block;
+    margin-top: 8px;
+    color: #e63946;
+    line-height: 1.4;
+    opacity: 0.9;
+}
+
+.audio-notice .ja {
+    font-size: 0.75rem;
+    font-weight: normal;
+}
+
+.audio-notice .en {
+    font-size: 0.65rem;
+    margin-top: 2px;
 }
 
 /* Timer Settings (inside menu area) */
