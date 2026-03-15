@@ -5,6 +5,19 @@ const pianoContainer = document.getElementById("piano");
 const unlockBtn = document.getElementById("unlock-audio-btn");
 const waveformSelect = document.getElementById("waveform-select"); // 音色選択用のセレクトボックス
 
+// 録音機能のための変数とDOM要素
+let isRecording = false;
+let isPlaying = false;
+let recordStartTime = 0;
+let recordedNotes = []; // { midi, startTime, duration } の配列。弾いた音を記録
+let activeRecordNotes = {}; // midi -> startTime の連想配列。現在押されている鍵盤の開始時刻を管理
+let playbackTimeouts = []; // 再生中の setTimeout ID の配列
+
+const recordBtn = document.getElementById("record-btn");
+const stopBtn = document.getElementById("stop-btn");
+const playBtn = document.getElementById("play-btn");
+const clearBtn = document.getElementById("clear-btn");
+
 // AudioContext（Web Audio APIのコア機能）の準備
 let audioCtx = null;
 
@@ -19,9 +32,6 @@ function getFrequency(midiNumber) {
 }
 
 // 25鍵盤（C4〜C6）の設定データ
-// type: 白鍵(white)か黒鍵(black)か
-// keyMap: 対応するPCのキーボード
-// midi: 音階のMIDIノート番号（C4が60）
 const KEYS = [
     { note: "C4", type: "white", keyMap: "Z", midi: 60 },
     { note: "C#4", type: "black", keyMap: "S", midi: 61 },
@@ -58,7 +68,6 @@ const activeOscillators = {};
 
 /**
  * XSS対策用のサニタイズ関数
- * テキストとしてDOMに挿入する際に、HTMLタグとして解釈されないように無害化する処理
  */
 function sanitizeText(str) {
     if (!str) return '';
@@ -71,6 +80,135 @@ function sanitizeText(str) {
 }
 
 /**
+ * 録音UI・ボタン状態の更新
+ */
+function updateUIControls() {
+    if (isRecording) {
+        recordBtn.classList.add("recording");
+        recordBtn.disabled = true;
+        playBtn.disabled = true;
+        clearBtn.disabled = true;
+        stopBtn.disabled = false;
+    } else if (isPlaying) {
+        playBtn.classList.add("playing");
+        recordBtn.disabled = true;
+        playBtn.disabled = true;
+        clearBtn.disabled = true;
+        stopBtn.disabled = false;
+    } else {
+        recordBtn.classList.remove("recording");
+        playBtn.classList.remove("playing");
+        recordBtn.disabled = false;
+        stopBtn.disabled = true;
+        
+        const hasNotes = recordedNotes.length > 0;
+        playBtn.disabled = !hasNotes;
+        clearBtn.disabled = !hasNotes;
+    }
+}
+
+// 録音開始イベント
+recordBtn.addEventListener("click", () => {
+    if (isPlaying) return;
+    initAudio(); // 録音開始時にもAudio初期化を試みる
+    
+    // 録音状態リセット
+    isRecording = true;
+    recordedNotes = [];
+    activeRecordNotes = {};
+    recordStartTime = performance.now();
+    
+    updateUIControls();
+});
+
+// 録音・再生停止イベント
+stopBtn.addEventListener("click", () => {
+    // 録音中だった場合の処理
+    if (isRecording) {
+        isRecording = false;
+        const now = performance.now();
+        
+        // 録音停止時にまだ押しっぱなしの鍵盤があれば、そこまでの長さで記録する
+        for (let midi in activeRecordNotes) {
+            const start = activeRecordNotes[midi];
+            recordedNotes.push({
+                midi: parseInt(midi),
+                startTime: start,
+                duration: (now - recordStartTime) - start
+            });
+        }
+        activeRecordNotes = {}; // リセット
+    }
+    
+    // 再生中だった場合の処理
+    if (isPlaying) {
+        isPlaying = false;
+        // 予約済みのすべての再生タイマーをキャンセル
+        playbackTimeouts.forEach(t => clearTimeout(t));
+        playbackTimeouts = [];
+        
+        // 再生中だった音をすべて強制停止する
+        KEYS.forEach(k => stopPlaying(k, true));
+    }
+    
+    updateUIControls();
+});
+
+// 再生開始イベント
+playBtn.addEventListener("click", () => {
+    // 録音なし、または他の動作中の場合は無視
+    if (isRecording || isPlaying || recordedNotes.length === 0) return;
+    
+    initAudio();
+    isPlaying = true;
+    updateUIControls();
+    
+    let maxEndTime = 0;
+    
+    // 記録された各音階に対してタイマーをセット
+    recordedNotes.forEach(note => {
+        const keyInfo = KEYS.find(k => k.midi === note.midi);
+        if (!keyInfo) return;
+        
+        const startTime = note.startTime;
+        const endTime = note.startTime + note.duration;
+        
+        if (endTime > maxEndTime) {
+            maxEndTime = endTime;
+        }
+        
+        // 発音開始の予約
+        const t1 = setTimeout(() => {
+            if (!isPlaying) return;
+            startPlaying(null, keyInfo, true); // trueはplayback中であることを示すフラグ
+        }, startTime);
+        
+        // 発音停止の予約
+        const t2 = setTimeout(() => {
+            if (!isPlaying) return;
+            stopPlaying(keyInfo, true);
+        }, endTime);
+        
+        playbackTimeouts.push(t1, t2);
+    });
+    
+    // 全ての音が鳴り終わった後（+500msの余韻確保後）に自動停止状態に戻す
+    const tEnd = setTimeout(() => {
+        if (isPlaying) {
+            stopBtn.click(); // 停止時と同じ処理を呼ぶ
+        }
+    }, maxEndTime + 500);
+    playbackTimeouts.push(tEnd);
+});
+
+// 録音データ消去イベント
+clearBtn.addEventListener("click", () => {
+    if (isRecording || isPlaying) return;
+    recordedNotes = [];
+    updateUIControls();
+});
+
+/**
  * 鍵盤UIの動的生成
  */
 function initPiano() {
@@ -78,26 +216,20 @@ function initPiano() {
         // 鍵盤要素（<div>）の作成
         const keyEl = document.createElement("div");
         keyEl.className = `key ${keyInfo.type}-key`;
-        
-        // CSSセレクタやJavaScriptで後から指定しやすいようにデータ属性を付与
         keyEl.dataset.midi = keyInfo.midi;
         
-        // キーのヒント（文字）を挿入（テキストなのでtextContentを使い、念のためサニタイズも通す）
+        // キーのヒント（文字）を挿入
         const span = document.createElement("span");
         span.textContent = sanitizeText(keyInfo.keyMap);
         keyEl.appendChild(span);
         
         // ====== マウス・タッチイベントの登録 ====== //
-        
-        // 押した時
         keyEl.addEventListener("mousedown", (e) => startPlaying(e, keyInfo));
         keyEl.addEventListener("touchstart", (e) => {
-            // e.preventDefault() はスクロール防止などタッチ特有の動きを抑えるため
             e.preventDefault(); 
             startPlaying(e, keyInfo);
         }, { passive: false });
         
-        // 離した時（タップ終了時や、マウスが鍵盤の外に出た時も含む）
         keyEl.addEventListener("mouseup", () => stopPlaying(keyInfo));
         keyEl.addEventListener("mouseleave", () => stopPlaying(keyInfo));
         keyEl.addEventListener("touchend", (e) => {
@@ -112,39 +244,40 @@ function initPiano() {
 
 /**
  * AudioContext（サウンドエンジン）の初期化
- * 現代のブラウザはユーザーのアクション（クリック等）なしに自動で音声を鳴らすことを防ぐため、
- * 最初のアクション時にこれを初期化・再開する必要がある。
  */
 function initAudio() {
     if (!audioCtx) {
-        // ブラウザごとの差異を吸収
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AudioContext();
         
-        // 準備完了後、手動アンロックボタンは消す
-        if(unlockBtn) {
+        if (unlockBtn) {
             unlockBtn.classList.add("hidden");
         }
     }
     
-    // サスペンド（休止）状態の場合は、再開させる
     if (audioCtx.state === "suspended") {
         audioCtx.resume();
     }
 }
 
-// 明示的にボタンで解除するためのイベントリスナー
 unlockBtn.addEventListener("click", initAudio);
 
 /**
  * 音を鳴らす関数
+ * @param {Event} event マウス/タッチイベント本体（キーボード・自動再生の場合はnull）
+ * @param {Object} keyInfo KEYS配列内の該当キーデータ
+ * @param {Boolean} isPlayback 自動再生中かどうかのフラグ
  */
-function startPlaying(event, keyInfo) {
-    // 確実にAudioContextを動かせる状態にする
+function startPlaying(event, keyInfo, isPlayback = false) {
     initAudio();
     
-    // すでに同じ音が鳴っている場合は無視する（押しっぱなしでの連打防止）
+    // すでに同じ音が鳴っている場合は無視する
     if (activeOscillators[keyInfo.midi]) return;
+    
+    // 録音中で、かつユーザー自身が弾いた場合（再生機能からの呼び出しではない場合）、弾き始めのタイミングを記録
+    if (isRecording && !isPlayback) {
+        activeRecordNotes[keyInfo.midi] = performance.now() - recordStartTime;
+    }
     
     // UIをハイライト（色を変えてへこませる）
     const keyEl = document.querySelector(`.key[data-midi="${keyInfo.midi}"]`);
@@ -152,31 +285,24 @@ function startPlaying(event, keyInfo) {
         keyEl.classList.add("active");
     }
     
-    // オシレーター（音の発生源）と、ゲインノード（音量調整）を作成
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
     
     // セレクトボックスで選ばれた音色（波形）を適用する
-    // sine, square, sawtooth, triangle のいずれかが設定される
     oscillator.type = waveformSelect.value;
     oscillator.frequency.value = getFrequency(keyInfo.midi);
     
-    // 時間管理用の現在時刻を取得
     const now = audioCtx.currentTime;
     
-    // ===== エンベロープ設定（音の立ち上がりを調整）===== //
-    // いきなり最大音量にすると「プツッ」とノイズが乗るため、わずかな時間をかけて音量を上げる
+    // エンベロープ設定（音の立ち上がりを調整）
     gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(0.8, now + 0.05); // 0.05秒かけて0.8まで上げる
+    gainNode.gain.linearRampToValueAtTime(0.8, now + 0.05);
     
-    // 機器の接続ルート： 音の発生源 → 音量調整 → スピーカー出力
     oscillator.connect(gainNode);
     gainNode.connect(audioCtx.destination);
     
-    // 発音開始
     oscillator.start(now);
     
-    // 後で音を止められるように、管理オブジェクトに保存しておく
     activeOscillators[keyInfo.midi] = {
         oscillator: oscillator,
         gainNode: gainNode
@@ -185,10 +311,26 @@ function startPlaying(event, keyInfo) {
 
 /**
  * 音を止める関数
+ * @param {Object} keyInfo KEYS配列内の該当キーデータ
+ * @param {Boolean} isPlayback 自動再生中かどうかのフラグ
  */
-function stopPlaying(keyInfo) {
+function stopPlaying(keyInfo, isPlayback = false) {
     const activeData = activeOscillators[keyInfo.midi];
     if (!activeData) return;
+    
+    // 録音中で、かつこの音が記録対象である場合、音の長さを計算して配列に保存
+    if (isRecording && !isPlayback && activeRecordNotes[keyInfo.midi] !== undefined) {
+        const start = activeRecordNotes[keyInfo.midi];
+        const duration = (performance.now() - recordStartTime) - start;
+        
+        recordedNotes.push({
+            midi: keyInfo.midi,
+            startTime: start,
+            duration: duration
+        });
+        
+        delete activeRecordNotes[keyInfo.midi]; // 記録完了したので削除
+    }
     
     // UIのハイライトを元に戻す
     const keyEl = document.querySelector(`.key[data-midi="${keyInfo.midi}"]`);
@@ -198,41 +340,32 @@ function stopPlaying(keyInfo) {
     
     const now = audioCtx.currentTime;
     
-    // ===== エンベロープ設定（音の消え方を調整）===== //
-    // 一瞬で音を消すと不自然なので、少し余韻を残しながら消えていくようにする
+    // エンベロープ設定（音の消え方を調整）
     activeData.gainNode.gain.setValueAtTime(activeData.gainNode.gain.value, now);
-    activeData.gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3); // 0.3秒かけてほぼ無音に
+    activeData.gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
     
-    // 完全に音が消える頃（0.3秒後）に、オシレーター自体を停止して破棄
     activeData.oscillator.stop(now + 0.3);
-    
-    // 管理オブジェクトから削除し、次また押せる状態にする
     delete activeOscillators[keyInfo.midi];
 }
 
 // ====== キーボード連動処理 ====== //
-
-// キーが押された時
 window.addEventListener("keydown", (e) => {
-    // 押しっぱなしによるイベント連続発火を防止（OSの設定により連続入力されるのを防ぐ）
     if (e.repeat) return;
     
-    // 入力されたキーを大文字に変換して、KEYSの設定データ内から合致するものを探す
     const key = e.key.toUpperCase();
     const keyInfo = KEYS.find(k => k.keyMap === key);
     
     if (keyInfo) {
-        startPlaying(null, keyInfo);
+        startPlaying(null, keyInfo); // ユーザー操作なので第3引数はデフォルトのfalse
     }
 });
 
-// キーが離された時
 window.addEventListener("keyup", (e) => {
     const key = e.key.toUpperCase();
     const keyInfo = KEYS.find(k => k.keyMap === key);
     
     if (keyInfo) {
-        stopPlaying(keyInfo);
+        stopPlaying(keyInfo); // 同様に第3引数はfalse
     }
 });
 

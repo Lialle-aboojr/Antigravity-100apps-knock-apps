@@ -22,15 +22,34 @@
         </header>
 
         <main>
-            <!-- 音色選択UI -->
-            <div class="tone-selector">
-                <label for="waveform-select">音色 / Tone</label>
-                <select id="waveform-select" class="waveform-select">
-                    <option value="triangle" selected>三角波 / Triangle</option>
-                    <option value="sine">正弦波 / Sine</option>
-                    <option value="square">矩形波 / Square</option>
-                    <option value="sawtooth">ノコギリ波 / Sawtooth</option>
-                </select>
+            <!-- アプリケーションの操作パネル（音色変更・録音機能） -->
+            <div class="control-panel">
+                <!-- 音色選択UI -->
+                <div class="tone-selector">
+                    <label for="waveform-select">音色 / Tone</label>
+                    <select id="waveform-select" class="waveform-select">
+                        <option value="triangle" selected>三角波 / Triangle</option>
+                        <option value="sine">正弦波 / Sine</option>
+                        <option value="square">矩形波 / Square</option>
+                        <option value="sawtooth">ノコギリ波 / Sawtooth</option>
+                    </select>
+                </div>
+
+                <!-- 録音・再生機能UI -->
+                <div class="recorder-controls">
+                    <button id="record-btn" class="recorder-btn record-btn">
+                        <span class="icon">●</span> 録音 / Record
+                    </button>
+                    <button id="stop-btn" class="recorder-btn stop-btn" disabled>
+                        <span class="icon">■</span> 停止 / Stop
+                    </button>
+                    <button id="play-btn" class="recorder-btn play-btn" disabled>
+                        <span class="icon">▶</span> 再生 / Play
+                    </button>
+                    <button id="clear-btn" class="recorder-btn clear-btn" disabled>
+                        <span class="icon">✖</span> 消去 / Clear
+                    </button>
+                </div>
             </div>
 
             <!-- ピアノの鍵盤全体を囲むコンテナ -->
