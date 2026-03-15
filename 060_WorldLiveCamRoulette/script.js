@@ -68,10 +68,10 @@ function processNextCamera() {
     let midPointDelay = 900; 
     let endDelay = 800;
 
-    // 飛行機モードのみアニメーションを4秒に延長（半分で動画切り替え、残り半分で開く）
+    // 飛行機モードのみアニメーションを3秒に延長
     if (currentThemeClass === 'theme-airplane') {
-        midPointDelay = 2000;
-        endDelay = 2000;
+        midPointDelay = 1500;
+        endDelay = 1500;
     }
 
     setTimeout(() => {

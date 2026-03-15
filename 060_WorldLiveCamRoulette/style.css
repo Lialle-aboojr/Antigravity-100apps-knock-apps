@@ -189,8 +189,7 @@ body.theme-window .theme-overlay {
     box-shadow: inset 0 0 40px rgba(0,0,0,0.7);
     mix-blend-mode: normal;
 }
-body.theme-window .curtain-left,
-body.theme-window .curtain-right {
+body.theme-window .curtain {
     display: block;
 }
 
@@ -403,40 +402,27 @@ body.theme-airplane .clouds-wrapper { display: block; }
 
 /* 本物の入道雲のようなモクモクした形 (box-shadowを駆使) */
 .cloud-fluffy {
-    background: #ffffff;
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
     position: absolute;
     top: 50%; left: 50%;
-    margin-top: -150px; margin-left: -150px;
-    /* 複数の純白のbox-shadowで雲の塊を表現 */
+    width: 150vmax; height: 150vmax;
+    background: #ffffff;
+    border-radius: 50%;
     box-shadow: 
-        150px -100px 0 -20px #ffffff,
-        -150px -100px 0 -10px #ffffff,
-        200px 80px 0 20px #ffffff,
-        -200px 100px 0 10px #ffffff,
-        0px -200px 0 30px #ffffff,
-        0px 200px 0 10px #ffffff,
-        150px 180px 0 40px #ffffff,
-        -150px 180px 0 20px #ffffff;
+        -20vmax -10vmax 0 5vmax #ffffff,
+        20vmax 10vmax 0 10vmax #ffffff,
+        -10vmax 20vmax 0 5vmax #ffffff,
+        10vmax -20vmax 0 15vmax #ffffff;
     opacity: 0;
-    transform: translateX(100vw) scale(1.5); /* 右側枠外から */
 }
-
-/* アニメーションの発火 (4秒に延長) */
 body.theme-airplane.is-transitioning .cloud-fluffy {
-    animation: fly-clouds 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    animation: fly-clouds 3s ease-in-out forwards;
 }
-
-/* 右から左へゆっくり流れ、画面を真っ白に覆うキーフレーム */
 @keyframes fly-clouds {
-    0%   { transform: translateX(100vw) scale(1.5); opacity: 0; }
-    15%  { opacity: 1; }
-    40%  { transform: translateX(0) scale(4.5); opacity: 1; } /* ここから完全に白く覆う状態 */
-    60%  { transform: translateX(-5vw) scale(5); opacity: 1; } /* ここまで完全に白く覆う状態 */
-    85%  { opacity: 1; }
-    100% { transform: translateX(-150vw) scale(2); opacity: 0; } /* 左へ流れて消える */
+    0%   { transform: translate(-50%, -50%) translateX(100vw); opacity: 0; }
+    20%  { opacity: 1; }
+    45%, 55% { transform: translate(-50%, -50%) translateX(0); opacity: 1; } /* ここで画面真っ白 */
+    80%  { opacity: 1; }
+    100% { transform: translate(-50%, -50%) translateX(-100vw); opacity: 0; }
 }
 
 
