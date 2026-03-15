@@ -1,22 +1,19 @@
 /* 
  * World Live Cam Roulette - Styles
- * Includes responsive layout and 4 CSS-based themes for the camera frame.
+ * Includes responsive layout, rich CSS themes, and complex animations.
  */
 
 :root {
-    /* Base Colors - dark cinematic theme */
-    --clr-bg: #0a0e17;
-    --clr-surface: #151d2e;
-    --clr-text: #f0f4f8;
-    --clr-text-sub: #94a3b8;
+    --clr-bg: #111827;
+    --clr-surface: #1f2937;
+    --clr-text: #f3f4f6;
+    --clr-text-sub: #9ca3af;
     --clr-accent: #3b82f6;
     --clr-accent-hover: #2563eb;
     
-    /* Layout */
     --radius-md: 12px;
     --radius-lg: 20px;
     --font-main: 'Inter', 'Noto Sans JP', sans-serif;
-    --trans-speed: 0.3s;
 }
 
 * {
@@ -33,13 +30,13 @@ body {
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+    transition: background-color 0.8s ease;
 }
 
 /* Bilingual Helpers */
 .ja { display: block; font-size: 0.85em; opacity: 0.8; margin-top: 2px; }
 .en { display: block; font-weight: 600; }
 
-/* 見切れ修正と全体のパディング */
 .app-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -50,7 +47,7 @@ body {
     height: 100vh;
 }
 
-/* ヘッダー */
+/* --- Header / UI Controls --- */
 .app-header {
     display: flex;
     justify-content: space-between;
@@ -61,7 +58,7 @@ body {
     border-radius: var(--radius-md);
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     position: relative;
-    z-index: 50; /* UI消失防止: 常に最前面へ */
+    z-index: 50;
     flex-wrap: wrap;
     gap: 16px;
 }
@@ -88,19 +85,17 @@ body {
     gap: 12px;
     border: 1px solid rgba(255,255,255,0.1);
 }
-
 .theme-selector-group label {
     display: flex;
     flex-direction: column;
     font-size: 0.8rem;
     color: var(--clr-text-sub);
 }
-
 .theme-selector-group label .en { font-size: 0.75rem; }
 .theme-selector-group label .ja { font-size: 0.7rem; }
 
 select#themeSelect {
-    background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.4);
     color: white;
     border: 1px solid rgba(255,255,255,0.2);
     padding: 8px 12px;
@@ -109,9 +104,13 @@ select#themeSelect {
     cursor: pointer;
     outline: none;
     font-size: 0.95rem;
+    transition: all 0.2s;
+}
+select#themeSelect:focus {
+    border-color: var(--clr-accent);
 }
 
-/* プレイヤー部分 */
+/* --- Player & Global Frame Setup --- */
 .player-section {
     flex: 1;
     display: flex;
@@ -126,201 +125,245 @@ select#themeSelect {
     position: relative;
     width: 100%;
     max-width: 1000px;
-    aspect-ratio: 16 / 9; /* この比率を守ることでYoutubeが正しく表示される */
+    aspect-ratio: 16 / 9;
     background: #000;
-    border-radius: var(--radius-md);
-    /* 枠を描画するためのはみ出しを防ぐ */
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    transition: all 0.3s ease;
+    transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    box-sizing: border-box; /* IMPORTANT for thick borders */
+    /* Hardware acceleration for smooth transitions */
+    transform: translateZ(0);
 }
 
 .yt-container {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 1; /* z-index指定で下層に敷く */
-}
-.yt-container iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
+    z-index: 1;
 }
 
-/* --- 再生不可時のフォールバックUI --- */
-.fallback-message {
+.theme-overlay {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: #1e293b;
-    color: var(--clr-text);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 24px;
-    z-index: 2; /* YTコンテナより上で、テーマフレームより下 */
+    z-index: 5;
+    pointer-events: none;
+    transition: all 0.6s ease;
+    mix-blend-mode: overlay; /* Better blending for shadows */
+}
+
+/* ====================================================
+   🎨 THEME 1: WINDOW (部屋の窓)
+==================================================== */
+body.theme-window { background-color: #1e293b; }
+body.theme-window .frame-container {
+    border-radius: 8px;
+    /* 木の窓枠をボーダーで表現 */
+    border: 24px solid #8B5A2B;
+    border-bottom: 32px solid #5C3A21; /* 窓の下敷居を太く濃く */
+    border-top: 24px solid #A0522D;    /* 上枠を少し明るく */
+    box-shadow: 0 20px 40px rgba(0,0,0,0.7),
+                inset 0 0 20px rgba(0,0,0,0.8);
+    background: #8B5A2B;
+}
+
+body.theme-window .theme-overlay {
+    /* 窓の十字ガラス表現 */
+    background: 
+        linear-gradient(to right, transparent 48.5%, #4a2c11 48.5%, #4a2c11 51.5%, transparent 51.5%),
+        linear-gradient(to bottom, transparent 48.5%, #4a2c11 48.5%, #4a2c11 51.5%, transparent 51.5%);
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.7);
+    mix-blend-mode: normal;
+}
+
+/* 窓のトランジション（カーテン） */
+.curtain-left, .curtain-right {
+    background: repeating-linear-gradient(
+      90deg,
+      #1e3a8a,      /* 濃い青 */
+      #1e3a8a 10px,
+      #1e40af 10px, /* 少し明るい青 (ひだ) */
+      #1e40af 20px
+    );
+    width: 0%;      /* 最初は開いている(幅0) */
+    height: 100%;
+    position: absolute;
+    top: 0;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    transition: width 0.7s cubic-bezier(0.5, 0, 0.2, 1);
+    z-index: 20;
+}
+.curtain-left { left: 0; border-right: 4px solid #0f172a; }
+.curtain-right { right: 0; border-left: 4px solid #0f172a; }
+
+body.theme-window.is-transitioning .curtain-left { width: 50.5%; }
+body.theme-window.is-transitioning .curtain-right { width: 50.5%; }
+
+
+/* ====================================================
+   📺 THEME 2: RETRO TV (レトロテレビ)
+==================================================== */
+body.theme-tv { background-color: #451a03; /* 濃いレトロ壁紙風 */ }
+body.theme-tv .frame-container {
+    border-radius: 40px;
+    background: #111;
+    max-width: 900px;
+    aspect-ratio: 4 / 3; /* レトロ比率 */
+    
+    /* 黒〜茶色の外側のテレビ筐体 */
+    border: 40px solid #292524;
+    border-right: 120px solid #1c1917; /* 右側にダイヤル用のスペース */
+    
+    box-shadow: 0 30px 50px rgba(0,0,0,0.8),
+                inset 0 0 10px rgba(255,255,255,0.1);
+}
+
+body.theme-tv .theme-overlay {
+    /* ブラウン管の湾曲ガラスの反射を表現 */
+    background: 
+        radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.8) 100%),
+        linear-gradient(105deg, rgba(255,255,255,0.1) 0%, transparent 40%);
+    border-radius: 20px;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.9);
+    mix-blend-mode: normal;
+}
+
+/* テレビの右側ダイヤル（疑似要素で描画） */
+body.theme-tv .frame-container::after {
+    content: '';
+    position: absolute;
+    right: -100px;
+    top: 50px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle at center, #78716c 20%, #444 80%);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.5),
+                0 90px 0 0px #444, /* 2個目のダイヤル(影のtrick) */
+                0 90px 4px 0px rgba(0,0,0,0.8);
+    z-index: 100;
+}
+
+/* TVのトランジション（砂嵐ノイズ） */
+.tv-noise {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    /* SVG Data URI でフラクタルノイズを生成し、背景画像として敷く */
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease;
+    transition: opacity 0s; /* 瞬時に出す */
+    z-index: 20;
+    mix-blend-mode: color-dodge;
 }
 
-.fallback-message.show {
-    opacity: 1;
-    pointer-events: auto;
+body.theme-tv.is-transitioning .tv-noise {
+    opacity: 0.9;
+    animation: tvJitter 0.1s infinite steps(2);
 }
 
-.fallback-message .icon {
-    font-size: 2.5rem;
-    margin-bottom: 12px;
-    background: transparent;
-    box-shadow: none;
-    width: auto; height: auto;
+@keyframes tvJitter {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
 }
 
-.fallback-message p {
-    font-size: 0.95rem;
-    line-height: 1.6;
-    margin-bottom: 8px;
-}
-.fallback-message .en {
-    font-size: 0.85rem;
-    color: var(--clr-text-sub);
-    font-weight: 400;
-}
 
-/* --- THEMES & FRAMES --- */
-/* クリックを貫通させるための設定 */
-.theme-frame {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none;
-    z-index: 5;
-    transition: all 0.3s ease;
-}
-
-/* 1. Theme: Window (部屋の窓) */
-body.theme-window .frame-container {
-    border-radius: 4px; /* Harder corners for a window */
-    box-shadow: 0 0 0 16px #e2e8f0, /* Inner window sill */
-                0 0 0 20px #94a3b8; /* Outer frame */
-}
-body.theme-window .theme-frame {
-    /* Basic cross bars for the window */
-    background: linear-gradient(to right, transparent 48%, #e2e8f0 48%, #e2e8f0 52%, transparent 52%),
-                linear-gradient(to bottom, transparent 48%, #e2e8f0 48%, #e2e8f0 52%, transparent 52%);
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
-}
-
-/* 2. Theme: Retro TV (レトロテレビ) */
-body.theme-tv .frame-container {
-    border-radius: 40px; /* Big rounded corners */
-    /* Paddingをやめ、ボーダーで丸っこい枠を表現する */
-    border: 32px solid #475569;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-}
-body.theme-tv .theme-frame {
-    /* Screen glare/curve effect */
-    background: radial-gradient(circle at center, transparent 60%, rgba(0,0,0,0.6) 100%),
-                linear-gradient(rgba(255,255,255,0.1) 0%, transparent 40%);
-    box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
-}
-
-/* 3. Theme: Airplane (飛行機の窓) */
+/* ====================================================
+   ✈️ THEME 3: AIRPLANE (飛行機の窓)
+==================================================== */
+body.theme-airplane { background-color: #38bdf8; /* 空色 */ }
 body.theme-airplane .frame-container {
-    border-radius: 200px; /* Highly rounded window */
-    border: 32px solid #cbd5e1;
+    /* 縦長のオーバル状の窓 */
+    border-radius: 200px;
+    aspect-ratio: 9 / 12;
+    max-width: 450px;
+    height: 80vh;
+    border: 32px solid #e2e8f0;    /* 内側のプラスチック枠 */
+    box-shadow: 
+        0 0 0 24px #cbd5e1,       /* 外側の金属装飾 */
+        0 20px 40px rgba(0,0,0,0.5),
+        inset 0 10px 30px rgba(0,0,0,0.7);
     background: #000;
-    box-shadow: 0 0 0 10px #f8fafc;
-    /* Adjust aspect ratio slightly for a plane window feel */
-    aspect-ratio: 4 / 3;
-    max-width: 700px;
-}
-body.theme-airplane .theme-frame {
-    box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
-    background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 40%);
 }
 
-/* 4. Theme: Simple / Cinematic (シンプル) */
-body.theme-simple .frame-container {
-    border: none;
-    border-radius: var(--radius-md);
-    box-shadow: none;
-    background: #000;
-    max-width: 100%;
-}
-body.theme-simple .theme-frame {
-    /* Just subtle top/bottom shadow for cinematic feel */
-    background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.4) 100%);
+body.theme-airplane .theme-overlay {
+    /* 分厚いアクリル窓の光沢 */
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 40%, transparent 70%, rgba(255,255,255,0.1) 100%);
+    border-radius: 170px;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.6);
+    mix-blend-mode: overlay;
 }
 
-
-/* --- TRANSITION LAYERS --- */
-.transition-layer {
+/* 飛行機のトランジション（雲で覆う） */
+.clouds-wrapper {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 10;
-    pointer-events: none;
-    overflow: hidden; /* コンテナ外にはみ出ないように */
-}
-
-/* By default all transition pieces are hidden/inactive */
-.trans-curtain, .trans-noise, .trans-clouds, .trans-fade {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 20;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.4s ease;
+    transition: all 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* 背景全体も徐々に白くなる */
+    background: rgba(255,255,255,0.9);
 }
 
-/* 1. Curtain Transition (Window) */
-.trans-curtain {
-    background: #334155; /* dark bluish curtain color */
-    width: 50%;
-    visibility: visible; 
-    transform: translateX(-100%);
+/* CSS Radial Gradient で丸い雲の集合体を描く */
+.cloud {
+    position: absolute;
+    border-radius: 50%;
+    background: #fff;
+    filter: blur(20px);
+    transition: transform 1.2s ease-out;
 }
-.trans-curtain.right { 
-    left: 50%; 
-    transform: translateX(100%); 
-}
+.c1 { width: 300px; height: 300px; top: 10%; left: -20%; transform: scale(0.5); }
+.c2 { width: 400px; height: 300px; bottom: -10%; right: -20%; transform: scale(0.5); }
+.c3 { width: 200px; height: 200px; top: 40%; left: 30%; transform: scale(0.5); }
 
-.is-transitioning-window .trans-curtain { transform: translateX(0); opacity: 1; }
-
-/* 2. Noise Transition (Retro TV) */
-.trans-noise {
-    background: #666;
+body.theme-airplane.is-transitioning .clouds-wrapper {
+    opacity: 1;
     visibility: visible;
 }
-.is-transitioning-tv .trans-noise {
-    opacity: 1;
-    animation: tvJitter 0.15s infinite;
-}
-@keyframes tvJitter {
-    0% { background: #333; }
-    50% { background: #888; }
-    100% { background: #555; }
+body.theme-airplane.is-transitioning .cloud {
+    transform: scale(2.5); /* 雲が迫ってきて画面を覆い尽くす */
 }
 
-/* 3. Clouds Transition (Airplane) */
-.trans-clouds {
-    background: #fff; /* Just pure white flash representing flying into a cloud */
-    visibility: visible;
+
+/* ====================================================
+   🎬 THEME 4: SIMPLE (シンプル・シネマティック)
+==================================================== */
+body.theme-simple { background-color: #000; }
+body.theme-simple .frame-container {
+    border-radius: 0;
+    border: none;
+    max-width: 100vw;
+    margin: 0 calc(-50vw + 50%); /* フルブリード */
+    aspect-ratio: 21 / 9;        /* シネマスコープ比率 */
+    box-shadow: none;
 }
-.is-transitioning-airplane .trans-clouds {
-    opacity: 1;
+@media (max-width: 768px) {
+    body.theme-simple .frame-container { aspect-ratio: 16 / 9; }
 }
 
-/* 4. Fade Transition (Simple) */
-.trans-fade {
+body.theme-simple .theme-overlay {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.8) 100%);
+}
+
+/* シンプルのトランジション（クロスフェード暗転） */
+.simple-fade {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: #000;
-    visibility: visible;
+    opacity: 0;
+    z-index: 20;
+    pointer-events: none;
+    transition: opacity 0.6s ease-in-out;
 }
-.is-transitioning-simple .trans-fade {
+body.theme-simple.is-transitioning .simple-fade {
     opacity: 1;
 }
 
 
-/* --- Footer / Controls --- */
+
+/* --- 共通 UI Footer --- */
 .info-footer {
     padding: 16px 24px;
     margin-top: 24px;
@@ -332,7 +375,7 @@ body.theme-simple .theme-frame {
     border-radius: var(--radius-md);
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     position: relative;
-    z-index: 50; /* UI消失防止: 常に最前面へ */
+    z-index: 50;
     flex-wrap: wrap;
 }
 
@@ -420,27 +463,22 @@ body.theme-simple .theme-frame {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .app-container {
-        padding: 12px;
-    }
+    .app-container { padding: 12px; }
     .app-header {
         flex-direction: column;
         align-items: flex-start;
         padding: 16px;
         gap: 12px;
     }
-    
     .info-footer {
         flex-direction: column;
         align-items: stretch;
         padding: 16px;
     }
-    
     .next-btn {
         justify-content: center;
         padding: 16px;
     }
-    
     .cam-info {
         flex-direction: column;
         gap: 16px;

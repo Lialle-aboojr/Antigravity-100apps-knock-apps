@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="世界中のパブリックライブカメラをランダムに表示するアプリ / Ramdomly display public live cameras from all over the world">
+    <meta name="description" content="世界中のライブ映像をランダム表示 - World Live Cam Roulette">
     <title>World Live Cam Roulette</title>
     
-    <!-- ファビコンの指定 (画像が読めない場合のフォールバック含む) -->
     <link rel="icon" href="favicon.png" type="image/png">
     
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
@@ -19,7 +17,6 @@
 <body class="theme-window">
     <div class="app-container">
         
-        <!-- ヘッダー部分 -->
         <header class="app-header">
             <div class="logo-area">
                 <h1>
@@ -44,31 +41,38 @@
             </div>
         </header>
 
-        <!-- メイン画面（Player + テーマごとの枠装飾 + トランジション層） -->
-        <main class="player-section">
-            <div class="frame-container">
+        <main class="player-section" id="playerSection">
+            <div class="frame-container" id="frameContainer">
                 
-                <!-- 標準HTML5 Videoプレーヤー (テストモード) -->
                 <div class="yt-container">
-                    <video id="main-video" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover;"></video>
+                    <video id="main-video" autoplay loop muted playsinline crossorigin="anonymous" style="width:100%; height:100%; object-fit:cover;"></video>
                 </div>
                 
-                <!-- 枠線の装飾 (テーマ切り替え用) -->
-                <div class="theme-frame"></div>
+                <!-- 画面の上に被さるテーマ特有の装飾・枠 -->
+                <div class="theme-overlay"></div>
                 
-                <!-- トランジション（画面切り替えの演出用）レイヤー -->
-                <div id="transition-layer" class="transition-layer">
-                    <!-- テーマ固有のトランジション要素 -->
-                    <div class="trans-curtain left"></div>
-                    <div class="trans-curtain right"></div>
-                    <div class="trans-noise"></div>
-                    <div class="trans-clouds"></div>
-                    <div class="trans-fade"></div>
+                <!-- トランジション（切り替え）用レイヤー -->
+                <div class="transition-layer">
+                    <!-- 1. Window: カーテン -->
+                    <div class="trans-piece curtain-left"></div>
+                    <div class="trans-piece curtain-right"></div>
+                    
+                    <!-- 2. TV: 砂嵐ノイズ -->
+                    <div class="trans-piece tv-noise"></div>
+                    
+                    <!-- 3. Airplane: 雲 -->
+                    <div class="trans-piece clouds-wrapper">
+                        <div class="cloud c1"></div>
+                        <div class="cloud c2"></div>
+                        <div class="cloud c3"></div>
+                    </div>
+                    
+                    <!-- 4. Simple: クロスフェード用の黒幕 -->
+                    <div class="trans-piece simple-fade"></div>
                 </div>
             </div>
         </main>
 
-        <!-- 各種情報・コントロール配置 -->
         <footer class="info-footer">
             <div class="cam-info">
                 <div class="location-group">

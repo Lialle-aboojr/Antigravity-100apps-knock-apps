@@ -1,18 +1,15 @@
 /**
  * World Live Cam Roulette - Main Logic
- * Uses standard HTML5 <video> for reliable preview testing.
+ * Manages standard HTML5 <video> with rich CSS theme transitions.
  */
 
-// 安全なDOM挿入のためのユーティリティ (XSS対策)
 function sanitizeText(str) {
     const div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
 }
 
-// ==========================================
-// 📺 テスト用MP4動画データ
-// ==========================================
+// 📺 テスト用MP4動画データ (Google公式サンプル)
 const cameraList = [
     { src: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', country: 'テスト国A', location: 'ウサギの森', timeZone: 'America/New_York' },
     { src: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', country: 'テスト国B', location: '機械の街', timeZone: 'Europe/London' },
@@ -20,9 +17,7 @@ const cameraList = [
     { src: 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', country: 'テスト国D', location: 'SF研究所', timeZone: 'Australia/Sydney' }
 ];
 
-// ==========================================
 // 状態管理
-// ==========================================
 let currentCamIndex = -1;
 let clockInterval = null;
 let isTransitioning = false;
@@ -41,100 +36,73 @@ const mainVideo = document.getElementById('main-video');
 // 初期化
 // ==========================================
 function initApp() {
-    pickRandomCamera(); // 最初のカメラを選択
-    
-    // UIを初期情報で更新
+    pickRandomCamera();
     updateInfoDisplay();
     
-    // 動画のソースを設定して再生
+    // 設定して再生
     mainVideo.src = cameraList[currentCamIndex].src;
-    mainVideo.play().catch(e => console.error("Auto-play was prevented:", e));
+    mainVideo.play().catch(e => console.error(e));
 }
 
 // ==========================================
-// アプリケーションロジック
+// ロジックとトランジション制御
 // ==========================================
-
 function pickRandomCamera() {
     let newIndex;
-    if (cameraList.length <= 1) {
-        newIndex = 0;
-    } else {
-        do {
-            newIndex = Math.floor(Math.random() * cameraList.length);
-        } while (newIndex === currentCamIndex); 
-    }
+    do {
+        newIndex = Math.floor(Math.random() * cameraList.length);
+    } while (newIndex === currentCamIndex);
     currentCamIndex = newIndex;
 }
 
-// 動画とUIの読み込み
-function loadNextCameraUnsafe() {
-    pickRandomCamera();
-    
-    // UIのテキスト情報を更新
-    updateInfoDisplay();
-    
-    // 動画ソースを切り替えて再生
-    mainVideo.src = cameraList[currentCamIndex].src;
-    mainVideo.play().then(() => {
-        // 再生が開始したらトランジションを外す
-        endTransitionIfStillTransitioning();
-    }).catch(e => {
-        console.error("Video playback error:", e);
-        endTransitionIfStillTransitioning();
-    });
-}
-
-// Nextボタンを押したときの処理（アニメーションを伴う）
-function loadNextCameraWithTransition() {
+// Nextボタンを押したときの詳細なアニメーション連動処理
+function processNextCamera() {
     if (isTransitioning) return;
     
     isTransitioning = true;
     nextBtn.disabled = true;
 
-    // 現在のテーマに応じたトランジションクラスを付与
-    const themeName = currentThemeClass.split('-')[1];
-    body.classList.add(`is-transitioning-${themeName}`);
-
-    // CSSアニメーションの画面が覆われるタイミング（0.4秒後）で動画を切り替える
-    setTimeout(() => {
-        loadNextCameraUnsafe();
-        
-        // 【フェイルセーフ】動画が再生状態にならなくてもトランジションを外す
-        setTimeout(() => {
-            endTransitionIfStillTransitioning();
-        }, 1500);
-
-    }, 400);
-}
-
-// トランジションを強制解除する処理
-function endTransitionIfStillTransitioning() {
-    if (!isTransitioning) return;
+    // ① コンテナに `is-transitioning` クラスを付与してCSSアニメーション開始
+    body.classList.add('is-transitioning');
     
-    body.classList.remove('is-transitioning-window', 'is-transitioning-tv', 'is-transitioning-airplane', 'is-transitioning-simple');
-    isTransitioning = false;
-    nextBtn.disabled = false;
+    // ② アニメーション中（画面が覆われたタイミング）で動画とテキストを裏側で切り替える
+    // カーテンや雲のアニメーションが完了する約0.8秒〜1.0秒後を狙う
+    const midPointDelay = 900; 
+
+    setTimeout(() => {
+        // 次のカメラをピック
+        pickRandomCamera();
+        
+        // 動画のソースとUIを更新
+        mainVideo.src = cameraList[currentCamIndex].src;
+        mainVideo.play().catch(e => console.error(e));
+        
+        updateInfoDisplay();
+        
+        // ③ さらに時間が経過したら（新しい映像のロードも加味して合計1.8秒程度）、
+        // トランジションクラスを外して画面を開け、ボタンを再び有効化する
+        setTimeout(() => {
+            body.classList.remove('is-transitioning');
+            isTransitioning = false;
+            nextBtn.disabled = false;
+        }, 800);
+        
+    }, midPointDelay);
 }
 
-// 情報エリアの更新
+
 function updateInfoDisplay() {
     const cam = cameraList[currentCamIndex];
     if (!cam) return;
 
-    // XSS対策でテキストを安全に挿入
     infoCountry.textContent = sanitizeText(cam.country);
     infoLocation.textContent = sanitizeText(cam.location);
     
-    // タイムゾーンが変わるのでクロック再始動
     startClock(); 
 }
 
-// 現地時計のループ
 function startClock() {
-    if (clockInterval) {
-        clearInterval(clockInterval);
-    }
+    if (clockInterval) clearInterval(clockInterval);
     
     const cam = cameraList[currentCamIndex];
     if (!cam) return;
@@ -164,18 +132,15 @@ function startClock() {
 // ==========================================
 // イベントリスナー
 // ==========================================
-
-// Nextボタンクリック
 nextBtn.addEventListener('click', () => {
-    loadNextCameraWithTransition();
+    processNextCamera();
 });
 
-// テーマ変更
 themeSelect.addEventListener('change', (e) => {
     body.classList.remove(currentThemeClass);
     currentThemeClass = e.target.value;
     body.classList.add(currentThemeClass);
 });
 
-// アプリの開始
+// 実行
 initApp();
