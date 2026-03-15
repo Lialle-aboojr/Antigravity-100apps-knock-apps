@@ -11,103 +11,15 @@ function sanitizeText(str) {
 }
 
 // ==========================================
-// 📺 ライブカメラデータ (最低15個のバリアント)
+// 📺 ライブカメラデータ
 // ==========================================
 // id: YouTubeのVideo ID (URLの ?v=XXX の部分)
-// country: 国名 (日/英)
-// location: 場所の詳細 (日/英)
-// tz: タイムゾーン識別子 (IANA Time Zone Database)
-const CAMERAS = [
-    { 
-        id: 'LXb3EKWsInQ', // [テスト用] Costa Rica 4K等の確実な風景動画
-        country: { ja: '日本', en: 'Japan' }, 
-        location: { ja: '東京 (デモ映像)', en: 'Tokyo (Demo Video)' }, 
-        tz: 'Asia/Tokyo' 
-    },
-    { 
-        id: 'aqz-KE-bpKQ', // [テスト用] Big Buck Bunny
-        country: { ja: 'アメリカ', en: 'USA' }, 
-        location: { ja: 'ニューヨーク (デモ映像)', en: 'New York (Demo Video)' }, 
-        tz: 'America/New_York' 
-    },
-    { 
-        id: 'LXb3EKWsInQ', 
-        country: { ja: '宇宙', en: 'Space' }, 
-        location: { ja: 'ISS (デモ映像)', en: 'ISS (Demo Video)' }, 
-        tz: 'UTC'
-    },
-    { 
-        id: 'aqz-KE-bpKQ', 
-        country: { ja: '南アフリカ', en: 'South Africa' }, 
-        location: { ja: 'サバンナ (デモ映像)', en: 'Savanna (Demo Video)' }, 
-        tz: 'Africa/Johannesburg' 
-    },
-    { 
-        id: 'LXb3EKWsInQ', 
-        country: { ja: 'イタリア', en: 'Italy' }, 
-        location: { ja: 'ヴェネツィア (デモ映像)', en: 'Venice (Demo Video)' }, 
-        tz: 'Europe/Rome' 
-    },
-    { 
-        id: 'aqz-KE-bpKQ', 
-        country: { ja: 'アメリカ', en: 'USA' }, 
-        location: { ja: 'ハワイ (デモ映像)', en: 'Hawaii (Demo Video)' }, 
-        tz: 'Pacific/Honolulu' 
-    },
-    { 
-        id: 'LXb3EKWsInQ', 
-        country: { ja: 'オーストラリア', en: 'Australia' }, 
-        location: { ja: 'シドニー (デモ映像)', en: 'Sydney (Demo Video)' }, 
-        tz: 'Australia/Sydney' 
-    },
-    { 
-        id: 'aqz-KE-bpKQ', 
-        country: { ja: 'ブラジル', en: 'Brazil' }, 
-        location: { ja: 'リオデジャネイロ (デモ映像)', en: 'Rio (Demo Video)' }, 
-        tz: 'America/Sao_Paulo' 
-    },
-    { 
-        id: 'LXb3EKWsInQ', 
-        country: { ja: 'フランス', en: 'France' }, 
-        location: { ja: 'パリ (デモ映像)', en: 'Paris (Demo Video)' }, 
-        tz: 'Europe/Paris' 
-    },
-    { 
-        id: 'aqz-KE-bpKQ', 
-        country: { ja: 'カナダ', en: 'Canada' }, 
-        location: { ja: 'ナイアガラ (デモ映像)', en: 'Niagara (Demo Video)' }, 
-        tz: 'America/Toronto' 
-    },
-    { 
-        id: 'LXb3EKWsInQ', 
-        country: { ja: 'アイスランド', en: 'Iceland' }, 
-        location: { ja: 'レイキャビク (デモ映像)', en: 'Reykjavík (Demo Video)' }, 
-        tz: 'Atlantic/Reykjavik' 
-    },
-    { 
-        id: 'aqz-KE-bpKQ', 
-        country: { ja: 'スイス', en: 'Switzerland' }, 
-        location: { ja: 'アルプス (デモ映像)', en: 'Alps (Demo Video)' }, 
-        tz: 'Europe/Zurich' 
-    },
-    { 
-        id: 'LXb3EKWsInQ', 
-        country: { ja: 'エジプト', en: 'Egypt' }, 
-        location: { ja: 'ピラミッド (デモ映像)', en: 'Pyramids (Demo Video)' }, 
-        tz: 'Africa/Cairo' 
-    },
-    { 
-        id: 'aqz-KE-bpKQ', 
-        country: { ja: 'タイ', en: 'Thailand' }, 
-        location: { ja: 'バンコク (デモ映像)', en: 'Bangkok (Demo Video)' }, 
-        tz: 'Asia/Bangkok' 
-    },
-    { 
-        id: 'LXb3EKWsInQ', 
-        country: { ja: 'UAE', en: 'UAE' }, 
-        location: { ja: 'ドバイ (デモ映像)', en: 'Dubai (Demo Video)' }, 
-        tz: 'Asia/Dubai' 
-    }
+const cameraList = [
+  { id: 'LXb3EKWsInQ', country: 'コスタリカ / Costa Rica', location: '大自然 / Nature (4K)', timeZone: 'America/Costa_Rica' },
+  { id: 'b6KT9ImNwzk', country: 'アメリカ / USA', location: 'タイムズスクエア / Times Square', timeZone: 'America/New_York' },
+  { id: 'M7lc1UVf-VE', country: 'テスト用 / Test', location: 'YouTube開発者公式 / YT Official', timeZone: 'America/Los_Angeles' },
+  { id: 'qU69nyfy2XQ', country: 'コスタリカ / Costa Rica', location: '熱帯雨林 / Rainforest', timeZone: 'America/Costa_Rica' },
+  { id: 'F109TZt3nRc', country: 'テスト用 / Test', location: 'YouTubeデモ / YT Demo', timeZone: 'America/Los_Angeles' }
 ];
 
 // ==========================================
@@ -150,10 +62,10 @@ function initApp() {
 window.onYouTubeIframeAPIReady = function() {
     // プレイヤーの生成
     player = new YT.Player('youtube-player', {
-        videoId: CAMERAS[currentCamIndex].id,
+        videoId: cameraList[currentCamIndex].id,
         playerVars: {
-            'autoplay': 1,      // 自動再生フラグ
-            'mute': 1,          // ブラウザ自動再生ポリシー対応（必須）
+            'autoplay': 1,      // ブラウザ自動再生に対応
+            'mute': 1,          // ブラウザの自動再生ポリシー対策でミュート必須
             'controls': 1,      // ユーザーが操作できるようにコントロールを表示
             'playsinline': 1,
             'rel': 0,
@@ -182,8 +94,9 @@ function onPlayerStateChange(event) {
     }
 }
 
-// 【ルーレットが回り続けるバグ修正】
-// API・動画読み込みエラー時のフォールバック処理を安全に
+// ==========================================
+// API・動画読み込みエラー時のフォールバック処理
+// ==========================================
 function onPlayerError(event) {
     console.warn("YouTube Player Error:", event.data, "- Waiting 3 seconds before next camera.");
     consecutiveErrors++;
@@ -208,11 +121,11 @@ function onPlayerError(event) {
 
 function pickRandomCamera() {
     let newIndex;
-    if (CAMERAS.length <= 1) {
+    if (cameraList.length <= 1) {
         newIndex = 0;
     } else {
         do {
-            newIndex = Math.floor(Math.random() * CAMERAS.length);
+            newIndex = Math.floor(Math.random() * cameraList.length);
         } while (newIndex === currentCamIndex); // 同じものが連続しないように
     }
     currentCamIndex = newIndex;
@@ -223,7 +136,7 @@ function loadNextCameraUnsafe() {
     pickRandomCamera();
     if (player && player.loadVideoById) {
         player.loadVideoById({
-            videoId: CAMERAS[currentCamIndex].id
+            videoId: cameraList[currentCamIndex].id
         });
         updateInfoDisplay();
     }
@@ -265,12 +178,12 @@ function endTransitionIfStillTransitioning() {
 
 // 情報エリアの更新
 function updateInfoDisplay() {
-    const cam = CAMERAS[currentCamIndex];
+    const cam = cameraList[currentCamIndex];
     if (!cam) return;
 
     // textContent を使って安全に文字を挿入 (XSS対策)
-    infoCountry.textContent = `${cam.country.ja} / ${cam.country.en}`;
-    infoLocation.textContent = `${cam.location.ja} / ${cam.location.en}`;
+    infoCountry.textContent = cam.country;
+    infoLocation.textContent = cam.location;
     
     startClock(); // タイムゾーンが変わるのでクロック再始動
 }
@@ -281,10 +194,10 @@ function startClock() {
         clearInterval(clockInterval);
     }
     
-    const cam = CAMERAS[currentCamIndex];
+    const cam = cameraList[currentCamIndex];
     if (!cam) return;
 
-    const tz = cam.tz;
+    const tz = cam.timeZone;
     
     // 最初の1秒を待たずに即時実行するためにラップする
     const tick = () => {
