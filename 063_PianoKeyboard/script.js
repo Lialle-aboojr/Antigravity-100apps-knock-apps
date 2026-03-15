@@ -2,7 +2,6 @@
 
 // DOM要素の取得
 const pianoContainer = document.getElementById("piano");
-const unlockBtn = document.getElementById("unlock-audio-btn");
 const waveformSelect = document.getElementById("waveform-select"); // 音色選択用のセレクトボックス
 
 // 録音機能のための変数とDOM要素
@@ -249,18 +248,12 @@ function initAudio() {
     if (!audioCtx) {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         audioCtx = new AudioContext();
-        
-        if (unlockBtn) {
-            unlockBtn.classList.add("hidden");
-        }
     }
     
     if (audioCtx.state === "suspended") {
         audioCtx.resume();
     }
 }
-
-unlockBtn.addEventListener("click", initAudio);
 
 /**
  * 音を鳴らす関数

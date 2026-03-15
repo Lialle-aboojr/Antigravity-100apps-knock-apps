@@ -322,43 +322,15 @@ header h1 {
     margin-bottom: 8px;
 }
 
-/* ボタン群 */
-.controls {
-    margin-top: 25px;
-}
-
-.btn {
-    background-color: #2b2b2b; /* 黒鍵に合わせた落ち着いた黒 */
-    color: #fff;
-    border: none;
-    padding: 14px 28px;
-    border-radius: 25px;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    font-family: inherit;
-    font-weight: 600;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-
-.btn:hover {
-    background-color: #444;
-    transform: translateY(-1px);
-}
-
-.btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-}
-
-.btn.hidden {
-    display: none;
-}
-
 /* スマホ等、画面幅が狭い場合への対応（レスポンシブ） */
 @media (max-width: 650px) {
     .app-container {
         padding: 25px 15px;
+    }
+    
+    .tone-selector {
+        flex-direction: column;
+        gap: 10px;
     }
     
     .piano {
