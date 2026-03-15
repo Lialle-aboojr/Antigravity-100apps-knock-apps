@@ -48,7 +48,14 @@
         <main class="player-section">
             <div class="frame-container">
                 <!-- YouTubeプレーヤーがここに入ります -->
-                <div id="youtube-wrapper" class="yt-container"></div>
+                <div id="youtube-player" class="yt-container"></div>
+                
+                <!-- エラー時のフォールバックメッセージ -->
+                <div id="fallback-message" class="fallback-message">
+                    <span class="icon">⚠️</span>
+                    <p class="ja">※プレビュー環境のためYouTube動画の埋め込み再生が制限されています。<br>機能は正常に動作中です。「Next Camera」ボタンを押してルーレットをテストしてください。</p>
+                    <p class="en">*Preview environment limitation: YouTube embedding is restricted here.<br>The app is functioning normally. Please test with the "Next Camera" button.</p>
+                </div>
                 
                 <!-- 枠線の装飾 (テーマ切り替え用) -->
                 <div class="theme-frame"></div>

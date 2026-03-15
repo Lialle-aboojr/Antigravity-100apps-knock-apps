@@ -138,12 +138,54 @@ select#themeSelect {
 .yt-container {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    /* Youtubeの再生操作が行えるようにするため pointer-events:none を外す */
+    z-index: 1; /* z-index指定で下層に敷く */
 }
 .yt-container iframe {
     width: 100%;
     height: 100%;
     border: none;
+}
+
+/* --- 再生不可時のフォールバックUI --- */
+.fallback-message {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #1e293b;
+    color: var(--clr-text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    z-index: 2; /* YTコンテナより上で、テーマフレームより下 */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.fallback-message.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.fallback-message .icon {
+    font-size: 2.5rem;
+    margin-bottom: 12px;
+    background: transparent;
+    box-shadow: none;
+    width: auto; height: auto;
+}
+
+.fallback-message p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+.fallback-message .en {
+    font-size: 0.85rem;
+    color: var(--clr-text-sub);
+    font-weight: 400;
 }
 
 /* --- THEMES & FRAMES --- */

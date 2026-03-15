@@ -1,6 +1,6 @@
 /**
  * World Live Cam Roulette - Main Logic
- * Manages YouTube IFrame Player API, live camera list, timezone clocks, and theme transitions.
+ * Handles standard YouTube Player API initialization and fallback failsafes
  */
 
 // 安全なDOM挿入のためのユーティリティ (XSS対策)
@@ -13,7 +13,6 @@ function sanitizeText(str) {
 // ==========================================
 // 📺 ライブカメラデータ
 // ==========================================
-// id: YouTubeのVideo ID (URLの ?v=XXX の部分)
 const cameraList = [
   { id: 'LXb3EKWsInQ', country: 'コスタリカ / Costa Rica', location: '大自然 / Nature (4K)', timeZone: 'America/Costa_Rica' },
   { id: 'b6KT9ImNwzk', country: 'アメリカ / USA', location: 'タイムズスクエア / Times Square', timeZone: 'America/New_York' },
@@ -30,11 +29,7 @@ let currentCamIndex = -1;
 let clockInterval = null;
 let isTransitioning = false;
 let currentThemeClass = 'theme-window';
-
-// エラー連鎖による無限ループストッパー
-let consecutiveErrors = 0;
-let errorTimer = null;
-let transitionFailsafe = null;
+let apiLoadTimeout = null; // APIロードフリーズ対策用タイマー
 
 // DOM Elements
 const body = document.body;
@@ -44,6 +39,7 @@ const infoCountry = document.getElementById('infoCountry');
 const infoLocation = document.getElementById('infoLocation');
 const infoTime = document.getElementById('infoTime');
 const transitionLayer = document.getElementById('transition-layer');
+const fallbackMessage = document.getElementById('fallback-message');
 
 // ==========================================
 // 初期化・スクリプト動的読み込み
@@ -51,77 +47,75 @@ const transitionLayer = document.getElementById('transition-layer');
 function initApp() {
     pickRandomCamera(); // 最初のカメラを選択
     
-    // Youtube IFrame APIを動的にロードする（HTMLに直書きするよりも確実）
+    // 【フェイルセーフ】3秒経ってもAPIが読み込めない場合は、フリーズを防ぐためにローディング状態を解除
+    apiLoadTimeout = setTimeout(() => {
+        console.warn("YouTube API load timeout. Forcing UI enable.");
+        updateInfoDisplay();
+        fallbackMessage.classList.add('show');
+        nextBtn.disabled = false;
+    }, 3000);
+
+    // Youtube IFrame APIをロード
     const tag = document.createElement('script');
     tag.src = "https://www.youtube.com/iframe_api";
     const firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
 
-// YouTube IFrame API の準備完了時に呼ばれるグローバル関数
+// ----------------------------------------------------
+// YouTube API 準備完了
+// ----------------------------------------------------
 window.onYouTubeIframeAPIReady = function() {
-    createAndAttachPlayer();
-};
-
-function createAndAttachPlayer() {
-    const videoId = cameraList[currentCamIndex].id;
-    const wrapper = document.getElementById('youtube-wrapper');
+    // APIが無事にロードされたのでタイムアウトを解除
+    if (apiLoadTimeout) clearTimeout(apiLoadTimeout);
     
-    // iframeパラメータを構築し、DOMに直接挿入 (Referrer Policy エラー回避のため必須)
-    wrapper.innerHTML = `
-        <iframe id="youtube-player" 
-                src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=1&mute=1&controls=1&playsinline=1&rel=0&modestbranding=1&origin=${window.location.origin}" 
-                referrerpolicy="strict-origin-when-cross-origin" 
-                allow="autoplay; encrypted-media" 
-                frameborder="0" 
-                allowfullscreen>
-        </iframe>
-    `;
-
-    // 既存のiframeに対してAPIをアタッチ
+    // UIを初期情報で更新
+    updateInfoDisplay();
+    
+    // 最も標準的な `new YT.Player` を用いてdivを自動でiframeに置換する
     player = new YT.Player('youtube-player', {
+        videoId: cameraList[currentCamIndex].id,
+        playerVars: {
+            'autoplay': 1,      
+            'mute': 1,          
+            'controls': 1,      
+            'playsinline': 1,
+            'rel': 0,
+            'modestbranding': 1
+        },
         events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange,
             'onError': onPlayerError
         }
     });
-}
+};
 
 function onPlayerReady(event) {
     nextBtn.disabled = false;
-    updateInfoDisplay();
-    // 確実に再生を試みる
     event.target.playVideo();
 }
 
 function onPlayerStateChange(event) {
-    // 動画の再生が始まったらエラーカウントをリセットし、トランジションを外す
+    // 動画の再生が始まったらフォールバックメッセージを消し、トランジションを外す
     if (event.data === YT.PlayerState.PLAYING) {
-        consecutiveErrors = 0; 
+        fallbackMessage.classList.remove('show');
         endTransitionIfStillTransitioning();
     }
 }
 
-// ==========================================
-// API・動画読み込みエラー時のフォールバック処理
-// ==========================================
+// ----------------------------------------------------
+// エラー対応 (自動スキップの廃止と手動操作の維持)
+// ----------------------------------------------------
 function onPlayerError(event) {
-    console.warn("YouTube Player Error:", event.data, "- Waiting 3 seconds before next camera.");
-    consecutiveErrors++;
+    console.warn("YouTube Player Error (Playback Restricted):", event.data);
     
-    // 3回連続でエラーになった場合は自動スキップを停止し、処理を止める
-    if (consecutiveErrors >= 3) {
-        console.error("3回連続で動画の読み込みに失敗しました。自動スキップ機能を停止します。");
-        endTransitionIfStillTransitioning();
-        return;
-    }
+    // 自動スキップループは完全に停止し、プレビュー制限のメッセージを表示する
+    fallbackMessage.classList.add('show');
     
-    // 3秒（3000ms）待機してから次の動画へ切り替える (無限ループ防止)
-    if (errorTimer) clearTimeout(errorTimer);
-    errorTimer = setTimeout(() => {
-        loadNextCameraUnsafe();
-    }, 3000);
+    // トランジションで画面が隠れたままにならないよう強制的に解除し、UIを操作可能にする
+    endTransitionIfStillTransitioning();
+    nextBtn.disabled = false;
 }
 
 // ==========================================
@@ -135,27 +129,34 @@ function pickRandomCamera() {
     } else {
         do {
             newIndex = Math.floor(Math.random() * cameraList.length);
-        } while (newIndex === currentCamIndex); // 同じものが連続しないように
+        } while (newIndex === currentCamIndex); 
     }
     currentCamIndex = newIndex;
 }
 
-// 無条件で次のカメラの動画を読み込む部分（エラー・切り替え用）
+// 動画とUIの読み込み
 function loadNextCameraUnsafe() {
     pickRandomCamera();
     
-    // iframeを破棄して再生成するアプローチにする（Iframeのキャッシュ問題やポリシー対策のため）
-    if (player && typeof player.destroy === 'function') {
-        player.destroy();
-    }
-    
+    // UIのテキスト情報（国名、時刻など）はAPIの状態に関係なく100%確実に更新する
     updateInfoDisplay();
-    createAndAttachPlayer();
+    
+    // 動画をロードする前に一端フォールバックメッセージを消す
+    fallbackMessage.classList.remove('show');
+
+    if (player && typeof player.loadVideoById === "function") {
+        player.loadVideoById({
+            videoId: cameraList[currentCamIndex].id
+        });
+    } else {
+        // 万が一playerオブジェクトの初期化に失敗している場合
+        fallbackMessage.classList.add('show');
+    }
 }
 
 // Nextボタンを押したときの処理（アニメーションを伴う）
 function loadNextCameraWithTransition() {
-    if (isTransitioning || !player) return;
+    if (isTransitioning) return;
     
     isTransitioning = true;
     nextBtn.disabled = true;
@@ -164,16 +165,14 @@ function loadNextCameraWithTransition() {
     const themeName = currentThemeClass.split('-')[1];
     body.classList.add(`is-transitioning-${themeName}`);
 
-    // CSSアニメーションの画面が覆われるタイミング（例：0.4秒後）で動画を切り替える
+    // CSSアニメーションの画面が覆われるタイミング（0.4秒後）で動画を切り替える
     setTimeout(() => {
         loadNextCameraUnsafe();
         
-        // 【シンプルモード＆エラー時のフェールセーフ】
-        // 最大3.5秒待ってもPLAYINGにならなければ、強制的にトランジションを外す
-        if (transitionFailsafe) clearTimeout(transitionFailsafe);
-        transitionFailsafe = setTimeout(() => {
+        // 【フェイルセーフ】最大1.5秒待って再生が始まらなければ、トランジションを強制解除する
+        setTimeout(() => {
             endTransitionIfStillTransitioning();
-        }, 3500);
+        }, 1500);
 
     }, 400);
 }
@@ -192,11 +191,12 @@ function updateInfoDisplay() {
     const cam = cameraList[currentCamIndex];
     if (!cam) return;
 
-    // textContent を使って安全に文字を挿入 (XSS対策)
+    // XSS対策でテキストを安全に挿入
     infoCountry.textContent = cam.country;
     infoLocation.textContent = cam.location;
     
-    startClock(); // タイムゾーンが変わるのでクロック再始動
+    // タイムゾーンが変わるのでクロック再始動
+    startClock(); 
 }
 
 // 現地時計のループ
@@ -210,11 +210,9 @@ function startClock() {
 
     const tz = cam.timeZone;
     
-    // 最初の1秒を待たずに即時実行するためにラップする
     const tick = () => {
         try {
             const now = new Date();
-            // 指定されたタイムゾーンでの時刻文字列を生成
             const timeString = now.toLocaleTimeString('en-US', {
                 timeZone: tz,
                 hour12: false,
@@ -224,7 +222,6 @@ function startClock() {
             });
             infoTime.textContent = timeString;
         } catch (e) {
-            // 万が一未知のタイムゾーン等のエラーがあった場合
             infoTime.textContent = "--:--:--";
         }
     };
@@ -244,9 +241,7 @@ nextBtn.addEventListener('click', () => {
 
 // テーマ変更
 themeSelect.addEventListener('change', (e) => {
-    // 古いテーマのクラスを除去
     body.classList.remove(currentThemeClass);
-    // 新しいテーマのクラスを付与
     currentThemeClass = e.target.value;
     body.classList.add(currentThemeClass);
 });
