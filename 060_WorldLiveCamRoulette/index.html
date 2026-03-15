@@ -44,31 +44,42 @@
         <main class="player-section" id="playerSection">
             <div class="frame-container" id="frameContainer">
                 
-                <div class="yt-container">
-                    <video id="main-video" autoplay loop muted playsinline crossorigin="anonymous" style="width:100%; height:100%; object-fit:cover;"></video>
+                <!-- TV用コントロールパネル (テーマ2でのみ表示) -->
+                <div class="tv-control-panel">
+                    <div class="dials">
+                        <div class="tv-dial main-dial"></div>
+                        <div class="tv-dial sub-dial"></div>
+                    </div>
+                    <div class="tv-speaker"></div>
                 </div>
-                
-                <!-- 画面の上に被さるテーマ特有の装飾・枠 -->
-                <div class="theme-overlay"></div>
-                
-                <!-- トランジション（切り替え）用レイヤー -->
-                <div class="transition-layer">
-                    <!-- 1. Window: カーテン -->
-                    <div class="trans-piece curtain-left"></div>
-                    <div class="trans-piece curtain-right"></div>
-                    
-                    <!-- 2. TV: 砂嵐ノイズ -->
-                    <div class="trans-piece tv-noise"></div>
-                    
-                    <!-- 3. Airplane: 雲 -->
-                    <div class="trans-piece clouds-wrapper">
-                        <div class="cloud c1"></div>
-                        <div class="cloud c2"></div>
-                        <div class="cloud c3"></div>
+
+                <!-- 映像やオーバーレイが入るスクリーンエリア -->
+                <div class="screen-area">
+                    <div class="yt-container" id="ytContainer">
+                        <video id="main-video" autoplay loop muted playsinline crossorigin="anonymous" style="width:100%; height:100%; object-fit:cover;"></video>
                     </div>
                     
-                    <!-- 4. Simple: クロスフェード用の黒幕 -->
-                    <div class="trans-piece simple-fade"></div>
+                    <!-- 画面の上に被さるテーマ特有の装飾・枠 -->
+                    <div class="theme-overlay"></div>
+                    
+                    <!-- トランジション（切り替え）用レイヤー -->
+                    <div class="transition-layer">
+                        <!-- 1. Window: カーテン -->
+                        <div class="trans-piece curtain-left"></div>
+                        <div class="trans-piece curtain-right"></div>
+                        
+                        <!-- 2. TV: CRTアニメーションのためのフラッシュ -->
+                        <div class="trans-piece crt-flash"></div>
+                        
+                        <!-- 3. Airplane: 雲 -->
+                        <div class="trans-piece clouds-wrapper">
+                            <div class="clouds-bg"></div>
+                            <div class="clouds-layer"></div>
+                        </div>
+                        
+                        <!-- 4. Simple: クロスフェード用の黒幕 -->
+                        <div class="trans-piece simple-fade"></div>
+                    </div>
                 </div>
             </div>
         </main>
