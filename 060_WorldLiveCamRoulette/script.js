@@ -1,6 +1,6 @@
 /**
  * World Live Cam Roulette - Main Logic
- * Integrates Windy Webcams with rich CSS theme transitions.
+ * Integrates YouTube Iframe API (4K Scenic Videos) with rich CSS theme transitions.
  */
 
 function sanitizeText(str) {
@@ -9,19 +9,16 @@ function sanitizeText(str) {
     return div.innerHTML;
 }
 
-// 🌍 Windy Webcamsデータリスト
+// 🌍 YouTube 4K風景動画データリスト
 const cameraList = [
-  { id: '1341940811', country: 'アメリカ / USA', location: 'タイムズスクエア / Times Square', timeZone: 'America/New_York' },
-  { id: '1555326274', country: 'フランス / France', location: 'エッフェル塔 / Eiffel Tower', timeZone: 'Europe/Paris' },
-  { id: '1410979629', country: '日本 / Japan', location: '東京タワー / Tokyo Tower', timeZone: 'Asia/Tokyo' },
-  { id: '1362211264', country: '日本 / Japan', location: '東京スカイツリー / Tokyo Skytree', timeZone: 'Asia/Tokyo' },
-  { id: '1490712854', country: 'イギリス / UK', location: 'ビッグベン / Big Ben', timeZone: 'Europe/London' },
-  { id: '1552065404', country: 'UAE / Dubai', location: 'ドバイ / Dubai Mall', timeZone: 'Asia/Dubai' },
-  { id: '1279401088', country: 'イタリア / Italy', location: 'ヴェネツィア / Venice', timeZone: 'Europe/Rome' },
-  { id: '1503353468', country: 'オーストラリア / Australia', location: 'シドニー港 / Sydney Harbour', timeZone: 'Australia/Sydney' },
-  { id: '1240237991', country: 'カナダ / Canada', location: 'ナイアガラの滝 / Niagara Falls', timeZone: 'America/Toronto' },
-  { id: '1237807604', country: 'スペイン / Spain', location: 'バルセロナ海岸 / Barcelona Beach', timeZone: 'Europe/Madrid' },
-  { id: '1346107218', country: 'スペイン / Spain', location: 'ラス・ランブラス / Las Ramblas', timeZone: 'Europe/Madrid' }
+    { id: 'LXb3EKWsInQ', country: 'コスタリカ / Costa Rica', location: '熱帯雨林の絶景 / Tropical Rainforest 4K', timeZone: 'America/Costa_Rica' },
+    { id: 'FzcfZyEhOoI', country: 'スイス / Switzerland', location: 'アルプスと鉄道 / Swiss Alps 4K', timeZone: 'Europe/Zurich' },
+    { id: 'b6KT9ImNwzk', country: 'アメリカ / USA', location: 'タイムズスクエア / Times Square 4K', timeZone: 'America/New_York' },
+    { id: '9QeS3o6QXEU', country: '日本 / Japan', location: '渋谷スクランブル交差点 / Shibuya 4K', timeZone: 'Asia/Tokyo' },
+    { id: 'Vg1mpD1BICI', country: 'イタリア / Italy', location: 'ヴェネツィア / Venice 4K', timeZone: 'Europe/Rome' },
+    { id: 'sY-8HGaGv1M', country: 'フランス / France', location: 'エッフェル塔周辺 / Paris 4K', timeZone: 'Europe/Paris' },
+    { id: 'HvdK_3x1Otc', country: 'ケニア / Kenya', location: 'サバンナの野生動物 / African Safari 4K', timeZone: 'Africa/Nairobi' },
+    { id: '2R2gb0MKJlo', country: 'イギリス / UK', location: 'ロンドン市街地 / London Walk 4K', timeZone: 'Europe/London' }
 ];
 
 // 状態管理
@@ -29,6 +26,7 @@ let currentCamIndex = -1;
 let clockInterval = null;
 let isTransitioning = false;
 let currentThemeClass = 'theme-window';
+let player = null;
 
 // DOM Elements
 const body = document.body;
@@ -37,18 +35,70 @@ const nextBtn = document.getElementById('nextBtn');
 const infoCountry = document.getElementById('infoCountry');
 const infoLocation = document.getElementById('infoLocation');
 const infoTime = document.getElementById('infoTime');
-const windyPlayer = document.getElementById('windy-player');
+
 
 // ==========================================
-// 初期化
+// 初期化・YouTube Iframe API
 // ==========================================
 function initApp() {
     pickRandomCamera();
     updateInfoDisplay();
     
-    // Windy Webcamsを初期表示
-    windyPlayer.src = 'https://webcams.windy.com/webcams/public/embed/player/' + cameraList[currentCamIndex].id + '/live';
+    // YouTube APIの動的読み込み
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
+
+// YT APIが準備完了した際に呼ばれるグローバル関数
+window.onYouTubeIframeAPIReady = function() {
+    const cam = cameraList[currentCamIndex];
+    player = new YT.Player('youtube-player', {
+        height: '100%',
+        width: '100%',
+        videoId: cam.id,
+        playerVars: {
+            'autoplay': 1,
+            'mute': 1,
+            'controls': 0,
+            'rel': 0,
+            'loop': 1,
+            'disablekb': 1,
+            'modestbranding': 1,
+            'playsinline': 1
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange,
+            'onError': onPlayerError
+        }
+    });
+};
+
+function onPlayerReady(event) {
+    // API読み込み完了したらボタンを活性化
+    nextBtn.disabled = false;
+    event.target.playVideo();
+}
+
+function onPlayerStateChange(event) {
+    // 動画の再生が終了したら最初からループ再生
+    if (event.data === YT.PlayerState.ENDED) {
+        player.playVideo();
+    }
+}
+
+function onPlayerError(event) {
+    // エラーハンドリング: 自動スキップはせず、ユーザーの操作を待つ（無限ループ防止）
+    console.warn('YouTube Player Error:', event.data);
+    infoCountry.textContent = "Error";
+    infoLocation.textContent = "動画を再生できません。Nextを押してください";
+    nextBtn.disabled = false;
+    isTransitioning = false;
+    body.classList.remove('is-transitioning');
+}
+
 
 // ==========================================
 // ロジックとトランジション制御
@@ -63,7 +113,8 @@ function pickRandomCamera() {
 
 // Nextボタンを押したときの詳細なアニメーション連動処理
 function processNextCamera() {
-    if (isTransitioning) return;
+    // playerの機能がまだ準備できていない場合は無視
+    if (isTransitioning || !player || typeof player.loadVideoById !== 'function') return;
     
     isTransitioning = true;
     nextBtn.disabled = true;
@@ -84,8 +135,8 @@ function processNextCamera() {
         // 次のカメラをピック
         pickRandomCamera();
         
-        // Windy Webcamsの動画を切り替え
-        windyPlayer.src = 'https://webcams.windy.com/webcams/public/embed/player/' + cameraList[currentCamIndex].id + '/live';
+        // YouTube APIで新しい動画を読み込んで再生
+        player.loadVideoById(cameraList[currentCamIndex].id);
         
         updateInfoDisplay();
         
