@@ -22,6 +22,17 @@
         </header>
 
         <main>
+            <!-- 音色選択UI -->
+            <div class="tone-selector">
+                <label for="waveform-select">音色 / Tone</label>
+                <select id="waveform-select" class="waveform-select">
+                    <option value="triangle" selected>三角波 / Triangle</option>
+                    <option value="sine">正弦波 / Sine</option>
+                    <option value="square">矩形波 / Square</option>
+                    <option value="sawtooth">ノコギリ波 / Sawtooth</option>
+                </select>
+            </div>
+
             <!-- ピアノの鍵盤全体を囲むコンテナ -->
             <div id="piano" class="piano">
                 <!-- JavaScriptで動的に鍵盤が生成されます。

@@ -3,6 +3,7 @@
 // DOM要素の取得
 const pianoContainer = document.getElementById("piano");
 const unlockBtn = document.getElementById("unlock-audio-btn");
+const waveformSelect = document.getElementById("waveform-select"); // 音色選択用のセレクトボックス
 
 // AudioContext（Web Audio APIのコア機能）の準備
 let audioCtx = null;
@@ -155,8 +156,9 @@ function startPlaying(event, keyInfo) {
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
     
-    // 音色を「triangle（三角波）」に設定。正弦波(sine)より少し深みがあり、楽器らしくなる
-    oscillator.type = "triangle";
+    // セレクトボックスで選ばれた音色（波形）を適用する
+    // sine, square, sawtooth, triangle のいずれかが設定される
+    oscillator.type = waveformSelect.value;
     oscillator.frequency.value = getFrequency(keyInfo.midi);
     
     // 時間管理用の現在時刻を取得
