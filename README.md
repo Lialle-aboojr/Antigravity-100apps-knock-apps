@@ -71,13 +71,14 @@ Complete it. Ship it. Relax. ☕
 | 058 | 🚧 404 Error Page Maker | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/058_ErrorPageMaker/index.html) |
 | 059 | 👀 EyeRelax Trainer | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/059_EyeRelaxTrainer/index.html) |
 | 060 | 🌍 WorldLiveCamRoulette | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/060_WorldLiveCamRoulette/index.html) |
+| 061 | 💬 Bilingual Quote Generator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/061_BilingualQuoteGenerator/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 60 / 100 ████████████░░░░░░░░ 60%
+完成: 61 / 100 ████████████░░░░░░░░ 61%
 ```
 
 ---
