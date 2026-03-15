@@ -327,6 +327,36 @@ const elements = {
 let currentQuoteIndex = 0;
 // Web Speech API のインスタンスを取得
 const synth = window.speechSynthesis;
+let preferredEnglishVoice = null;
+
+// 高品質な英語の音声を選定する関数
+function loadVoices() {
+    const voices = synth.getVoices();
+    if (voices.length === 0) return;
+
+    // 英語の音声のみを抽出 (en-US または en-GB)
+    const englishVoices = voices.filter(voice => voice.lang.includes('en'));
+    
+    // 優先したい高品質または自然な女性の音声名（Google, Samantha, Zira, Karen など）
+    const preferredNames = ['Google', 'Samantha', 'Zira', 'Karen', 'Serena', 'Tessa'];
+    
+    // 優先したい音声を探す
+    preferredEnglishVoice = englishVoices.find(voice => {
+        return preferredNames.some(name => voice.name.includes(name));
+    });
+    
+    // 見つからなかった場合は、利用可能な英語音声の最初のものをフォールバックにする
+    if (!preferredEnglishVoice && englishVoices.length > 0) {
+        preferredEnglishVoice = englishVoices[0];
+    }
+}
+
+// OSやブラウザによっては非同期で音声リストが読み込まれるため、イベントを監視する
+if (synth.onvoiceschanged !== undefined) {
+    synth.onvoiceschanged = loadVoices;
+}
+// 即座に取得できる環境用に一度実行しておく
+loadVoices();
 
 /**
  * 3. クロスサイトスクリプティング（XSS）対策のためのサニタイズ関数
@@ -389,6 +419,11 @@ function speakText(text, lang, btnElement) {
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = lang; // 言語設定（英語: en-US, 日本語: ja-JP）
     utterance.rate = 0.9;  // 少しゆっくりめに読む
+    
+    // 言語が英語の場合、選定した優先音声（高品質な女性音声等）をセットする
+    if (lang.includes('en') && preferredEnglishVoice) {
+        utterance.voice = preferredEnglishVoice;
+    }
     
     // 読み上げ開始時のアニメーション
     utterance.onstart = () => {
