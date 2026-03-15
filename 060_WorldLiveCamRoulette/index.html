@@ -47,14 +47,10 @@
         <!-- メイン画面（Player + テーマごとの枠装飾 + トランジション層） -->
         <main class="player-section">
             <div class="frame-container">
-                <!-- YouTubeプレーヤーがここに入ります -->
-                <div id="youtube-player" class="yt-container"></div>
                 
-                <!-- エラー時のフォールバックメッセージ -->
-                <div id="fallback-message" class="fallback-message">
-                    <span class="icon">⚠️</span>
-                    <p class="ja">※プレビュー環境のためYouTube動画の埋め込み再生が制限されています。<br>機能は正常に動作中です。「Next Camera」ボタンを押してルーレットをテストしてください。</p>
-                    <p class="en">*Preview environment limitation: YouTube embedding is restricted here.<br>The app is functioning normally. Please test with the "Next Camera" button.</p>
+                <!-- 標準HTML5 Videoプレーヤー (テストモード) -->
+                <div class="yt-container">
+                    <video id="main-video" autoplay loop muted playsinline style="width:100%; height:100%; object-fit:cover;"></video>
                 </div>
                 
                 <!-- 枠線の装飾 (テーマ切り替え用) -->
@@ -78,7 +74,7 @@
                 <div class="location-group">
                     <span class="icon">📍</span>
                     <div class="text-group">
-                        <div class="country" id="infoCountry">Loading API...</div>
+                        <div class="country" id="infoCountry">Loading...</div>
                         <div class="location" id="infoLocation">Please wait</div>
                     </div>
                 </div>
@@ -91,7 +87,7 @@
                 </div>
             </div>
             
-            <button id="nextBtn" class="next-btn" aria-label="Next Camera" disabled>
+            <button id="nextBtn" class="next-btn" aria-label="Next Camera">
                 <div class="btn-content">
                     <span class="en">Next Camera</span>
                     <span class="ja">次のカメラ</span>
