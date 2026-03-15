@@ -1,0 +1,240 @@
+/* 全体のリセットと基本設定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* カラーパレットの定義 */
+    --bg-color: #f7f9fc;
+    --card-bg: #ffffff;
+    --text-primary: #1a1a24;
+    --text-secondary: #5a5a66;
+    --accent-color: #3b82f6;
+    --accent-hover: #2563eb;
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 10px 25px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    --transition: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    /* 欧文フォントと和文フォントの組み合わせ（きれいに見えるフォントスタック） */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem 1rem;
+    line-height: 1.6;
+}
+
+/* メインコンテナ */
+.container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+}
+
+/* ヘッダー部分 */
+.header {
+    text-align: center;
+}
+
+.title-en {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.title-ja {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* 名言カード */
+.quote-card {
+    background: var(--card-bg);
+    width: 100%;
+    border-radius: 24px;
+    padding: 4rem 3rem;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    /* フェードインアニメーション用のプロパティ */
+    transition: opacity 0.5s var(--transition), transform 0.5s var(--transition);
+}
+
+/* フェードアウト・フェードイン用のクラス */
+.quote-card.fade-out {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+/* 背景に表示される大きな引用符 */
+.quote-mark {
+    position: absolute;
+    top: 2rem;
+    left: 2.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 8rem;
+    line-height: 1;
+    color: rgba(59, 130, 246, 0.1);
+    pointer-events: none;
+    user-select: none;
+}
+
+/* 名言テキストのコンテナ */
+.quote-content {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+/* 英語の名言 */
+.quote-en {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.25rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    line-height: 1.4;
+}
+
+/* 日本語の名言 */
+.quote-ja {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.8;
+}
+
+/* 発言者情報 */
+.quote-author {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* 発言者の上の飾り線 */
+.author-line {
+    width: 40px;
+    height: 2px;
+    background-color: var(--accent-color);
+    margin-bottom: 1rem;
+}
+
+.author-en {
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.author-ja {
+    font-family: 'Noto Serif JP', serif;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* ボタンのコンテナ */
+.controls {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* ボタンのデザイン */
+.btn {
+    background-color: var(--card-bg);
+    border: 2px solid var(--accent-color);
+    border-radius: 9999px;
+    padding: 1rem 2.5rem;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    transition: all 0.3s var(--transition);
+    box-shadow: var(--shadow-sm);
+    outline: none;
+}
+
+.btn:hover {
+    background-color: var(--accent-color);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* ボタン内のテキスト（日本語） */
+.btn-text-ja {
+    font-family: 'Noto Serif JP', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: var(--accent-color);
+    transition: color 0.3s ease;
+}
+
+/* ボタン内のテキスト（英語） */
+.btn-text-en {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--accent-color);
+    letter-spacing: 0.05em;
+    opacity: 0.8;
+    transition: color 0.3s ease;
+}
+
+/* ホバー時のテキスト色変更 */
+.btn:hover .btn-text-ja,
+.btn:hover .btn-text-en {
+    color: #ffffff;
+}
+
+/* レスポンシブ対応（スマホ画面サイズ調整） */
+@media (max-width: 640px) {
+    .quote-card {
+        padding: 3rem 1.5rem;
+        border-radius: 16px;
+    }
+    
+    .quote-mark {
+        font-size: 6rem;
+        top: 1rem;
+        left: 1rem;
+    }
+
+    .quote-en {
+        font-size: 1.75rem;
+    }
+
+    .quote-ja {
+        font-size: 1.25rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 2rem;
+        width: 100%;
+    }
+}
