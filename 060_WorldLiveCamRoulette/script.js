@@ -19,9 +19,9 @@ function sanitizeText(str) {
 // tz: タイムゾーン識別子 (IANA Time Zone Database)
 const CAMERAS = [
     { 
-        id: '1-iS7Lmh5BM', 
+        id: 'pzqyR-k_6Jk', // FNN新宿など、比較的安定したライブ
         country: { ja: '日本', en: 'Japan' }, 
-        location: { ja: '渋谷スクランブル交差点', en: 'Shibuya Scramble Crossing' }, 
+        location: { ja: '新宿 大ガード', en: 'Shinjuku' }, 
         tz: 'Asia/Tokyo' 
     },
     { 
@@ -34,7 +34,7 @@ const CAMERAS = [
         id: '2HjQ1Q7XwKE', 
         country: { ja: '宇宙', en: 'Space' }, 
         location: { ja: 'ISS 国際宇宙ステーション', en: 'ISS Live Stream' }, 
-        tz: 'UTC' // ISSは標準時を採用
+        tz: 'UTC'
     },
     { 
         id: '1eFWIAzK8aA', 
@@ -42,16 +42,11 @@ const CAMERAS = [
         location: { ja: 'テンベ・エレファント・パーク', en: 'Tembe Elephant Park' }, 
         tz: 'Africa/Johannesburg' 
     },
+    /* 万が一エラーになってもスキップ機能が動くかどうかの動作確認も兼ねています */
     { 
-        id: '1-GvjH-O6L4', 
-        country: { ja: 'イギリス', en: 'UK' }, 
-        location: { ja: 'ロンドン アビイ・ロード', en: 'London Abbey Road' }, 
-        tz: 'Europe/London' 
-    },
-    { 
-        id: 'g3i1wimk8hE', 
+        id: 'j9V78UcdMHg', 
         country: { ja: 'イタリア', en: 'Italy' }, 
-        location: { ja: 'ヴェネツィア リアルト橋', en: 'Venice Rialto Bridge' }, 
+        location: { ja: 'ヴェネツィア', en: 'Venice' }, 
         tz: 'Europe/Rome' 
     },
     { 
@@ -107,6 +102,12 @@ const CAMERAS = [
         country: { ja: 'タイ', en: 'Thailand' }, 
         location: { ja: 'パタヤ ウォーキングストリート', en: 'Pattaya Walking Street' }, 
         tz: 'Asia/Bangkok' 
+    },
+    { 
+        id: 'S2bX0sE81Bw', 
+        country: { ja: 'UAE', en: 'UAE' }, 
+        location: { ja: 'ドバイ ファウンテン', en: 'Dubai Fountain' }, 
+        tz: 'Asia/Dubai' 
     }
 ];
 
@@ -119,6 +120,11 @@ let clockInterval = null;
 let isTransitioning = false;
 let currentThemeClass = 'theme-window';
 
+// エラー連鎖による無限ループストッパー
+let consecutiveErrors = 0;
+let errorTimer = null;
+let transitionFailsafe = null;
+
 // DOM Elements
 const body = document.body;
 const themeSelect = document.getElementById('themeSelect');
@@ -128,18 +134,28 @@ const infoLocation = document.getElementById('infoLocation');
 const infoTime = document.getElementById('infoTime');
 const transitionLayer = document.getElementById('transition-layer');
 
-// YouTube IFrame API の準備完了時に呼ばれるグローバル関数
-window.onYouTubeIframeAPIReady = function() {
+// ==========================================
+// 初期化・スクリプト動的読み込み
+// ==========================================
+function initApp() {
     pickRandomCamera(); // 最初のカメラを選択
     
+    // Youtube IFrame APIを動的にロードする（HTMLに直書きするよりも確実）
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+}
+
+// YouTube IFrame API の準備完了時に呼ばれるグローバル関数
+window.onYouTubeIframeAPIReady = function() {
+    // プレイヤーの生成
     player = new YT.Player('youtube-player', {
-        height: '100%',
-        width: '100%',
         videoId: CAMERAS[currentCamIndex].id,
         playerVars: {
-            'autoplay': 1,
+            'autoplay': 1,      // 自動再生を試みる
             'mute': 1,          // ブラウザの自動再生ポリシー対策でミュート必須
-            'controls': 0,      // コントロールバー非表示
+            'controls': 1,      // ★修正: ユーザーが操作できるようにコントロールを表示
             'playsinline': 1,
             'rel': 0,
             'modestbranding': 1
@@ -155,23 +171,32 @@ window.onYouTubeIframeAPIReady = function() {
 function onPlayerReady(event) {
     nextBtn.disabled = false;
     updateInfoDisplay();
-    startClock();
+    // 確実に再生を試みる
+    event.target.playVideo();
 }
 
 function onPlayerStateChange(event) {
-    // YT.PlayerState.PLAYING == 1
+    // 動画の再生が始まったらエラーカウントをリセットし、トランジションを外す
     if (event.data === YT.PlayerState.PLAYING) {
-        if (isTransitioning) {
-            endTransition();
-        }
+        consecutiveErrors = 0; 
+        endTransitionIfStillTransitioning();
     }
 }
 
-// API・動画読み込みエラー時のフォールバック処理
+// 【ルーレットが回り続けるバグ修正】
+// API・動画読み込みエラー時のフォールバック処理を安全に
 function onPlayerError(event) {
     console.warn("YouTube Player Error:", event.data, "- Skipping to next camera.");
-    // UIを壊さずに次のカメラへスキップする
-    loadNextCameraUnsafe();
+    consecutiveErrors++;
+    
+    // 何らかの理由で動画が見つからない場合、自動スキップするが
+    // 15個すべてダメなどの場合に無限高速ループさせないよう、待機時間を指数的に増やす
+    const delay = Math.min(consecutiveErrors * 1000, 10000); 
+    
+    if (errorTimer) clearTimeout(errorTimer);
+    errorTimer = setTimeout(() => {
+        loadNextCameraUnsafe();
+    }, delay);
 }
 
 // ==========================================
@@ -190,6 +215,7 @@ function pickRandomCamera() {
     currentCamIndex = newIndex;
 }
 
+// 無条件で次のカメラの動画を読み込む部分（エラー・切り替え用）
 function loadNextCameraUnsafe() {
     pickRandomCamera();
     if (player && player.loadVideoById) {
@@ -200,6 +226,7 @@ function loadNextCameraUnsafe() {
     }
 }
 
+// Nextボタンを押したときの処理（アニメーションを伴う）
 function loadNextCameraWithTransition() {
     if (isTransitioning || !player) return;
     
@@ -207,25 +234,30 @@ function loadNextCameraWithTransition() {
     nextBtn.disabled = true;
 
     // 現在のテーマに応じたトランジションクラスを付与
-    const transClass = `is-transitioning-${currentThemeClass.split('-')[1]}`;
-    body.classList.add(transClass);
+    const themeName = currentThemeClass.split('-')[1];
+    body.classList.add(`is-transitioning-${themeName}`);
 
-    // CSSアニメーションの画面が覆われるタイミング（例：0.5秒後）で動画を切り替える
+    // CSSアニメーションの画面が覆われるタイミング（例：0.4秒後）で動画を切り替える
     setTimeout(() => {
         loadNextCameraUnsafe();
-    }, 500);
+        
+        // 【シンプルモード＆エラー時のフェールセーフ】
+        // 最大3.5秒待ってもPLAYINGにならなければ、強制的にトランジションを外す
+        if (transitionFailsafe) clearTimeout(transitionFailsafe);
+        transitionFailsafe = setTimeout(() => {
+            endTransitionIfStillTransitioning();
+        }, 3500);
+
+    }, 400);
 }
 
-function endTransition() {
-    // 動画の再生が始まったらトランジションクラスを外して画面を見せる
-    const transClass = `is-transitioning-${currentThemeClass.split('-')[1]}`;
-    body.classList.remove(transClass);
+// トランジションを強制解除する処理
+function endTransitionIfStillTransitioning() {
+    if (!isTransitioning) return;
     
-    // アニメーション完了を待ってからボタンを有効化 (余裕を見て0.8秒)
-    setTimeout(() => {
-        isTransitioning = false;
-        nextBtn.disabled = false;
-    }, 800);
+    body.classList.remove('is-transitioning-window', 'is-transitioning-tv', 'is-transitioning-airplane', 'is-transitioning-simple');
+    isTransitioning = false;
+    nextBtn.disabled = false;
 }
 
 // 情報エリアの更新
@@ -291,3 +323,6 @@ themeSelect.addEventListener('change', (e) => {
     currentThemeClass = e.target.value;
     body.classList.add(currentThemeClass);
 });
+
+// アプリの開始
+initApp();

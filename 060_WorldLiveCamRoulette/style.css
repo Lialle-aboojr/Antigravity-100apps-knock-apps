@@ -1,6 +1,6 @@
 /* 
  * World Live Cam Roulette - Styles
- * Includes responsive layout and 4 animated themes for the camera frame.
+ * Includes responsive layout and 4 CSS-based themes for the camera frame.
  */
 
 :root {
@@ -39,23 +39,31 @@ body {
 .ja { display: block; font-size: 0.85em; opacity: 0.8; margin-top: 2px; }
 .en { display: block; font-weight: 600; }
 
+/* 見切れ修正と全体のパディング */
 .app-container {
     max-width: 1200px;
     margin: 0 auto;
     width: 100%;
-    padding: 16px;
+    padding: 24px;
     display: flex;
     flex-direction: column;
     height: 100vh;
 }
 
-/* Header */
+/* ヘッダー */
 .app-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 0;
-    margin-bottom: 8px;
+    padding: 16px 24px;
+    margin-bottom: 24px;
+    background: var(--clr-surface);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 50; /* UI消失防止: 常に最前面へ */
+    flex-wrap: wrap;
+    gap: 16px;
 }
 
 .logo-area h1 {
@@ -72,7 +80,7 @@ body {
 }
 
 .theme-selector-group {
-    background: var(--clr-surface);
+    background: rgba(0,0,0,0.2);
     padding: 8px 16px;
     border-radius: 50px;
     display: flex;
@@ -103,7 +111,7 @@ select#themeSelect {
     font-size: 0.95rem;
 }
 
-/* Player Section */
+/* プレイヤー部分 */
 .player-section {
     flex: 1;
     display: flex;
@@ -111,27 +119,27 @@ select#themeSelect {
     justify-content: center;
     position: relative;
     width: 100%;
-    min-height: 0; /* Important for flex child */
+    min-height: 200px;
 }
 
 .frame-container {
     position: relative;
     width: 100%;
     max-width: 1000px;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 16 / 9; /* この比率を守ることでYoutubeが正しく表示される */
     background: #000;
     border-radius: var(--radius-md);
+    /* 枠を描画するためのはみ出しを防ぐ */
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    transition: all 0.5s ease;
+    transition: all 0.3s ease;
 }
 
 .yt-container {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; /* Prevent interacting with youtube UI to keep it clean */
+    /* Youtubeの再生操作が行えるようにするため pointer-events:none を外す */
 }
-/* Ensure the iframe itself scales correctly */
 .yt-container iframe {
     width: 100%;
     height: 100%;
@@ -139,12 +147,13 @@ select#themeSelect {
 }
 
 /* --- THEMES & FRAMES --- */
+/* クリックを貫通させるための設定 */
 .theme-frame {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     pointer-events: none;
     z-index: 5;
-    transition: all 0.5s ease;
+    transition: all 0.3s ease;
 }
 
 /* 1. Theme: Window (部屋の窓) */
@@ -163,28 +172,26 @@ body.theme-window .theme-frame {
 /* 2. Theme: Retro TV (レトロテレビ) */
 body.theme-tv .frame-container {
     border-radius: 40px; /* Big rounded corners */
-    padding: 24px;
-    background: #475569; /* TV Casing */
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5);
-    border: 12px solid #334155;
+    /* Paddingをやめ、ボーダーで丸っこい枠を表現する */
+    border: 32px solid #475569;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.5);
 }
 body.theme-tv .theme-frame {
     /* Screen glare/curve effect */
     background: radial-gradient(circle at center, transparent 60%, rgba(0,0,0,0.6) 100%),
                 linear-gradient(rgba(255,255,255,0.1) 0%, transparent 40%);
-    border-radius: 20px;
     box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
 }
 
 /* 3. Theme: Airplane (飛行機の窓) */
 body.theme-airplane .frame-container {
-    border-radius: 120px 120px 120px 120px; /* Highly rounded window */
-    border: 24px solid #cbd5e1;
+    border-radius: 200px; /* Highly rounded window */
+    border: 32px solid #cbd5e1;
     background: #000;
-    box-shadow: inset 0 20px 20px rgba(0,0,0,0.4), 0 0 0 10px #f8fafc;
+    box-shadow: 0 0 0 10px #f8fafc;
     /* Adjust aspect ratio slightly for a plane window feel */
     aspect-ratio: 4 / 3;
-    max-width: 600px;
+    max-width: 700px;
 }
 body.theme-airplane .theme-frame {
     box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
@@ -193,11 +200,11 @@ body.theme-airplane .theme-frame {
 
 /* 4. Theme: Simple / Cinematic (シンプル) */
 body.theme-simple .frame-container {
-    border-radius: 0;
-    width: 100vw;
-    margin: 0 calc(-50vw + 50%); /* Full bleed trick */
-    max-width: 100vw;
+    border: none;
+    border-radius: var(--radius-md);
     box-shadow: none;
+    background: #000;
+    max-width: 100%;
 }
 body.theme-simple .theme-frame {
     /* Just subtle top/bottom shadow for cinematic feel */
@@ -211,7 +218,7 @@ body.theme-simple .theme-frame {
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: 10;
     pointer-events: none;
-    overflow: hidden;
+    overflow: hidden; /* コンテナ外にはみ出ないように */
 }
 
 /* By default all transition pieces are hidden/inactive */
@@ -220,46 +227,42 @@ body.theme-simple .theme-frame {
     top: 0; left: 0; width: 100%; height: 100%;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.5s ease;
+    transition: all 0.4s ease;
 }
 
 /* 1. Curtain Transition (Window) */
 .trans-curtain {
-    background: #64748b; /* dark bluish curtain color */
+    background: #334155; /* dark bluish curtain color */
     width: 50%;
     visibility: visible; 
-    transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+    transform: translateX(-100%);
 }
-.trans-curtain.left { transform: translateX(-100%); }
-.trans-curtain.right { left: 50%; transform: translateX(100%); }
+.trans-curtain.right { 
+    left: 50%; 
+    transform: translateX(100%); 
+}
 
-.is-transitioning-window .trans-curtain.left { transform: translateX(0%); opacity: 1; }
-.is-transitioning-window .trans-curtain.right { transform: translateX(0%); opacity: 1; }
+.is-transitioning-window .trans-curtain { transform: translateX(0); opacity: 1; }
 
 /* 2. Noise Transition (Retro TV) */
 .trans-noise {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    opacity: 0;
+    background: #666;
     visibility: visible;
-    transition: opacity 0.1s;
-    mix-blend-mode: screen;
 }
 .is-transitioning-tv .trans-noise {
     opacity: 1;
-    animation: tvJitter 0.2s infinite;
+    animation: tvJitter 0.15s infinite;
 }
 @keyframes tvJitter {
-    0% { transform: translateY(0); }
-    50% { transform: translateY(5px); }
-    100% { transform: translateY(0); }
+    0% { background: #333; }
+    50% { background: #888; }
+    100% { background: #555; }
 }
 
 /* 3. Clouds Transition (Airplane) */
 .trans-clouds {
     background: #fff; /* Just pure white flash representing flying into a cloud */
-    opacity: 0;
     visibility: visible;
-    transition: opacity 0.8s ease;
 }
 .is-transitioning-airplane .trans-clouds {
     opacity: 1;
@@ -268,9 +271,7 @@ body.theme-simple .theme-frame {
 /* 4. Fade Transition (Simple) */
 .trans-fade {
     background: #000;
-    opacity: 0;
     visibility: visible;
-    transition: opacity 0.5s ease;
 }
 .is-transitioning-simple .trans-fade {
     opacity: 1;
@@ -279,14 +280,18 @@ body.theme-simple .theme-frame {
 
 /* --- Footer / Controls --- */
 .info-footer {
-    padding: 20px 0;
+    padding: 16px 24px;
+    margin-top: 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 16px;
-    background: var(--clr-bg); /* ensure it stays above simple theme bleed */
+    background: var(--clr-surface);
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     position: relative;
-    z-index: 20;
+    z-index: 50; /* UI消失防止: 常に最前面へ */
+    flex-wrap: wrap;
 }
 
 .cam-info {
@@ -303,11 +308,10 @@ body.theme-simple .theme-frame {
 
 .icon {
     font-size: 1.8rem;
-    background: var(--clr-surface);
+    background: rgba(0,0,0,0.2);
     width: 48px; height: 48px;
     display: flex; align-items: center; justify-content: center;
     border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 .country {
@@ -374,15 +378,20 @@ body.theme-simple .theme-frame {
 
 /* Responsive */
 @media (max-width: 768px) {
+    .app-container {
+        padding: 12px;
+    }
     .app-header {
         flex-direction: column;
         align-items: flex-start;
+        padding: 16px;
         gap: 12px;
     }
     
     .info-footer {
         flex-direction: column;
         align-items: stretch;
+        padding: 16px;
     }
     
     .next-btn {
