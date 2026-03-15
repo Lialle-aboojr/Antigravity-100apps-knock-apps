@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="世界中のパブリックライブカメラをランダムに表示するアプリ / Ramdomly display public live cameras from all over the world">
+    <title>World Live Cam Roulette</title>
+    
+    <!-- ファビコンの指定 (画像が読めない場合のフォールバック含む) -->
+    <link rel="icon" href="favicon.png" type="image/png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Noto+Sans+JP:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- YouTube IFrame Player API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+<body class="theme-window">
+    <div class="app-container">
+        
+        <!-- ヘッダー部分 -->
+        <header class="app-header">
+            <div class="logo-area">
+                <h1>
+                    <span>World Live Cam Roulette</span>
+                    <span class="ja-subtitle">世界ランダムカメラ</span>
+                </h1>
+            </div>
+            
+            <div class="controls-area">
+                <div class="theme-selector-group">
+                    <label for="themeSelect">
+                        <span class="en">Theme:</span>
+                        <span class="ja">テーマ:</span>
+                    </label>
+                    <select id="themeSelect">
+                        <option value="theme-window">部屋の窓 / Window</option>
+                        <option value="theme-tv">レトロテレビ / Retro TV</option>
+                        <option value="theme-airplane">飛行機の窓 / Airplane</option>
+                        <option value="theme-simple">シンプル / Simple</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <!-- メイン画面（Player + テーマごとの枠装飾 + トランジション層） -->
+        <main class="player-section">
+            <div class="frame-container">
+                <!-- YouTubeプレーヤーがここに入ります -->
+                <div id="youtube-player" class="yt-container"></div>
+                
+                <!-- 枠線の装飾 (テーマ切り替え用) -->
+                <div class="theme-frame"></div>
+                
+                <!-- トランジション（画面切り替えの演出用）レイヤー -->
+                <div id="transition-layer" class="transition-layer">
+                    <!-- テーマ固有のトランジション要素 -->
+                    <div class="trans-curtain left"></div>
+                    <div class="trans-curtain right"></div>
+                    <div class="trans-noise"></div>
+                    <div class="trans-clouds"></div>
+                    <div class="trans-fade"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 各種情報・コントロール配置 -->
+        <footer class="info-footer">
+            <div class="cam-info">
+                <div class="location-group">
+                    <span class="icon">📍</span>
+                    <div class="text-group">
+                        <div class="country" id="infoCountry">Loading...</div>
+                        <div class="location" id="infoLocation">-</div>
+                    </div>
+                </div>
+                <div class="time-group">
+                    <span class="icon">🕒</span>
+                    <div class="local-time">
+                        <span class="label">Local Time</span>
+                        <span class="time" id="infoTime">--:--:--</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="nextBtn" class="next-btn" aria-label="Next Camera" disabled>
+                <div class="btn-content">
+                    <span class="en">Next Camera</span>
+                    <span class="ja">次のカメラ</span>
+                </div>
+                <span class="btn-icon">⏭</span>
+            </button>
+        </footer>
+
+    </div>
+
+    <!-- メインスクリプト -->
+    <script src="script.js"></script>
+</body>
+</html>
