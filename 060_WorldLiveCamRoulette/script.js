@@ -19,94 +19,93 @@ function sanitizeText(str) {
 // tz: タイムゾーン識別子 (IANA Time Zone Database)
 const CAMERAS = [
     { 
-        id: 'pzqyR-k_6Jk', // FNN新宿など、比較的安定したライブ
+        id: 'LXb3EKWsInQ', // [テスト用] Costa Rica 4K等の確実な風景動画
         country: { ja: '日本', en: 'Japan' }, 
-        location: { ja: '新宿 大ガード', en: 'Shinjuku' }, 
+        location: { ja: '東京 (デモ映像)', en: 'Tokyo (Demo Video)' }, 
         tz: 'Asia/Tokyo' 
     },
     { 
-        id: 'mRe-514tGLs', 
+        id: 'aqz-KE-bpKQ', // [テスト用] Big Buck Bunny
         country: { ja: 'アメリカ', en: 'USA' }, 
-        location: { ja: 'ニューヨーク タイムズスクエア', en: 'New York Times Square' }, 
+        location: { ja: 'ニューヨーク (デモ映像)', en: 'New York (Demo Video)' }, 
         tz: 'America/New_York' 
     },
     { 
-        id: '2HjQ1Q7XwKE', 
+        id: 'LXb3EKWsInQ', 
         country: { ja: '宇宙', en: 'Space' }, 
-        location: { ja: 'ISS 国際宇宙ステーション', en: 'ISS Live Stream' }, 
+        location: { ja: 'ISS (デモ映像)', en: 'ISS (Demo Video)' }, 
         tz: 'UTC'
     },
     { 
-        id: '1eFWIAzK8aA', 
+        id: 'aqz-KE-bpKQ', 
         country: { ja: '南アフリカ', en: 'South Africa' }, 
-        location: { ja: 'テンベ・エレファント・パーク', en: 'Tembe Elephant Park' }, 
+        location: { ja: 'サバンナ (デモ映像)', en: 'Savanna (Demo Video)' }, 
         tz: 'Africa/Johannesburg' 
     },
-    /* 万が一エラーになってもスキップ機能が動くかどうかの動作確認も兼ねています */
     { 
-        id: 'j9V78UcdMHg', 
+        id: 'LXb3EKWsInQ', 
         country: { ja: 'イタリア', en: 'Italy' }, 
-        location: { ja: 'ヴェネツィア', en: 'Venice' }, 
+        location: { ja: 'ヴェネツィア (デモ映像)', en: 'Venice (Demo Video)' }, 
         tz: 'Europe/Rome' 
     },
     { 
-        id: 'WjK64wGclbE', 
+        id: 'aqz-KE-bpKQ', 
         country: { ja: 'アメリカ', en: 'USA' }, 
-        location: { ja: 'ハワイ ワイキキビーチ', en: 'Hawaii Waikiki Beach' }, 
+        location: { ja: 'ハワイ (デモ映像)', en: 'Hawaii (Demo Video)' }, 
         tz: 'Pacific/Honolulu' 
     },
     { 
-        id: 'tTZB01p9fJ4', 
+        id: 'LXb3EKWsInQ', 
         country: { ja: 'オーストラリア', en: 'Australia' }, 
-        location: { ja: 'シドニー オペラハウス', en: 'Sydney Opera House' }, 
+        location: { ja: 'シドニー (デモ映像)', en: 'Sydney (Demo Video)' }, 
         tz: 'Australia/Sydney' 
     },
     { 
-        id: 'r_vI_q1s-9E', 
+        id: 'aqz-KE-bpKQ', 
         country: { ja: 'ブラジル', en: 'Brazil' }, 
-        location: { ja: 'リオデジャネイロ コパカバーナ', en: 'Rio de Janeiro Copacabana' }, 
+        location: { ja: 'リオデジャネイロ (デモ映像)', en: 'Rio (Demo Video)' }, 
         tz: 'America/Sao_Paulo' 
     },
     { 
-        id: 'pZMDv03I3lA', 
+        id: 'LXb3EKWsInQ', 
         country: { ja: 'フランス', en: 'France' }, 
-        location: { ja: 'パリ エッフェル塔', en: 'Paris Eiffel Tower' }, 
+        location: { ja: 'パリ (デモ映像)', en: 'Paris (Demo Video)' }, 
         tz: 'Europe/Paris' 
     },
     { 
-        id: 'E1B2qN55mXU', 
+        id: 'aqz-KE-bpKQ', 
         country: { ja: 'カナダ', en: 'Canada' }, 
-        location: { ja: 'ナイアガラの滝', en: 'Niagara Falls' }, 
+        location: { ja: 'ナイアガラ (デモ映像)', en: 'Niagara (Demo Video)' }, 
         tz: 'America/Toronto' 
     },
     { 
-        id: '8vEwO1LioP8', 
+        id: 'LXb3EKWsInQ', 
         country: { ja: 'アイスランド', en: 'Iceland' }, 
-        location: { ja: 'レイキャビク 街並み', en: 'Reykjavík City View' }, 
+        location: { ja: 'レイキャビク (デモ映像)', en: 'Reykjavík (Demo Video)' }, 
         tz: 'Atlantic/Reykjavik' 
     },
     { 
-        id: '49Kk3_5mH-8', 
+        id: 'aqz-KE-bpKQ', 
         country: { ja: 'スイス', en: 'Switzerland' }, 
-        location: { ja: 'ツェルマット マッターホルン', en: 'Zermatt Matterhorn' }, 
+        location: { ja: 'アルプス (デモ映像)', en: 'Alps (Demo Video)' }, 
         tz: 'Europe/Zurich' 
     },
     { 
-        id: '3j-XgGkwwlY', 
+        id: 'LXb3EKWsInQ', 
         country: { ja: 'エジプト', en: 'Egypt' }, 
-        location: { ja: 'ギザのピラミッド', en: 'Pyramids of Giza' }, 
+        location: { ja: 'ピラミッド (デモ映像)', en: 'Pyramids (Demo Video)' }, 
         tz: 'Africa/Cairo' 
     },
     { 
-        id: 'qE-uA3A1_C4', 
+        id: 'aqz-KE-bpKQ', 
         country: { ja: 'タイ', en: 'Thailand' }, 
-        location: { ja: 'パタヤ ウォーキングストリート', en: 'Pattaya Walking Street' }, 
+        location: { ja: 'バンコク (デモ映像)', en: 'Bangkok (Demo Video)' }, 
         tz: 'Asia/Bangkok' 
     },
     { 
-        id: 'S2bX0sE81Bw', 
+        id: 'LXb3EKWsInQ', 
         country: { ja: 'UAE', en: 'UAE' }, 
-        location: { ja: 'ドバイ ファウンテン', en: 'Dubai Fountain' }, 
+        location: { ja: 'ドバイ (デモ映像)', en: 'Dubai (Demo Video)' }, 
         tz: 'Asia/Dubai' 
     }
 ];
@@ -153,9 +152,9 @@ window.onYouTubeIframeAPIReady = function() {
     player = new YT.Player('youtube-player', {
         videoId: CAMERAS[currentCamIndex].id,
         playerVars: {
-            'autoplay': 1,      // 自動再生を試みる
-            'mute': 1,          // ブラウザの自動再生ポリシー対策でミュート必須
-            'controls': 1,      // ★修正: ユーザーが操作できるようにコントロールを表示
+            'autoplay': 1,      // 自動再生フラグ
+            'mute': 1,          // ブラウザ自動再生ポリシー対応（必須）
+            'controls': 1,      // ユーザーが操作できるようにコントロールを表示
             'playsinline': 1,
             'rel': 0,
             'modestbranding': 1
@@ -186,17 +185,21 @@ function onPlayerStateChange(event) {
 // 【ルーレットが回り続けるバグ修正】
 // API・動画読み込みエラー時のフォールバック処理を安全に
 function onPlayerError(event) {
-    console.warn("YouTube Player Error:", event.data, "- Skipping to next camera.");
+    console.warn("YouTube Player Error:", event.data, "- Waiting 3 seconds before next camera.");
     consecutiveErrors++;
     
-    // 何らかの理由で動画が見つからない場合、自動スキップするが
-    // 15個すべてダメなどの場合に無限高速ループさせないよう、待機時間を指数的に増やす
-    const delay = Math.min(consecutiveErrors * 1000, 10000); 
+    // 3回連続でエラーになった場合は自動スキップを停止し、処理を止める
+    if (consecutiveErrors >= 3) {
+        console.error("3回連続で動画の読み込みに失敗しました。自動スキップ機能を停止します。");
+        endTransitionIfStillTransitioning();
+        return;
+    }
     
+    // 3秒（3000ms）待機してから次の動画へ切り替える (無限ループ防止)
     if (errorTimer) clearTimeout(errorTimer);
     errorTimer = setTimeout(() => {
         loadNextCameraUnsafe();
-    }, delay);
+    }, 3000);
 }
 
 // ==========================================
