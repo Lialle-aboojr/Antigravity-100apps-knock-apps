@@ -172,20 +172,19 @@ select#themeSelect:focus {
 ==================================================== */
 body.theme-window { background-color: #1e293b; }
 body.theme-window .frame-container {
-    border-radius: 8px;
-    /* 木の窓枠をボーダーで表現 */
-    border: 24px solid #8B5A2B;
-    border-bottom: 32px solid #5C3A21; /* 下敷居 */
-    border-top: 24px solid #A0522D;    /* 上枠 */
-    box-shadow: 0 20px 40px rgba(0,0,0,0.7), inset 0 0 10px rgba(0,0,0,0.9);
-    background: #8B5A2B;
+    max-width: 860px; /* 見切れ防止のためやや縮小 */
+    border-radius: 6px;
+    border: 30px solid #885629;
+    border-bottom: 50px solid #553418; /* 下敷居(シル)の奥行き感 */
+    border-top: 36px solid #A66432;    /* 上のレール/壁部分 */
+    box-shadow: 0 30px 50px rgba(0,0,0,0.7), inset 0 0 20px rgba(0,0,0,0.9);
+    background: #000;
     padding: 0;
 }
 body.theme-window .screen-area {
     border-radius: 2px;
 }
 body.theme-window .theme-overlay {
-    /* 十字線を消し、内側の影のみを残す */
     background: none;
     box-shadow: inset 0 0 40px rgba(0,0,0,0.7);
     mix-blend-mode: normal;
@@ -195,38 +194,42 @@ body.theme-window .curtain-right {
     display: block;
 }
 
-/* 温かみのあるベージュグラデーションカーテン */
+/* 温かみのあるベージュ〜アイボリーグラデーションカーテン */
 .curtain-left, .curtain-right {
     /* リアルなひだ（プリーツ）表現 */
     background: repeating-linear-gradient(
       90deg,
-      #f5ebdc 0px,
+      #fdfbf7 0px,
       #ebd5b3 15px,
-      #d4b892 25px,
-      #ebd5b3 35px,
-      #f5ebdc 50px
+      #d4b892 30px,
+      #ebd5b3 45px,
+      #fdfbf7 60px
     );
-    width: 0%;
+    width: 50.5%;
     height: 100%;
     position: absolute;
     top: 0;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    transition: width 0.7s cubic-bezier(0.5, 0, 0.2, 1);
     z-index: 20;
+    /* transformを使って左右から迫り出すより確実なアニメーション */
+    transition: transform 0.8s cubic-bezier(0.5, 0, 0.2, 1);
 }
 .curtain-left { 
     left: 0; 
-    border-right: 2px solid rgba(0,0,0,0.1); 
-    box-shadow: inset -10px 0 20px rgba(0,0,0,0.2), 5px 0 15px rgba(0,0,0,0.3);
+    transform: translateX(-100%);
+    border-right: 4px solid rgba(0,0,0,0.1); 
+    box-shadow: inset -15px 0 30px rgba(0,0,0,0.2), 10px 0 30px rgba(0,0,0,0.5);
 }
 .curtain-right { 
     right: 0; 
-    border-left: 2px solid rgba(0,0,0,0.1); 
-    box-shadow: inset 10px 0 20px rgba(0,0,0,0.2), -5px 0 15px rgba(0,0,0,0.3);
+    transform: translateX(100%);
+    border-left: 4px solid rgba(0,0,0,0.1); 
+    box-shadow: inset 15px 0 30px rgba(0,0,0,0.2), -10px 0 30px rgba(0,0,0,0.5);
 }
 
-body.theme-window.is-transitioning .curtain-left { width: 50.5%; }
-body.theme-window.is-transitioning .curtain-right { width: 50.5%; }
+body.theme-window.is-transitioning .curtain-left,
+body.theme-window.is-transitioning .curtain-right { 
+    transform: translateX(0); 
+}
 
 
 /* ====================================================
@@ -369,16 +372,15 @@ body.theme-tv.is-transitioning .crt-flash {
 ==================================================== */
 body.theme-airplane { background-color: #bae6fd; }
 body.theme-airplane .frame-container {
-    /* 縦長のオーバル状の窓 */
     border-radius: 200px;
     aspect-ratio: 9 / 12;
     max-width: 450px;
     height: 80vh;
-    border: 32px solid #f1f5f9;  /* 内側のプラスチック枠 */
+    border: 32px solid #f1f5f9;  
     box-shadow: 
-        0 0 0 24px #94a3b8,      /* 外側の金属装飾 */
+        0 0 0 24px #94a3b8,      
         0 20px 50px rgba(0,0,0,0.4),
-        inset 0 10px 40px rgba(0,0,0,0.5); /* 影 */
+        inset 0 10px 40px rgba(0,0,0,0.5); 
     background: #000;
     padding: 0;
 }
@@ -387,7 +389,6 @@ body.theme-airplane .screen-area {
     border-radius: inherit;
 }
 body.theme-airplane .theme-overlay {
-    /* 分厚いアクリル窓の光沢 */
     background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.1) 30%, transparent 50%, rgba(255,255,255,0.05) 70%, rgba(255,255,255,0.2) 100%);
     box-shadow: inset 0 0 80px rgba(0,0,0,0.6);
     mix-blend-mode: overlay;
@@ -395,47 +396,72 @@ body.theme-airplane .theme-overlay {
 
 body.theme-airplane .clouds-wrapper { display: block; }
 
-/* ふわふわの雲レイヤー */
+/* 飛行機が雲を突き抜けるトランジション */
 .clouds-wrapper {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: 20;
-    visibility: hidden;
-}
-body.theme-airplane.is-transitioning .clouds-wrapper {
-    visibility: visible;
+    overflow: hidden;
 }
 
-.clouds-bg {
+.clouds-solid {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     background: #fff;
     opacity: 0;
-    transition: opacity 0.8s ease;
-}
-body.theme-airplane.is-transitioning .clouds-bg {
-    opacity: 0.8; /* 背景を白で覆う */
 }
 
-/* リアルな雲の塊を複数重ねた表現 */
-.clouds-layer {
+.cloud-mass {
     position: absolute;
-    top: -50%; left: -50%;
-    width: 200%; height: 200%;
-    background-image: 
-        radial-gradient(ellipse at 30% 40%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 60%),
-        radial-gradient(ellipse at 70% 30%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 70%),
-        radial-gradient(ellipse at 40% 60%, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 65%),
-        radial-gradient(ellipse at 80% 80%, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 75%),
-        radial-gradient(ellipse at 50% 50%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.5) 30%, rgba(255,255,255,0) 80%);
-    filter: blur(15px);
+    width: 150%; height: 150%;
+    top: -25%; left: -25%;
+    border-radius: 50%;
+    filter: blur(25px);
     opacity: 0;
-    transform: scale(0.6);
-    transition: all 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform: translateX(100%);
 }
-body.theme-airplane.is-transitioning .clouds-layer {
-    opacity: 1;
-    transform: scale(1.4); /* 雲が画面いっぱいに迫ってくる */
+
+.mass-1 {
+    background: radial-gradient(circle at 50% 50%, #fff 20%, rgba(255,255,255,0.9) 40%, rgba(255,255,255,0) 65%);
+}
+.mass-2 {
+    background: radial-gradient(circle at 30% 60%, #fff 20%, rgba(255,255,255,0) 55%);
+    width: 120%; height: 120%; top: -10%; left: -10%;
+}
+.mass-3 {
+    background: radial-gradient(circle at 70% 30%, #fff 20%, rgba(255,255,255,0) 60%);
+    width: 130%; height: 130%; top: -15%; left: -15%;
+}
+
+/* アニメーションの発火 */
+body.theme-airplane.is-transitioning .clouds-solid {
+    animation: fly-solid 1.7s linear forwards;
+}
+body.theme-airplane.is-transitioning .mass-1 {
+    animation: fly-clouds 1.7s cubic-bezier(0.3, 0.1, 0.3, 1) forwards;
+}
+body.theme-airplane.is-transitioning .mass-2 {
+    animation: fly-clouds 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
+}
+body.theme-airplane.is-transitioning .mass-3 {
+    animation: fly-clouds 1.9s cubic-bezier(0.2, 0, 0.3, 1) 0s forwards;
+}
+
+/* 完全に映像を隠すためのソリッド白フェード */
+@keyframes fly-solid {
+    0%, 25% { opacity: 0; }
+    45%, 55% { opacity: 1; }
+    75%, 100% { opacity: 0; }
+}
+
+/* 雲が右から左へ流れていくキーフレーム */
+@keyframes fly-clouds {
+    0% { transform: translateX(100%) scale(0.8); opacity: 0; }
+    20% { opacity: 1; }
+    45% { transform: translateX(0%) scale(1.5); opacity: 1; }
+    55% { transform: translateX(0%) scale(1.6); opacity: 1; }
+    85% { opacity: 1; }
+    100% { transform: translateX(-100%) scale(1); opacity: 0; }
 }
 
 
