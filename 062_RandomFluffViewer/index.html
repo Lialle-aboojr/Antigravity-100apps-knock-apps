@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Fluff Viewer - ランダム動物ビューワー</title>
+    <!-- ファビコンの設定 -->
+    <link rel="icon" href="favicon.png" type="image/png">
+    <!-- Google Fontsの読み込み（温かみのある丸ゴシック体などを想定） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kosugi+Maru&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <!-- CSSファイルの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- ヘッダー部分 -->
+        <header class="app-header">
+            <h1>Random Fluff Viewer</h1>
+            <p class="subtitle">ランダム動物ビューワー</p>
+        </header>
+
+        <!-- メインコンテンツ部分 -->
+        <main class="app-content">
+            <!-- 動物の選択スイッチ -->
+            <div class="animal-toggle-container">
+                <input type="radio" id="toggle-cat" name="animal-type" value="cat" checked>
+                <label for="toggle-cat" class="toggle-label cat-label">
+                    <span class="icon">🐱</span> 猫 (Cat)
+                </label>
+                
+                <input type="radio" id="toggle-dog" name="animal-type" value="dog">
+                <label for="toggle-dog" class="toggle-label dog-label">
+                    <span class="icon">🐶</span> 犬 (Dog)
+                </label>
+            </div>
+
+            <!-- 画像表示エリア -->
+            <div class="image-display-area">
+                <div id="loading-spinner" class="loading-spinner"></div>
+                <img id="animal-image" src="" alt="ランダムな動物の画像 (Random animal image)" style="display: none;">
+                <p id="error-message" class="error-message" style="display: none;"></p>
+            </div>
+
+            <!-- 操作ボタンエリア -->
+            <div class="action-buttons">
+                <!-- 新しい画像を取得するボタン -->
+                <button id="fetch-button" class="btn primary-btn">
+                    新しい画像 / New Image
+                </button>
+                
+                <!-- URLをコピーするボタンとそのフィードバック -->
+                <div class="copy-container">
+                    <button id="copy-button" class="btn secondary-btn" disabled>
+                        URLをコピー / Copy URL
+                    </button>
+                    <span id="copy-feedback" class="copy-feedback">コピーしました! (Copied!)</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScriptファイルの読み込み -->
+    <script src="script.js"></script>
+</body>
+</html>
