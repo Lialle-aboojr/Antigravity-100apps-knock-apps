@@ -1,6 +1,6 @@
 /**
  * World Live Cam Roulette - Main Logic
- * Manages standard HTML5 <video> with rich CSS theme transitions.
+ * Integrates YouTube Iframe API with rich CSS theme transitions.
  */
 
 function sanitizeText(str) {
@@ -9,12 +9,23 @@ function sanitizeText(str) {
     return div.innerHTML;
 }
 
-// 📺 テスト用MP4動画データ (Google公式サンプル)
+// 🌍 ライブカメラ＆風景動画データリスト (YouTube ID表記)
 const cameraList = [
-    { src: 'https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4', country: 'テスト国A', location: 'ウサギの森', timeZone: 'America/New_York' },
-    { src: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4', country: 'テスト国B', location: '機械の街', timeZone: 'Europe/London' },
-    { src: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4', country: 'テスト国C', location: '海岸沿い', timeZone: 'Asia/Tokyo' },
-    { src: 'https://storage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', country: 'テスト国D', location: 'SF研究所', timeZone: 'Australia/Sydney' }
+    { id: 'LXb3EKWsInQ', country: 'コスタリカ / Costa Rica', location: '大自然の野鳥 / Nature Birds', timeZone: 'America/Costa_Rica' },
+    { id: 'b6KT9ImNwzk', country: 'アメリカ / USA', location: 'タイムズスクエア / Times Square', timeZone: 'America/New_York' },
+    { id: 'OWXEGjX0Cng', country: '日本 / Japan', location: '渋谷スクランブル交差点 / Shibuya Crossing', timeZone: 'Asia/Tokyo' },
+    { id: 'HpdO5Kq3o7Y', country: '宇宙 / Space', location: '国際宇宙ステーション / ISS LIVE', timeZone: 'UTC' },
+    { id: '1-iS7Lmh5EE', country: 'イタリア / Italy', location: 'ヴェネツィア / Venice', timeZone: 'Europe/Rome' },
+    { id: 'ydYDnHxsB74', country: '南アフリカ / South Africa', location: 'サバンナの水飲み場 / Kruger Safari', timeZone: 'Africa/Johannesburg' },
+    { id: 'aJTosX_2sO8', country: 'スイス / Switzerland', location: 'ベルニーナ急行 / Bernina Express', timeZone: 'Europe/Zurich' },
+    { id: 'h7U6-N1M4P0', country: 'アメリカ / USA', location: 'ジャクソンホール / Jackson Hole', timeZone: 'America/Boise' },
+    { id: 'w1A2I8p6a8M', country: '日本 / Japan', location: '草津温泉 / Kusatsu Onsen', timeZone: 'Asia/Tokyo' },
+    { id: 'uI1rV4nJz8I', country: 'イギリス / UK', location: 'アビーロード / Abbey Road', timeZone: 'Europe/London' },
+    { id: 'Pz2U6O-X2uA', country: 'オーストリア / Austria', location: 'ザルツブルク / Salzburg', timeZone: 'Europe/Vienna' },
+    { id: 'JqOIt7X0m6I', country: 'オーストラリア / Australia', location: 'シドニー港 / Sydney Harbour', timeZone: 'Australia/Sydney' },
+    { id: '5E2t3e8uN7w', country: 'カナダ / Canada', location: 'バンフ国立公園 / Banff National Park', timeZone: 'America/Edmonton' },
+    { id: 'ZVQm6g_v2Sg', country: 'フランス / France', location: 'モンブラン / Mont Blanc', timeZone: 'Europe/Paris' },
+    { id: '-71tW0m3G1M', country: 'ノルウェー / Norway', location: 'オーロラ / Northern Lights', timeZone: 'Europe/Oslo' }
 ];
 
 // 状態管理
@@ -22,6 +33,7 @@ let currentCamIndex = -1;
 let clockInterval = null;
 let isTransitioning = false;
 let currentThemeClass = 'theme-window';
+let player = null;
 
 // DOM Elements
 const body = document.body;
@@ -30,19 +42,70 @@ const nextBtn = document.getElementById('nextBtn');
 const infoCountry = document.getElementById('infoCountry');
 const infoLocation = document.getElementById('infoLocation');
 const infoTime = document.getElementById('infoTime');
-const mainVideo = document.getElementById('main-video');
+
 
 // ==========================================
-// 初期化
+// 初期化・YouTube Iframe API
 // ==========================================
 function initApp() {
     pickRandomCamera();
     updateInfoDisplay();
     
-    // 設定して再生
-    mainVideo.src = cameraList[currentCamIndex].src;
-    mainVideo.play().catch(e => console.error(e));
+    // YouTube APIの読み込み
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 }
+
+// YT APIが準備完了した際に呼ばれるグローバル関数
+window.onYouTubeIframeAPIReady = function() {
+    const cam = cameraList[currentCamIndex];
+    player = new YT.Player('youtube-player', {
+        height: '100%',
+        width: '100%',
+        videoId: cam.id,
+        playerVars: {
+            'autoplay': 1,
+            'mute': 1,
+            'controls': 0,
+            'disablekb': 1,
+            'modestbranding': 1,
+            'rel': 0,
+            'playsinline': 1
+        },
+        events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange,
+            'onError': onPlayerError
+        }
+    });
+};
+
+function onPlayerReady(event) {
+    // API読み込み完了したらボタンを活性化
+    nextBtn.disabled = false;
+    event.target.playVideo();
+}
+
+function onPlayerStateChange(event) {
+    // 動画の再生が終了したら最初からループ再生
+    if (event.data === YT.PlayerState.ENDED) {
+        player.playVideo();
+    }
+}
+
+function onPlayerError(event) {
+    // エラーハンドリング: 自動スキップはせず、ユーザーの操作を待つ
+    console.warn('YouTube Player Error:', event.data);
+    infoCountry.textContent = "Error";
+    infoLocation.textContent = "動画を再生できません。Nextを押してください";
+    // ボタンの無効化を解除して次へ行けるようにする
+    nextBtn.disabled = false;
+    isTransitioning = false;
+    body.classList.remove('is-transitioning');
+}
+
 
 // ==========================================
 // ロジックとトランジション制御
@@ -57,7 +120,7 @@ function pickRandomCamera() {
 
 // Nextボタンを押したときの詳細なアニメーション連動処理
 function processNextCamera() {
-    if (isTransitioning) return;
+    if (isTransitioning || !player || typeof player.loadVideoById !== 'function') return;
     
     isTransitioning = true;
     nextBtn.disabled = true;
@@ -78,9 +141,8 @@ function processNextCamera() {
         // 次のカメラをピック
         pickRandomCamera();
         
-        // 動画のソースとUIを更新
-        mainVideo.src = cameraList[currentCamIndex].src;
-        mainVideo.play().catch(e => console.error(e));
+        // YouTube APIで動画を切り替え
+        player.loadVideoById(cameraList[currentCamIndex].id);
         
         updateInfoDisplay();
         
