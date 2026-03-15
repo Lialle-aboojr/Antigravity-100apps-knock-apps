@@ -317,8 +317,16 @@ const elements = {
     quoteJa: document.getElementById('quote-ja'),
     authorEn: document.getElementById('author-en'),
     authorJa: document.getElementById('author-ja'),
-    nextBtn: document.getElementById('next-btn')
+    nextBtn: document.getElementById('next-btn'),
+    // 音声再生ボタンの追加
+    speakEnBtn: document.getElementById('speak-en-btn'),
+    speakJaBtn: document.getElementById('speak-ja-btn')
 };
+
+// 現在表示されている名言のインデックスを保存する変数
+let currentQuoteIndex = 0;
+// Web Speech API のインスタンスを取得
+const synth = window.speechSynthesis;
 
 /**
  * 3. クロスサイトスクリプティング（XSS）対策のためのサニタイズ関数
@@ -343,28 +351,80 @@ function sanitizeHTML(str) {
 // 4. 新しい名言を取得して画面に表示する関数
 function displayRandomQuote() {
     // データ配列からランダムなインデックスを選ぶ
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    const quote = quotes[randomIndex];
+    currentQuoteIndex = Math.floor(Math.random() * quotes.length);
+    const quote = quotes[currentQuoteIndex];
+
+    // 再生中の音声があれば停止し、ボタンの状態をリセット
+    if (synth.speaking) {
+        synth.cancel();
+    }
+    resetSpeechButtons();
 
     // 透明にしてフェードアウトさせる（CSSアニメーションと連携）
     elements.card.classList.add('fade-out');
 
-    // トランジション（CSSのアニメーション）が終わるタイミングで中身を書き換える
-    // 今回はCSSで0.5s（500ms）を指定しているので、少し短い400ms後くらいに変更
+    // トランジションが終わるタイミングで中身を書き換える
     setTimeout(() => {
-        // サニタイズ関数を通してからDOMに反映（セキュリティ対策）
-        elements.quoteEn.textContent = `"${sanitizeHTML(quote.en)}"`;
-        elements.quoteJa.textContent = sanitizeHTML(quote.ja);
-        elements.authorEn.textContent = `- ${sanitizeHTML(quote.authorEn)}`;
-        elements.authorJa.textContent = sanitizeHTML(quote.authorJa);
+        // 【バグ修正】サニタイズされたHTMLエンティティ（&#39;等）を
+        // 記号として正しく描画するためにtextContentではなくinnerHTMLを使用します
+        elements.quoteEn.innerHTML = `"${sanitizeHTML(quote.en)}"`;
+        elements.quoteJa.innerHTML = sanitizeHTML(quote.ja);
+        elements.authorEn.innerHTML = `- ${sanitizeHTML(quote.authorEn)}`;
+        elements.authorJa.innerHTML = sanitizeHTML(quote.authorJa);
 
-        // フェードアウトクラスを外して再度表示（フェードイン）させる
+        // フェードアウトクラスを外して再度表示させる
         elements.card.classList.remove('fade-out');
-    }, 400); // 400ミリ秒後に実行
+    }, 400);
 }
 
-// 5. ボタンがクリックされたときのイベントリスナーを設定
+// 5. 音声を読み上げる関数
+function speakText(text, lang, btnElement) {
+    // すでに読み上げ中の場合はキャンセル
+    if (synth.speaking) {
+        synth.cancel();
+    }
+    
+    resetSpeechButtons();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = lang; // 言語設定（英語: en-US, 日本語: ja-JP）
+    utterance.rate = 0.9;  // 少しゆっくりめに読む
+    
+    // 読み上げ開始時のアニメーション
+    utterance.onstart = () => {
+        btnElement.classList.add('playing');
+        btnElement.querySelector('.speech-text').textContent = "再生中...";
+    };
+    
+    utterance.onend = () => resetSpeechButtons();
+    utterance.onerror = () => resetSpeechButtons();
+    
+    synth.speak(utterance);
+}
+
+// ボタンの状態をリセットする補助関数
+function resetSpeechButtons() {
+    elements.speakEnBtn.classList.remove('playing');
+    elements.speakJaBtn.classList.remove('playing');
+    elements.speakEnBtn.querySelector('.speech-text').textContent = "英語を聴く";
+    elements.speakJaBtn.querySelector('.speech-text').textContent = "日本語を聴く";
+}
+
+// 6. 各ボタンのイベントリスナー設定
+// 次の名言ボタン
 elements.nextBtn.addEventListener('click', displayRandomQuote);
+
+// 英語音声再生ボタン
+elements.speakEnBtn.addEventListener('click', () => {
+    const quote = quotes[currentQuoteIndex];
+    speakText(quote.en, 'en-US', elements.speakEnBtn);
+});
+
+// 日本語音声再生ボタン
+elements.speakJaBtn.addEventListener('click', () => {
+    const quote = quotes[currentQuoteIndex];
+    speakText(quote.ja, 'ja-JP', elements.speakJaBtn);
+});
 
 // 6. 画像が無い場合（エラー時）のファビコンフォールバック処理
 const setupFaviconFallback = () => {

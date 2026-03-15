@@ -8,10 +8,10 @@
     <link rel="stylesheet" href="style.css">
     <!-- ファビコンの指定。画像がない場合はJavaScriptで絵文字SVGにフォールバックします -->
     <link rel="icon" href="favicon.png" id="dynamic-favicon">
-    <!-- Google Fontsから美しいフォントを読み込みます -->
+    <!-- Google Fontsからポップで美しいフォントを読み込みます -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+JP:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=M+PLUS+Rounded+1c:wght@500;700&family=Inter:wght@500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <main class="container">
@@ -41,7 +41,19 @@
             </div>
         </div>
         
-        <div class="controls">
+        <div class="controls-container">
+            <!-- 音声再生ボタンのグループ -->
+            <div class="speech-controls">
+                <button id="speak-en-btn" class="speech-btn" aria-label="Listen English">
+                    <span class="speech-icon">🔊</span>
+                    <span class="speech-text">英語を聴く</span>
+                </button>
+                <button id="speak-ja-btn" class="speech-btn" aria-label="Listen Japanese">
+                    <span class="speech-icon">🔊</span>
+                    <span class="speech-text">日本語を聴く</span>
+                </button>
+            </div>
+
             <!-- 新しい名言を取得するボタン -->
             <button id="next-btn" class="btn" aria-label="Next Quote">
                 <span class="btn-text-ja">別の言葉を見る</span>
