@@ -65,9 +65,14 @@ function processNextCamera() {
     // ① コンテナに `is-transitioning` クラスを付与してCSSアニメーション開始
     body.classList.add('is-transitioning');
     
-    // ② アニメーション中（画面が覆われたタイミング）で動画とテキストを裏側で切り替える
-    // カーテンや雲のアニメーションが完了する約0.8秒〜1.0秒後を狙う
-    const midPointDelay = 900; 
+    let midPointDelay = 900; 
+    let endDelay = 800;
+
+    // 飛行機モードのみアニメーションを2.5秒(1250ms+1250ms)に延長
+    if (currentThemeClass === 'theme-airplane') {
+        midPointDelay = 1250;
+        endDelay = 1250;
+    }
 
     setTimeout(() => {
         // 次のカメラをピック
@@ -79,13 +84,12 @@ function processNextCamera() {
         
         updateInfoDisplay();
         
-        // ③ さらに時間が経過したら（新しい映像のロードも加味して合計1.8秒程度）、
-        // トランジションクラスを外して画面を開け、ボタンを再び有効化する
+        // ③ さらに時間が経過したら、トランジションを外す
         setTimeout(() => {
             body.classList.remove('is-transitioning');
             isTransitioning = false;
             nextBtn.disabled = false;
-        }, 800);
+        }, endDelay);
         
     }, midPointDelay);
 }

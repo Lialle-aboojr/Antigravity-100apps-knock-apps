@@ -196,7 +196,6 @@ body.theme-window .curtain-right {
 
 /* 温かみのあるベージュ〜アイボリーグラデーションカーテン */
 .curtain-left, .curtain-right {
-    /* リアルなひだ（プリーツ）表現 */
     background: repeating-linear-gradient(
       90deg,
       #fdfbf7 0px,
@@ -205,30 +204,27 @@ body.theme-window .curtain-right {
       #ebd5b3 45px,
       #fdfbf7 60px
     );
-    width: 50.5%;
+    width: 0%;   /* 0%からスタートして中央で合わさる */
     height: 100%;
     position: absolute;
     top: 0;
     z-index: 20;
-    /* transformを使って左右から迫り出すより確実なアニメーション */
-    transition: transform 0.8s cubic-bezier(0.5, 0, 0.2, 1);
+    transition: width 0.8s cubic-bezier(0.5, 0, 0.2, 1);
 }
 .curtain-left { 
     left: 0; 
-    transform: translateX(-100%);
     border-right: 4px solid rgba(0,0,0,0.1); 
-    box-shadow: inset -15px 0 30px rgba(0,0,0,0.2), 10px 0 30px rgba(0,0,0,0.5);
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5); /* 閉まる時の先端の影 */
 }
 .curtain-right { 
     right: 0; 
-    transform: translateX(100%);
     border-left: 4px solid rgba(0,0,0,0.1); 
-    box-shadow: inset 15px 0 30px rgba(0,0,0,0.2), -10px 0 30px rgba(0,0,0,0.5);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.5);
 }
 
 body.theme-window.is-transitioning .curtain-left,
 body.theme-window.is-transitioning .curtain-right { 
-    transform: translateX(0); 
+    width: 50.5%; /* ピッタリ合わさる */
 }
 
 
@@ -402,66 +398,45 @@ body.theme-airplane .clouds-wrapper { display: block; }
     top: 0; left: 0; width: 100%; height: 100%;
     z-index: 20;
     overflow: hidden;
+    pointer-events: none;
 }
 
-.clouds-solid {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: #fff;
-    opacity: 0;
-}
-
-.cloud-mass {
-    position: absolute;
-    width: 150%; height: 150%;
-    top: -25%; left: -25%;
+/* 本物の入道雲のようなモクモクした形 (box-shadowを駆使) */
+.cloud-fluffy {
+    background: #ffffff;
+    width: 300px;
+    height: 300px;
     border-radius: 50%;
-    filter: blur(25px);
+    position: absolute;
+    top: 50%; left: 50%;
+    margin-top: -150px; margin-left: -150px;
+    /* 複数の純白のbox-shadowで雲の塊を表現 */
+    box-shadow: 
+        150px -100px 0 -20px #ffffff,
+        -150px -100px 0 -10px #ffffff,
+        200px 80px 0 20px #ffffff,
+        -200px 100px 0 10px #ffffff,
+        0px -200px 0 30px #ffffff,
+        0px 200px 0 10px #ffffff,
+        150px 180px 0 40px #ffffff,
+        -150px 180px 0 20px #ffffff;
     opacity: 0;
-    transform: translateX(100%);
+    transform: translateX(100vw) scale(1.5); /* 右側枠外から */
 }
 
-.mass-1 {
-    background: radial-gradient(circle at 50% 50%, #fff 20%, rgba(255,255,255,0.9) 40%, rgba(255,255,255,0) 65%);
-}
-.mass-2 {
-    background: radial-gradient(circle at 30% 60%, #fff 20%, rgba(255,255,255,0) 55%);
-    width: 120%; height: 120%; top: -10%; left: -10%;
-}
-.mass-3 {
-    background: radial-gradient(circle at 70% 30%, #fff 20%, rgba(255,255,255,0) 60%);
-    width: 130%; height: 130%; top: -15%; left: -15%;
+/* アニメーションの発火 (2.5秒に延長) */
+body.theme-airplane.is-transitioning .cloud-fluffy {
+    animation: fly-clouds 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
-/* アニメーションの発火 */
-body.theme-airplane.is-transitioning .clouds-solid {
-    animation: fly-solid 1.7s linear forwards;
-}
-body.theme-airplane.is-transitioning .mass-1 {
-    animation: fly-clouds 1.7s cubic-bezier(0.3, 0.1, 0.3, 1) forwards;
-}
-body.theme-airplane.is-transitioning .mass-2 {
-    animation: fly-clouds 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.1s forwards;
-}
-body.theme-airplane.is-transitioning .mass-3 {
-    animation: fly-clouds 1.9s cubic-bezier(0.2, 0, 0.3, 1) 0s forwards;
-}
-
-/* 完全に映像を隠すためのソリッド白フェード */
-@keyframes fly-solid {
-    0%, 25% { opacity: 0; }
-    45%, 55% { opacity: 1; }
-    75%, 100% { opacity: 0; }
-}
-
-/* 雲が右から左へ流れていくキーフレーム */
+/* 右から左へ流れ、画面を真っ白に覆うキーフレーム */
 @keyframes fly-clouds {
-    0% { transform: translateX(100%) scale(0.8); opacity: 0; }
-    20% { opacity: 1; }
-    45% { transform: translateX(0%) scale(1.5); opacity: 1; }
-    55% { transform: translateX(0%) scale(1.6); opacity: 1; }
+    0% { transform: translateX(100vw) scale(1.5); opacity: 0; }
+    15% { opacity: 1; }
+    45% { transform: translateX(0) scale(4.5); opacity: 1; } /* 完全に画面を白く覆う */
+    60% { transform: translateX(-5vw) scale(5); opacity: 1; } 
     85% { opacity: 1; }
-    100% { transform: translateX(-100%) scale(1); opacity: 0; }
+    100% { transform: translateX(-150vw) scale(2); opacity: 0; } /* 左側枠外へ消える */
 }
 
 
