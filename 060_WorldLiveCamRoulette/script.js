@@ -60,24 +60,33 @@ function initApp() {
 
 // YouTube IFrame API の準備完了時に呼ばれるグローバル関数
 window.onYouTubeIframeAPIReady = function() {
-    // プレイヤーの生成
+    createAndAttachPlayer();
+};
+
+function createAndAttachPlayer() {
+    const videoId = cameraList[currentCamIndex].id;
+    const wrapper = document.getElementById('youtube-wrapper');
+    
+    // iframeパラメータを構築し、DOMに直接挿入 (Referrer Policy エラー回避のため必須)
+    wrapper.innerHTML = `
+        <iframe id="youtube-player" 
+                src="https://www.youtube-nocookie.com/embed/${videoId}?enablejsapi=1&autoplay=1&mute=1&controls=1&playsinline=1&rel=0&modestbranding=1&origin=${window.location.origin}" 
+                referrerpolicy="strict-origin-when-cross-origin" 
+                allow="autoplay; encrypted-media" 
+                frameborder="0" 
+                allowfullscreen>
+        </iframe>
+    `;
+
+    // 既存のiframeに対してAPIをアタッチ
     player = new YT.Player('youtube-player', {
-        videoId: cameraList[currentCamIndex].id,
-        playerVars: {
-            'autoplay': 1,      // ブラウザ自動再生に対応
-            'mute': 1,          // ブラウザの自動再生ポリシー対策でミュート必須
-            'controls': 1,      // ユーザーが操作できるようにコントロールを表示
-            'playsinline': 1,
-            'rel': 0,
-            'modestbranding': 1
-        },
         events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange,
             'onError': onPlayerError
         }
     });
-};
+}
 
 function onPlayerReady(event) {
     nextBtn.disabled = false;
@@ -134,12 +143,14 @@ function pickRandomCamera() {
 // 無条件で次のカメラの動画を読み込む部分（エラー・切り替え用）
 function loadNextCameraUnsafe() {
     pickRandomCamera();
-    if (player && player.loadVideoById) {
-        player.loadVideoById({
-            videoId: cameraList[currentCamIndex].id
-        });
-        updateInfoDisplay();
+    
+    // iframeを破棄して再生成するアプローチにする（Iframeのキャッシュ問題やポリシー対策のため）
+    if (player && typeof player.destroy === 'function') {
+        player.destroy();
     }
+    
+    updateInfoDisplay();
+    createAndAttachPlayer();
 }
 
 // Nextボタンを押したときの処理（アニメーションを伴う）
