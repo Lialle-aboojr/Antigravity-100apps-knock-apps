@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glitch Art Generator | サイバー風グリッチメーカー</title>
+    <link rel="icon" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <!-- フォールバック用ファビコン（JSで設定） -->
+    <script>
+        // 画像がない場合（フォールバック）として絵文字をSVG化して設定
+        window.addEventListener('DOMContentLoaded', () => {
+            const img = new Image();
+            img.onerror = () => {
+                const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+                link.type = 'image/svg+xml';
+                link.rel = 'icon';
+                const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">👾</text></svg>`;
+                link.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+                document.head.appendChild(link);
+            };
+            img.src = 'favicon.png';
+        });
+    </script>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1 class="glitch-text" data-text="GLITCH ART GENERATOR">GLITCH ART GENERATOR</h1>
+            <p class="subtitle">サイバー風グリッチメーカー</p>
+        </header>
+
+        <main>
+            <!-- アップロードエリア -->
+            <div id="upload-area" class="upload-area">
+                <div class="upload-content">
+                    <span class="upload-icon">📁</span>
+                    <h2>Upload Image</h2>
+                    <p>画像をドラッグ＆ドロップするか、クリックして選択</p>
+                    <p class="small-text">(jpg, png, webp)</p>
+                </div>
+                <input type="file" id="file-input" accept="image/jpeg, image/png, image/webp" hidden>
+            </div>
+
+            <!-- ワークスペース（画像アップロード後に表示） -->
+            <div id="workspace" class="workspace hidden">
+                <div class="canvas-container">
+                    <canvas id="glitch-canvas"></canvas>
+                </div>
+
+                <div class="controls">
+                    <div class="control-group">
+                        <label>
+                            <span class="label-en">RGB Shift</span>
+                            <span class="label-ja">色のズレ</span>
+                        </label>
+                        <input type="range" id="rgb-shift" min="0" max="100" value="0">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>
+                            <span class="label-en">Noise</span>
+                            <span class="label-ja">ノイズ</span>
+                        </label>
+                        <input type="range" id="noise" min="0" max="100" value="0">
+                    </div>
+                    
+                    <div class="control-group">
+                        <label>
+                            <span class="label-en">Slice / Block</span>
+                            <span class="label-ja">スライス / ブロック</span>
+                        </label>
+                        <input type="range" id="slice" min="0" max="100" value="0">
+                    </div>
+
+                    <div class="buttons">
+                        <button id="reset-btn" class="btn btn-secondary">
+                            <span class="btn-en">Reset</span> / <span class="btn-ja">リセット</span>
+                        </button>
+                        <button id="download-btn" class="btn btn-primary">
+                            <span class="btn-en">Download PNG</span> / <span class="btn-ja">保存する</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
