@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const resetBtn = document.getElementById('reset-btn');
+    const changeImageBtn = document.getElementById('change-image-btn');
     const downloadBtn = document.getElementById('download-btn');
 
     // 2. 状態管理用の変数
@@ -76,6 +77,20 @@ document.addEventListener('DOMContentLoaded', () => {
     resetBtn.addEventListener('click', () => {
         Object.values(sliders).forEach(slider => slider.value = 0);
         if (originalImageData) applyGlitch();
+    });
+
+    // 画像変更ボタンの処理
+    changeImageBtn.addEventListener('click', () => {
+        // UIをワークスペースからアップロード画面に戻す
+        workspace.classList.add('hidden');
+        uploadArea.classList.remove('hidden');
+        
+        // 状態のリセット
+        fileInput.value = ''; // ファイル入力をリセット（同じ画像を再選択できるようにする）
+        originalImage = null;
+        originalImageData = null;
+        ctx.clearRect(0, 0, canvas.width, canvas.height); // キャンバスのクリア
+        Object.values(sliders).forEach(slider => slider.value = 0); // スライダーの値をリセット
     });
 
     // ダウンロードボタンの処理
