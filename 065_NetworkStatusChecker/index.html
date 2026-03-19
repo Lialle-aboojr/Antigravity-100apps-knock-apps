@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Network Status Checker | ネット接続状況チェッカー</title>
+  
+  <!-- レトロRPG感を出すためのGoogle Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- ファビコンの設定 (生成された画像を使用、見つからない場合は絵文字フォールバック) -->
+  <link rel="icon" id="favicon" href="favicon.png" type="image/png">
+</head>
+<body>
+
+  <div class="game-container">
+    
+    <!-- ヘッダーウィンドウ (状態表示) -->
+    <div class="window-box status-window">
+      <h1 class="title">Status / じょうたい</h1>
+      
+      <div class="hero-status">
+        <div class="hero-icon" id="heroIcon">🛡️</div>
+        <div class="hp-section">
+          <div class="hp-label">HP</div>
+          <div class="hp-bar-container">
+            <div class="hp-bar" id="hpBar"></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="message-box" id="messageBox">
+        <!-- 状態メッセージがここに入ります（JSで制御） -->
+      </div>
+    </div>
+
+    <!-- 詳細パラメータウィンドウ -->
+    <div class="window-box stats-window">
+      <h2 class="section-title">Stats / つよさ</h2>
+      <ul class="stats-list">
+        <li>
+          <span class="stat-name">ちから (Downlink):</span>
+          <span class="stat-value" id="statDownlink">--</span>
+        </li>
+        <li>
+          <span class="stat-name">すばやさ (Type):</span>
+          <span class="stat-value" id="statType">--</span>
+        </li>
+        <li>
+          <span class="stat-name">たいりょく (RTT):</span>
+          <span class="stat-value" id="statRtt">--</span>
+        </li>
+      </ul>
+      <p class="api-note" id="apiNote"></p>
+    </div>
+
+    <!-- 冒険のきろく (ログ) -->
+    <div class="window-box log-window">
+      <h2 class="section-title">Log / ぼうけんのきろく</h2>
+      <ul id="logList" class="log-list">
+        <!-- ログがここに追加されます（JSで制御） -->
+      </ul>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
