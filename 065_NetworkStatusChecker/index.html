@@ -3,28 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Network Status Checker | ネット接続状況チェッカー</title>
+  <title>Network Status Checker</title>
   
   <!-- レトロRPG感を出すためのGoogle Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="style.css">
   
-  <!-- ファビコンの設定 (生成された画像を使用、見つからない場合は絵文字フォールバック) -->
-  <link rel="icon" id="favicon" href="favicon.png" type="image/png">
+  <!-- 新しいファビコンの設定 (見つからない場合は絵文字フォールバック) -->
+  <link rel="icon" id="favicon" href="new_favicon.png" type="image/png">
 </head>
 <body>
 
   <div class="game-container">
     
+    <!-- アプリタイトル -->
+    <div class="app-title-container">
+      <h1 class="main-title">Network Status Checker</h1>
+      <h2 class="sub-title">ネットせつぞくじょうきょう チェッカー</h2>
+    </div>
+
     <!-- ヘッダーウィンドウ (状態表示) -->
     <div class="window-box status-window">
-      <h1 class="title">Status / じょうたい</h1>
+      <h3 class="window-title">Status / じょうたい</h3>
       
       <div class="hero-status">
-        <div class="hero-icon" id="heroIcon">🛡️</div>
+        <!-- 新しい勇者アイコン -->
+        <img src="hero_icon.png" alt="Hero" class="hero-icon-img" id="heroIconImg">
         <div class="hp-section">
           <div class="hp-label">HP</div>
           <div class="hp-bar-container">
@@ -40,7 +47,7 @@
 
     <!-- 詳細パラメータウィンドウ -->
     <div class="window-box stats-window">
-      <h2 class="section-title">Stats / つよさ</h2>
+      <h3 class="window-title">Stats / つよさ</h3>
       <ul class="stats-list">
         <li>
           <span class="stat-name">ちから (Downlink):</span>
@@ -51,16 +58,22 @@
           <span class="stat-value" id="statType">--</span>
         </li>
         <li>
-          <span class="stat-name">たいりょく (RTT):</span>
-          <span class="stat-value" id="statRtt">--</span>
+          <!-- ラベル修正: はんのう (RTT) / Latency (RTT) -->
+          <span class="stat-name">はんのう (RTT) / Latency (RTT):</span>
+          <span class="stat-value" id="statRtt">-- ms</span>
         </li>
       </ul>
       <p class="api-note" id="apiNote"></p>
+      
+      <!-- 再調査 / Refresh ボタン -->
+      <div class="action-container">
+        <button id="refreshBtn" class="rpg-btn">再調査 / Refresh</button>
+      </div>
     </div>
 
     <!-- 冒険のきろく (ログ) -->
     <div class="window-box log-window">
-      <h2 class="section-title">Log / ぼうけんのきろく</h2>
+      <h3 class="window-title">Log / ぼうけんのきろく</h3>
       <ul id="logList" class="log-list">
         <!-- ログがここに追加されます（JSで制御） -->
       </ul>

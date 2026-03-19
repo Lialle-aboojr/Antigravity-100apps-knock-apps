@@ -7,16 +7,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- DOM要素の取得 ---
   const hpBar = document.getElementById('hpBar');
   const messageBox = document.getElementById('messageBox');
-  const heroIcon = document.getElementById('heroIcon');
+  const heroIconImg = document.getElementById('heroIconImg');
   const logList = document.getElementById('logList');
   
   const statDownlink = document.getElementById('statDownlink');
   const statType = document.getElementById('statType');
   const statRtt = document.getElementById('statRtt');
   const apiNote = document.getElementById('apiNote');
+  const refreshBtn = document.getElementById('refreshBtn');
 
-  // ファビコンのフォールバック処理 (SVG Data URI)
-  const fallbackFavicon = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🛡️</text></svg>';
+  // 新しいファビコンのフォールバック処理 (RPG風絵文字 ⚔️ を Data URI変換)
+  const fallbackFavicon = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⚔️</text></svg>';
   const favicon = document.getElementById('favicon');
   favicon.addEventListener('error', () => {
     favicon.href = fallbackFavicon;
@@ -27,21 +28,21 @@ document.addEventListener('DOMContentLoaded', () => {
     FAST: {
       hpWidth: '100%',
       hpColor: 'var(--hp-green)',
-      icon: '🛡️',
+      heroClass: '', // 通常
       msgJp: '勇者は 元気いっぱいだ！',
       msgEn: 'The hero is full of energy!'
     },
     SLOW: {
       hpWidth: '50%',
       hpColor: 'var(--hp-yellow)',
-      icon: '😓',
+      heroClass: 'hero-tired', // 少し疲れているエフェクト
       msgJp: '勇者は 少し 疲れているようだ…',
       msgEn: 'The hero looks a bit tired...'
     },
     OFFLINE: {
       hpWidth: '0%',
       hpColor: 'var(--hp-red)',
-      icon: '🪦',
+      heroClass: 'hero-dead', // モノクロエフェクト
       msgJp: 'おお ゆうしゃよ！ ネットが しんでしまうとは なにごとだ！',
       msgEn: 'Oh Hero! How could the network die!'
     }
@@ -65,28 +66,30 @@ document.addEventListener('DOMContentLoaded', () => {
       // APIが利用可能な場合、詳細情報を取得
       type = connection.effectiveType || 'Unknown';
       downlink = connection.downlink !== undefined ? `${connection.downlink} Mbps` : 'Unknown';
-      rtt = connection.rtt !== undefined ? `${connection.rtt} ms` : 'Unknown';
+      rtt = connection.rtt !== undefined ? `${connection.rtt} ms` : 'Unknown ms';
 
-      // 速度による判定 (3g以下、または1Mbps以下ならSLOW)
+      // 速度による状況判定 (3g以下、または1Mbps以下ならSLOW)
       if (type === 'slow-2g' || type === '2g' || type === '3g' || (connection.downlink !== undefined && connection.downlink < 1.0)) {
         newStateKey = 'SLOW';
       }
     } else {
       // API非対応だがオンラインの場合
       apiNote.textContent = '※詳細なつよさ(Network API)は測定不能です / Network API unsupported';
-      newStateKey = 'FAST'; // 基本的にFASTとする
+      newStateKey = 'FAST';
     }
 
     // --- DOMの更新 ---
     const state = STATES[newStateKey];
     
-    // HPゲージとアイコン
+    // HPゲージ
     hpBar.style.width = state.hpWidth;
     hpBar.style.backgroundColor = state.hpColor;
-    heroIcon.textContent = state.icon;
+    
+    // アイコンのクラス切り替え（エフェクト用）
+    heroIconImg.className = 'hero-icon-img ' + state.heroClass;
 
-    // メッセージ生成（XSS対策として DOM API を使用）
-    messageBox.innerHTML = ''; // 既存の要素をクリア (安全なリセット)
+    // メッセージ生成（XSS対策として textContent と DOMツリーの構築を利用）
+    messageBox.innerHTML = ''; // 既存の中身を安全にクリア
     
     const jpSpan = document.createElement('span');
     jpSpan.className = 'message-jp';
@@ -104,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
     statDownlink.textContent = downlink;
     statRtt.textContent = rtt;
 
-    // 状態が変化した時だけログを記録 (初回のみログを出すか出さないかはお好みだが、初期状態も記録しておく)
+    // 状態が変化した時だけログを記録 (初期読み込みも含む)
     if (currentState !== newStateKey) {
       addLogEntry(newStateKey, currentState === null);
       currentState = newStateKey;
@@ -142,12 +145,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const msgSpan = document.createElement('span');
     msgSpan.className = msgClass;
-    msgSpan.textContent = logMsg;
+    msgSpan.textContent = logMsg; // textContent を使用して安全にテキストを挿入
 
     li.appendChild(timeSpan);
     li.appendChild(msgSpan);
 
     // 最新のログを上に追加する
+    logList.insertBefore(li, logList.firstChild);
+  }
+
+  // --- ボタンクリックによる再調査イベント ---
+  refreshBtn.addEventListener('click', () => {
+    // 手動ボタンクリック時、再取得ログを出すかはお好みですが、状態更新関数を呼び出す
+    addManualRefreshLog();
+    updateNetworkStatus();
+  });
+
+  // 手動リフレッシュ用のログ
+  function addManualRefreshLog() {
+    const now = new Date();
+    const timeString = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    
+    const li = document.createElement('li');
+    const timeSpan = document.createElement('span');
+    timeSpan.className = 'log-time';
+    timeSpan.textContent = timeString;
+    const msgSpan = document.createElement('span');
+    msgSpan.className = 'log-msg-online';
+    msgSpan.style.color = '#add8e6'; // Refresh用の特別色（薄い青）
+    msgSpan.textContent = 'じょうたい を さいちょうさ した (Refreshed)';
+
+    li.appendChild(timeSpan);
+    li.appendChild(msgSpan);
     logList.insertBefore(li, logList.firstChild);
   }
 
@@ -157,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   if (connection) {
-    // ネットワーク状況(速度など)が変わった時のイベント
+    // ネットワーク状況が変わった時のイベント
     connection.addEventListener('change', updateNetworkStatus);
   }
 
