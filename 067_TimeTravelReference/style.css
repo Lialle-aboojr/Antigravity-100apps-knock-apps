@@ -1,20 +1,16 @@
 /* =========================================================================
    ベースリセットとCSS変数定義
    ========================================================================= */
-   :root {
-    /* カラーパレットの設定 */
-    --bg-color: #fcf9f2; /* ノート風の淡いクリーム色 */
+:root {
+    --bg-color: #fcf9f2;
     --text-color: #333333;
-    --primary-color: #ff6b6b; /* レトロポップな赤 */
-    --secondary-color: #4ecdc4; /* レトロポップな緑（ミント） */
-    --accent-color: #ffe66d; /* 明るい黄色 */
-    
-    /* 時代ごとのイメージカラー */
+    --primary-color: #ff6b6b;
+    --secondary-color: #4ecdc4;
+    --accent-color: #ffe66d;
     --showa-color: #ff9f43;
     --heisei-color: #54a0ff;
     --reiwa-color: #ff9ff3;
 
-    /* ドロップシャドウの設定（立体的なカード風） */
     --card-shadow: 4px 4px 0px rgba(0, 0, 0, 0.15);
     --border-radius: 12px;
 }
@@ -25,46 +21,26 @@
     padding: 0;
 }
 
-/* =========================================================================
-   全体デザイン（スクラップブック風の背景）
-   ========================================================================= */
 body {
-    font-family: 'M PLUS Rounded 1c', 'Helvetica Neue', Arial, sans-serif; /* 丸ゴシック */
+    font-family: 'M PLUS Rounded 1c', 'Helvetica Neue', Arial, sans-serif;
     color: var(--text-color);
     background-color: var(--bg-color);
-    
-    /* スクラップブック・ノート風の方眼紙パターンを表現 */
     background-image: 
         linear-gradient(90deg, transparent 79px, #abced4 79px, #abced4 81px, transparent 81px),
         linear-gradient(#eee .1em, transparent .1em);
     background-size: 100% 1.2em;
-    
     line-height: 1.6;
     padding: 20px 10px;
 }
 
-/* ユーティリティ/共通クラス */
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
+.en-label, .en-title { font-size: 0.8em; color: #666; font-weight: normal; }
+.app-container { max-width: 800px; margin: 0 auto; }
 
-.en-label, .en-title {
-    font-size: 0.8em;
-    color: #666;
-    font-weight: normal;
-}
-
-.app-container {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-/* =========================================================================
-   カードレイアウト（共通コンポーネント）
-   ========================================================================= */
+/* カードレイアウト */
 .card {
     background-color: white;
-    border: 3px solid #333; /* ポップな太線を付与 */
+    border: 3px solid #333;
     border-radius: var(--border-radius);
     padding: 20px;
     margin-bottom: 24px;
@@ -74,7 +50,6 @@ body {
     overflow: hidden;
 }
 
-/* マスキングテープ風の装飾をCSS疑似要素で表現 */
 .card::before {
     content: '';
     position: absolute;
@@ -87,15 +62,8 @@ body {
     z-index: 10;
 }
 
-.title-card {
-    text-align: center;
-    background-color: var(--accent-color);
-}
-.title-card h1 {
-    font-size: 1.8rem;
-    color: #333;
-    font-weight: 800;
-}
+.title-card { text-align: center; background-color: var(--accent-color); }
+.title-card h1 { font-size: 1.8rem; color: #333; font-weight: 800; }
 
 .card-header {
     display: flex;
@@ -106,51 +74,68 @@ body {
     padding-bottom: 10px;
 }
 
-.icon-accent {
-    font-size: 32px;
-    color: var(--primary-color);
-}
+.icon-accent { font-size: 32px; color: var(--primary-color); }
 
-/* コントロールエリアのレイアウト */
+/* コントロールエリア */
 .controls-panel {
     display: grid;
     grid-template-columns: 1fr;
     gap: 20px;
 }
-
 @media (min-width: 600px) {
-    .controls-panel {
-        grid-template-columns: 1fr 1fr;
-    }
+    .controls-panel { grid-template-columns: 1fr 1fr; }
 }
 
-/* =========================================================================
-   入力フォームとボタン
-   ========================================================================= */
+/* 入力フォームレイアウト */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
 .input-row {
     display: flex;
+    align-items: flex-end;
     gap: 10px;
-    margin-top: 8px;
+}
+.input-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.input-col label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+.sync-icon {
+    padding-bottom: 8px;
+    color: #888;
 }
 
 input[type="number"] {
-    flex: 1;
+    width: 100%;
     padding: 10px;
     border: 2px solid #333;
     border-radius: 8px;
     font-family: inherit;
     font-size: 1rem;
     outline: none;
+    text-align: center;
 }
 input[type="number"]:focus {
     border-color: var(--primary-color);
 }
 
+.action-row {
+    text-align: center;
+}
 .btn {
-    padding: 10px 15px;
+    width: 100%;
+    padding: 12px 15px;
     border: 2px solid #333;
     border-radius: 8px;
     font-family: inherit;
+    font-size: 1.1rem;
     font-weight: bold;
     cursor: pointer;
     box-shadow: 2px 2px 0px #333;
@@ -158,16 +143,14 @@ input[type="number"]:focus {
 }
 .btn:active {
     transform: translate(2px, 2px);
-    box-shadow: 0px 0px 0px #333; /* 押し込み時のアニメーション */
+    box-shadow: 0px 0px 0px #333;
 }
 .primary-btn {
     background-color: var(--primary-color);
     color: white;
 }
 
-/* =========================================================================
-   アバター表示領域（DiceBear API用）
-   ========================================================================= */
+/* アバター表示領域 */
 .avatar-area {
     margin-top: 15px;
     text-align: center;
@@ -175,7 +158,7 @@ input[type="number"]:focus {
     border-radius: 8px;
     padding: 15px;
     border: 2px dashed #aaa;
-    animation: fadeIn 0.5s ease; /* ふんわり表示 */
+    animation: fadeIn 0.5s ease;
 }
 
 .avatar-area img {
@@ -187,20 +170,21 @@ input[type="number"]:focus {
     margin-bottom: 10px;
 }
 
-.avatar-message {
+.avatar-message { font-weight: bold; color: #333; margin-bottom: 5px;}
+.zodiac-text {
+    font-size: 1.1rem;
     font-weight: bold;
-    color: #333;
+    color: var(--primary-color);
+    background: white;
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 2px solid #333;
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
 }
 
-/* =========================================================================
-   フィルタボタン
-   ========================================================================= */
-.filter-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
+/* フィルタボタン */
+.filter-group { display: flex; flex-wrap: wrap; gap: 10px; }
 .filter-btn {
     padding: 8px 12px;
     border: 2px solid #333;
@@ -211,51 +195,21 @@ input[type="number"]:focus {
     font-weight: bold;
     transition: all 0.2s;
 }
+.filter-btn.active { background-color: #333; color: #fff; }
 
-.filter-btn.active {
-    background-color: #333;
-    color: #fff;
-}
+/* テーブルスタイル */
+table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: center; }
+th, td { padding: 12px 8px; border-bottom: 1px dashed #ccc; font-size: 1rem; }
+th { background-color: #f1f2f6; border-top: 2px solid #333; border-bottom: 2px solid #333; font-weight: 800; }
+tbody tr { transition: background-color 0.3s, opacity 0.5s, transform 0.5s; }
+tbody tr:hover { background-color: rgba(255, 230, 109, 0.2); }
 
-/* =========================================================================
-   早見表テーブル
-   ========================================================================= */
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0;
-    text-align: center;
-}
-
-th, td {
-    padding: 12px 8px;
-    border-bottom: 1px dashed #ccc;
-    font-size: 1rem;
-}
-
-th {
-    background-color: #f1f2f6;
-    border-top: 2px solid #333;
-    border-bottom: 2px solid #333;
-    font-weight: 800;
-}
-
-/* テーブル行のアニメーション */
-tbody tr {
-    transition: background-color 0.3s, opacity 0.5s, transform 0.5s;
-}
-tbody tr:hover {
-    background-color: rgba(255, 230, 109, 0.2); /* 軽くホバーした時の色 */
-}
-
-/* 生まれた年の強調表示（ハイライト） */
 .highlight-birth {
     background-color: var(--accent-color) !important;
     font-weight: bold;
     border-left: 5px solid var(--primary-color);
 }
 
-/* 時代別カラーラベル */
 .era-label {
     display: inline-block;
     padding: 4px 8px;
@@ -269,10 +223,7 @@ tbody tr:hover {
 .era-reiwa { background-color: var(--reiwa-color); }
 .era-old { background-color: #a4b0be; }
 
-/* =========================================================================
-   カラフルスタンプ（ライフイベントのアイコン表示用）
-   Google Material Symbols をCSSで装飾して表示
-   ========================================================================= */
+/* スタンプ */
 .stamp {
     display: inline-flex;
     align-items: center;
@@ -289,42 +240,26 @@ tbody tr:hover {
     white-space: nowrap;
 }
 
-.stamp .material-symbols-rounded {
-    font-size: 18px; /* アイコンのサイズ */
-}
+.stamp .material-symbols-rounded { font-size: 18px; }
 
-/* イベントごとのカラーバリエーション */
 .stamp-birth { background-color: #ff9ff3; border-color: #f368e0; }
 .stamp-school { background-color: #48dbfb; border-color: #0abde3; }
 .stamp-adult { background-color: #ff6b6b; color: white; border-color: #ee5253; }
 .stamp-milestone { background-color: #1dd1a1; border-color: #10ac84; }
 .stamp-kanreki { background-color: #ff4757; color: white; border-color: #ff4757; font-size: 1rem; }
+.stamp-yakudoshi { background-color: #8c7ae6; color: white; border-color: #7158e2; }
 .stamp-old { background-color: #d1ccc0; border-color: #84817a; }
 
-/* =========================================================================
-   アニメーションとレスポンシブ
-   ========================================================================= */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-footer {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 0.8rem;
-    color: #777;
-    margin-bottom: 30px;
-}
+footer { text-align: center; margin-top: 20px; font-size: 0.8rem; color: #777; margin-bottom: 30px; }
 
 @media (max-width: 500px) {
-    th, td {
-        font-size: 0.85rem;
-        padding: 8px 4px;
-    }
-    .stamp {
-        padding: 4px 8px;
-        font-size: 0.75rem;
-        flex-direction: column; /* スマホではアイコンと文字を縦に */
-    }
+    th, td { font-size: 0.85rem; padding: 8px 4px; }
+    .stamp { padding: 4px 8px; font-size: 0.75rem; flex-direction: column; }
+    .input-row { flex-direction: column; align-items: stretch; gap: 5px; }
+    .sync-icon { transform: rotate(90deg); text-align: center; padding: 5px 0; }
 }
