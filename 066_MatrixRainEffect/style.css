@@ -24,6 +24,33 @@ body, html {
     z-index: 1; /* 背景となるため背面に配置 */
 }
 
+/* ターミナル風情報表示 */
+.terminal-info {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 5; /* キャンバスの手前に表示 */
+    font-family: monospace; /* 等幅フォントでコンソールっぽく */
+    color: rgba(0, 255, 0, 0.6); /* 邪魔にならないように少し透明度を下げたグリーン */
+    pointer-events: none; /* マウスイベントを貫通させて操作の邪魔にならないようにする */
+}
+
+.terminal-info p {
+    margin: 6px 0;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-shadow: 0 0 3px rgba(0, 255, 0, 0.3); /* わずかなネオン効果 */
+}
+
+/* 点滅カーソルのアニメーション */
+.cursor {
+    animation: blink 1s step-end infinite;
+}
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
 /* 操作パネルのコンテナ配置 */
 .controls {
     position: absolute;
@@ -72,6 +99,7 @@ body, html {
 /* スライダー（Range input）のカスタム装飾 */
 input[type=range] {
     -webkit-appearance: none;
+    appearance: none;
     width: 150px;
     background: transparent;
 }
@@ -93,6 +121,7 @@ input[type=range]::-webkit-slider-thumb {
     background: #0f0;
     cursor: pointer;
     -webkit-appearance: none;
+    appearance: none;
     margin-top: -7px;
     box-shadow: 0 0 10px #0f0;
 }
