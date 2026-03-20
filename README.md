@@ -79,13 +79,14 @@ Complete it. Ship it. Relax. ☕
 | 066 | 💻 Digital Rain Effect | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/066_MatrixRainEffect/index.html) |
 | 067 | 🕰️ タイムトラベル早見表 | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/067_TimeTravelReference/index.html) |
 | 068 | 📜 Tategaki Studio | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/068_TategakiStudio/index.html) |
+| 069 | 🍩 DonutBrandSite | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/069_DonutBrandSite/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 68 / 100 █████████████░░░░░░░ 68%
+完成: 69 / 100 ██████████████░░░░░░ 69%
 ```
 
 ---
