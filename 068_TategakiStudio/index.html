@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tategaki Studio | 縦書きスタジオ</title>
+  
+  <!-- ファビコン（AI生成した画像） -->
+  <link rel="icon" href="favicon.png" type="image/png">
+  
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Webフォント（美しい明朝体を指定） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- html2canvasライブラリ (プレビューを画像化するための軽量ライブラリ) -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- 左側 (コントロールパネル・入力エリア) -->
+    <aside class="control-panel">
+      <!-- タイトル -->
+      <h1 class="logo">Tategaki Studio<br><span>縦書きスタジオ</span></h1>
+      
+      <!-- テキスト入力 -->
+      <div class="input-group">
+        <label for="editor">
+          テキスト入力 / Input Text
+          <span class="help-text">※ルビは「漢字(かんじ)」と入力</span>
+        </label>
+        <textarea id="editor" placeholder="ここに文章を入力してください。&#10;改行もそのまま反映されます。&#10;&#10;ルビの例：&#10;縦書(たてが)きスタジオへ、&#10;ようこそ！"></textarea>
+      </div>
+
+      <!-- 設定領域 -->
+      <div class="settings">
+        <!-- テーマ変更 -->
+        <div class="setting-item">
+          <label for="themeSelect">背景テーマ / Background Theme</label>
+          <select id="themeSelect">
+            <option value="plain">無地 (Plain)</option>
+            <option value="manuscript">原稿用紙風 (Manuscript)</option>
+            <option value="paper">和紙風 (Japanese Paper)</option>
+          </select>
+        </div>
+        
+        <!-- ルビの表示/非表示スイッチ -->
+        <div class="setting-item toggle-wrapper">
+          <label for="rubyToggle" class="checkbox-label">
+            <input type="checkbox" id="rubyToggle" checked>
+            ルビ表示 / Show Ruby
+          </label>
+        </div>
+        
+        <!-- 画像としてダウンロード -->
+        <button id="downloadBtn" class="primary-btn">
+          画像として保存 / Save as Image
+          <svg class="icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- 右側 (プレビュー画面) -->
+    <main class="preview-panel">
+      <!-- 実際に画像として出力される範囲 -->
+      <div id="previewContainer" class="preview-container plain">
+        <div id="previewContent" class="preview-content show-ruby"></div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>

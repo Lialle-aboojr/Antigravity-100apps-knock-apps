@@ -1,0 +1,288 @@
+/* ==========================================================
+   CSS 変数（カラーパレットやフォントの設定）
+   和モダンな落ち着いた色合いを設定します。
+========================================================== */
+:root {
+  --bg-color: #f6f5f3;        /* 全体の背景色 */
+  --text-color: #2c2b29;      /* 文字色 */
+  --panel-bg: #ffffff;        /* コントロール周りの色 */
+  --border-color: #ded9c9;    /* 境界線 */
+  --accent-color: #a84b3f;    /* アクセントカラー（和風の赤・臙脂色） */
+  --accent-hover: #8f3b30;    /* ホバー時の色 */
+  --font-mincho: 'Noto Serif JP', 'Yu Mincho', 'Klee One', serif;  /* 縦書き用・明朝体 */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;      /* UI用・ゴシック体 */
+  --ruby-color: #666666;      /* ルビの色 */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ==========================================================
+   レイアウト (左右分割)
+========================================================== */
+.app-container {
+  display: flex;
+  height: 100vh;    /* 画面の高さいっぱい */
+  overflow: hidden; /* 全体のスクロールは消す */
+}
+
+/* 左側：操作パネル */
+.control-panel {
+  width: 340px;
+  background-color: var(--panel-bg);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 2.5rem 2rem;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.03);
+  z-index: 10;
+}
+
+/* 右側：プレビューパネル */
+.preview-panel {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background-color: #e9e5d9; /* キャンバスの裏地 */
+  overflow: auto; /* 画面サイズが小さくなった時のスクロール */
+}
+
+/* スマホ対応（縦並びに変更） */
+@media (max-width: 800px) {
+  .app-container {
+    flex-direction: column;
+    height: auto;
+  }
+  .control-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .preview-panel {
+    min-height: 70vh;
+    padding: 1rem;
+    align-items: flex-start;
+  }
+}
+
+/* ==========================================================
+   UIコンポーネントのデザイン
+========================================================== */
+/* ロゴ */
+.logo {
+  font-family: var(--font-mincho);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+.logo span {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-color);
+  display: block;
+  margin-top: 0.3rem;
+}
+
+/* 入力欄グループ */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* 高さをいっぱいに使う */
+  margin-bottom: 2rem;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.help-text {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #777;
+}
+
+/* テキストエリア */
+textarea {
+  flex: 1;
+  resize: none;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: #faf9f5;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  min-height: 150px;
+}
+textarea:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(168, 75, 63, 0.1);
+}
+
+/* セレクトボックス等 */
+.settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: #fff;
+  font-size: 0.95rem;
+  cursor: pointer;
+  appearance: none; /* デフォルトデザインをリセット */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%232c2b29%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem top 50%;
+  background-size: 0.65rem auto;
+}
+
+/* チェックボックス */
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* 保存ボタン */
+.primary-btn {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+.primary-btn:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(168, 75, 63, 0.2);
+}
+.primary-btn:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================
+   プレビュー領域 (縦書きの実装)
+========================================================== */
+.preview-container {
+  width: 100%;
+  max-width: 800px;
+  height: 100%;
+  max-height: 85vh;
+  min-height: 500px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  border-radius: 4px;
+  padding: 4rem;
+  /* html2canvasで綺麗に切り取るための設定 */
+  overflow: hidden; 
+  position: relative;
+  transition: background 0.4s ease;
+}
+
+.preview-content {
+  width: 100%;
+  height: 100%;
+  
+  /* ===== 縦書きのコア ===== */
+  writing-mode: vertical-rl;      /* 横書きから縦書き(右から左)に変更 */
+  text-orientation: upright;      /* アルファベット等の向きも縦にする */
+  /* ===================== */
+  
+  font-family: var(--font-mincho);
+  font-size: 1.6rem;
+  line-height: 2.2;               /* 行間 */
+  letter-spacing: 0.1em;          /* 字間 */
+  color: var(--text-color);
+  
+  overflow-x: auto; /* 縦書き時のスクロール方向は横軸になるため */
+  overflow-y: hidden;
+}
+
+/* ルビの調整 */
+ruby {
+  font-family: var(--font-mincho);
+  ruby-position: over;            /* 右側にルビを振る(縦書きの場合 over は右) */
+}
+rt {
+  font-size: 0.55em;
+  color: var(--ruby-color);
+  opacity: 1;
+  transition: opacity 0.2s;
+  letter-spacing: 0;
+}
+
+/* ルビ非表示機能 */
+.hide-ruby rt {
+  opacity: 0;
+  visibility: hidden;
+}
+
+/* ==========================================================
+   テーマスタイルの実装
+========================================================== */
+
+/* 1. 無地 (Plain) */
+.plain {
+  background-color: #fdfbf7;
+}
+
+/* 2. 原稿用紙風 (Manuscript) */
+.manuscript {
+  background-color: #fcf9f2;
+  /* CSS Gradientを利用して原稿用紙特有のマス目を描画 */
+  background-image: 
+    linear-gradient(to right, transparent calc(100% - 1px), #d8cbaa calc(100% - 1px)),
+    linear-gradient(to bottom, transparent calc(100% - 1px), #d8cbaa calc(100% - 1px));
+  /* 線と線の間隔を指定 */
+  background-size: 3.52rem 3.52rem; 
+  background-position: top 0 right 0;
+}
+/* マス目に文字が乗るように行間を調整 */
+.manuscript .preview-content {
+  line-height: 3.52rem;
+  font-size: 1.6rem;
+}
+
+/* 3. 和紙風 (Japanese Paper) */
+.paper {
+  background-color: #f5eedc;
+  /* SVGフィルタを用いたノイズをBase64変換し、背景画像として表示して和紙の質感を表現 */
+  /* 外部画像を読み込まないので高速かつ安全です */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.2'/%3E%3C/svg%3E");
+}
