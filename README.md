@@ -75,13 +75,14 @@ Complete it. Ship it. Relax. ☕
 | 062 | 🐾 Random Fluff Viewer | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/062_RandomFluffViewer/index.html) |
 | 063 | 🎹 PianoKeyboard | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/063_PianoKeyboard/index.html) |
 | 064 | 👾 GlitchArtGenerator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/064_GlitchArtGenerator/index.html) |
+| 065 | 🎮 Network Status Checker | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/065_NetworkStatusChecker/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 64 / 100 █████████████░░░░░░░ 64%
+完成: 65 / 100 █████████████░░░░░░░ 65%
 ```
 
 ---
