@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gourmet Donut Shop</title>
+    <!-- フォントの読み込み: Inter と 游明朝/Noto Serif JP などで洗練された印象に -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+JP:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- ファビコンの設定 -->
+    <link rel="icon" href="favicon.png">
+    <!-- 
+      ※もし画像(favicon.png)の生成や準備が間に合わない場合は、上の<link>をコメントアウトし、
+      下のSVGフォールバック（ドーナツ絵文字）のコメントを外して使用してください。
+      <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 style=%22dominant-baseline:central;text-anchor:middle;font-size:90px;%22>🍩</text></svg>">
+    -->
+</head>
+<body>
+
+    <!-- 
+      ================================================
+      画像差し替えの案内（NanoBanana 2用）
+      ================================================
+      サイト内の画像は、以下のプレースホルダーURLで仮配置されています。
+      NanoBanana 2などの画像生成AIで画像を生成し、適宜差し替えてください。
+
+      【共通キーワード】
+      photorealistic, soft natural lighting, shallow depth of field, high detailed, warm earthy colors
+    -->
+
+    <!-- Hero Area -->
+    <!-- 
+      画像生成プロンプト例：
+      A single masterpiece gourmet donut with unique toppings on a minimalist ceramic plate, centered, cinematic lighting, dramatic composition. [共通キーワード]
+    -->
+    <section class="hero fade-in">
+        <div class="hero-image-wrapper">
+            <img src="https://via.placeholder.com/1600x900?text=Wait+for+NanoBanana+Image" alt="Masterpiece Donut" class="hero-img">
+        </div>
+        <div class="hero-text">
+            <h1 class="main-title">BEYOND NORMAL</h1>
+            <p class="sub-title">日常を超える、一口の体験。</p>
+        </div>
+    </section>
+
+    <!-- Concept -->
+    <!--
+      画像生成プロンプト例：
+      A stylish baker with white gloves carefully placing a topping on a donut in a bright, clean, modern kitchen. Focus on hands and texture. [共通キーワード]
+    -->
+    <section class="concept">
+        <div class="container container-flex">
+            <div class="concept-text fade-in">
+                <h2 class="section-title">
+                    <span class="en">CONCEPT</span>
+                    <span class="ja">コンセプト</span>
+                </h2>
+                <p class="description">
+                    完璧なまでの美しさと、想像を超える食感。<br>
+                    私たちは「ドーナツ」という概念をリファインし、<br>
+                    洗練されたスイーツへと昇華させました。
+                </p>
+                <p class="description">
+                    選び抜かれた素材と、妥協のない技術。<br>
+                    特別な瞬間に寄り添う、ひとつのアート作品として<br>
+                    あなたにお届けします。
+                </p>
+            </div>
+            <div class="concept-image-wrapper fade-in">
+                <img src="https://via.placeholder.com/800x1000?text=Wait+for+NanoBanana+Image" alt="Crafting the donut" class="concept-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu -->
+    <section class="menu">
+        <div class="container container-center fade-in">
+            <h2 class="section-title">
+                <span class="en">SIGNATURE MENU</span>
+                <span class="ja">おすすめメニュー</span>
+            </h2>
+        </div>
+        <div class="menu-grid">
+            <!-- Item 1 -->
+            <!--
+              画像生成プロンプト例：
+              A pistachio glazed donut on a small white plate. [共通キーワード]
+            -->
+            <div class="menu-item fade-in">
+                <div class="menu-image-wrapper">
+                    <img src="https://via.placeholder.com/600x800?text=Wait+for+NanoBanana+Image" alt="Pistachio Glazed" class="menu-img">
+                </div>
+                <div class="menu-info">
+                    <h3 class="menu-name">Pistachio Glaze</h3>
+                    <p class="menu-desc">ピスタチオグレーズ</p>
+                </div>
+            </div>
+
+            <!-- Item 2 -->
+            <!--
+              画像生成プロンプト例：
+              A rich chocolate ganache donut with gold leaf dust on a small white plate. [共通キーワード]
+            -->
+            <div class="menu-item fade-in delay-1">
+                <div class="menu-image-wrapper">
+                    <img src="https://via.placeholder.com/600x800?text=Wait+for+NanoBanana+Image" alt="Rich Chocolate" class="menu-img">
+                </div>
+                <div class="menu-info">
+                    <h3 class="menu-name">Dark Chocolate</h3>
+                    <p class="menu-desc">ダークチョコレートガナッシュ</p>
+                </div>
+            </div>
+
+            <!-- Item 3 -->
+            <!--
+              画像生成プロンプト例：
+              A raspberry filled donut with powdered sugar dusting on a small white plate. [共通キーワード]
+            -->
+            <div class="menu-item fade-in delay-2">
+                <div class="menu-image-wrapper">
+                    <img src="https://via.placeholder.com/600x800?text=Wait+for+NanoBanana+Image" alt="Raspberry Filled" class="menu-img">
+                </div>
+                <div class="menu-info">
+                    <h3 class="menu-name">Raspberry Fill</h3>
+                    <p class="menu-desc">ラズベリーフィル</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shop Info -->
+    <!--
+      画像生成プロンプト例：
+      Wide shot of a stylish, minimalist donut shop exterior during golden hour, big glass window, potted plants. [共通キーワード]
+    -->
+    <section class="shop-info fade-in">
+        <div class="shop-image-wrapper">
+            <img src="https://via.placeholder.com/1600x600?text=Wait+for+NanoBanana+Image" alt="Shop Exterior" class="shop-img">
+        </div>
+        <div class="shop-details fade-in">
+            <h2 class="section-title">
+                <span class="en">STORE INFO</span>
+                <span class="ja">店舗情報</span>
+            </h2>
+            <p class="address">
+                150-0000 東京都渋谷区神宮前X-X-X<br>
+                Open 11:00 - 19:00 (Closed on Tuesday)
+            </p>
+            <a href="#" class="instagram-link">
+                <span class="btn-text">Follow on Instagram</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="copyright">&copy; 2026 Gourmet Donut Shop. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScriptの読み込み -->
+    <script src="script.js"></script>
+</body>
+</html>
