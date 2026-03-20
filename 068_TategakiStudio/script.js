@@ -20,7 +20,6 @@ const previewContainer = document.getElementById('previewContainer');
  * @returns {string} - エスケープ後の文字列
  */
 function escapeHTML(str) {
-  // 置換用の辞書
   const escapeMap = {
     '&': '&amp;',
     '<': '&lt;',
@@ -28,33 +27,26 @@ function escapeHTML(str) {
     "'": '&#39;',
     '"': '&quot;'
   };
-  // 正規表現で対象の文字列を探し、置換します
   return str.replace(/[&<>'"]/g, match => escapeMap[match]);
 }
 
 /**
  * テキストから「ルビ」を生成し、改行を適用する関数
- * "漢字(かんじ)" または "漢字（かんじ）" というフォーマットを
- * "<ruby>漢字<rt>かんじ</rt></ruby>" に変換します。
+ * "漢字(かんじ)" というフォーマットを "<ruby>漢字<rt>かんじ</rt></ruby>" に変換します。
  * 
  * @param {string} text - 入力文字列
  * @returns {string} - HTMLタグに変換された文字列
  */
 function parseText(text) {
-  // 1. まずXSS対策として入力をすべてエスケープする
+  // 1. まずXSS対策として入力をすべてエスケープする（最も重要）
   let safeText = escapeHTML(text);
 
-  // 2. ルビの正規表現パターン
-  //   ([^\s()（）]+) -> スペースや半角・全角カッコ以外の文字の連続（漢字などの対象）
-  //   (?:\(|（)       -> 半角または全角の開きカッコ (キャプチャしない)
-  //   ([^)）]+)       -> 閉じカッコ以外の文字の連続（ルビの読み部分）
-  //   (?:\)|）)       -> 半角または全角の閉じカッコ (キャプチャしない)
-  const rubyRegex = /([^\s()（）]+)(?:\(|（)([^)）]+)(?:\)|）)/g;
+  // 2. ルビの正規表現パターン (堅牢でシンプルな置換)
+  // 全角文字等の連続 + (半角カッコ内の任意の文字) にマッチ
+  const rubyRegex = /([^\x00-\x7F]+?)\((.+?)\)/g;
 
   // 正規表現でマッチした箇所を ruby タグに置換します
-  safeText = safeText.replace(rubyRegex, (match, baseString, rubyText) => {
-    return `<ruby>${baseString}<rt>${rubyText}</rt></ruby>`;
-  });
+  safeText = safeText.replace(rubyRegex, '<ruby>$1<rt>$2</rt></ruby>');
 
   // 3. 改行コード (\n) を <br> タグに変換して、表示にも改行を反映
   safeText = safeText.replace(/\n/g, '<br>');
@@ -77,7 +69,7 @@ function updatePreview() {
 // ==========================================
 
 // ① テキストエリアの入力監視 (リアルタイム更新)
-// ユーザーが文字を打つたびに毎回 updatePreview() が発火します。
+// ユーザーが文字を打つたびに毎回パースし直して updatePreview() が発火します。
 editor.addEventListener('input', updatePreview);
 
 // ② テーマ変更の監視 (セレクトボックス)
@@ -93,11 +85,9 @@ themeSelect.addEventListener('change', (e) => {
 // ③ ルビ表示/非表示の切り替えボタン
 rubyToggle.addEventListener('change', (e) => {
   if (e.target.checked) {
-    // チェックが入っていればルビを表示
     previewContent.classList.remove('hide-ruby');
     previewContent.classList.add('show-ruby');
   } else {
-    // チェックが外れていればルビを非表示
     previewContent.classList.remove('show-ruby');
     previewContent.classList.add('hide-ruby');
   }
@@ -112,21 +102,17 @@ downloadBtn.addEventListener('click', async () => {
     // ボタンの見た目を「処理中」に変更
     downloadBtn.innerHTML = '画像生成中... / Processing...';
 
-    // html2canvas ライブラリにプレビュー領域を渡し、画像(Canvas)を描画
-    // scaleを上げて高画質化（2倍）
-    const canvas = await html2canvas(previewContainer, {
-      scale: 2,           // 高解像度
-      useCORS: true,      // 外部画像等の混在を許可
-      backgroundColor: null // CSSの背景色・背景画像をそのまま活かすため透過
+    // html-to-image ライブラリにプレビュー領域を渡し、PNG画像 (Data URI) を生成
+    // pixelRatioプロパティで高解像度化（今回は2倍）
+    const dataUrl = await htmlToImage.toPng(previewContainer, {
+      pixelRatio: 2,
+      backgroundColor: null // CSS背景色を活かすため透過
     });
 
-    // 生成された Canvas を Base64 画像 (PNG形式) に変換
-    const imageBase64 = canvas.toDataURL("image/png");
-    
     // aタグを一時的に生成し、ダウンロードを発火させる
     const link = document.createElement('a');
-    link.href = imageBase64;
-    link.download = 'tategaki_output.png';
+    link.download = 'tategaki.png'; // 必ず拡張子を指定
+    link.href = dataUrl;
     document.body.appendChild(link);
     link.click();
     
@@ -139,7 +125,6 @@ downloadBtn.addEventListener('click', async () => {
   } finally {
     // 成功・失敗にかかわらず、ボタンの状態を元に戻す
     downloadBtn.disabled = false;
-    // 初期状態のHTML（アイコンSVG含む）に戻す
     downloadBtn.innerHTML = `
       画像として保存 / Save as Image
       <svg class="icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
