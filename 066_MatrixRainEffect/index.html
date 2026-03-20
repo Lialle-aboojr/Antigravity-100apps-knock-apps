@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Rain Effect</title>
+    <!-- ダウンロードしたファビコンを読み込む -->
+    <link rel="icon" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 画面全体にMatrix文字を描画するためのキャンバス -->
+    <canvas id="matrixCanvas"></canvas>
+
+    <!-- 操作パネル（グラスモーフィズムデザイン） -->
+    <div class="controls glassmorphism">
+        <div class="control-group">
+            <!-- スピード調整用スライダー -->
+            <label for="speedSlider">スピード / Speed</label>
+            <input type="range" id="speedSlider" min="10" max="150" value="50">
+        </div>
+        <div class="control-group">
+            <!-- 色切り替え用のトグルスイッチ -->
+            <label>色 / Color Mode</label>
+            <button id="colorToggleBtn" class="toggle-btn">
+                <span class="mode-text">ネオングリーン / Basic Green</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScriptファイルの読み込み -->
+    <script src="script.js"></script>
+</body>
+</html>

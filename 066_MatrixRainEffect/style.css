@@ -1,0 +1,164 @@
+/* style.css - Matrix Rain Effect App */
+
+/* 全体のリセットと基本的な設定 */
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
+    overflow: hidden; /* スクロールバーを隠す */
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* キャンバスを全画面に配置 */
+#matrixCanvas {
+    display: block; /* 余白を消すため */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; /* 背景となるため背面に配置 */
+}
+
+/* 操作パネルのコンテナ配置 */
+.controls {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10; /* キャンバスより前面に配置 */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 30px;
+}
+
+/* グラスモーフィズム調の美しい装飾 */
+.glassmorphism {
+    /* 半透明の背景色 */
+    background: rgba(20, 30, 20, 0.4);
+    /* ぼかし効果 (Safari対応含む) */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    /* 境界線と角丸 */
+    border: 1px solid rgba(0, 255, 0, 0.2);
+    border-radius: 16px;
+    padding: 20px 40px;
+    /* ふんわりとした影 */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    color: #fff;
+}
+
+/* 各コントロールのグループ */
+.control-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ラベルのスタイル */
+.control-group label {
+    font-size: 0.9rem;
+    color: #aaffaa;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+    letter-spacing: 1px;
+}
+
+/* スライダー（Range input）のカスタム装飾 */
+input[type=range] {
+    -webkit-appearance: none;
+    width: 150px;
+    background: transparent;
+}
+input[type=range]:focus {
+    outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    border: 1px solid rgba(0, 255, 0, 0.2);
+}
+input[type=range]::-webkit-slider-thumb {
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: #0f0;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -7px;
+    box-shadow: 0 0 10px #0f0;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Firefox用スライダースタイル */
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    border: 1px solid rgba(0, 255, 0, 0.2);
+}
+input[type=range]::-moz-range-thumb {
+    height: 18px;
+    width: 18px;
+    border-radius: 50%;
+    background: #0f0;
+    cursor: pointer;
+    box-shadow: 0 0 10px #0f0;
+}
+
+/* 色切り替えボタン（トグル風） */
+.toggle-btn {
+    appearance: none;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid #0f0;
+    color: #0f0;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-shadow: 0 0 5px #0f0;
+    box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
+    font-weight: bold;
+}
+
+.toggle-btn:hover {
+    background: rgba(0, 255, 0, 0.2);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+/* ランダムモード時のボタンスタイル（JSでクラス付与） */
+.toggle-btn.random-mode {
+    border-color: #ff00ff;
+    color: #fff;
+    text-shadow: 0 0 5px #ff00ff;
+    box-shadow: inset 0 0 10px rgba(255, 0, 255, 0.3);
+}
+
+.toggle-btn.random-mode:hover {
+    background: rgba(255, 0, 255, 0.2);
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+}
+
+/* スマホ用レスポンシブ対応 */
+@media (max-width: 600px) {
+    .controls {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 25px;
+        bottom: 15px;
+        width: 90%;
+    }
+}
