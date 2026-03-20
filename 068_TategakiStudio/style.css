@@ -209,7 +209,7 @@ select {
   box-shadow: 0 10px 40px rgba(0,0,0,0.1);
   border-radius: 4px;
   padding: 4rem;
-  /* html2canvasで綺麗に切り取るための設定 */
+  /* html-to-image等で綺麗に切り取るための設定 */
   overflow: hidden; 
   position: relative;
   transition: background 0.4s ease;
@@ -262,27 +262,28 @@ rt {
   background-color: #fdfbf7;
 }
 
-/* 2. 原稿用紙風 (Manuscript) */
-.manuscript {
-  background-color: #fcf9f2;
-  /* CSS Gradientを利用して原稿用紙特有のマス目を描画 */
+/* 2. マス目ノート (Grid Notebook) */
+.grid {
+  background-color: #faf8f5;
+  /* CSS Gradientを利用してマス目を描画 */
   background-image: 
-    linear-gradient(to right, transparent calc(100% - 1px), #d8cbaa calc(100% - 1px)),
-    linear-gradient(to bottom, transparent calc(100% - 1px), #d8cbaa calc(100% - 1px));
+    linear-gradient(to right, #e8dfcc 1px, transparent 1px),
+    linear-gradient(to bottom, #e8dfcc 1px, transparent 1px);
   /* 線と線の間隔を指定 */
-  background-size: 3.52rem 3.52rem; 
+  background-size: 2.2em 2.2em; 
   background-position: top 0 right 0;
 }
 /* マス目に文字が乗るように行間を調整 */
-.manuscript .preview-content {
-  line-height: 3.52rem;
-  font-size: 1.6rem;
+.grid .preview-content {
+  line-height: 2.2em;
 }
 
 /* 3. 和紙風 (Japanese Paper) */
 .paper {
+  /* 画像読み込み失敗時のフォールバックとして淡いベージュ系 */
   background-color: #f5eedc;
-  /* SVGフィルタを用いたノイズをBase64変換し、背景画像として表示して和紙の質感を表現 */
-  /* 外部画像を読み込まないので高速かつ安全です */
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.2'/%3E%3C/svg%3E");
+  /* 背景画像として bg_washi.jpg を指定 */
+  background-image: url('bg_washi.jpg');
+  background-size: cover;
+  background-position: center;
 }

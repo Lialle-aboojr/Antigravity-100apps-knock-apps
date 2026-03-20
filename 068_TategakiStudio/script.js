@@ -41,9 +41,9 @@ function parseText(text) {
   // 1. まずXSS対策として入力をすべてエスケープする（最も重要）
   let safeText = escapeHTML(text);
 
-  // 2. ルビの正規表現パターン (堅牢でシンプルな置換)
-  // 全角文字等の連続 + (半角カッコ内の任意の文字) にマッチ
-  const rubyRegex = /([^\x00-\x7F]+?)\((.+?)\)/g;
+  // 2. ルビの正規表現パターン (文頭まで巻き込まない堅牢な仕様)
+  // 漢字（オプションで送り仮名の平仮名・片仮名）＋カッコ（半角or全角）のみを抽出
+  const rubyRegex = /([一-龯々]+[ぁ-んァ-ヶ]*)[(（]([^)）]+)[)）]/g;
 
   // 正規表現でマッチした箇所を ruby タグに置換します
   safeText = safeText.replace(rubyRegex, '<ruby>$1<rt>$2</rt></ruby>');
@@ -74,10 +74,10 @@ editor.addEventListener('input', updatePreview);
 
 // ② テーマ変更の監視 (セレクトボックス)
 themeSelect.addEventListener('change', (e) => {
-  const selectedTheme = e.target.value; // plain, manuscript, paper のいずれか
+  const selectedTheme = e.target.value; // plain, grid, paper のいずれか
   
   // 既存のテーマクラスをすべて削除
-  previewContainer.classList.remove('plain', 'manuscript', 'paper');
+  previewContainer.classList.remove('plain', 'grid', 'paper');
   // 選択された新しいテーマクラスを付与
   previewContainer.classList.add(selectedTheme);
 });
@@ -103,7 +103,7 @@ downloadBtn.addEventListener('click', async () => {
     downloadBtn.innerHTML = '画像生成中... / Processing...';
 
     // html-to-image ライブラリにプレビュー領域を渡し、PNG画像 (Data URI) を生成
-    // pixelRatioプロパティで高解像度化（今回は2倍）
+    // pixelRatioプロパティで高解像度化
     const dataUrl = await htmlToImage.toPng(previewContainer, {
       pixelRatio: 2,
       backgroundColor: null // CSS背景色を活かすため透過
