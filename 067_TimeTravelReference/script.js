@@ -10,7 +10,7 @@ const currentYear = new Date().getFullYear(); // 実行時の年
 const START_YEAR = currentYear; // 最新年
 const END_YEAR = currentYear - 100; // 初期表示は100年前まで
 
-// 干支（十二支）の配列データ定義（西暦を12で割った余りがインデックスに対応します）
+// 干支（十二支）の配列データ定義（西暦を12で割った余りがインデックスに対応）
 const ZODIACS = [
     { name: '申年', en: 'Monkey', emoji: '🐒' }, // 0
     { name: '酉年', en: 'Rooster', emoji: '🐓' }, // 1
@@ -25,6 +25,11 @@ const ZODIACS = [
     { name: '午年', en: 'Horse',  emoji: '🐎' }, // 10
     { name: '未年', en: 'Sheep',  emoji: '🐏' }  // 11
 ];
+
+// 数え年の本厄（男性）
+const MALE_HON_YAKU = [25, 42, 61];
+// 数え年の本厄（女性）
+const FEMALE_HON_YAKU = [19, 33, 37, 61];
 
 // ---------------------------
 // 2. ユーティリティ系関数群
@@ -41,13 +46,14 @@ function getEraInfo(year) {
 }
 
 /**
- * 年齢からライフイベントのHTMLスタンプを生成する関数
+ * 年齢からライフイベントや厄年のHTMLスタンプを生成する関数
+ * @param {number} age - 年齢（満年齢）
  */
 function getLifeEventsHtml(age) {
-    let eventsHtml = ''; // 複数のイベントが重なることも考慮して文字列を結合していく方針に変更
+    let eventsHtml = ''; 
+    const kazoe = age + 1; // 厄年の基準となる「数え年」（満年齢＋1）
 
-    // 各年齢に合致するイベントがあればスタンプ文字列を連結する
-    // ---- 誕生・学校系 ----
+    // ---- 誕生・学校・成人系 ----
     if (age === 0) eventsHtml += `<span class="stamp stamp-birth"><span class="material-symbols-rounded">child_care</span>誕生 (Birth)</span>`;
     if (age === 6) eventsHtml += `<span class="stamp stamp-school"><span class="material-symbols-rounded">school</span>小学校入学</span>`;
     if (age === 12) eventsHtml += `<span class="stamp stamp-school"><span class="material-symbols-rounded">backpack</span>中学校入学</span>`;
@@ -55,10 +61,27 @@ function getLifeEventsHtml(age) {
     if (age === 18) eventsHtml += `<span class="stamp stamp-adult"><span class="material-symbols-rounded">celebration</span>成人 (18歳)</span>`;
     if (age === 20) eventsHtml += `<span class="stamp stamp-adult"><span class="material-symbols-rounded">local_bar</span>ハタチ (20歳)</span>`;
 
-    // ---- 厄年 (19, 25, 33, 42, 61) ----
-    if (age === 19 || age === 25 || age === 33 || age === 42 || age === 61) {
-        // 絵文字はランダムでも良いですが、固定の🔥を使って強調します
-        eventsHtml += `<span class="stamp stamp-yakudoshi">🔥厄年 (Yakudoshi)</span>`;
+    // ---- 厄年判定（男女併記） ----
+    // 男性 (M)
+    if (MALE_HON_YAKU.includes(kazoe + 1)) {
+        eventsHtml += `<span class="stamp stamp-yakudoshi-pre">💧 前厄(男) / Pre-Yakudoshi(M)</span>`;
+    }
+    if (MALE_HON_YAKU.includes(kazoe)) {
+        eventsHtml += `<span class="stamp stamp-yakudoshi-main">🔥 本厄(男) / Yakudoshi(M)</span>`;
+    }
+    if (MALE_HON_YAKU.includes(kazoe - 1)) {
+        eventsHtml += `<span class="stamp stamp-yakudoshi-post">💨 後厄(男) / Post-Yakudoshi(M)</span>`;
+    }
+
+    // 女性 (F)
+    if (FEMALE_HON_YAKU.includes(kazoe + 1)) {
+        eventsHtml += `<span class="stamp stamp-yakudoshi-pre">💧 前厄(女) / Pre-Yakudoshi(F)</span>`;
+    }
+    if (FEMALE_HON_YAKU.includes(kazoe)) {
+        eventsHtml += `<span class="stamp stamp-yakudoshi-main">🔥 本厄(女) / Yakudoshi(F)</span>`;
+    }
+    if (FEMALE_HON_YAKU.includes(kazoe - 1)) {
+        eventsHtml += `<span class="stamp stamp-yakudoshi-post">💨 後厄(女) / Post-Yakudoshi(F)</span>`;
     }
 
     // ---- 周年・長寿系 ----
@@ -87,7 +110,6 @@ function renderTable(userBirthYear = null) {
     tableBody.innerHTML = ""; // 一度テーブルの中身をクリアする
 
     // 表示する一番古い年を決定。生まれ年が入力されていれば、その年までを描画。
-    // まだ入力がない場合は END_YEAR (100年前) まで。
     const theOldestYearToRender = userBirthYear ? userBirthYear : END_YEAR;
 
     for (let year = START_YEAR; year >= theOldestYearToRender; year--) {
@@ -140,7 +162,7 @@ function updateProfile(birthYear) {
     const containerDesc = document.getElementById("avatar-desc");
     const zodiacInfo = document.getElementById("zodiac-info");
     
-    // アニメーションを再実行させるためのちょっとしたテクニック（一度クラスを外してつけ直す）
+    // 表示エリアをアクティブ化
     avatarContainer.classList.remove("hidden");
     
     // アバター画像の更新
@@ -148,7 +170,6 @@ function updateProfile(birthYear) {
     containerDesc.textContent = `${birthYear}年生まれのタイムトラベラーさん！`;
     
     // 干支の計算と更新
-    // 生まれ年を12で割った余りが、定数で定義したZODIACS配列の順序と一致します
     const zodiacIndex = birthYear % 12;
     const zodiac = ZODIACS[zodiacIndex];
     zodiacInfo.innerHTML = `${zodiac.emoji} ${zodiac.name} / ${zodiac.en}`;
@@ -181,8 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputCurrentAge = document.getElementById("current-age");
 
     /**
-     * 【追加機能】入力欄の自動連動システム
-     * どちらかの入力枠に数値が打ち込まれると、リアルタイムでもう一方を逆算してセットします。
+     * 入力欄の自動連動システム
      */
     // ① 「生まれ年」が打ち込まれたら「現在の年齢」を計算
     inputBirthYear.addEventListener("input", (e) => {
@@ -190,8 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isNaN(val) && val >= 1900 && val <= currentYear) {
             inputCurrentAge.value = currentYear - val;
         } else {
-            // 不正値なら片方をクリア
-            inputCurrentAge.value = "";
+            inputCurrentAge.value = ""; // 不正値なら片方をクリア
         }
     });
 
@@ -201,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isNaN(val) && val >= 0 && val <= 150) {
             inputBirthYear.value = currentYear - val;
         } else {
-            inputBirthYear.value = "";
+            inputBirthYear.value = ""; // 不正値なら片方をクリア
         }
     });
 
@@ -211,19 +230,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const applyBtn = document.getElementById("apply-btn");
     applyBtn.addEventListener("click", () => {
         
-        // メインとなるのは「生まれ年」の値
         const birthYear = parseInt(inputBirthYear.value, 10);
         
         if (!isNaN(birthYear) && birthYear >= 1900 && birthYear <= currentYear) {
-            // 正しい年が入力されていれば
-            
-            // 1. 表の再描画（誕生年までの行しか描画されないように修正済み）
+            // 1. 表の再描画
             renderTable(birthYear);
             
             // 2. プロフィール（アバターと干支）の更新
             updateProfile(birthYear);
             
-            // 3. フィルタの見た目を「すべて(all)」に戻し、フィルタを解除する
+            // 3. フィルタの解除
             document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
             document.querySelector('.filter-btn[data-era="all"]').classList.add("active");
             applyEraFilter("all");
@@ -241,11 +257,9 @@ document.addEventListener("DOMContentLoaded", () => {
         btn.addEventListener("click", (e) => {
             const targetEra = e.target.getAttribute("data-era");
             
-            // アクティブ状態の切り替え
             filterButtons.forEach(b => b.classList.remove("active"));
             e.target.classList.add("active");
             
-            // フィルタ実行
             applyEraFilter(targetEra);
         });
     });

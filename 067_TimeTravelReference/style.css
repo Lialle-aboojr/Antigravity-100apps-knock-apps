@@ -247,9 +247,15 @@ tbody tr:hover { background-color: rgba(255, 230, 109, 0.2); }
 .stamp-adult { background-color: #ff6b6b; color: white; border-color: #ee5253; }
 .stamp-milestone { background-color: #1dd1a1; border-color: #10ac84; }
 .stamp-kanreki { background-color: #ff4757; color: white; border-color: #ff4757; font-size: 1rem; }
-.stamp-yakudoshi { background-color: #8c7ae6; color: white; border-color: #7158e2; }
+
+/* 厄年用カラー（前厄・本厄・後厄） */
+.stamp-yakudoshi-pre { background-color: #74b9ff; color: white; border-color: #0984e3; }
+.stamp-yakudoshi-main { background-color: #d63031; color: white; border-color: #b33939; }
+.stamp-yakudoshi-post { background-color: #00b894; color: white; border-color: #00cec9; }
+
 .stamp-old { background-color: #d1ccc0; border-color: #84817a; }
 
+/* アニメーション */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
