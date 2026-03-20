@@ -4,7 +4,6 @@
 const editor = document.getElementById('editor');
 const previewContent = document.getElementById('previewContent');
 const themeSelect = document.getElementById('themeSelect');
-const rubyToggle = document.getElementById('rubyToggle');
 const downloadBtn = document.getElementById('downloadBtn');
 const previewContainer = document.getElementById('previewContainer');
 
@@ -31,24 +30,16 @@ function escapeHTML(str) {
 }
 
 /**
- * テキストから「ルビ」を生成し、改行を適用する関数
- * "漢字(かんじ)" というフォーマットを "<ruby>漢字<rt>かんじ</rt></ruby>" に変換します。
+ * テキストの改行を適用する関数
  * 
  * @param {string} text - 入力文字列
  * @returns {string} - HTMLタグに変換された文字列
  */
 function parseText(text) {
-  // 1. まずXSS対策として入力をすべてエスケープする（最も重要）
+  // 1. まずXSS対策として入力をすべてエスケープする
   let safeText = escapeHTML(text);
 
-  // 2. ルビの正規表現パターン (文頭まで巻き込まない堅牢な仕様)
-  // 漢字（オプションで送り仮名の平仮名・片仮名）＋カッコ（半角or全角）のみを抽出
-  const rubyRegex = /([一-龯々]+[ぁ-んァ-ヶ]*)[(（]([^)）]+)[)）]/g;
-
-  // 正規表現でマッチした箇所を ruby タグに置換します
-  safeText = safeText.replace(rubyRegex, '<ruby>$1<rt>$2</rt></ruby>');
-
-  // 3. 改行コード (\n) を <br> タグに変換して、表示にも改行を反映
+  // 2. 改行コード (\n) を <br> タグに変換して、表示にも改行を反映
   safeText = safeText.replace(/\n/g, '<br>');
 
   return safeText;
@@ -82,18 +73,7 @@ themeSelect.addEventListener('change', (e) => {
   previewContainer.classList.add(selectedTheme);
 });
 
-// ③ ルビ表示/非表示の切り替えボタン
-rubyToggle.addEventListener('change', (e) => {
-  if (e.target.checked) {
-    previewContent.classList.remove('hide-ruby');
-    previewContent.classList.add('show-ruby');
-  } else {
-    previewContent.classList.remove('show-ruby');
-    previewContent.classList.add('hide-ruby');
-  }
-});
-
-// ④ 画像ダウンロードボタン
+// ③ 画像ダウンロードボタン
 downloadBtn.addEventListener('click', async () => {
   try {
     // ダウンロード処理中は多重クリック防止のためボタンを無効化
@@ -138,6 +118,3 @@ downloadBtn.addEventListener('click', async () => {
 // 最初から placeholder の文章等が入っている場合を考慮し、
 // 一度プレビューを更新しておく。
 updatePreview();
-
-// ルビトグルの状態を初期描画時に確実に同期させる
-rubyToggle.dispatchEvent(new Event('change'));

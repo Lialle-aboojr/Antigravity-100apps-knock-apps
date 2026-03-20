@@ -30,9 +30,8 @@
       <div class="input-group">
         <label for="editor">
           テキスト入力 / Input Text
-          <span class="help-text">※ルビは「漢字(かんじ)」と入力</span>
         </label>
-        <textarea id="editor" placeholder="ここに文章を入力してください。&#10;改行もそのまま反映されます。&#10;&#10;ルビの例：&#10;縦書(たてが)きスタジオへ、&#10;ようこそ！"></textarea>
+        <textarea id="editor" placeholder="ここに文章を入力してください。&#10;改行もそのまま反映されます。"></textarea>
       </div>
 
       <!-- 設定領域 -->
@@ -47,14 +46,6 @@
           </select>
         </div>
         
-        <!-- ルビの表示/非表示スイッチ -->
-        <div class="setting-item toggle-wrapper">
-          <label for="rubyToggle" class="checkbox-label">
-            <input type="checkbox" id="rubyToggle" checked>
-            ルビ表示 / Show Ruby
-          </label>
-        </div>
-        
         <!-- 画像としてダウンロード -->
         <button id="downloadBtn" class="primary-btn">
           画像として保存 / Save as Image
@@ -67,7 +58,7 @@
     <main class="preview-panel">
       <!-- 実際に画像として出力される範囲 -->
       <div id="previewContainer" class="preview-container plain">
-        <div id="previewContent" class="preview-content show-ruby"></div>
+        <div id="previewContent" class="preview-content"></div>
       </div>
     </main>
 

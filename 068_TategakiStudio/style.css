@@ -11,7 +11,6 @@
   --accent-hover: #8f3b30;    /* ホバー時の色 */
   --font-mincho: 'Noto Serif JP', 'Yu Mincho', 'Klee One', serif;  /* 縦書き用・明朝体 */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;      /* UI用・ゴシック体 */
-  --ruby-color: #666666;      /* ルビの色 */
 }
 
 * {
@@ -115,12 +114,6 @@ label {
   gap: 0.2rem;
 }
 
-.help-text {
-  font-size: 0.75rem;
-  font-weight: 400;
-  color: #777;
-}
-
 /* テキストエリア */
 textarea {
   flex: 1;
@@ -159,16 +152,6 @@ select {
   background-repeat: no-repeat;
   background-position: right 1rem top 50%;
   background-size: 0.65rem auto;
-}
-
-/* チェックボックス */
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  gap: 0.5rem;
-  cursor: pointer;
-  font-weight: 500;
 }
 
 /* 保存ボタン */
@@ -226,35 +209,14 @@ select {
   
   font-family: var(--font-mincho);
   font-size: 1.6rem;
-  line-height: 2.5;               /* 行間 (ルビが潰れないように拡大) */
+  line-height: 2.5;               /* 行間 */
   letter-spacing: 0.1em;          /* 字間 */
   color: var(--text-color);
   
-  padding-right: 2.5rem;          /* 右端行のルビが見切れるのを防ぐための余白 */
+  padding-right: 2.5rem;          /* 右端の余白 */
   
   overflow-x: auto; /* 縦書き時のスクロール方向は横軸になるため */
   overflow-y: hidden;
-}
-
-/* ルビの調整 */
-ruby {
-  font-family: var(--font-mincho);
-  ruby-position: over;            /* 右側にルビを振る(縦書きの場合 over は右) */
-}
-rt {
-  font-size: 0.55em;
-  color: var(--ruby-color);
-  transition: opacity 0.2s;
-  letter-spacing: 0;
-}
-
-/* ルビ表示制御の設定 (確実に効かせる定義) */
-.show-ruby rt {
-  display: ruby-text;
-}
-
-.hide-ruby rt {
-  display: none;
 }
 
 /* ==========================================================
