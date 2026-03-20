@@ -26,10 +26,7 @@ const ZODIACS = [
     { name: '未年', en: 'Sheep',  emoji: '🐏' }  // 11
 ];
 
-// 数え年の本厄（男性）
-const MALE_HON_YAKU = [25, 42, 61];
-// 数え年の本厄（女性）
-const FEMALE_HON_YAKU = [19, 33, 37, 61];
+
 
 // ---------------------------
 // 2. ユーティリティ系関数群
@@ -51,7 +48,7 @@ function getEraInfo(year) {
  */
 function getLifeEventsHtml(age) {
     let eventsHtml = ''; 
-    const kazoe = age + 1; // 厄年の基準となる「数え年」（満年齢＋1）
+
 
     // ---- 誕生・学校・成人系 ----
     if (age === 0) eventsHtml += `<span class="stamp stamp-birth"><span class="material-symbols-rounded">child_care</span>誕生 (Birth)</span>`;
@@ -61,28 +58,6 @@ function getLifeEventsHtml(age) {
     if (age === 18) eventsHtml += `<span class="stamp stamp-adult"><span class="material-symbols-rounded">celebration</span>成人 (18歳)</span>`;
     if (age === 20) eventsHtml += `<span class="stamp stamp-adult"><span class="material-symbols-rounded">local_bar</span>ハタチ (20歳)</span>`;
 
-    // ---- 厄年判定（男女併記） ----
-    // 男性 (M)
-    if (MALE_HON_YAKU.includes(kazoe + 1)) {
-        eventsHtml += `<span class="stamp stamp-yakudoshi-pre">💧 前厄(男) / Pre-Yakudoshi(M)</span>`;
-    }
-    if (MALE_HON_YAKU.includes(kazoe)) {
-        eventsHtml += `<span class="stamp stamp-yakudoshi-main">🔥 本厄(男) / Yakudoshi(M)</span>`;
-    }
-    if (MALE_HON_YAKU.includes(kazoe - 1)) {
-        eventsHtml += `<span class="stamp stamp-yakudoshi-post">💨 後厄(男) / Post-Yakudoshi(M)</span>`;
-    }
-
-    // 女性 (F)
-    if (FEMALE_HON_YAKU.includes(kazoe + 1)) {
-        eventsHtml += `<span class="stamp stamp-yakudoshi-pre">💧 前厄(女) / Pre-Yakudoshi(F)</span>`;
-    }
-    if (FEMALE_HON_YAKU.includes(kazoe)) {
-        eventsHtml += `<span class="stamp stamp-yakudoshi-main">🔥 本厄(女) / Yakudoshi(F)</span>`;
-    }
-    if (FEMALE_HON_YAKU.includes(kazoe - 1)) {
-        eventsHtml += `<span class="stamp stamp-yakudoshi-post">💨 後厄(女) / Post-Yakudoshi(F)</span>`;
-    }
 
     // ---- 周年・長寿系 ----
     if (age === 30) eventsHtml += `<span class="stamp stamp-milestone"><span class="material-symbols-rounded">trending_up</span>30歳</span>`;
