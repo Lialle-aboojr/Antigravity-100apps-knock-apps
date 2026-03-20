@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>タイムトラベル早見表 / Time Travel Quick Reference</title>
+    
+    <!-- ファビコンの設定 -->
+    <link rel="icon" href="favicon.png" type="image/png">
+    <!-- 画像が読み込めなかった場合のフォールバックとして絵文字SVGを用意 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏳</text></svg>" id="fallback-favicon">
+
+    <!-- Google Fonts: レトロポップな丸ゴシック -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Material Symbols (アウトライン) の読み込み -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+
+    <!-- 外部スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- ヘッダー部分 -->
+        <header class="card title-card">
+            <h1>タイムトラベル早見表</h1>
+            <p class="en-title">Time Travel Quick Reference</p>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main>
+            <!-- 上部：コントロールパネル領域 -->
+            <section class="controls-panel">
+                
+                <!-- 1. マイ・タイムライン (ユーザー入力エリア) -->
+                <div class="card timeline-card">
+                    <div class="card-header">
+                        <h2>マイ・タイムライン / My Timeline</h2>
+                        <span class="material-symbols-rounded icon-accent">calendar_month</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="birth-year">生まれ年（西暦） / Birth Year</label>
+                        <div class="input-row">
+                            <!-- XSS対策として type="number" を指定し、JavaScript側でもパースを行う -->
+                            <input type="number" id="birth-year" placeholder="例: 1990" min="1900" max="2100">
+                            <button id="apply-btn" class="btn primary-btn">反映する / Apply</button>
+                        </div>
+                    </div>
+                    
+                    <!-- アバター表示領域 (初期状態は隠す) -->
+                    <div id="avatar-container" class="avatar-area hidden">
+                        <img id="user-avatar" src="" alt="User Avatar">
+                        <p id="avatar-desc" class="avatar-message"></p>
+                    </div>
+                </div>
+
+                <!-- 2. 時代フィルタ (絞り込みエリア) -->
+                <div class="card filter-card">
+                    <div class="card-header">
+                        <h2>時代フィルタ / Era Filters</h2>
+                        <span class="material-symbols-rounded icon-accent">filter_alt</span>
+                    </div>
+                    <div class="filter-group">
+                        <button class="filter-btn active" data-era="all">すべて / All</button>
+                        <button class="filter-btn" data-era="showa">昭和 / Showa</button>
+                        <button class="filter-btn" data-era="heisei">平成 / Heisei</button>
+                        <button class="filter-btn" data-era="reiwa">令和 / Reiwa</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 下部：年齢早見表テーブル -->
+            <section class="table-section card">
+                <table id="reference-table">
+                    <thead>
+                        <tr>
+                            <th>西暦 <br><span class="en-label">Year</span></th>
+                            <th>和暦 <br><span class="en-label">Era</span></th>
+                            <th>年齢 <br><span class="en-label">Age</span></th>
+                            <th>ライフイベント <br><span class="en-label">Life Events</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <!-- ここにJavaScriptで年表データが挿入されます -->
+                    </tbody>
+                </table>
+            </section>
+        </main>
+
+        <!-- フッター -->
+        <footer>
+            <p>© 2026 Time Travel Quick Reference App</p>
+        </footer>
+    </div>
+
+    <!-- 外部スクリプトの読み込み -->
+    <script src="script.js"></script>
+    
+    <!-- ファビコンのフォールバック処理 -->
+    <script>
+        // カスタムファビコンの読み込みに失敗した場合に備え、絵文字ファビコンに切り替える処理
+        window.onload = function() {
+            var mainFavicon = document.querySelector('link[rel="icon"][href="favicon.png"]');
+            var img = new Image();
+            img.onerror = function() {
+                // エラー時は何もしない（fallback-faviconが有効になる）
+                if(mainFavicon) {
+                    mainFavicon.parentNode.removeChild(mainFavicon);
+                }
+            };
+            img.src = 'favicon.png';
+        };
+    </script>
+</body>
+</html>
