@@ -163,56 +163,118 @@ Concept (コンセプト)
 
 /* 
 ================================================
-Menu (メニュー)
+Menu (インタラクティブ・カルーセル)
 ================================================
 */
 .menu {
     padding: 80px 0 160px;
+    overflow: hidden; /* コンテナ外への見切れを隠す */
 }
 
-.menu-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
-    max-width: 1400px;
-    margin: 60px auto 0;
-    padding: 0 40px;
-}
-
-.menu-item {
-    text-align: center;
-}
-
-.menu-image-wrapper {
-    margin-bottom: 24px;
-    overflow: hidden;
-    background-color: #fff;
-    /* 画像を少し浮き上がらせる */
-    box-shadow: 0 15px 35px rgba(0,0,0,0.04);
-}
-
-.menu-img {
+.carousel-container {
+    position: relative;
     width: 100%;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
-    transition: transform 0.6s ease;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 40px;
 }
 
-/* 画像ホバー時にゆっくりズーム */
-.menu-item:hover .menu-img {
-    transform: scale(1.05);
+.carousel-track {
+    position: relative;
+    width: 100%;
+    height: 380px; /* PCでの画像表示高さに合わせて確保 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.menu-name {
+.carousel-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300px; /* ドーナツのベースサイズ */
+    height: 300px;
+    transform: translate(-50%, -50%);
+    transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.6s ease;
+    opacity: 0;
+    z-index: 1;
+    cursor: pointer;
+    /* 背景透過PNGを美しく見せるためのドロップシャドウ */
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* 各状態のクラス（JavaScriptで切り替え） */
+.carousel-item.active {
+    transform: translate(-50%, -50%) scale(1.2); /* 中央は拡大 */
+    opacity: 1;
+    z-index: 3;
+    cursor: default;
+}
+
+.carousel-item.prev {
+    /* calc()を使って画面サイズに依存せず一定距離を保つ */
+    transform: translate(calc(-50% - 320px), -50%) scale(0.7);
+    opacity: 0.4;
+    z-index: 2;
+}
+
+.carousel-item.next {
+    transform: translate(calc(-50% + 320px), -50%) scale(0.7);
+    opacity: 0.4;
+    z-index: 2;
+}
+
+.carousel-item.hidden-left {
+    transform: translate(calc(-50% - 640px), -50%) scale(0.5);
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none; /* 見えない要素はクリック無効化 */
+}
+
+.carousel-item.hidden-right {
+    transform: translate(calc(-50% + 640px), -50%) scale(0.5);
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* ホバー時に前後の画像が少しだけ明るくなる遊び心 */
+.carousel-item.prev:hover,
+.carousel-item.next:hover {
+    opacity: 0.7;
+}
+
+/* ドーナツ情報（テキスト）のスタイルとアニメーション */
+.carousel-info {
+    text-align: center;
+    margin-top: 40px;
+    min-height: 90px;
+}
+
+.carousel-name {
     font-family: var(--font-en);
-    font-size: 1.2rem;
+    font-size: 1.6rem;
     font-weight: 400;
     margin-bottom: 8px;
+    transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
-.menu-desc {
-    font-size: 0.85rem;
+.carousel-desc {
+    font-size: 0.95rem;
     color: var(--text-color-light);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* JSで動的にトグルされるクラス */
+.fade-out {
+    opacity: 0 !important;
+    transform: translateY(10px); /* 消える時に少し下へ下がる */
 }
 
 /* 
@@ -318,7 +380,7 @@ Footer (フッター)
 
 /* 
 ================================================
-アニメーション (フェードイン)
+アニメーション (フェードイン全体用)
 ================================================
 */
 /* 初期状態：透明にして少し下へずらす */
@@ -333,14 +395,6 @@ Footer (フッター)
 .fade-in.is-visible {
     opacity: 1;
     transform: translateY(0);
-}
-
-/* メニュー用の遅延アニメーション */
-.delay-1 {
-    transition-delay: 0.2s;
-}
-.delay-2 {
-    transition-delay: 0.4s;
 }
 
 /* 
@@ -371,16 +425,6 @@ Footer (フッター)
         max-width: 100%;
     }
 
-    .menu {
-        padding: 60px 0 80px;
-    }
-
-    .menu-grid {
-        grid-template-columns: 1fr;
-        gap: 60px;
-        padding: 0 24px;
-    }
-
     .main-title {
         font-size: 2.2rem;
     }
@@ -389,13 +433,43 @@ Footer (フッター)
         font-size: 0.9rem;
     }
 
+    /* カルーセルのスマホ向け調整 */
+    .menu {
+        padding: 60px 0 80px;
+    }
+
+    .carousel-track {
+        height: 280px;
+    }
+    
+    .carousel-item {
+        width: 220px;
+        height: 220px;
+    }
+
+    .carousel-item.active {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    .carousel-item.prev {
+        /* スマホ向けに左右の間隔を狭める */
+        transform: translate(calc(-50% - 160px), -50%) scale(0.65);
+    }
+
+    .carousel-item.next {
+        transform: translate(calc(-50% + 160px), -50%) scale(0.65);
+    }
+    
+    .carousel-info {
+        margin-top: 20px;
+    }
+    
+    .carousel-name {
+        font-size: 1.4rem;
+    }
+
     .shop-details {
         margin: -50px 24px 0;
         padding: 60px 24px;
-    }
-
-    /* スマホ時はホバーエフェクトのディレイを消す（即座に見えるように配慮） */
-    .delay-1, .delay-2 {
-        transition-delay: 0s;
     }
 }

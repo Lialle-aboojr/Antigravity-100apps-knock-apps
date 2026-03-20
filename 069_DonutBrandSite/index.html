@@ -13,29 +13,14 @@
     <!-- ファビコンの設定 -->
     <link rel="icon" href="favicon.png">
     <!-- 
-      ※もし画像(favicon.png)の生成や準備が間に合わない場合は、上の<link>をコメントアウトし、
+      ※もし画像(favicon.png)の準備が間に合わない場合は、上の<link>をコメントアウトし、
       下のSVGフォールバック（ドーナツ絵文字）のコメントを外して使用してください。
       <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 style=%22dominant-baseline:central;text-anchor:middle;font-size:90px;%22>🍩</text></svg>">
     -->
 </head>
 <body>
 
-    <!-- 
-      ================================================
-      画像差し替えの案内（NanoBanana 2用）
-      ================================================
-      サイト内の画像は、以下のプレースホルダーURLで仮配置されています。
-      NanoBanana 2などの画像生成AIで画像を生成し、適宜差し替えてください。
-
-      【共通キーワード】
-      photorealistic, soft natural lighting, shallow depth of field, high detailed, warm earthy colors
-    -->
-
     <!-- Hero Area -->
-    <!-- 
-      画像生成プロンプト例：
-      A single masterpiece gourmet donut with unique toppings on a minimalist ceramic plate, centered, cinematic lighting, dramatic composition. [共通キーワード]
-    -->
     <section class="hero fade-in">
         <div class="hero-image-wrapper">
             <img src="hero.png" alt="Masterpiece Donut" class="hero-img">
@@ -47,10 +32,6 @@
     </section>
 
     <!-- Concept -->
-    <!--
-      画像生成プロンプト例：
-      A stylish baker with white gloves carefully placing a topping on a donut in a bright, clean, modern kitchen. Focus on hands and texture. [共通キーワード]
-    -->
     <section class="concept">
         <div class="container container-flex">
             <div class="concept-text fade-in">
@@ -75,7 +56,7 @@
         </div>
     </section>
 
-    <!-- Menu -->
+    <!-- Menu (無限カルーセル) -->
     <section class="menu">
         <div class="container container-center fade-in">
             <h2 class="section-title">
@@ -83,59 +64,37 @@
                 <span class="ja">おすすめメニュー</span>
             </h2>
         </div>
-        <div class="menu-grid">
-            <!-- Item 1 -->
-            <!--
-              画像生成プロンプト例：
-              A pistachio glazed donut on a small white plate. [共通キーワード]
-            -->
-            <div class="menu-item fade-in">
-                <div class="menu-image-wrapper">
-                    <img src="menu-a.png" alt="Pistachio Glazed" class="menu-img">
+        
+        <div class="carousel-container fade-in">
+            <!-- 左右のタップやスワイプを受け付けるトラック -->
+            <div class="carousel-track">
+                <!-- 画像は背景透過のPNGプレースホルダー（donut1〜5.png）を想定 -->
+                <div class="carousel-item" data-index="0">
+                    <img src="./donut1.png" alt="Donut 1">
                 </div>
-                <div class="menu-info">
-                    <h3 class="menu-name">Pistachio Glaze</h3>
-                    <p class="menu-desc">ピスタチオグレーズ</p>
+                <div class="carousel-item" data-index="1">
+                    <img src="./donut2.png" alt="Donut 2">
                 </div>
-            </div>
-
-            <!-- Item 2 -->
-            <!--
-              画像生成プロンプト例：
-              A rich chocolate ganache donut with gold leaf dust on a small white plate. [共通キーワード]
-            -->
-            <div class="menu-item fade-in delay-1">
-                <div class="menu-image-wrapper">
-                    <img src="menu-b.png" alt="Rich Chocolate" class="menu-img">
+                <div class="carousel-item" data-index="2">
+                    <img src="./donut3.png" alt="Donut 3">
                 </div>
-                <div class="menu-info">
-                    <h3 class="menu-name">Dark Chocolate</h3>
-                    <p class="menu-desc">ダークチョコレートガナッシュ</p>
+                <div class="carousel-item" data-index="3">
+                    <img src="./donut4.png" alt="Donut 4">
+                </div>
+                <div class="carousel-item" data-index="4">
+                    <img src="./donut5.png" alt="Donut 5">
                 </div>
             </div>
-
-            <!-- Item 3 -->
-            <!--
-              画像生成プロンプト例：
-              A raspberry filled donut with powdered sugar dusting on a small white plate. [共通キーワード]
-            -->
-            <div class="menu-item fade-in delay-2">
-                <div class="menu-image-wrapper">
-                    <img src="menu-c.png" alt="Raspberry Filled" class="menu-img">
-                </div>
-                <div class="menu-info">
-                    <h3 class="menu-name">Raspberry Fill</h3>
-                    <p class="menu-desc">ラズベリーフィル</p>
-                </div>
+            
+            <!-- 中央のドーナツに合わせて動的に切り替わるテキスト -->
+            <div class="carousel-info">
+                <h3 class="carousel-name" id="carouselName">Pistachio Glaze</h3>
+                <p class="carousel-desc" id="carouselDesc">ピスタチオグレーズ</p>
             </div>
         </div>
     </section>
 
     <!-- Shop Info -->
-    <!--
-      画像生成プロンプト例：
-      Wide shot of a stylish, minimalist donut shop exterior during golden hour, big glass window, potted plants. [共通キーワード]
-    -->
     <section class="shop-info fade-in">
         <div class="shop-image-wrapper">
             <img src="shop.png" alt="Shop Exterior" class="shop-img">
