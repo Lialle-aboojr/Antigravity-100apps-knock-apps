@@ -226,9 +226,11 @@ select {
   
   font-family: var(--font-mincho);
   font-size: 1.6rem;
-  line-height: 2.2;               /* 行間 */
+  line-height: 2.5;               /* 行間 (ルビが潰れないように拡大) */
   letter-spacing: 0.1em;          /* 字間 */
   color: var(--text-color);
+  
+  padding-right: 2.5rem;          /* 右端行のルビが見切れるのを防ぐための余白 */
   
   overflow-x: auto; /* 縦書き時のスクロール方向は横軸になるため */
   overflow-y: hidden;
@@ -242,15 +244,17 @@ ruby {
 rt {
   font-size: 0.55em;
   color: var(--ruby-color);
-  opacity: 1;
   transition: opacity 0.2s;
   letter-spacing: 0;
 }
 
-/* ルビ非表示機能 */
+/* ルビ表示制御の設定 (確実に効かせる定義) */
+.show-ruby rt {
+  display: ruby-text;
+}
+
 .hide-ruby rt {
-  opacity: 0;
-  visibility: hidden;
+  display: none;
 }
 
 /* ==========================================================
@@ -269,13 +273,13 @@ rt {
   background-image: 
     linear-gradient(to right, #e8dfcc 1px, transparent 1px),
     linear-gradient(to bottom, #e8dfcc 1px, transparent 1px);
-  /* 線と線の間隔を指定 */
-  background-size: 2.2em 2.2em; 
+  /* 線と線の間隔を指定 (改行幅に合わせる) */
+  background-size: 2.5em 2.5em; 
   background-position: top 0 right 0;
 }
 /* マス目に文字が乗るように行間を調整 */
 .grid .preview-content {
-  line-height: 2.2em;
+  line-height: 2.5em; /* コンテナのマス目と一致させる */
 }
 
 /* 3. 和紙風 (Japanese Paper) */

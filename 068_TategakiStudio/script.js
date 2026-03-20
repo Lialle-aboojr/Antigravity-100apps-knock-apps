@@ -138,3 +138,6 @@ downloadBtn.addEventListener('click', async () => {
 // 最初から placeholder の文章等が入っている場合を考慮し、
 // 一度プレビューを更新しておく。
 updatePreview();
+
+// ルビトグルの状態を初期描画時に確実に同期させる
+rubyToggle.dispatchEvent(new Event('change'));
