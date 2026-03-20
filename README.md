@@ -78,13 +78,14 @@ Complete it. Ship it. Relax. ☕
 | 065 | 🎮 Network Status Checker | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/065_NetworkStatusChecker/index.html) |
 | 066 | 💻 Digital Rain Effect | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/066_MatrixRainEffect/index.html) |
 | 067 | 🕰️ タイムトラベル早見表 | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/067_TimeTravelReference/index.html) |
+| 068 | 📜 Tategaki Studio | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/068_TategakiStudio/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 67 / 100 █████████████░░░░░░░ 67%
+完成: 68 / 100 █████████████░░░░░░░ 68%
 ```
 
 ---
