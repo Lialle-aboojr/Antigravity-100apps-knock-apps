@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>100 Apps Knock Portfolio</title>
+  
+  <!-- AI画像生成機能で作成したファビコン -->
+  <!-- ※もし画像が読み込めない場合は、フォールバックとして絵文字(🏆)をSVGデータに変換して表示します -->
+  <link rel="icon" id="favicon" href="favicon.png" type="image/png">
+  
+  <!-- モダンなフォントの読み込み (英: Outfit, 和: Noto Sans JP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- CSSスタイルシートの読み込み -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  
+  <!-- ファビコンの読み込みエラー対策スクリプト（環境構築などの制限用） -->
+  <script>
+    document.getElementById('favicon').onerror = function() {
+      // エラーが無限ループしないようにnullにする
+      this.onerror = null;
+      // 🏆(トロフィー)の絵文字をData URI変換（SVG形式）して代替アイコンとして設定する
+      this.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🏆</text></svg>';
+    };
+  </script>
+
+  <!-- 背景で動くアニメーションオブジェクト -->
+  <div class="background-elements">
+    <div class="blob shape-1"></div>
+    <div class="blob shape-2"></div>
+  </div>
+
+  <div class="container">
+    
+    <!-- ダークモードが切り替えられるGlassmorphismヘッダー -->
+    <header class="glass-panel">
+      <div>
+        <h1 class="title">100 Apps Knock Portfolio</h1>
+        <p class="subtitle">Complete Collection / 集大成ギャラリー</p>
+      </div>
+      <button id="theme-toggle" class="btn-icon" aria-label="Toggle Dark Mode">
+        <span class="icon-sun">☀️</span>
+        <span class="icon-moon">🌙</span>
+      </button>
+    </header>
+
+    <!-- Bento Grid (弁当箱レイアウト) で配置されたダッシュボード -->
+    <div class="dashboard bento-grid">
+      
+      <!-- 1. 検索機能パネル -->
+      <div class="panel glass-panel search-panel">
+        <div class="panel-header">
+          <h2>Search <span class="ja">検索</span></h2>
+        </div>
+        <div class="search-wrap">
+          <input type="text" id="search-input" placeholder="App Name or number / アプリ名・番号で検索">
+        </div>
+      </div>
+
+      <!-- 2. プログレス(進捗)インジケーターパネル -->
+      <div class="panel glass-panel progress-panel">
+        <div class="panel-header">
+          <h2>Progress <span class="ja">進捗</span></h2>
+        </div>
+        <div class="progress-container">
+          <!-- SVGとCSSアニメーションを用いた円形メーター -->
+          <svg class="progress-ring" width="120" height="120">
+            <circle class="ring-bg" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+            <circle id="ring-progress" class="ring-fill" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+          </svg>
+          <div class="progress-text">
+            <span id="app-count">0</span><span class="total-count">/ 100</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Journey Disclaimer (免責事項・成長記録の宣言文) パネル -->
+      <div class="panel glass-panel about-panel">
+        <div class="panel-header">
+          <h2>Disclaimer <span class="ja">成長の記録として</span></h2>
+        </div>
+        <div class="disclaimer-text">
+          <p class="en">
+            This portfolio chronicles my journey of building 100 web apps from scratch as a complete beginner. Early apps (001~030) intentionally remain in their original state to reflect my learning process and do not include modern security sanitization. Please enjoy them as a record of growth.
+          </p>
+          <p class="ja-small">
+            このポートフォリオは完全未経験からの100本ノックの記録です。初期のアプリ(001~030)は学習の過程を示すため当時のままにしており、高度なサニタイズは行っていません。成長の記録としてお楽しみください。
+          </p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 自動生成されるアプリギャラリーのコンテナ -->
+    <main id="gallery-grid" class="gallery-grid">
+      <div class="loading-state">Loading Apps... <br /><span style="font-size:0.8rem">アプリ情報を取得しています</span></div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="glass-panel text-center footer-panel">
+      <p>&copy; 100 Apps Knock Project. All Rights Reserved.</p>
+    </footer>
+
+  </div>
+
+  <!-- JavaScriptロジックの読み込み -->
+  <script src="script.js"></script>
+</body>
+</html>

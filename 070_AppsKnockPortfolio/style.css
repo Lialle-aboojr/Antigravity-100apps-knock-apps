@@ -1,0 +1,390 @@
+:root {
+  /* ライトテーマ用の変数 (Light Mode) */
+  --bg-color: #f3f4f6;          /* 背景色 */
+  --text-primary: #1f2937;      /* メインの文字色 */
+  --text-secondary: #4b5563;    /* サブの文字色 */
+  --glass-bg: rgba(255, 255, 255, 0.6);         /* すりガラス風の背景色 */
+  --glass-border: rgba(255, 255, 255, 0.4);     /* すりガラスの枠線 */
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05); /* すりガラスの影 */
+  --primary-color: #8b5cf6;     /* アクセントカラー(紫) */
+  --secondary-color: #ec4899;   /* アクセントカラー(ピンク) */
+  --blob-1: rgba(139, 92, 246, 0.3); /* 背景のアニメーション用色1 */
+  --blob-2: rgba(236, 72, 153, 0.3); /* 背景のアニメーション用色2 */
+}
+
+/* ダークテーマ用の変数 (Dark Mode) - bodyにdata-theme="dark"が付いた時に有効になります */
+[data-theme="dark"] {
+  --bg-color: #0f172a;          /* 暗い背景色 */
+  --text-primary: #f8fafc;      /* 明るい文字色 */
+  --text-secondary: #94a3b8;    /* 暗めの文字色 */
+  --glass-bg: rgba(30, 41, 59, 0.7);            /* 暗いすりガラス風背景 */
+  --glass-border: rgba(255, 255, 255, 0.1);     /* 枠線を少し明るく */
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4); /* 深い影 */
+  --primary-color: #a78bfa;     /* 少し明るい紫 */
+  --secondary-color: #f472b6;   /* 少し明るいピンク */
+  --blob-1: rgba(139, 92, 246, 0.15); /* 背景色を少し薄く */
+  --blob-2: rgba(236, 72, 153, 0.15); /* 背景色を少し薄く */
+}
+
+/* 基本設定 (リセットCSS) */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', 'Noto Sans JP', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* テーマ切り替え時に色を滑らかに変化させる */
+  transition: background-color 0.4s ease, color 0.4s ease;
+  position: relative;
+}
+
+/* ====================================================
+   背景の装飾（フワフワ動くグラデーションの円）
+==================================================== */
+.background-elements {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* 他の要素の後ろに配置 */
+  overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  filter: blur(80px); /* 強くぼかすことでグラデーションのように見せる */
+  border-radius: 50%;
+  animation: float 10s ease-in-out infinite alternate;
+}
+
+.shape-1 {
+  top: -10%;
+  left: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: var(--blob-1);
+}
+
+.shape-2 {
+  bottom: -10%;
+  right: -10%;
+  width: 60vw;
+  height: 60vw;
+  background: var(--blob-2);
+  animation-direction: alternate-reverse;
+}
+
+/* フワフワ動くアニメーション */
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(60px, 40px) scale(1.1); }
+}
+
+/* ====================================================
+   レイアウトコンテナ・Glassmorphismパネル
+==================================================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Glassmorphism (すりガラス風) を実現する共通クラス */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px); /* Safari対応 */
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 24px;
+  padding: 2rem;
+  transition: background-color 0.4s ease, border-color 0.4s ease;
+}
+
+/* ====================================================
+   ヘッダー (Header)
+==================================================== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  /* 文字をグラデーションカラーにする技術 */
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+/* ダークモード切り替えボタン */
+.btn-icon {
+  background: rgba(128, 128, 128, 0.1);
+  border: 1px solid var(--glass-border);
+  color: inherit;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.4rem;
+  transition: transform 0.2s, background-color 0.2s;
+}
+
+.btn-icon:hover {
+  transform: scale(1.1);
+  background: rgba(128, 128, 128, 0.2);
+}
+
+/* テーマに応じてアイコン(太陽と月)の表示/非表示を切り替える */
+[data-theme="dark"] .icon-moon { display: none; }
+:root:not([data-theme="dark"]) .icon-sun { display: none; }
+
+/* ====================================================
+   Bento Grid (弁当箱レイアウトのダッシュボード)
+==================================================== */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr); /* 全体を12マスのグリッドに分割 */
+  gap: 1.5rem;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-header h2 {
+  font-size: 1.4rem;
+  margin-bottom: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 800;
+}
+
+.ja {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  background: rgba(128,128,128,0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+
+/* 各パネルのサイズ指定 (デスクトップ版) */
+.search-panel { grid-column: span 6; }
+.progress-panel {
+  grid-column: span 6;
+  align-items: center;
+  justify-content: center;
+}
+.about-panel { grid-column: span 12; }
+
+/* スマホ版のレイアウト調整 */
+@media (max-width: 768px) {
+  .search-panel, .progress-panel { grid-column: span 12; } /* 縦に積む */
+  .title { font-size: 1.8rem; }
+}
+
+/* ====================================================
+   検索パネル (Search Input)
+==================================================== */
+.search-wrap {
+  width: 100%;
+}
+
+#search-input {
+  width: 100%;
+  padding: 1.2rem;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  background: rgba(128, 128, 128, 0.05);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s, background-color 0.3s;
+}
+
+#search-input:focus {
+  border-color: var(--primary-color);
+  background: rgba(128, 128, 128, 0.1);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+}
+
+/* ====================================================
+   進捗メーター (Circular Progress)
+==================================================== */
+.progress-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* SVGの中の線を滑らかに描画するための設定 */
+.progress-ring {
+  transform: rotate(-90deg); /* アニメーションを12時の方向から始める */
+}
+
+.ring-bg {
+  stroke: rgba(128, 128, 128, 0.15); /* メーターの背景（灰色の円） */
+}
+
+.ring-fill {
+  stroke: url(#gradient) var(--primary-color);
+  stroke-dasharray: 326.72;  /* 2 * PI * 52(半径) の円周 */
+  stroke-dashoffset: 326.72; /* 最初は線を全て隠す */
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1); /* なめらかなアニメーション */
+  stroke-linecap: round;
+}
+
+.progress-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+#app-count {
+  font-size: 2.2rem;
+  color: var(--text-primary);
+}
+
+.total-count {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: block;
+  font-weight: 600;
+}
+
+/* ====================================================
+   Disclaimer・成長の記録 (About)
+==================================================== */
+.disclaimer-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.en {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  font-weight: 600;
+  border-left: 4px solid var(--primary-color);
+  padding-left: 1rem;
+}
+
+.ja-small {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding-left: 1rem;
+}
+
+/* ====================================================
+   ギャラリー・アプリカード (Gallery Grid)
+==================================================== */
+.gallery-grid {
+  display: grid;
+  /* 横幅に応じてカードの列数が自動的に変化するレスポンシブなグリッド */
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.app-card {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  /* Hoverアニメーションの設定 */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.app-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.app-card:hover {
+  transform: translateY(-5px); /* マウスを乗せたら上に浮く */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  border-color: var(--primary-color);
+}
+
+.app-card:hover::before {
+  opacity: 1; /* グラデーションの線を上に表示 */
+}
+
+/* カード内のテキストデザイン */
+.app-number {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-secondary);
+  opacity: 0.4;
+  margin-bottom: -10px;
+}
+
+.app-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* ローディングおよび検索非表示用 */
+.loading-state {
+  text-align: center;
+  grid-column: 1 / -1; /* グリッドの全幅を使う */
+  padding: 3rem;
+  color: var(--text-secondary);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.footer-panel {
+  padding: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
