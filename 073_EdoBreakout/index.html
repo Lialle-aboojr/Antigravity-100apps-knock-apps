@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- スマホ対応のviewport設定 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <!-- SEO: ページのメタ情報 -->
+  <meta name="description" content="和風ブロック崩し Edo Breakout - 抹茶色・臙脂色・藍色の和カラーで彩られたレトロ風ブロック崩しゲーム。A Japanese-style Breakout game with traditional colors.">
+  <title>和風ブロック崩し / Edo Breakout</title>
+  <!-- ファビコン設定（画像が読み込めない場合のフォールバック付き） -->
+  <link rel="icon" href="favicon.png" id="favicon-link">
+  <!-- レトロゲーム風フォント（Google Fonts） -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <!-- 外部CSSの読み込み -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- メインコンテナ -->
+  <div class="game-container">
+
+    <!-- ヘッダー: タイトル表示 -->
+    <header class="game-header">
+      <h1 class="game-title">
+        <span class="title-jp">和風ブロック崩し</span>
+        <span class="title-en">Edo Breakout</span>
+      </h1>
+    </header>
+
+    <!-- スコア表示エリア -->
+    <div class="score-area">
+      <div class="score-label">スコア / Score</div>
+      <div class="score-value" id="score-display">0</div>
+    </div>
+
+    <!-- ゲームキャンバス（Canvas要素） -->
+    <main class="canvas-wrapper">
+      <canvas id="game-canvas"></canvas>
+    </main>
+
+    <!-- スタートボタン -->
+    <div class="button-area">
+      <button type="button" class="start-btn" id="start-btn">
+        はじめる / Start
+      </button>
+    </div>
+
+    <!-- フッター -->
+    <footer class="game-footer">
+      <p class="footer-text">© 2026 Edo Breakout</p>
+    </footer>
+
+  </div>
+
+  <!-- ファビコンのフォールバックスクリプト -->
+  <script>
+    // ファビコン画像が読み込めない場合は絵文字のSVGをData URIとして設定
+    (function() {
+      'use strict';
+      var faviconLink = document.getElementById('favicon-link');
+      var img = new Image();
+      img.onerror = function() {
+        // 🌸 桜の絵文字をSVGとしてファビコンに設定
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="80" font-size="80">🌸</text></svg>';
+        faviconLink.href = 'data:image/svg+xml,' + encodeURIComponent(svg);
+      };
+      img.src = 'favicon.png';
+    })();
+  </script>
+  <!-- 外部JSの読み込み -->
+  <script src="script.js"></script>
+</body>
+</html>
