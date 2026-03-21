@@ -81,13 +81,14 @@ Complete it. Ship it. Relax. ☕
 | 068 | 📜 Tategaki Studio | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/068_TategakiStudio/index.html) |
 | 069 | 🍩 DonutBrandSite | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/069_DonutBrandSite/index.html) |
 | 070 | 🏆 100 Apps Knock Portfolio | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/070_AppsKnockPortfolio/index.html) |
+| 071 | 🧊 Polyhedron Spinner | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/071_CubeSpinner/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 70 / 100 ██████████████░░░░░░ 70%
+完成: 71 / 100 ██████████████░░░░░░ 71%
 ```
 
 ---
