@@ -60,8 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
   async function fetchAndRenderApps() {
     try {
       // fetch関数: 指定したURLのデータを取得する。
-      // 要件に基づき 2階層上 (../../) にある README.md を読み込む
-      const response = await fetch('../../README.md');
+      // 要件に基づき GitHub上の README.md を直接読み込む
+      const response = await fetch('https://raw.githubusercontent.com/lialle-aboojr/Antigravity-100apps-knock-apps/main/README.md');
       
       if (!response.ok) {
         throw new Error('READMEファイルの取得に失敗しました');
