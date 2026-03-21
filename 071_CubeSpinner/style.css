@@ -15,7 +15,6 @@ body {
   align-items: center;
   min-height: 100vh;
   overflow: hidden;
-  transition: background-color 0.5s ease; /* Magic Colorボタンを押した時のため */
 }
 
 /* コンテナ領域 */
@@ -57,7 +56,7 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .select-wrapper {
@@ -97,6 +96,23 @@ body {
   box-shadow: 0 0 0 2px rgba(150, 150, 150, 0.2);
 }
 
+/* 親切化のための注釈 */
+.canvas-annotation {
+  font-size: 12px;
+  font-weight: 600;
+  color: #888888;
+  margin-bottom: 8px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sub-annotation {
+  font-size: 10px;
+  font-weight: 400;
+  color: #aaaaaa;
+}
 
 /* 3Dキャンバスを格納するエリア */
 .scene {
@@ -125,7 +141,6 @@ body {
   outline: none;
 }
 
-
 /* コントロールパネルのスタイル */
 .controls {
   display: flex;
@@ -133,7 +148,7 @@ body {
   align-items: center;
   gap: 24px;
   width: 100%;
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 /* トグルボタン全体を囲むラベル */
@@ -206,7 +221,6 @@ body {
 .toggle-switch:has(.toggle-input:checked) {
   background-color: #666666;
 }
-
 
 /* 通常のボタン（カラー変更ボタン） */
 .btn {
