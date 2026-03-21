@@ -30,6 +30,9 @@
   var BALL_SPEED_BASE = 4;     // ボールの基本速度
   var POINTS_PER_BLOCK = 10;   // 1ブロック破壊あたりのスコア
 
+  // 背景画像の透明度（0.0〜1.0、低いほど薄くうっすら表示される）
+  var BG_ALPHA = 0.25;
+
   // Canvas基準解像度（ゲームロジックはこの解像度で動作）
   var BASE_WIDTH = 360;
   var BASE_HEIGHT = 480;
@@ -54,6 +57,10 @@
   var gameState = STATE_IDLE;
   var score = 0;
   var animationId = null;
+
+  // 背景画像オブジェクト（非同期で読み込み）
+  var bgImage = null;
+  var bgImageLoaded = false;
 
   // ボール
   var ball = {
@@ -82,6 +89,31 @@
   // スケール情報（実際の描画サイズとの比率）
   var scaleX = 1;
   var scaleY = 1;
+
+  // ============================================
+  // 背景画像の読み込み
+  // ============================================
+
+  /**
+   * 浮世絵風背景画像を非同期で読み込む
+   * 画像の読み込みが完了するとbgImageLoadedフラグがtrueになる
+   * 画像が読み込めなくても、ゲームは通常通り動作する（フォールバック）
+   */
+  function loadBackgroundImage() {
+    bgImage = new Image();
+    bgImage.onload = function () {
+      bgImageLoaded = true;
+      // IDLE状態なら即座に再描画して背景を反映
+      if (gameState === STATE_IDLE) {
+        drawIdleScreen();
+      }
+    };
+    bgImage.onerror = function () {
+      // 画像が読み込めなくても、ゲームに影響なし
+      bgImageLoaded = false;
+    };
+    bgImage.src = 'bg_ukiyoe.png';
+  }
 
   // ============================================
   // Canvas初期化・リサイズ処理
@@ -299,11 +331,21 @@
   // ============================================
 
   /**
-   * 画面をクリアする
+   * 画面をクリアし、背景画像を描画する
+   * 背景画像はglobalAlphaを使って「うっすら」表示する
    */
   function clearScreen() {
+    // まず画面全体を暗い色で塗りつぶす（ベース背景）
+    ctx.globalAlpha = 1.0;
     ctx.fillStyle = '#0F0F1A';
     ctx.fillRect(0, 0, BASE_WIDTH, BASE_HEIGHT);
+
+    // 背景画像が読み込み済みなら、うっすら重ねて描画
+    if (bgImageLoaded && bgImage) {
+      ctx.globalAlpha = BG_ALPHA; // 透明度を下げて「うっすら」表示
+      ctx.drawImage(bgImage, 0, 0, BASE_WIDTH, BASE_HEIGHT);
+      ctx.globalAlpha = 1.0; // 透明度を元に戻す（以降の描画に影響させない）
+    }
   }
 
   /**
@@ -446,7 +488,7 @@
       return;
     }
 
-    // 画面クリア
+    // 画面クリア（背景画像もここで描画される）
     clearScreen();
 
     // ボール位置更新
@@ -642,6 +684,9 @@
   // ============================================
   // 初期表示
   // ============================================
+
+  // 背景画像の読み込みを開始
+  loadBackgroundImage();
 
   // Canvas初期化
   resizeCanvas();
