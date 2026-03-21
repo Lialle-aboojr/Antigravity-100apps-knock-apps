@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Cube Spinner - 3Dキューブ回転</title>
+  <!-- JavaScriptやCSSへのクロスサイトスクリプティング（XSS）を防ぐ等のため、
+       Content-Security-Policyを設定することも可能ですが、
+       今回は完全なローカル・静的ホスティングを想定し安全な実装を心がけます -->
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="title">3D Cube Spinner<span class="sub-title">3Dキューブ回転</span></h1>
+    </header>
+
+    <!-- キューブを表示するエリア -->
+    <main class="scene" id="scene">
+      <div class="cube" id="cube">
+        <!-- 立方体の6つの面（フロント・バック・ライト・レフト・トップ・ボトム） -->
+        <div class="face front">1</div>
+        <div class="face back">2</div>
+        <div class="face right">3</div>
+        <div class="face left">4</div>
+        <div class="face top">5</div>
+        <div class="face bottom">6</div>
+      </div>
+    </main>
+
+    <!-- コントロールパネル（ボタンなど） -->
+    <footer class="controls">
+      <!-- 自動回転のオン・オフを切り替えるトグルボタン -->
+      <label class="toggle-wrapper" for="autoRotateToggle">
+        <span class="toggle-label">Auto Rotate<span class="sub-label">自動回転</span></span>
+        <div class="toggle-switch">
+          <!-- on/offの切り替え入力。class="toggle-input"はCSSで見えなくします -->
+          <input type="checkbox" id="autoRotateToggle" class="toggle-input" checked>
+          <span class="slider"></span>
+        </div>
+      </label>
+
+      <!-- 色をランダムに変えるボタン -->
+      <button id="changeColorBtn" class="btn">
+        <span class="btn-text">Random Color<span class="sub-text">カラー変更</span></span>
+      </button>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

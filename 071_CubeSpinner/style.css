@@ -1,0 +1,239 @@
+/* 基本設定。全てのエレメントの余白をなくし、ボックスサイズを統一します */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ページ全体の設定。無印良品風（白・グレー基調、クリーンでミニマル） */
+body {
+  font-family: 'Inter', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background-color: #fafafa;
+  color: #333333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  overflow: hidden; /* スクロールバーが出ないようにします */
+}
+
+/* コンテナ領域。画面サイズに合わせつつ、最大幅を制限します */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+  max-width: 600px;
+  padding: 60px 20px;
+}
+
+/* ヘッダー領域 */
+.header {
+  text-align: center;
+}
+
+/* タイトルのスタイル */
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #222222;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* 日本語のサブタイトル */
+.sub-title {
+  font-size: 13px;
+  font-weight: 400;
+  color: #888888;
+}
+
+/* 3Dシーンの設定。キューブが3Dで見えるように視点を設定（perspective） */
+.scene {
+  width: 200px;
+  height: 200px;
+  perspective: 800px; /* 値が小さいほど遠近感が強くなります */
+  cursor: grab; /* マウスカーソルを開いた手の形にします */
+  /* スマホ等のタッチ操作で画面がスクロールしたり拡大縮小するのを防ぎます */
+  touch-action: none; 
+}
+
+/* ドラッグ中のカーソル */
+.scene:active {
+  cursor: grabbing;
+}
+
+/* キューブ自体の設定 */
+.cube {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  /* 3Dの形を保持したまま回転させるための設定 */
+  transform-style: preserve-3d;
+  /* 初期状態の傾き。X軸、Y軸を少し傾けて立体感を出します */
+  transform: translateZ(-100px) rotateX(-20deg) rotateY(-30deg);
+  transition: transform 0.1s ease-out; /* ドラッグ時の動きを滑らかにします */
+}
+
+/* 自動回転時のアニメーション設定。script.jsからこのクラスを付け外しします */
+.cube.auto-rotate {
+  animation: spinCube 12s infinite linear;
+  transition: transform 0.5s ease-out;
+}
+
+/* 360度回転するアニメーションの定義 */
+@keyframes spinCube {
+  0% { transform: translateZ(-100px) rotateX(0deg) rotateY(0deg); }
+  100% { transform: translateZ(-100px) rotateX(360deg) rotateY(360deg); }
+}
+
+/* キューブの各面（6つ）の共通設定 */
+.face {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background-color: rgba(220, 220, 220, 0.85); /* 半透明のグレー。無印風 */
+  border: 1px solid rgba(150, 150, 150, 0.3); /* 薄い枠線 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  font-weight: 600;
+  color: #777777; /* 少し控えめな文字色 */
+  transition: background-color 0.5s ease; /* 色が変わる時のアニメーション */
+}
+
+/* それぞれの面の3D配置（Z軸移動や回転） */
+.front  { transform: rotateY(  0deg) translateZ(100px); }
+.back   { transform: rotateY(180deg) translateZ(100px); }
+.right  { transform: rotateY( 90deg) translateZ(100px); }
+.left   { transform: rotateY(-90deg) translateZ(100px); }
+.top    { transform: rotateX( 90deg) translateZ(100px); }
+.bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+
+/* ========== コントロールパネルのスタイル ========== */
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  width: 100%;
+}
+
+/* トグルボタン全体を囲むラベル */
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.toggle-wrapper:hover {
+  background-color: #f0f0f0;
+}
+
+/* トグル横のテキスト */
+.toggle-label {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 600;
+  color: #444444;
+  gap: 2px;
+}
+
+.sub-label {
+  font-size: 11px;
+  font-weight: 400;
+  color: #999999;
+}
+
+/* トグルスイッチの背景部分 */
+.toggle-switch {
+  position: relative;
+  width: 50px;
+  height: 28px;
+  background-color: #cccccc;
+  border-radius: 34px;
+  transition: background-color 0.3s;
+}
+
+/* チェックボックスそのものは見えなくする */
+.toggle-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* トグルスイッチの丸いスライダー */
+.slider {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* トグルがONになったときの変化 */
+.toggle-input:checked + .slider {
+  transform: translateX(22px);
+}
+
+/* toggle-inputがチェックされた時、親要素内のトグルスイッチ背景を変える */
+.toggle-switch:has(.toggle-input:checked) {
+  background-color: #666666; /* 無印風の落ち着いたダークグレー */
+}
+
+
+/* 通常のボタン（カラー変更ボタン） */
+.btn {
+  background-color: #ffffff;
+  border: 1px solid #d0d0d0;
+  color: #333333;
+  padding: 12px 32px;
+  border-radius: 8px; /* 角丸で優しい印象に */
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.btn:hover {
+  background-color: #f8f8f8;
+  border-color: #bcbcbc;
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  background-color: #eaeaea;
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+}
+
+/* ボタン内のテキスト構造 */
+.btn-text {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  font-weight: 600;
+  gap: 3px;
+}
+
+.sub-text {
+  font-size: 11px;
+  font-weight: 400;
+  color: #888888;
+}
