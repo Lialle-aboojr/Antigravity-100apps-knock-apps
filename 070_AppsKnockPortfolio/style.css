@@ -125,6 +125,7 @@ header {
   font-weight: 800;
   /* 文字をグラデーションカラーにする技術 */
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   line-height: 1.2;
@@ -210,13 +211,23 @@ header {
 }
 
 /* ====================================================
-   検索パネル (Search Input)
+   検索パネル (Search Input & Sort)
 ==================================================== */
 .search-wrap {
   width: 100%;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .search-wrap {
+    flex-direction: column;
+  }
 }
 
 #search-input {
+  flex: 1;
   width: 100%;
   padding: 1.2rem;
   border-radius: 16px;
@@ -233,6 +244,37 @@ header {
   border-color: var(--primary-color);
   background: rgba(128, 128, 128, 0.1);
   box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+}
+
+.btn-sort {
+  padding: 1.2rem 1.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+  background: rgba(128, 128, 128, 0.08);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  width: auto;
+}
+
+@media (max-width: 768px) {
+  .btn-sort {
+    width: 100%;
+  }
+}
+
+.btn-sort:hover {
+  background: rgba(128, 128, 128, 0.15);
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
 }
 
 /* ====================================================

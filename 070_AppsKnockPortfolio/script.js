@@ -10,12 +10,57 @@ document.addEventListener('DOMContentLoaded', () => {
   // --------------------------------------------------
   const themeToggleBtn = document.getElementById('theme-toggle');
   const searchInput = document.getElementById('search-input');
+  const sortToggleBtn = document.getElementById('sort-toggle');
   const galleryGrid = document.getElementById('gallery-grid');
   const ringProgress = document.getElementById('ring-progress');
   const appCountEl = document.getElementById('app-count');
 
   // 取得したアプリデータを保存しておくための配列(リスト)
   let appDataList = [];
+
+  // ==================================================
+  // 新規追加: ソート状態とフィルタリングの共通関数
+  // ==================================================
+  let isOldestFirst = true; // デフォルトは「古い順」
+
+  // 検索ボックスの入力内容に合わせてカードを絞り込む関数
+  function applySearchFilter() {
+    const keyword = searchInput.value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.app-card');
+
+    cards.forEach(card => {
+      const cardText = card.textContent.toLowerCase();
+      if (cardText.includes(keyword)) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  }
+
+  // ソートボタンがクリックされた時の処理
+  if(sortToggleBtn) { // 要素が存在する場合のみ
+    sortToggleBtn.addEventListener('click', () => {
+      // 状態を反転させる (trueならfalse、falseならtrueへ)
+      isOldestFirst = !isOldestFirst;
+
+      // ボタンのテキストとアイコンを切り替える
+      if (isOldestFirst) {
+        sortToggleBtn.innerHTML = '<span class="sort-icon">↑</span><span class="sort-text">古い順 / Oldest</span>';
+      } else {
+        sortToggleBtn.innerHTML = '<span class="sort-icon">↓</span><span class="sort-text">最新順 / Newest</span>';
+      }
+
+      // データ配列の順番を逆にする
+      appDataList.reverse();
+
+      // カード一覧のDOMを全て作り直して再描画
+      renderAppCards(appDataList);
+
+      // 再描画直後に、検索中であればその絞り込みを再び適用する（競合防止策）
+      applySearchFilter();
+    });
+  }
 
   // --------------------------------------------------
   // 2. ダークモード切替の設定 (Theme Toggle)
@@ -119,7 +164,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       // エラーなく取得できた場合は、画面にカードを作成して表示させる
+      if(sortToggleBtn) {
+        sortToggleBtn.innerHTML = '<span class="sort-icon">↑</span><span class="sort-text">古い順 / Oldest</span>';
+      }
       renderAppCards(appDataList);
+      applySearchFilter(); // もし入力があれば初期起動時にも適用
       
       // ちょっとだけ遅らせてからアニメーションを呼ぶとカッコよく動きます
       setTimeout(() => {
@@ -177,26 +226,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // --------------------------------------------------
   // 6. 検索機能: 入力に一致するカードだけを絞り込む
   // --------------------------------------------------
-  searchInput.addEventListener('input', (event) => {
-    // ユーザーが入力した文字を取得し、すべて小文字に統一(英字などでの検索漏れを防ぐ)
-    const keyword = event.target.value.toLowerCase().trim();
-    
-    // 画面上にある全てのカード取得
-    const cards = document.querySelectorAll('.app-card');
-
-    cards.forEach(card => {
-      // 各カードの中の文字(番号と名前)を取得し、小文字にする
-      const cardText = card.textContent.toLowerCase();
-      
-      // 入力キーワードが含まれているか判定
-      if (cardText.includes(keyword)) {
-        // 合致していれば見せる
-        card.classList.remove('hidden');
-      } else {
-        // 合致していなければ隠す
-        card.classList.add('hidden');
-      }
-    });
+  searchInput.addEventListener('input', () => {
+    // 共通化したフィルタリング関数を呼び出す
+    applySearchFilter();
   });
 
   // ========== メイン処理スタート ==========
