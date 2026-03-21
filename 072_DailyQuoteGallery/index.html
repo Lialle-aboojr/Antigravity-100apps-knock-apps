@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Quote Gallery</title>
+  <meta name="description" content="毎日新しいインスピレーションを与える名言ギャラリー。 / A gallery of quotes that inspires you everyday.">
+  
+  <!-- ファビコン設定 -->
+  <link rel="icon" href="favicon.png" type="image/png">
+  
+  <!-- フォント読み込み (美しいタイポグラフィのためにGoogle Fontsを使用) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+JP:wght@400;600&family=Outfit:wght@300;400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- メインコンテナ -->
+  <main class="app-container">
+    
+    <!-- ヘッダー部分 -->
+    <header class="header">
+      <h1 class="app-title">
+        <span class="en text-gold">Daily Quote Gallery</span>
+        <span class="jp">名言ランダム表示機</span>
+      </h1>
+      
+      <!-- テーマ選択ドロップダウン -->
+      <div class="theme-selector-wrapper">
+        <label for="theme-selector" class="theme-label">
+          <span class="jp">デザインを選ぶ</span>
+          <span class="en">Choose Theme</span>
+        </label>
+        <select id="theme-selector" class="theme-select">
+          <option value="theme-museum">額縁 / Museum Frame</option>
+          <option value="theme-bubble">吹き出し / Speech Bubble</option>
+          <option value="theme-soft">ふわっと丸い / Soft Cutout</option>
+        </select>
+      </div>
+    </header>
+
+    <!-- 名言表示エリア -->
+    <!-- 初期状態のテーマとして theme-museum を設定 -->
+    <section id="quote-container" class="quote-box theme-museum">
+      <div class="quote-content">
+        <!-- 日本語の名言 -->
+        <p id="jp-quote" class="quote-text-jp">読み込み中...</p>
+        <!-- 英語の名言 -->
+        <p id="en-quote" class="quote-text-en">Loading...</p>
+      </div>
+      
+      <div class="quote-author">
+        <!-- 日本語の著者 -->
+        <p id="jp-author" class="author-jp">-</p>
+        <!-- 英語の著者 -->
+        <p id="en-author" class="author-en">-</p>
+      </div>
+    </section>
+
+    <!-- 操作ボタンエリア -->
+    <section class="controls">
+      <!-- 新しい名言ボタン -->
+      <button id="btn-new-quote" class="btn btn-primary">
+        <span class="btn-icon">↻</span>
+        <div class="btn-text">
+          <span class="jp">新しい名言</span>
+          <span class="en">New Quote</span>
+        </div>
+      </button>
+
+      <div class="secondary-controls">
+        <!-- コピーボタン -->
+        <button id="btn-copy" class="btn btn-secondary">
+          <span class="btn-icon">📋</span>
+          <div class="btn-text">
+            <span class="jp">コピー</span>
+            <span class="en">Copy</span>
+          </div>
+        </button>
+
+        <!-- シェアボタン -->
+        <button id="btn-share" class="btn btn-secondary">
+          <span class="btn-icon">✨</span>
+          <div class="btn-text">
+            <span class="jp">シェア</span>
+            <span class="en">Share</span>
+          </div>
+        </button>
+      </div>
+    </section>
+
+    <!-- 通知トースト (コピー完了時などに表示) -->
+    <div id="toast" class="toast hidden">
+      <p class="toast-message">✨ コピーしました / Copied!</p>
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

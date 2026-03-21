@@ -1,0 +1,417 @@
+/* 
+  Daily Quote Gallery 
+  - 美しいタイポグラフィとミニマルなデザインをベースとします
+  - 3種類のデザインテーマを実装
+*/
+
+/* 変数定義（デザインシステム） */
+:root {
+  /* 色彩パレット */
+  --bg-color: #f7f9f9;
+  --text-main: #2c3e50;
+  --text-muted: #7f8c8d;
+  --gold-accent: #c0a062;
+  --white: #ffffff;
+  
+  /* ボタンとインタラクションの色 */
+  --btn-primary-bg: #2c3e50;
+  --btn-primary-hover: #1a252f;
+  --btn-secondary-bg: #e0e6ed;
+  --btn-secondary-hover: #d1d8e0;
+  
+  /* フォントセット */
+  --font-jp-serif: 'Noto Serif JP', serif;
+  --font-en-serif: 'Cormorant Garamond', serif;
+  --font-jp-sans: 'Zen Kaku Gothic New', sans-serif;
+  --font-en-sans: 'Outfit', sans-serif;
+  
+  /* アニメーション時間 */
+  --transition-speed: 0.4s;
+}
+
+/* 全体のリセットとベース設定 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: var(--font-en-sans), var(--font-jp-sans);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+/* アプリのメインコンテナ */
+.app-container {
+  width: 100%;
+  max-width: 700px;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* ヘッダー */
+.header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.app-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.app-title .en {
+  font-family: var(--font-en-serif);
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.text-gold {
+  color: var(--gold-accent);
+}
+
+.app-title .jp {
+  font-family: var(--font-jp-sans);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+/* テーマセレクター */
+.theme-selector-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.theme-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.theme-label .jp { font-weight: 500; }
+.theme-label .en { font-size: 0.7rem; }
+
+.theme-select {
+  appearance: none;
+  background-color: var(--white);
+  border: 1px solid #dcdde1;
+  padding: 0.8rem 2rem 0.8rem 1.2rem;
+  border-radius: 8px;
+  font-family: var(--font-jp-sans);
+  font-size: 0.95rem;
+  color: var(--text-main);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.3s ease;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2212%22%20height%3D%228%22%20viewBox%3D%220%200%2012%208%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M1%201.5L6%206.5L11%201.5%22%20stroke%3D%22%232C3E50%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.theme-select:focus, .theme-select:hover {
+  border-color: var(--gold-accent);
+  box-shadow: 0 4px 12px rgba(192, 160, 98, 0.15);
+}
+
+/* 名言表示エリアの共通ベーススタイル */
+.quote-box {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+  transition: all var(--transition-speed) ease;
+  background-color: var(--white);
+  /* 内側の要素のアニメーション用 */
+  opacity: 1;
+}
+
+/* フェードアニメーション用クラス (JSで切り替え) */
+.quote-box.fade-out {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.quote-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+/* ==== テーマ 1: Museum Frame (額縁風) ==== */
+.theme-museum {
+  padding: 4rem 3rem;
+  border: 1px solid #e0e0e0;
+  outline: 1px solid #e0e0e0;
+  outline-offset: -10px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+  background: linear-gradient(to bottom right, #ffffff, #fafafa);
+}
+.theme-museum .quote-text-jp {
+  font-family: var(--font-jp-serif);
+  font-size: 1.6rem;
+  line-height: 1.8;
+  color: var(--text-main);
+  text-align: center;
+}
+.theme-museum .quote-text-en {
+  font-family: var(--font-en-serif);
+  font-size: 1.8rem;
+  font-style: italic;
+  color: var(--text-muted);
+  text-align: center;
+}
+.theme-museum .quote-author {
+  text-align: center;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  padding-top: 1.5rem;
+}
+
+/* ==== テーマ 2: Speech Bubble (吹き出し風) ==== */
+.theme-bubble {
+  padding: 3rem;
+  border-radius: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  /* 吹き出しのしっぽを作る */
+  position: relative;
+}
+.theme-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  left: 50px;
+  border-width: 20px 20px 0 0;
+  border-style: solid;
+  border-color: #ffffff transparent transparent transparent;
+  display: block;
+  width: 0;
+}
+.theme-bubble .quote-text-jp {
+  font-family: var(--font-jp-sans);
+  font-weight: 700;
+  font-size: 1.4rem;
+  line-height: 1.7;
+  color: var(--text-main);
+}
+.theme-bubble .quote-text-en {
+  font-family: var(--font-en-sans);
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+.theme-bubble .quote-author {
+  text-align: right;
+  margin-top: 1rem;
+}
+.theme-bubble .author-jp {
+  font-family: var(--font-jp-sans);
+  font-weight: 700;
+  color: var(--gold-accent);
+}
+
+/* ==== テーマ 3: Soft Cutout (やわらかい切り抜き) ==== */
+.theme-soft {
+  padding: 3.5rem 3rem;
+  border-radius: 40px;
+  background-color: var(--white);
+  box-shadow: 
+    0 20px 50px -10px rgba(44, 62, 80, 0.1),
+    0 0 0 10px rgba(255, 255, 255, 0.4);
+}
+.theme-soft .quote-text-jp {
+  font-family: var(--font-jp-sans);
+  font-size: 1.5rem;
+  line-height: 1.9;
+  font-weight: 500;
+  color: var(--text-main);
+  position: relative;
+}
+/* 左上の引用符デザイン */
+.theme-soft .quote-text-jp::before {
+  content: "“";
+  font-family: var(--font-en-serif);
+  font-size: 4rem;
+  color: rgba(192, 160, 98, 0.2);
+  position: absolute;
+  top: -30px;
+  left: -20px;
+  line-height: 1;
+}
+.theme-soft .quote-text-en {
+  font-family: var(--font-en-sans);
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--text-muted);
+}
+.theme-soft .quote-author {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.theme-soft .author-jp {
+  background-color: rgba(192, 160, 98, 0.1);
+  padding: 0.3rem 1rem;
+  border-radius: 20px;
+  display: inline-block;
+  font-size: 0.9rem;
+}
+
+/* 著者情報の共通設定 */
+.author-jp {
+  font-family: var(--font-jp-sans);
+  font-size: 1rem;
+  color: var(--text-main);
+  margin-bottom: 0.2rem;
+}
+.author-en {
+  font-family: var(--font-en-sans);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ==== コントロールボタンエリア ==== */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  align-items: center;
+}
+
+.secondary-controls {
+  display: flex;
+  gap: 1rem;
+}
+
+/* ボタンの共通スタイル */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  border: none;
+  cursor: pointer;
+  border-radius: 50px;
+  font-family: var(--font-en-sans), var(--font-jp-sans);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+}
+
+.btn-text .jp {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.btn-text .en {
+  font-size: 0.7rem;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+/* 新しい名言ボタン (プライマリ) */
+.btn-primary {
+  background-color: var(--btn-primary-bg);
+  color: var(--white);
+  padding: 1rem 2.5rem;
+  box-shadow: 0 10px 20px rgba(44, 62, 80, 0.2);
+}
+
+.btn-primary:hover {
+  background-color: var(--btn-primary-hover);
+  box-shadow: 0 15px 25px rgba(44, 62, 80, 0.3);
+  transform: translateY(-2px);
+}
+
+/* コピー・シェアボタン (セカンダリ) */
+.btn-secondary {
+  background-color: var(--btn-secondary-bg);
+  color: var(--text-main);
+  padding: 0.8rem 1.5rem;
+}
+
+.btn-secondary:hover {
+  background-color: var(--btn-secondary-hover);
+  transform: translateY(-2px);
+}
+
+.btn-icon {
+  font-size: 1.2rem;
+}
+
+/* ==== トースト通知 ==== */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  background-color: rgba(44, 62, 80, 0.9);
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  z-index: 1000;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  font-family: var(--font-jp-sans);
+  font-size: 0.9rem;
+  backdrop-filter: blur(5px);
+}
+
+.toast.hidden {
+  opacity: 0;
+  transform: translateX(-50%) translateY(20px);
+  pointer-events: none;
+}
+
+/* ==== レスポンシブデザイン ==== */
+@media (max-width: 600px) {
+  .theme-museum {
+    padding: 2.5rem 1.5rem;
+  }
+  .theme-bubble {
+    padding: 2rem 1.5rem;
+  }
+  .theme-soft {
+    padding: 2.5rem 1.5rem;
+    border-radius: 25px;
+  }
+  .app-title .en {
+    font-size: 2rem;
+  }
+  .quote-content {
+    gap: 1rem;
+  }
+  .secondary-controls {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
