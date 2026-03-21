@@ -1,11 +1,11 @@
-/* 基本設定。全てのエレメントの余白をなくし、ボックスサイズを統一します */
+/* 基本設定 */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* ページ全体の設定。無印良品風（白・グレー基調、クリーンでミニマル） */
+/* ページ全体の設定。無印良品風のクリーンなデザインを維持します */
 body {
   font-family: 'Inter', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
   background-color: #fafafa;
@@ -14,10 +14,11 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  overflow: hidden; /* スクロールバーが出ないようにします */
+  overflow: hidden;
+  transition: background-color 0.5s ease; /* Magic Colorボタンを押した時のため */
 }
 
-/* コンテナ領域。画面サイズに合わせつつ、最大幅を制限します */
+/* コンテナ領域 */
 .container {
   display: flex;
   flex-direction: column;
@@ -26,15 +27,15 @@ body {
   width: 100%;
   height: 100vh;
   max-width: 600px;
-  padding: 60px 20px;
+  padding: 40px 20px;
 }
 
 /* ヘッダー領域 */
 .header {
   text-align: center;
+  margin-bottom: 20px;
 }
 
-/* タイトルのスタイル */
 .title {
   font-size: 24px;
   font-weight: 600;
@@ -45,84 +46,94 @@ body {
   gap: 6px;
 }
 
-/* 日本語のサブタイトル */
 .sub-title {
   font-size: 13px;
   font-weight: 400;
   color: #888888;
 }
 
-/* 3Dシーンの設定。キューブが3Dで見えるように視点を設定（perspective） */
-.scene {
-  width: 200px;
-  height: 200px;
-  perspective: 800px; /* 値が小さいほど遠近感が強くなります */
-  cursor: grab; /* マウスカーソルを開いた手の形にします */
-  /* スマホ等のタッチ操作で画面がスクロールしたり拡大縮小するのを防ぎます */
-  touch-action: none; 
+/* 上部コントロール（ドロップダウン） */
+.top-controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
-/* ドラッグ中のカーソル */
+.select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.select-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #444444;
+}
+
+.select-label .sub-label {
+  font-size: 11px;
+  font-weight: 400;
+  color: #888888;
+}
+
+/* セレクトボックスのデザイン */
+.shape-select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #d0d0d0;
+  background-color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+  color: #333333;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.shape-select:focus {
+  border-color: #999999;
+  box-shadow: 0 0 0 2px rgba(150, 150, 150, 0.2);
+}
+
+
+/* 3Dキャンバスを格納するエリア */
+.scene {
+  width: 100%;
+  max-width: 320px;
+  height: 320px;
+  border-radius: 12px;
+  /* スマホ等のタッチ操作で画面がスクロールしたり拡大縮小するのを完全に防ぎます */
+  touch-action: none; 
+  cursor: grab;
+  /* キャンバスが角丸からはみ出ないように設定 */
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05); /* 控えめで上品な影 */
+  background-color: transparent; /* 背景色はThree.js側で制御します */
+}
+
 .scene:active {
   cursor: grabbing;
 }
 
-/* キューブ自体の設定 */
-.cube {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  /* 3Dの形を保持したまま回転させるための設定 */
-  transform-style: preserve-3d;
-  /* 初期状態の傾き。X軸、Y軸を少し傾けて立体感を出します */
-  transform: translateZ(-100px) rotateX(-20deg) rotateY(-30deg);
-  transition: transform 0.1s ease-out; /* ドラッグ時の動きを滑らかにします */
+/* Three.jsが生成するcanvas要素をエリアにぴったり合わせる */
+.scene canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
 }
 
-/* 自動回転時のアニメーション設定。script.jsからこのクラスを付け外しします */
-.cube.auto-rotate {
-  animation: spinCube 12s infinite linear;
-  transition: transform 0.5s ease-out;
-}
 
-/* 360度回転するアニメーションの定義 */
-@keyframes spinCube {
-  0% { transform: translateZ(-100px) rotateX(0deg) rotateY(0deg); }
-  100% { transform: translateZ(-100px) rotateX(360deg) rotateY(360deg); }
-}
-
-/* キューブの各面（6つ）の共通設定 */
-.face {
-  position: absolute;
-  width: 200px;
-  height: 200px;
-  background-color: rgba(220, 220, 220, 0.85); /* 半透明のグレー。無印風 */
-  border: 1px solid rgba(150, 150, 150, 0.3); /* 薄い枠線 */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 32px;
-  font-weight: 600;
-  color: #777777; /* 少し控えめな文字色 */
-  transition: background-color 0.5s ease; /* 色が変わる時のアニメーション */
-}
-
-/* それぞれの面の3D配置（Z軸移動や回転） */
-.front  { transform: rotateY(  0deg) translateZ(100px); }
-.back   { transform: rotateY(180deg) translateZ(100px); }
-.right  { transform: rotateY( 90deg) translateZ(100px); }
-.left   { transform: rotateY(-90deg) translateZ(100px); }
-.top    { transform: rotateX( 90deg) translateZ(100px); }
-.bottom { transform: rotateX(-90deg) translateZ(100px); }
-
-
-/* ========== コントロールパネルのスタイル ========== */
+/* コントロールパネルのスタイル */
 .controls {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 30px;
+  gap: 24px;
   width: 100%;
+  margin-top: 20px;
 }
 
 /* トグルボタン全体を囲むラベル */
@@ -137,10 +148,9 @@ body {
 }
 
 .toggle-wrapper:hover {
-  background-color: #f0f0f0;
+  background-color: rgba(0,0,0,0.03);
 }
 
-/* トグル横のテキスト */
 .toggle-label {
   display: flex;
   flex-direction: column;
@@ -167,7 +177,7 @@ body {
   transition: background-color 0.3s;
 }
 
-/* チェックボックスそのものは見えなくする */
+/* チェックボックスそのものは見えないように隠す */
 .toggle-input {
   opacity: 0;
   width: 0;
@@ -187,14 +197,14 @@ body {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* トグルがONになったときの変化 */
+/* トグルがONになったときの動き */
 .toggle-input:checked + .slider {
   transform: translateX(22px);
 }
 
-/* toggle-inputがチェックされた時、親要素内のトグルスイッチ背景を変える */
+/* トグルがONの時の背景色（無印風のダークグレー） */
 .toggle-switch:has(.toggle-input:checked) {
-  background-color: #666666; /* 無印風の落ち着いたダークグレー */
+  background-color: #666666;
 }
 
 
@@ -204,7 +214,7 @@ body {
   border: 1px solid #d0d0d0;
   color: #333333;
   padding: 12px 32px;
-  border-radius: 8px; /* 角丸で優しい印象に */
+  border-radius: 8px;
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s ease;
@@ -223,7 +233,6 @@ body {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
 }
 
-/* ボタン内のテキスト構造 */
 .btn-text {
   display: flex;
   flex-direction: column;

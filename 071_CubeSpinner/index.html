@@ -3,52 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Cube Spinner - 3Dキューブ回転</title>
-  <!-- JavaScriptやCSSへのクロスサイトスクリプティング（XSS）を防ぐ等のため、
-       Content-Security-Policyを設定することも可能ですが、
-       今回は完全なローカル・静的ホスティングを想定し安全な実装を心がけます -->
-  <link rel="icon" href="favicon.png">
+  <title>Polyhedron Spinner - 多面体スピナー</title>
+  
+  <!-- 【CORS・ローカル実行対応】 
+       外部の画像ファイルへのフェッチを避け、Data URIを使用して絵文字を直接ファビコンに変換しています -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 style=%22dominant-baseline:central;text-anchor:middle;font-size:90px;%22>🧊</text></svg>">
+  
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
 </head>
 <body>
   <div class="container">
     <header class="header">
-      <h1 class="title">3D Cube Spinner<span class="sub-title">3Dキューブ回転</span></h1>
+      <h1 class="title">Polyhedron Spinner<span class="sub-title">多面体スピナー</span></h1>
     </header>
 
-    <!-- キューブを表示するエリア -->
+    <!-- コントロール上部（形状を選択するドロップダウン） -->
+    <div class="top-controls">
+      <label class="select-wrapper">
+        <span class="select-label">Shape <span class="sub-label">/ 形状</span></span>
+        <select id="shapeSelect" class="shape-select">
+          <option value="cube">Cube (立方体)</option>
+          <option value="octahedron">Octahedron (8面体)</option>
+          <option value="dodecahedron">Dodecahedron (12面体)</option>
+          <option value="icosahedron">Icosahedron (20面体)</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- 3Dを描画するエリア -->
     <main class="scene" id="scene">
-      <div class="cube" id="cube">
-        <!-- 立方体の6つの面（フロント・バック・ライト・レフト・トップ・ボトム） -->
-        <div class="face front">1</div>
-        <div class="face back">2</div>
-        <div class="face right">3</div>
-        <div class="face left">4</div>
-        <div class="face top">5</div>
-        <div class="face bottom">6</div>
-      </div>
+      <!-- ここにThree.jsによってCanvasが自動生成されます -->
     </main>
 
-    <!-- コントロールパネル（ボタンなど） -->
+    <!-- コントロールパネル下部（ボタンなど） -->
     <footer class="controls">
       <!-- 自動回転のオン・オフを切り替えるトグルボタン -->
       <label class="toggle-wrapper" for="autoRotateToggle">
         <span class="toggle-label">Auto Rotate<span class="sub-label">自動回転</span></span>
         <div class="toggle-switch">
-          <!-- on/offの切り替え入力。class="toggle-input"はCSSで見えなくします -->
           <input type="checkbox" id="autoRotateToggle" class="toggle-input" checked>
           <span class="slider"></span>
         </div>
       </label>
 
-      <!-- 色をランダムに変えるボタン -->
+      <!-- サプライズ要素のあるカラー変更ボタン -->
       <button id="changeColorBtn" class="btn">
-        <span class="btn-text">Random Color<span class="sub-text">カラー変更</span></span>
+        <span class="btn-text">Magic Color<span class="sub-text">カラーチェンジ</span></span>
       </button>
     </footer>
   </div>
 
+  <!-- 【CORS・ローカル実行対応】 
+       type="module"制約を回避するため、Three.jsとOrbitControlsをCDNのグローバルスクリプトとして読み込みます -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  
   <script src="script.js"></script>
 </body>
 </html>

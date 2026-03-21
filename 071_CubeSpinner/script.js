@@ -1,153 +1,162 @@
-// --- 要素（HTMLの部品）の取得 ---
-// idを使ってHTML内の要素を探し、JavaScriptで操作できるようにします
-const cube = document.getElementById('cube');
-const scene = document.getElementById('scene');
+// DOM要素の取得
+const sceneContainer = document.getElementById('scene');
+const shapeSelect = document.getElementById('shapeSelect');
 const autoRotateToggle = document.getElementById('autoRotateToggle');
 const changeColorBtn = document.getElementById('changeColorBtn');
-const faces = document.querySelectorAll('.face');
 
-// --- 状態を管理する変数 ---
-let isDragging = false; // ドラッグ中かどうか（マウスや指が押されているか）
-let previousMousePosition = { x: 0, y: 0 }; // 前回のマウス位置を記憶する
-// キューブの現在の回転角度（X軸とY軸）。初期状態の傾きに合わせています。
-let rotation = { x: -20, y: -30 }; 
+// ==========================================
+// 1. Three.js の基本セットアップ
+// ==========================================
 
-// --- 初期設定 ---
-// ページを開いたときに、自動回転がオンの状態になるように設定します
-cube.classList.add('auto-rotate');
+// シーン（3D空間）の作成
+const scene = new THREE.Scene();
+// 無印良品風のクリーンな背景色（CSSの #fafafa と統一）
+scene.background = new THREE.Color('#fafafa');
 
-// --- 1. 自動回転のトグル（ON/OFF）機能 ---
-autoRotateToggle.addEventListener('change', (e) => {
-  // e.target.checked で、チェックボックスがON(true)かOFF(false)かを取得できます
-  if (e.target.checked) {
-    // ONなら 'auto-rotate' というクラス名を追加して、CSSのアニメーションを動かします
-    cube.classList.add('auto-rotate');
-    // ドラッグ等で手動でつけられた角度を一旦リセットします
-    cube.style.transform = ''; 
-  } else {
-    // OFFならクラス名を取り除いて、自動回転を止めます
-    cube.classList.remove('auto-rotate');
-    // 止めた瞬間に、手動回転用の角度に戻してその場で止まるように見せます
-    updateCubeRotation();
+// カメラの作成 (視野角, アスペクト比, 近くの描画限界, 遠くの描画限界)
+const camera = new THREE.PerspectiveCamera(
+  45, 
+  sceneContainer.clientWidth / sceneContainer.clientHeight, 
+  0.1, 
+  1000
+);
+// カメラを少し手前に引いて、オブジェクト全体が見えるようにします
+camera.position.z = 5;
+
+// レンダラー（描画エンジン）の作成
+const renderer = new THREE.WebGLRenderer({ antialias: true }); // antialias: true でエッジを滑らかに
+renderer.setSize(sceneContainer.clientWidth, sceneContainer.clientHeight);
+renderer.setPixelRatio(window.devicePixelRatio); // 高解像度ディスプレイ（Retinaなど）への対応
+sceneContainer.appendChild(renderer.domElement);
+
+// ==========================================
+// 2. マウス・スマホでのドラッグ回転（OrbitControls）
+// ==========================================
+// CDNから読み込んだOrbitControlsを使って、複雑な回転計算を自動化します
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; // 慣性（スッと止まらず滑らかに止まる）を有効化
+controls.dampingFactor = 0.05; // 慣性の強さ
+controls.enableZoom = false;   // ズーム機能をオフ（今回は回転のみ楽しむため）
+controls.enablePan = false;    // 平行移動をオフ
+controls.autoRotate = true;    // 初期状態で自動回転をオン
+controls.autoRotateSpeed = 2.0; // 自動回転のスピード
+
+// ==========================================
+// 3. 多面体の形状（Geometry）と質感（Material）
+// ==========================================
+
+// 各種形状の定義。サイズを統一感が出るように微調整しています
+const geometries = {
+  cube: new THREE.BoxGeometry(1.5, 1.5, 1.5),
+  octahedron: new THREE.OctahedronGeometry(1.4),
+  dodecahedron: new THREE.DodecahedronGeometry(1.4),
+  icosahedron: new THREE.IcosahedronGeometry(1.4)
+};
+
+// メインのマテリアル（質感）
+// MeshNormalMaterialは面が向いている方向によって色が虹色のように変わる、サイバーでモダンな質感です
+const mainMaterial = new THREE.MeshNormalMaterial({
+  flatShading: true // ポリゴンの面をパキッと見せる（ローポリ風・リッチな表現）
+});
+
+// ワイヤーフレーム（枠線）用のマテリアル
+// メッシュの上に重ねることで、SFチックな遊び心を加えます
+let wireframeMaterial = new THREE.LineBasicMaterial({
+  color: 0x333333, // 初期色はダークグレー
+  transparent: true,
+  opacity: 0.3
+});
+
+let currentMesh = null;
+let currentWireframe = null;
+
+// 指定された形を作成してシーンに追加する関数
+function createShape(type) {
+  // すでに図形がある場合は、一度シーンから取り除きます
+  if (currentMesh) {
+    scene.remove(currentMesh);
   }
-});
 
-// --- 2. カラー変更機能（セキュリティ考慮） ---
-changeColorBtn.addEventListener('click', () => {
-  // 【セキュリティ（XSS対策）のポイント】
-  // ユーザーが入力した文字列をそのまま innerHTML 等で入れると危険です。
-  // 今回はあらかじめ安全に用意されたカラーコード（文字列）だけを使い、
-  // style を通じて変更するため、悪意あるスクリプトが実行される余地がありません。
-
-  // 落ち着いた無印風のカラーパレット（くすんだパステルカラーやグレー系）
-  const colorPalette = [
-    'rgba(235, 226, 213, 0.9)', // ベージュ
-    'rgba(215, 222, 220, 0.9)', // ライトブルーグレー
-    'rgba(224, 215, 218, 0.9)', // ペールピンクグレー
-    'rgba(206, 212, 203, 0.9)', // セージグリーン
-    'rgba(230, 226, 226, 0.9)', // ライトグレー
-    'rgba(200, 200, 205, 0.9)'  // ラベンダーグレー
-  ];
-
-  // 6つの面すべて（1〜6）に対して、ランダムで色を割り当てます
-  faces.forEach(face => {
-    // 0 から パレットの数-1 までのランダムな数字を作ります
-    const randomIndex = Math.floor(Math.random() * colorPalette.length);
-    // その数字の場所にある色を取り出します
-    const newColor = colorPalette[randomIndex];
-    
-    // 安全に背景色（スタイル）を変更します
-    face.style.backgroundColor = newColor;
-  });
-});
-
-// --- 3. マウス・タッチ操作によるドラッグ回転機能 ---
-
-// キューブの角度を画面（CSS）に反映する関数
-function updateCubeRotation() {
-  // 自動回転中は手動の角度更新を行わない（衝突を防ぐ）
-  if (autoRotateToggle.checked) return;
+  // ドロップダウンの型文字に合う形状を取得します
+  const geometry = geometries[type] || geometries.cube;
   
-  // 100px奥に配置しつつ（translateZ）、X軸とY軸を回転させます
-  // ` （バッククォート）を使ったテンプレートリテラルで、変数${...}を文字の中に埋め込んでいます
-  cube.style.transform = `translateZ(-100px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`;
+  // 形状と質感を組み合わせてメッシュ（実体）を作ります
+  currentMesh = new THREE.Mesh(geometry, mainMaterial);
+  
+  // 形状から「枠線」だけを抽出して、ワイヤーフレームを作ります
+  const edges = new THREE.EdgesGeometry(geometry);
+  currentWireframe = new THREE.LineSegments(edges, wireframeMaterial);
+  
+  // メッシュの中にワイヤーフレームを子要素として追加します（一緒に回転させるため）
+  currentMesh.add(currentWireframe);
+  
+  // 3D空間に配置します
+  scene.add(currentMesh);
 }
 
-// ---------------------------
-// マウス用のイベント（PC用）
-// ---------------------------
+// 初期状態としてCube（立方体）を生成
+createShape('cube');
 
-// マウスのボタンが押されたとき (mousedown)
-scene.addEventListener('mousedown', (e) => {
-  if (autoRotateToggle.checked) return; // 自動回転中はドラッグ無効
-  isDragging = true;
-  // クリックした瞬間の座標を保存します
-  previousMousePosition = { x: e.offsetX, y: e.offsetY };
+
+// ==========================================
+// 4. アニメーション（描画ループ）
+// ==========================================
+function animate() {
+  // ブラウザの描画タイミングに合わせて永遠に繰り返します
+  requestAnimationFrame(animate);
+  
+  // OrbitControlsによる慣性や自動回転の更新
+  controls.update(); 
+  
+  // シーンとカメラを通じて画面にレンダリング（描画）します
+  renderer.render(scene, camera);
+}
+// アニメーション開始
+animate();
+
+
+// ==========================================
+// 5. UI（ボタンやセレクトボックス）のイベント
+// ==========================================
+
+// ウィンドウのサイズが変わった時、Canvasのサイズも一緒に合わせる処理
+window.addEventListener('resize', () => {
+  const width = sceneContainer.clientWidth;
+  const height = sceneContainer.clientHeight;
+  renderer.setSize(width, height);
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix(); // カメラの歪みを直す
 });
 
-// マウスが動いたとき (mousemove)
-// documentにつけることで、キューブの外にカーソルが出てもドラッグを続けられます
-document.addEventListener('mousemove', (e) => {
-  if (!isDragging) return; // ドラッグ中でなければ何もしない
-
-  // 現在のマウスと、直前のマウスとの差（どれくらい動かしたか）を計算します
-  const deltaMove = {
-    x: e.movementX || 0,
-    y: e.movementY || 0
-  };
-
-  // 縦の動き(y)は、キューブのX軸回転。横の動き(x)は、キューブのY軸回転として扱います
-  // 0.5 を掛けて、回転のスピードを少しマイルドに調整しています
-  rotation.x -= deltaMove.y * 0.5;
-  rotation.y += deltaMove.x * 0.5;
-
-  // 角度を実際の画面に反映します
-  updateCubeRotation();
+// ドロップダウンで形を変えた時
+shapeSelect.addEventListener('change', (e) => {
+  createShape(e.target.value);
 });
 
-// マウスのボタンが離されたとき (mouseup)
-document.addEventListener('mouseup', () => {
-  isDragging = false; // ドラッグ終了
+// 自動回転トグルの切り替え
+autoRotateToggle.addEventListener('change', (e) => {
+  controls.autoRotate = e.target.checked;
 });
 
+// マジックカラー機能：ボタンを押すたびに全体の雰囲気を変える
+changeColorBtn.addEventListener('click', () => {
+  // 背景色のパレット（無印風のやさしいパステル/グレー系）
+  const bgColors = [
+    '#fafafa', '#f0f4f8', '#fff0f5', '#f5fff0', '#fdf6e3', '#e6e6fa', '#f5f5f5'
+  ];
+  // ワイヤーフレーム（枠線）のパレット（サイバーで鮮やかな色合い + ダーク色）
+  const wireColors = [
+    0x333333, 0xff0055, 0x00ffcc, 0x7700ff, 0xffaa00, 0x0088ff, 0xffffff
+  ];
 
-// ---------------------------
-// スマホ（タッチ）用のイベント
-// ---------------------------
+  // パレットからランダムな色を選びます
+  const randomBg = bgColors[Math.floor(Math.random() * bgColors.length)];
+  const randomWire = wireColors[Math.floor(Math.random() * wireColors.length)];
 
-// 画面に指が触れたとき (touchstart)
-scene.addEventListener('touchstart', (e) => {
-  if (autoRotateToggle.checked) return; // 自動回転中はスワイプ無効
-  isDragging = true;
-  // 最初の指（touches[0]）の座標を保存します
-  const touch = e.touches[0];
-  previousMousePosition = { x: touch.clientX, y: touch.clientY };
-}, { passive: false }); // スクロールなどブラウザ標準の動きを止めるために設定します
-
-// 画面上で指が動いたとき (touchmove)
-document.addEventListener('touchmove', (e) => {
-  if (!isDragging) return;
-
-  const touch = e.touches[0];
-  // touchmoveにはマウスのmovementXにあたるものがないので、自分で差を計算します
-  const deltaMove = {
-    x: touch.clientX - previousMousePosition.x,
-    y: touch.clientY - previousMousePosition.y
-  };
-
-  rotation.x -= deltaMove.y * 0.5;
-  rotation.y += deltaMove.x * 0.5;
-
-  updateCubeRotation();
-
-  // 現在の座標を「前回の座標」として新しく更新します
-  previousMousePosition = { x: touch.clientX, y: touch.clientY };
-
-  // 画面が一緒にスクロールしないようにブロックします
-  e.preventDefault();
-}, { passive: false });
-
-// 画面から指が離れたとき (touchend)
-document.addEventListener('touchend', () => {
-  isDragging = false; // ドラッグ終了
+  // 背景色を変更
+  scene.background = new THREE.Color(randomBg);
+  document.body.style.backgroundColor = randomBg; // bodyの余白の色も統一
+  
+  // ワイヤーフレームの色を変更（Three.jsの色形式であるHexにセット）
+  wireframeMaterial.color.setHex(randomWire);
 });
