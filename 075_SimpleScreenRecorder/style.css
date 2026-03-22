@@ -1,0 +1,647 @@
+/* ============================================
+   Simple Screen Recorder - スタイルシート
+   ダークモードベースのモダンデザイン
+   ============================================ */
+
+/* ---------- CSS変数（カラーテーマ） ---------- */
+:root {
+  --bg-primary: #0d0d1a;
+  --bg-secondary: #161625;
+  --bg-tertiary: #1e1e32;
+  --bg-card: #1a1a2e;
+  --bg-hover: #252540;
+
+  --text-primary: #e8e8f0;
+  --text-secondary: #9d9db5;
+  --text-muted: #6b6b85;
+
+  --accent-red: #ff3b5c;
+  --accent-red-glow: rgba(255, 59, 92, 0.3);
+  --accent-blue: #4e8cff;
+  --accent-blue-glow: rgba(78, 140, 255, 0.25);
+  --accent-green: #2dd284;
+  --accent-green-glow: rgba(45, 210, 132, 0.25);
+  --accent-orange: #ff9f43;
+  --accent-yellow: #ffd93d;
+  --accent-purple: #a855f7;
+
+  --border-color: rgba(255, 255, 255, 0.06);
+  --border-hover: rgba(255, 255, 255, 0.12);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-btn: 0 2px 12px rgba(0, 0, 0, 0.3);
+  --shadow-glow-red: 0 0 20px var(--accent-red-glow);
+  --shadow-glow-blue: 0 0 20px var(--accent-blue-glow);
+
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+  --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- リセット＆ベース ---------- */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- ヘッダー ---------- */
+.app-header {
+  background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+  border-bottom: 1px solid var(--border-color);
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.header-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.app-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ロゴの録画ドット */
+.logo-dot {
+  width: 16px;
+  height: 16px;
+  background: var(--accent-red);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 12px var(--accent-red-glow);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.app-logo h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.app-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* ---------- メインコンテナ ---------- */
+.main-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+/* ---------- プレビューセクション ---------- */
+.preview-section {
+  margin-bottom: 20px;
+}
+
+.preview-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--transition-normal);
+}
+
+/* 録画中のプレビュー枠線 */
+.preview-wrapper.is-recording {
+  border-color: var(--accent-red);
+  box-shadow: var(--shadow-card), var(--shadow-glow-red);
+}
+
+.preview-wrapper.is-paused {
+  border-color: var(--accent-orange);
+}
+
+#preview-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: none;
+  background: #000;
+}
+
+#preview-video.active {
+  display: block;
+}
+
+/* ---------- プレースホルダー ---------- */
+.preview-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.preview-placeholder.hidden {
+  display: none;
+}
+
+.placeholder-icon {
+  font-size: 4rem;
+  opacity: 0.3;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.placeholder-text {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+.placeholder-text-en {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+/* ---------- 録画中インジケーター ---------- */
+.recording-indicator {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 8px 14px;
+  border-radius: 20px;
+  z-index: 10;
+}
+
+.recording-indicator.active {
+  display: flex;
+}
+
+.rec-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--accent-red);
+  border-radius: 50%;
+  animation: blink-rec 1s ease-in-out infinite;
+}
+
+@keyframes blink-rec {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.rec-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-red);
+  letter-spacing: 0.1em;
+}
+
+.rec-timer-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 一時停止インジケーター ---------- */
+.paused-indicator {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 8px 14px;
+  border-radius: 20px;
+  z-index: 10;
+}
+
+.paused-indicator.active {
+  display: flex;
+}
+
+.paused-icon {
+  font-size: 1rem;
+}
+
+.paused-text {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-orange);
+}
+
+/* ---------- タイマーセクション ---------- */
+.timer-section {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.timer-display {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 12px 32px;
+  box-shadow: var(--shadow-card);
+}
+
+.timer-value {
+  font-size: 2.2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  font-family: 'Inter', monospace;
+}
+
+/* 録画中のタイマー色変更 */
+.timer-display.is-recording .timer-value {
+  color: var(--accent-red);
+}
+
+.timer-display.is-paused .timer-value {
+  color: var(--accent-orange);
+}
+
+/* ---------- コントロールバー ---------- */
+.controls-section {
+  margin-bottom: 20px;
+}
+
+.controls-bar {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* コントロールボタン共通 */
+.control-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 18px;
+  min-width: 110px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-btn);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.control-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-btn), 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.control-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.control-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.btn-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.btn-label small {
+  font-weight: 400;
+  opacity: 0.7;
+  font-size: 0.65rem;
+}
+
+/* 録画ボタン特殊スタイル */
+.btn-record:not(:disabled) {
+  border-color: rgba(255, 59, 92, 0.3);
+  background: linear-gradient(135deg, rgba(255, 59, 92, 0.08), rgba(255, 59, 92, 0.02));
+}
+
+.btn-record:not(:disabled):hover {
+  border-color: var(--accent-red);
+  background: linear-gradient(135deg, rgba(255, 59, 92, 0.15), rgba(255, 59, 92, 0.05));
+  box-shadow: var(--shadow-btn), var(--shadow-glow-red);
+}
+
+/* 録画中のボタンスタイル */
+.btn-record.is-recording {
+  border-color: var(--accent-red);
+  background: linear-gradient(135deg, rgba(255, 59, 92, 0.2), rgba(255, 59, 92, 0.08));
+  animation: pulse-border 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% { box-shadow: var(--shadow-btn); }
+  50% { box-shadow: var(--shadow-btn), var(--shadow-glow-red); }
+}
+
+/* 停止ボタン特殊スタイル */
+.btn-stop:not(:disabled) {
+  border-color: rgba(78, 140, 255, 0.3);
+}
+
+.btn-stop:not(:disabled):hover {
+  border-color: var(--accent-blue);
+  box-shadow: var(--shadow-btn), var(--shadow-glow-blue);
+}
+
+/* マイクONスタイル */
+.control-btn.mic-on {
+  border-color: rgba(45, 210, 132, 0.3);
+  background: linear-gradient(135deg, rgba(45, 210, 132, 0.08), rgba(45, 210, 132, 0.02));
+}
+
+/* 画面共有中スタイル */
+.control-btn.sharing {
+  border-color: rgba(78, 140, 255, 0.4);
+  background: linear-gradient(135deg, rgba(78, 140, 255, 0.1), rgba(78, 140, 255, 0.03));
+}
+
+/* ---------- ステータスセクション ---------- */
+.status-section {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.status-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding: 10px 20px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  display: inline-block;
+  transition: all var(--transition-normal);
+}
+
+.status-text.status-recording {
+  color: var(--accent-red);
+  border-color: rgba(255, 59, 92, 0.2);
+  background: linear-gradient(135deg, rgba(255, 59, 92, 0.06), transparent);
+}
+
+.status-text.status-paused {
+  color: var(--accent-orange);
+  border-color: rgba(255, 159, 67, 0.2);
+}
+
+.status-text.status-success {
+  color: var(--accent-green);
+  border-color: rgba(45, 210, 132, 0.2);
+}
+
+.status-text.status-error {
+  color: var(--accent-red);
+  border-color: rgba(255, 59, 92, 0.2);
+}
+
+/* ---------- 録画結果セクション ---------- */
+.result-section {
+  display: none;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  animation: slideUp 0.4s var(--transition-smooth);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-section.active {
+  display: block;
+}
+
+.result-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.result-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#result-video {
+  width: 100%;
+  max-height: 400px;
+  border-radius: var(--radius-md);
+  background: #000;
+  outline: none;
+}
+
+.result-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ダウンロードボタン */
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 16px rgba(78, 140, 255, 0.3);
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(78, 140, 255, 0.4);
+}
+
+.download-btn:active {
+  transform: translateY(0);
+}
+
+/* 新しい録画ボタン */
+.new-recording-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.new-recording-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+}
+
+.new-recording-btn:active {
+  transform: translateY(0);
+}
+
+/* ---------- フッター ---------- */
+.app-footer {
+  text-align: center;
+  padding: 24px 20px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  line-height: 1.8;
+}
+
+.footer-sub {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* ---------- レスポンシブ ---------- */
+@media (max-width: 640px) {
+  .app-logo h1 {
+    font-size: 1.15rem;
+  }
+
+  .main-container {
+    padding: 16px 12px 32px;
+  }
+
+  .preview-wrapper {
+    border-radius: var(--radius-md);
+  }
+
+  .timer-value {
+    font-size: 1.6rem;
+  }
+
+  .controls-bar {
+    gap: 8px;
+  }
+
+  .control-btn {
+    min-width: 90px;
+    padding: 10px 12px;
+  }
+
+  .btn-icon {
+    font-size: 1.25rem;
+  }
+
+  .btn-label {
+    font-size: 0.65rem;
+  }
+
+  .result-section {
+    padding: 16px;
+  }
+
+  .result-actions {
+    flex-direction: column;
+  }
+
+  .download-btn,
+  .new-recording-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 400px) {
+  .controls-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .control-btn {
+    min-width: unset;
+  }
+}

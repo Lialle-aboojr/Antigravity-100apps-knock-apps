@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Simple Screen Recorder - ブラウザで画面録画ができるシンプルなツール / A simple browser-based screen recording tool">
+
+  <!-- CSP（コンテンツセキュリティポリシー）でXSS攻撃を防ぐ -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com 'unsafe-inline'; font-src https://fonts.gstatic.com; media-src blob:; img-src 'self' data:; script-src 'self';">
+
+  <title>Simple Screen Recorder | シンプル画面録画ツール</title>
+
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- ファビコン: 画像ファイルを読み込む。エラー時はSVGフォールバック -->
+  <link rel="icon" href="favicon.png" id="favicon-link">
+
+  <!-- メインCSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== ヘッダー ===== -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="app-logo">
+        <!-- 録画ドットアイコン -->
+        <span class="logo-dot"></span>
+        <h1>Simple Screen Recorder</h1>
+      </div>
+      <p class="app-subtitle">シンプル画面録画ツール</p>
+    </div>
+  </header>
+
+  <!-- ===== メインコンテンツ ===== -->
+  <main class="main-container">
+
+    <!-- 録画プレビューエリア -->
+    <section class="preview-section">
+      <div class="preview-wrapper" id="preview-wrapper">
+        <!-- 画面共有のプレビュー映像 -->
+        <video id="preview-video" autoplay muted playsinline></video>
+
+        <!-- プレビューが無い時のプレースホルダー -->
+        <div class="preview-placeholder" id="preview-placeholder">
+          <div class="placeholder-icon">🖥️</div>
+          <p class="placeholder-text">
+            画面共有を開始してプレビューを表示<br>
+            <span class="placeholder-text-en">Start screen sharing to show preview</span>
+          </p>
+        </div>
+
+        <!-- 録画中インジケーター -->
+        <div class="recording-indicator" id="recording-indicator">
+          <span class="rec-dot"></span>
+          <span class="rec-text">REC</span>
+          <span class="rec-timer" id="rec-timer-badge">00:00:00</span>
+        </div>
+
+        <!-- 一時停止インジケーター -->
+        <div class="paused-indicator" id="paused-indicator">
+          <span class="paused-icon">⏸</span>
+          <span class="paused-text">一時停止中 / Paused</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- タイマー表示 -->
+    <section class="timer-section">
+      <div class="timer-display" id="timer-display">
+        <span class="timer-value" id="timer-value">00:00:00</span>
+      </div>
+    </section>
+
+    <!-- コントロールバー -->
+    <section class="controls-section">
+      <div class="controls-bar">
+
+        <!-- 画面共有ボタン -->
+        <button class="control-btn" id="btn-share" title="画面共有 / Screen Share">
+          <span class="btn-icon">🖥️</span>
+          <span class="btn-label">画面共有<br><small>Screen Share</small></span>
+        </button>
+
+        <!-- マイクON/OFFボタン -->
+        <button class="control-btn" id="btn-mic" title="マイク / Microphone">
+          <span class="btn-icon">🎤</span>
+          <span class="btn-label">マイク ON<br><small>Mic ON</small></span>
+        </button>
+
+        <!-- 録画開始ボタン -->
+        <button class="control-btn btn-record" id="btn-record" disabled title="録画開始 / Start Recording">
+          <span class="btn-icon">⏺</span>
+          <span class="btn-label">録画開始<br><small>Start Recording</small></span>
+        </button>
+
+        <!-- 一時停止/再開ボタン -->
+        <button class="control-btn" id="btn-pause" disabled title="一時停止 / Pause">
+          <span class="btn-icon">⏸</span>
+          <span class="btn-label">一時停止<br><small>Pause</small></span>
+        </button>
+
+        <!-- 停止ボタン -->
+        <button class="control-btn btn-stop" id="btn-stop" disabled title="停止 / Stop">
+          <span class="btn-icon">⏹</span>
+          <span class="btn-label">停止<br><small>Stop</small></span>
+        </button>
+
+      </div>
+    </section>
+
+    <!-- ステータスバー -->
+    <section class="status-section">
+      <p class="status-text" id="status-text">画面共有を開始してください / Please start screen sharing</p>
+    </section>
+
+    <!-- 録画結果エリア（録画完了後に表示） -->
+    <section class="result-section" id="result-section">
+      <h2 class="result-title">📹 録画結果 / Recording Result</h2>
+      <div class="result-content">
+        <video id="result-video" controls playsinline></video>
+        <div class="result-actions">
+          <button class="download-btn" id="btn-download">
+            <span class="btn-icon">💾</span>
+            ダウンロード / Download
+          </button>
+          <button class="new-recording-btn" id="btn-new-recording">
+            <span class="btn-icon">🔄</span>
+            新しい録画 / New Recording
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== フッター ===== -->
+  <footer class="app-footer">
+    <p>&copy; 2026 Simple Screen Recorder. All recordings are processed locally in your browser.</p>
+    <p class="footer-sub">すべての録画はブラウザ内でローカル処理されます。サーバーへのデータ送信はありません。</p>
+  </footer>
+
+  <!-- メインJS -->
+  <script src="app.js"></script>
+
+</body>
+</html>
