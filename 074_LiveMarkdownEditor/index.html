@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Markdown Editor</title>
+    <meta name="description" content="リアルタイムでMarkdownをプレビューできるエディタ / Real-time Markdown preview editor" />
+
+    <!-- ファビコン設定 -->
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <!-- フォールバック: favicon.pngが読み込めない場合のSVGファビコン -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='15' fill='%235B4FE8'/><text x='50' y='72' font-size='60' font-weight='bold' fill='white' text-anchor='middle' font-family='Arial'>#</text></svg>" />
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- React（CDN版） -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Markdownパーサー & XSSサニタイズライブラリ -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+
+    <!-- スタイルシート -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <!-- Reactアプリのマウントポイント -->
+    <div id="root"></div>
+
+    <!-- Reactアプリケーション本体（CORS対策のためインライン化） -->
+    <script>
+    // ============================================
+    // Live Markdown Editor - Reactアプリケーション
+    // React CDN版 + marked + DOMPurify
+    // ============================================
+
+    // グローバルからReact関連の関数を取得
+    var useState = React.useState;
+    var useMemo = React.useMemo;
+    var useCallback = React.useCallback;
+
+    // ============================================
+    // 初期サンプルMarkdownテキスト
+    // 初めて使う人がMarkdown記法を理解できるようにサンプルを用意
+    // ============================================
+    var SAMPLE_MARKDOWN = [
+        '# Welcome to Live Markdown Editor! \u{1F389}',
+        '# \u3088\u3046\u3053\u305D\uFF01\u30E9\u30A4\u30D6Markdown\u30A8\u30C7\u30A3\u30BF\u3078\uFF01',
+        '',
+        '\u3053\u306E\u30A8\u30C7\u30A3\u30BF\u3067\u306F\u3001**Markdown\u8A18\u6CD5**\u3092\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u3067\u30D7\u30EC\u30D3\u30E5\u30FC\u3067\u304D\u307E\u3059\u3002',
+        '\u5DE6\u5074\u306B\u5165\u529B\u3059\u308B\u3068\u3001\u53F3\u5074\u306B\u5373\u5EA7\u306BHTML\u3068\u3057\u3066\u8868\u793A\u3055\u308C\u307E\u3059\u3002',
+        '',
+        '---',
+        '',
+        '## \u898B\u51FA\u3057 / Headings',
+        '',
+        '`#` \u306E\u6570\u3067\u898B\u51FA\u3057\u30EC\u30D9\u30EB\u3092\u5909\u3048\u3089\u308C\u307E\u3059\uFF1A',
+        '',
+        '# H1 \u898B\u51FA\u3057',
+        '## H2 \u898B\u51FA\u3057',
+        '### H3 \u898B\u51FA\u3057',
+        '#### H4 \u898B\u51FA\u3057',
+        '',
+        '---',
+        '',
+        '## \u30C6\u30AD\u30B9\u30C8\u88C5\u98FE / Text Formatting',
+        '',
+        '- **\u592A\u5B57\uFF08\u30DC\u30FC\u30EB\u30C9\uFF09**: `**\u30C6\u30AD\u30B9\u30C8**`',
+        '- *\u659C\u4F53\uFF08\u30A4\u30BF\u30EA\u30C3\u30AF\uFF09*: `*\u30C6\u30AD\u30B9\u30C8*`',
+        '- ~~\u53D6\u308A\u6D88\u3057\u7DDA~~: `~~\u30C6\u30AD\u30B9\u30C8~~`',
+        '- `\u30A4\u30F3\u30E9\u30A4\u30F3\u30B3\u30FC\u30C9`: \u30D0\u30C3\u30AF\u30AF\u30A9\u30FC\u30C8\u3067\u56F2\u3080',
+        '',
+        '---',
+        '',
+        '## \u30EA\u30B9\u30C8 / Lists',
+        '',
+        '### \u7B87\u6761\u66F8\u304D\u30EA\u30B9\u30C8\uFF08Unordered\uFF09',
+        '- React\u3067\u30B9\u30C6\u30FC\u30C8\u7BA1\u7406',
+        '- marked\u3067Markdown\u5909\u63DB',
+        '- DOMPurify\u3067XSS\u5BFE\u7B56',
+        '',
+        '### \u756A\u53F7\u4ED8\u304D\u30EA\u30B9\u30C8\uFF08Ordered\uFF09',
+        '1. Markdown\u3092\u5165\u529B\u3059\u308B',
+        '2. \u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u3067\u30D7\u30EC\u30D3\u30E5\u30FC\u78BA\u8A8D',
+        '3. \u5B8C\u6210\uFF01\u{1F680}',
+        '',
+        '---',
+        '',
+        '## \u5F15\u7528\u6587 / Blockquote',
+        '',
+        '> "\u30B7\u30F3\u30D7\u30EB\u3067\u3042\u308B\u3053\u3068\u306F\u3001',
+        '> \u7A76\u6975\u306E\u6D17\u7DF4\u3067\u3042\u308B\u3002"',
+        '> \u2014 \u30EC\u30AA\u30CA\u30EB\u30C9\u30FB\u30C0\u30FB\u30F4\u30A3\u30F3\u30C1',
+        '',
+        '---',
+        '',
+        '## \u30B3\u30FC\u30C9\u30D6\u30ED\u30C3\u30AF / Code Block',
+        '',
+        '```javascript',
+        '// JavaScript\u306E\u4F8B',
+        'function greet(name) {',
+        '  return `Hello, ${name}! \u{1F44B}`;',
+        '}',
+        '',
+        'console.log(greet("World"));',
+        '```',
+        '',
+        '---',
+        '',
+        '## \u30C6\u30FC\u30D6\u30EB / Table',
+        '',
+        '| \u6A5F\u80FD / Feature | \u8AAC\u660E / Description |',
+        '|---|---|',
+        '| \u30EA\u30A2\u30EB\u30BF\u30A4\u30E0\u30D7\u30EC\u30D3\u30E5\u30FC | \u5165\u529B\u3068\u540C\u6642\u306BHTML\u3092\u63CF\u753B |',
+        '| XSS\u5BFE\u7B56 | DOMPurify\u3067\u30B5\u30CB\u30BF\u30A4\u30BA |',
+        '| \u30EC\u30B9\u30DD\u30F3\u30B7\u30D6 | PC: \u5DE6\u53F3 / \u30B9\u30DE\u30DB: \u4E0A\u4E0B |',
+        '',
+        '---',
+        '',
+        '## \u30EA\u30F3\u30AF / Link',
+        '',
+        '[GitHub](https://github.com) - \u4E16\u754C\u6700\u5927\u306E\u30B3\u30FC\u30C9\u30DB\u30B9\u30C6\u30A3\u30F3\u30B0\u30B5\u30FC\u30D3\u30B9',
+        '',
+        '---',
+        '',
+        '\u270F\uFE0F **\u5DE6\u5074\u306E\u30C6\u30AD\u30B9\u30C8\u3092\u81EA\u7531\u306B\u7DE8\u96C6\u3057\u3066\u307F\u3066\u304F\u3060\u3055\u3044\uFF01**',
+        '\u270F\uFE0F **Try editing the text on the left side!**'
+    ].join('\n');
+
+    // ============================================
+    // markedの設定
+    // GitHub Flavored Markdown (GFM) を有効化
+    // ============================================
+    marked.setOptions({
+        gfm: true,        // GitHub風Markdownを有効化
+        breaks: true       // 改行を<br>に変換
+    });
+
+    // ============================================
+    // App コンポーネント（メイン）
+    // ============================================
+    function App() {
+        // Markdownテキストの状態管理
+        // 初期値としてサンプルテキストを設定
+        var stateResult = useState(SAMPLE_MARKDOWN);
+        var markdownText = stateResult[0];
+        var setMarkdownText = stateResult[1];
+
+        // テキストエリアの変更ハンドラー
+        // ユーザーが入力するたびにStateを更新
+        var handleTextChange = useCallback(function(e) {
+            setMarkdownText(e.target.value);
+        }, []);
+
+        // MarkdownをHTMLに変換（メモ化で最適化）
+        // markdownTextが変更された時だけ再計算される
+        var sanitizedHtml = useMemo(function() {
+            // markedでMarkdownをHTMLに変換
+            var rawHtml = marked.parse(markdownText);
+            // DOMPurifyでXSS攻撃を防ぐためにサニタイズ
+            // <script>タグなど危険なHTMLを除去
+            return DOMPurify.sanitize(rawHtml);
+        }, [markdownText]);
+
+        // テキストの文字数と行数を計算（フッター表示用）
+        var charCount = markdownText.length;
+        var lineCount = markdownText.split('\n').length;
+
+        return (
+            React.createElement(React.Fragment, null,
+                // ===== ヘッダー =====
+                React.createElement('header', { className: 'app-header' },
+                    React.createElement('div', { className: 'app-header__title-group' },
+                        // アイコン
+                        React.createElement('div', { className: 'app-header__icon' }, '#'),
+                        // タイトルテキスト
+                        React.createElement('div', null,
+                            React.createElement('div', { className: 'app-header__title' },
+                                'Live Markdown Editor'
+                            ),
+                            React.createElement('div', { className: 'app-header__subtitle' },
+                                '\u30EA\u30A2\u30EB\u30BF\u30A4\u30E0 Markdown \u30D7\u30EC\u30D3\u30E5\u30FC / Real-time Preview'
+                            )
+                        )
+                    )
+                ),
+
+                // ===== メインエディタ領域 =====
+                React.createElement('main', { className: 'editor-container' },
+
+                    // ----- 左パネル: Markdown入力 -----
+                    React.createElement('div', { className: 'panel editor-panel' },
+                        // パネルヘッダー
+                        React.createElement('div', { className: 'panel__header' },
+                            React.createElement('span', { className: 'panel__header-icon' }, '\u270F\uFE0F'),
+                            React.createElement('span', null, '\u5165\u529B / Editor'),
+                            React.createElement('span', { className: 'panel__header-label-sub' }, 'Markdown')
+                        ),
+                        // テキストエリア
+                        React.createElement('textarea', {
+                            id: 'markdown-input',
+                            className: 'editor-panel__textarea',
+                            value: markdownText,
+                            onChange: handleTextChange,
+                            placeholder: 'Markdown\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044... / Type your Markdown here...',
+                            spellCheck: false,
+                            'aria-label': 'Markdown\u5165\u529B\u30A8\u30EA\u30A2'
+                        })
+                    ),
+
+                    // ----- 右パネル: プレビュー -----
+                    React.createElement('div', { className: 'panel preview-panel' },
+                        // パネルヘッダー
+                        React.createElement('div', { className: 'panel__header' },
+                            React.createElement('span', { className: 'panel__header-icon' }, '\u{1F441}\uFE0F'),
+                            React.createElement('span', null, '\u30D7\u30EC\u30D3\u30E5\u30FC / Preview'),
+                            React.createElement('span', { className: 'panel__header-label-sub' }, 'HTML')
+                        ),
+                        // プレビュー表示エリア
+                        // dangerouslySetInnerHTML を使用するが、DOMPurifyでサニタイズ済みなので安全
+                        markdownText.trim()
+                            ? React.createElement('div', {
+                                id: 'markdown-preview',
+                                className: 'preview-panel__content markdown-body',
+                                dangerouslySetInnerHTML: { __html: sanitizedHtml }
+                            })
+                            : React.createElement('div', { className: 'preview-panel__content' },
+                                React.createElement('div', { className: 'preview-placeholder' },
+                                    React.createElement('div', { className: 'preview-placeholder__icon' }, '\u{1F4DD}'),
+                                    React.createElement('div', null,
+                                        '\u5DE6\u5074\u306BMarkdown\u3092\u5165\u529B\u3059\u308B\u3068\u3001\u3053\u3053\u306B\u30D7\u30EC\u30D3\u30E5\u30FC\u304C\u8868\u793A\u3055\u308C\u307E\u3059'
+                                    ),
+                                    React.createElement('div', null,
+                                        'Start typing Markdown on the left to see the preview here'
+                                    )
+                                )
+                            )
+                    )
+                ),
+
+                // ===== フッター =====
+                React.createElement('footer', { className: 'app-footer' },
+                    React.createElement('div', { className: 'app-footer__info' },
+                        React.createElement('span', null,
+                            charCount.toLocaleString() + ' \u6587\u5B57 / characters'
+                        ),
+                        React.createElement('span', null,
+                            lineCount.toLocaleString() + ' \u884C / lines'
+                        )
+                    ),
+                    React.createElement('div', { className: 'app-footer__info' },
+                        React.createElement('span', { className: 'app-footer__badge app-footer__badge--security' },
+                            '\u{1F6E1}\uFE0F XSS Protected'
+                        ),
+                        React.createElement('span', { className: 'app-footer__badge' },
+                            '\u26A1 React 18'
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    // ============================================
+    // ReactアプリケーションをDOMにマウント
+    // ============================================
+    var rootElement = document.getElementById('root');
+    var root = ReactDOM.createRoot(rootElement);
+    root.render(React.createElement(App));
+    </script>
+</body>
+</html>
