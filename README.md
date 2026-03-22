@@ -84,13 +84,14 @@ Complete it. Ship it. Relax. ☕
 | 071 | 🧊 Polyhedron Spinner | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/071_CubeSpinner/index.html) |
 | 072 | 🖼️ Daily Quote Gallery | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/072_DailyQuoteGallery/index.html) |
 | 073 | 🌸 Edo Breakout | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/073_EdoBreakout/index.html) |
+| 074 | 📝 Live Markdown Editor | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/074_LiveMarkdownEditor/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 73 / 100 ██████████████░░░░░░ 73%
+完成: 74 / 100 ██████████████░░░░░░ 74%
 ```
 
 ---
