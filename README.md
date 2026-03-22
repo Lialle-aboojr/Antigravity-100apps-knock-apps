@@ -85,13 +85,14 @@ Complete it. Ship it. Relax. ☕
 | 072 | 🖼️ Daily Quote Gallery | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/072_DailyQuoteGallery/index.html) |
 | 073 | 🌸 Edo Breakout | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/073_EdoBreakout/index.html) |
 | 074 | 📝 Live Markdown Editor | [▶ Demo](https://074-live-markdown-editor.vercel.app/) |
+| 075 | 🎥 SimpleScreenRecorder | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/075_SimpleScreenRecorder/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 74 / 100 ██████████████░░░░░░ 74%
+完成: 75 / 100 ███████████████░░░░░ 75%
 ```
 
 ---
