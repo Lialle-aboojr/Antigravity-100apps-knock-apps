@@ -173,7 +173,6 @@ input:checked + .slider:before {
     align-items: stretch; /* カードの高さを揃える */
 }
 
-/* 人気カードの配置調整用（PC表示時に上に少し飛び出させる） */
 @media (min-width: 1024px) {
     .pricing-cards-container {
         align-items: center; /* 縦の中央揃えで人気のカードを大きく見せる */
@@ -242,50 +241,85 @@ input:checked + .slider:before {
     color: var(--text-main);
 }
 
-.plan-price-container {
+/* ==============================================================
+   価格表示コンテナ（レイアウトのズレを完全に防止する設計）
+   ============================================================== */
+.plan-price-wrapper {
     display: flex;
     justify-content: center;
-    align-items: baseline;
-    height: 60px; /* 高さを固定して切り替え時のガタつきを防ぐ */
+    margin-bottom: 2rem;
+    height: 70px; /* 文字変更時など、全体の高さがブレないよう固定 */
 }
 
-.plan-currency {
+/* CSS Gridを使用して、通貨記号・金額・単位を横幅固定で配置 */
+/* これにより、右側のテキスト「/ 月 (年一括)」のように文字が伸びても、
+   中央の金額数字自体は 1px も左右にブレなくなります。 */
+.plan-price-container {
+    display: grid;
+    /* 左(記号)24px、中央(金額)110px、右(テキスト)130px と幅を完全固定 */
+    grid-template-columns: 24px 110px 130px; 
+    align-items: center; /* 縦方向の中央揃え */
+    gap: 4px;
+}
+
+.price-left {
+    text-align: right;
     font-size: 1.5rem;
     font-weight: 600;
-    margin-right: 4px;
+    color: var(--text-main);
+    transform: translateY(-8px); /* 数字と視覚的なバランスをとるため僅かに上へ */
 }
 
-.plan-price {
+/* 金額の数字が入る枠組み（110pxで固定されている） */
+.price-center {
+    text-align: center; 
+}
+
+/* 実際の数字テキスト */
+.price-number {
     font-size: 3.5rem;
     font-weight: 800;
     line-height: 1;
     letter-spacing: -1px;
+    color: var(--text-main);
+    display: inline-block;
     transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
+/* アニメーション用クラス（JSで付与・削除） */
 .price-animating {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.95); /* ふわっと小さくなりながら消える演出 */
 }
 
-.plan-duration {
-    font-size: 1rem;
-    color: var(--text-muted);
-    font-weight: 500;
-    margin-left: 4px;
+/* 単位テキストの枠組み（130pxで固定されている） */
+.price-right {
     text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 4px;
 }
 
-.en-duration {
-    font-size: 0.8rem;
-    display: block;
+.duration-ja {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    font-weight: 600;
+    white-space: nowrap; /* テキストの折り返しを禁止し、1行にピタリと収める */
+}
+
+.duration-en {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: normal;
+    white-space: nowrap;
 }
 
 /* 機能リスト / Feature List */
 .feature-list {
     list-style: none;
     margin-bottom: 2.5rem;
-    flex-grow: 1;
+    flex-grow: 1; /* 余った縦幅を埋めて、ボタンを揃える働き */
 }
 
 .feature-item {
@@ -321,7 +355,7 @@ input:checked + .slider:before {
     transition: all var(--transition-speed);
     cursor: pointer;
     border: none;
-    margin-top: auto; /* ボタンを常に底に配置 */
+    margin-top: auto; /* ボタンを常にカードの底に配置 */
 }
 
 .cta-button.primary {
@@ -343,7 +377,7 @@ input:checked + .slider:before {
 }
 
 .cta-button.secondary:hover {
-    background-color: rgba(99, 91, 255, 0.05);
+    background-color: rgba(99, 91, 255, 0.05); /* 背景をうっすらと色付ける */
 }
 
 /* Responsive adjustment for Mobile */
@@ -362,5 +396,13 @@ input:checked + .slider:before {
     
     .pricing-card.popular:hover {
         transform: translateY(-5px); /* 通常のホバーアクションと同じに */
+    }
+
+    /* スマホ用に価格表示幅を調整（画面からはみ出ないように狭める） */
+    .plan-price-container {
+        grid-template-columns: 24px 100px 120px;
+    }
+    .price-number {
+        font-size: 3rem; /* スマホでは金額の文字サイズを少し小さく */
     }
 }
