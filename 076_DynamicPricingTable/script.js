@@ -2,7 +2,6 @@
  * Simple Pricing Table
  * 
  * JavaScriptの役割:
- * 動的なHTML生成（ループ処理）を廃止し、
  * 月額/年額のトグルスイッチが切り替わった際に、すでにHTML上にある
  * 「金額」「単位テキスト」の文字だけをスムーズに書き換える機能に限定しました。
  */
@@ -44,9 +43,9 @@ const togglePricing = () => {
                 // 【セキュリティ】ユーザー入力ではないが、確実にテキストとして扱うため「textContent」で挿入
                 priceElement.textContent = newPrice;
                 
-                // 横にある「/ 月」などの期間テキストも、状態に合わせて書き換える
-                durationJa.textContent = isAnnual ? '/ 月 (年一括)' : '/ 月';
-                durationEn.textContent = isAnnual ? '/ mo (Annually)' : '/ mo';
+                // 上下段レイアウトに合わせた単位テキストの書き換え
+                durationJa.textContent = isAnnual ? '月額（年一括払い）' : '月額';
+                durationEn.textContent = isAnnual ? 'per month, billed annually' : 'per month';
                 
                 // 3. 最後に、アニメーション用のクラスを外して、再びふわっと表示（フェードイン）させる
                 priceElement.classList.remove('price-animating');
