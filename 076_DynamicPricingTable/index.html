@@ -31,7 +31,7 @@
                 <div class="card-header">
                     <h2 class="plan-name">Basic</h2>
                     <div class="plan-price-wrapper">
-                        <!-- 金額エリア：右横のテキストが伸びても金額数字が1pxもズレないよう、CSS Gridで幅を完全に固定したコンテナ -->
+                        <!-- 金額エリア：Flexboxとbaselineで横並びにし、各要素の幅を固定 -->
                         <div class="plan-price-container">
                             <div class="price-left">¥</div>
                             <div class="price-center">
@@ -74,7 +74,7 @@
                 <button class="cta-button secondary" onclick="alert('Basic プランを選択しました')">無料で始める / Start for Free</button>
             </div>
 
-            <!-- ====== PRO PLAN (Popular: 上に飛び出し、枠線が目立つデザイン) ====== -->
+            <!-- ====== PRO PLAN (Popular) ====== -->
             <div class="pricing-card popular">
                 <div class="popular-badge">一番人気 / Most Popular</div>
                 <div class="card-header">
