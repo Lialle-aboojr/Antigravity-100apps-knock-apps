@@ -31,15 +31,13 @@
                 <div class="card-header">
                     <h2 class="plan-name">Basic</h2>
                     <div class="plan-price-wrapper">
-                        <!-- 金額エリア：Flexboxとbaselineで横並びにし、各要素の幅を固定 -->
-                        <div class="plan-price-container">
-                            <div class="price-left">¥</div>
-                            <div class="price-center">
-                                <span class="price-number" id="price-basic" data-monthly="1,900" data-annual="1,520">1,900</span>
-                            </div>
-                            <div class="price-right">
-                                <span class="duration-ja" id="duration-ja-basic">/ 月</span>
-                                <span class="duration-en" id="duration-en-basic">/ mo</span>
+                        <!-- 厳格なFlexboxレイアウトによる金額エリア -->
+                        <div class="price-container">
+                            <span class="currency">¥</span>
+                            <span class="amount" id="price-basic" data-monthly="1,900" data-annual="1,520">1,900</span>
+                            <div class="period-box">
+                                <span class="period-jp" id="duration-ja-basic">/ 月</span>
+                                <span class="period-en" id="duration-en-basic">/ mo</span>
                             </div>
                         </div>
                     </div>
@@ -80,15 +78,13 @@
                 <div class="card-header">
                     <h2 class="plan-name">Pro</h2>
                     <div class="plan-price-wrapper">
-                        <!-- 金額エリア：ズレ防止コンテナ -->
-                        <div class="plan-price-container">
-                            <div class="price-left">¥</div>
-                            <div class="price-center">
-                                <span class="price-number" id="price-pro" data-monthly="4,900" data-annual="3,920">4,900</span>
-                            </div>
-                            <div class="price-right">
-                                <span class="duration-ja" id="duration-ja-pro">/ 月</span>
-                                <span class="duration-en" id="duration-en-pro">/ mo</span>
+                        <!-- 厳格なFlexboxレイアウトによる金額エリア -->
+                        <div class="price-container">
+                            <span class="currency">¥</span>
+                            <span class="amount" id="price-pro" data-monthly="4,900" data-annual="3,920">4,900</span>
+                            <div class="period-box">
+                                <span class="period-jp" id="duration-ja-pro">/ 月</span>
+                                <span class="period-en" id="duration-en-pro">/ mo</span>
                             </div>
                         </div>
                     </div>
@@ -133,15 +129,13 @@
                 <div class="card-header">
                     <h2 class="plan-name">Enterprise</h2>
                     <div class="plan-price-wrapper">
-                        <!-- 金額エリア：ズレ防止コンテナ -->
-                        <div class="plan-price-container">
-                            <div class="price-left">¥</div>
-                            <div class="price-center">
-                                <span class="price-number" id="price-enterprise" data-monthly="9,900" data-annual="7,920">9,900</span>
-                            </div>
-                            <div class="price-right">
-                                <span class="duration-ja" id="duration-ja-enterprise">/ 月</span>
-                                <span class="duration-en" id="duration-en-enterprise">/ mo</span>
+                        <!-- 厳格なFlexboxレイアウトによる金額エリア -->
+                        <div class="price-container">
+                            <span class="currency">¥</span>
+                            <span class="amount" id="price-enterprise" data-monthly="9,900" data-annual="7,920">9,900</span>
+                            <div class="period-box">
+                                <span class="period-jp" id="duration-ja-enterprise">/ 月</span>
+                                <span class="period-en" id="duration-en-enterprise">/ mo</span>
                             </div>
                         </div>
                     </div>
