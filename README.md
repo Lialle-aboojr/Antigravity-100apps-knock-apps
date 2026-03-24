@@ -86,13 +86,14 @@ Complete it. Ship it. Relax. ☕
 | 073 | 🌸 Edo Breakout | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/073_EdoBreakout/index.html) |
 | 074 | 📝 Live Markdown Editor | [▶ Demo](https://074-live-markdown-editor.vercel.app/) |
 | 075 | 🎥 SimpleScreenRecorder | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/075_SimpleScreenRecorder/index.html) |
+| 076 | 💳 Simple Pricing Table | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/076_DynamicPricingTable/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 75 / 100 ███████████████░░░░░ 75%
+完成: 76 / 100 ███████████████░░░░░ 76%
 ```
 
 ---
