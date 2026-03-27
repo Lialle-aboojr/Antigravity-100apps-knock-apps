@@ -23,12 +23,25 @@ const COLORS = [
   '#ec4899', // Pink
 ];
 
+// LocalStorageからデータを同期的に初期化する関数（リロード時のバグ対策）
+const initTasks = () => {
+  if (typeof window !== 'undefined') {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        return { tasks: JSON.parse(saved) };
+      } catch (e) {
+        console.error('Failed to parse saved tasks', e);
+      }
+    }
+  }
+  return { tasks: [] };
+};
+
 // Reducer関数の定義
 // 状態管理を一元化し、アクションに応じて状態を更新します。
 function taskReducer(state, action) {
   switch (action.type) {
-    case 'LOAD_TASKS':
-      return { ...state, tasks: action.payload };
     case 'ADD_TASK':
       return { 
         ...state, 
@@ -51,6 +64,18 @@ function taskReducer(state, action) {
             : task
         )
       };
+    case 'DUPLICATE_TASK': {
+      const taskToDuplicate = state.tasks.find(t => t.id === action.payload.taskId);
+      if (!taskToDuplicate) return state;
+      const duplicatedTask = {
+        ...taskToDuplicate,
+        id: Date.now().toString() // 新しい一意のIDを付与
+      };
+      return {
+        ...state,
+        tasks: [...state.tasks, duplicatedTask]
+      };
+    }
     case 'DELETE_TASK':
       return {
         ...state,
@@ -62,26 +87,15 @@ function taskReducer(state, action) {
 }
 
 function App() {
-  const [state, dispatch] = useReducer(taskReducer, { tasks: [] });
+  // useReducerの第3引数で初回マウント時に確実に復元する
+  const [state, dispatch] = useReducer(taskReducer, undefined, initTasks);
   const [inputValue, setInputValue] = useState('');
   const [selectedColor, setSelectedColor] = useState(COLORS[4]); // Default: Violet
   const [draggedTaskId, setDraggedTaskId] = useState(null);
   const [dragOverColumn, setDragOverColumn] = useState(null);
 
-  // 初回レンダリング時にローカルストレージからデータを読み込む
-  useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        dispatch({ type: 'LOAD_TASKS', payload: parsed });
-      } catch (e) {
-        console.error('Failed to parse saved tasks', e);
-      }
-    }
-  }, []);
-
   // state.tasks が更新されるたびにローカルストレージへ保存する
+  // （マウント時の初期化は済んでいるため上書きバグが発生しない）
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state.tasks));
   }, [state.tasks]);
@@ -154,15 +168,9 @@ function App() {
         <div className="title-section">
           <h1>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="4" width="18" height="16" rx="2" stroke="url(#gradient)" strokeWidth="2"/>
-              <path d="M8 9L12 13L16 9" stroke="url(#gradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <line x1="8" y1="15" x2="16" y2="15" stroke="url(#gradient)" strokeWidth="2" strokeLinecap="round"/>
-              <defs>
-                <linearGradient id="gradient" x1="3" y1="4" x2="21" y2="20" gradientUnits="userSpaceOnUse">
-                  <stop stopColor="#e2e8f0"/>
-                  <stop offset="1" stopColor="#8b5cf6"/>
-                </linearGradient>
-              </defs>
+              <rect x="3" y="4" width="18" height="16" rx="2" stroke="#8b5cf6" strokeWidth="2"/>
+              <path d="M8 9L12 13L16 9" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <line x1="8" y1="15" x2="16" y2="15" stroke="#8b5cf6" strokeWidth="2" strokeLinecap="round"/>
             </svg>
             Weekly Routine Planner
           </h1>
@@ -171,7 +179,7 @@ function App() {
       </header>
 
       {/* タスク作成フォーム */}
-      <form className="task-form glass-panel" onSubmit={handleAddTask}>
+      <form className="task-form neumo-panel" onSubmit={handleAddTask}>
         <input 
           type="text" 
           className="task-input"
@@ -205,7 +213,7 @@ function App() {
           const isDragOver = dragOverColumn === column.id;
           
           return (
-            <div className="column glass-panel" key={column.id}>
+            <div className="column neumo-panel" key={column.id}>
               <div className="column-header">
                 <div className="column-title">
                   {column.en}
@@ -228,7 +236,7 @@ function App() {
                 {columnTasks.map(task => (
                   <div 
                     key={task.id}
-                    className={`task-card ${draggedTaskId === task.id ? 'dragging' : ''}`}
+                    className={`task-card neumo-card ${draggedTaskId === task.id ? 'dragging' : ''}`}
                     draggable
                     onDragStart={(e) => handleDragStart(e, task.id)}
                     onDragEnd={handleDragEnd}
@@ -239,16 +247,30 @@ function App() {
                     />
                     <div className="task-header">
                       <span className="task-title">{task.title}</span>
-                      <button 
-                        className="task-delete"
-                        onClick={() => dispatch({ type: 'DELETE_TASK', payload: { taskId: task.id } })}
-                        title="削除 / Delete"
-                      >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <path d="M3 6h18"></path>
-                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                      </button>
+                      <div className="task-actions">
+                        {/* 複製機能ボタン */}
+                        <button 
+                          className="task-action-btn"
+                          onClick={() => dispatch({ type: 'DUPLICATE_TASK', payload: { taskId: task.id } })}
+                          title="複製 / Duplicate"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                          </svg>
+                        </button>
+                        {/* 削除ボタン */}
+                        <button 
+                          className="task-action-btn task-delete"
+                          onClick={() => dispatch({ type: 'DELETE_TASK', payload: { taskId: task.id } })}
+                          title="削除 / Delete"
+                        >
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
