@@ -1,0 +1,260 @@
+/* =========================================================
+   Interactive Ripple (波紋エフェクト)
+   Style Sheet
+========================================================= */
+
+/* 基本設定 */
+:root {
+  --bg-color: #0f172a;        /* ダークネイビーの背景 */
+  --text-primary: #e2e8f0;    /* 薄いグレーのテキスト */
+  --text-secondary: #94a3b8;  /* さらに薄いグレー */
+  --glass-bg: rgba(255, 255, 255, 0.05); /* ガラスパネルの基本背景色 */
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --accent-color: #0ea5e9;    /* シアン系のアクセント */
+  --accent-hover: #38bdf8;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* スクロールバー非表示 */
+  background-color: var(--bg-color);
+  font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  color: var(--text-primary);
+  user-select: none; /* テキスト選択を無効化 */
+}
+
+/* =========================================================
+   キャンバス 
+========================================================= */
+#rippleCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1; /* パネルの後ろ・背景の全面 */
+  display: block;
+}
+
+/* =========================================================
+   Glassmorphism 設定パネル 
+========================================================= */
+.glass-panel {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  width: 320px;
+  max-width: calc(100vw - 48px);
+  z-index: 10;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px); /* Safari対応 */
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3); /* 深みのある影 */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  pointer-events: auto; /* イベントを受け取る */
+}
+
+header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+header p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* =========================================================
+   コントロールグループとラベル
+========================================================= */
+.control-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.box-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+
+.ja {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.en {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+/* =========================================================
+   トグルスイッチ (Toggle Switch)
+========================================================= */
+.toggle-switch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 12px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.2);
+  transition: .4s;
+  border-radius: 24px;
+  flex-shrink: 0;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+input:checked + .slider {
+  background-color: var(--accent-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+.label-text {
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================================
+   Glassmorphism インプット要素 (Select / Range)
+========================================================= */
+.glass-input {
+  width: 100%;
+  appearance: none;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  border-radius: 8px;
+  outline: none;
+  padding: 10px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+
+.glass-input:focus {
+  border-color: var(--accent-color);
+}
+
+/* セレクトボックスの矢印カスタマイズ用 */
+select.glass-input {
+  padding-right: 32px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e2e8f0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-reverse;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+select.glass-input option {
+  background-color: var(--bg-color); /* Glassmorphismはoptionには効きにくいので背景色指定 */
+  color: var(--text-primary);
+}
+
+/* スライダー (Range) ガイドレールとツマミのカスタマイズ */
+input[type=range].glass-input {
+  padding: 0;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent-color);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.5);
+  transition: transform 0.1s;
+}
+
+input[type=range]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* =========================================================
+   ガイドテキスト
+========================================================= */
+.guide-text {
+  margin-top: 32px;
+  text-align: center;
+  border-top: 1px solid var(--glass-border);
+  padding-top: 16px;
+}
+
+.guide-text p {
+  font-size: 0.8rem;
+  margin-bottom: 4px;
+}
+.guide-text p.en {
+  font-size: 0.7rem;
+}
+
+/* =========================================================
+   レスポンシブ対応
+========================================================= */
+@media (max-width: 600px) {
+  .glass-panel {
+    top: auto;
+    bottom: 0;
+    right: 0;
+    width: 100vw;
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+  }
+}

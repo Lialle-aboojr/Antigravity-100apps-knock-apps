@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Ripple | 波紋エフェクト</title>
+  <link rel="icon" id="favicon" href="favicon.png" type="image/png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 背景用のCanvas -->
+  <canvas id="rippleCanvas"></canvas>
+
+  <!-- 設定パネル（Glassmorphismデザイン） -->
+  <aside id="settingsPanel" class="glass-panel">
+    <header>
+      <h1>Interactive Ripple</h1>
+      <p>波紋エフェクト / Canvas API</p>
+    </header>
+
+    <div class="control-group">
+      <label class="toggle-switch">
+        <input type="checkbox" id="autoModeToggle">
+        <span class="slider round"></span>
+        <span class="label-text">
+          <span class="ja">自動モード</span>
+          <span class="en">Auto Rain Mode</span>
+        </span>
+      </label>
+    </div>
+
+    <div class="control-group">
+      <label class="toggle-switch">
+        <input type="checkbox" id="soundToggle">
+        <span class="slider round"></span>
+        <span class="label-text">
+          <span class="ja">雨音エフェクト</span>
+          <span class="en">Raindrop Sound</span>
+        </span>
+      </label>
+    </div>
+
+    <div class="control-group">
+      <label for="colorSelect" class="box-label">
+        <span class="ja">波紋の色</span>
+        <span class="en">Ripple Color</span>
+      </label>
+      <select id="colorSelect" class="glass-input">
+        <option value="cyan" selected>Cyan (シアン)</option>
+        <option value="blue">Deep Blue (ディープブルー)</option>
+        <option value="white">Ghost White (ホワイト)</option>
+        <option value="random">Random (ランダム)</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label for="speedSlider" class="box-label">
+        <span class="ja">広がる速度</span>
+        <span class="en">Expansion Speed</span>
+      </label>
+      <input type="range" id="speedSlider" min="1" max="10" value="4" class="glass-input">
+    </div>
+
+    <div class="guide-text">
+      <p class="ja">画面をクリックすると波紋が広がります。</p>
+      <p class="en">Click anywhere to create a ripple.</p>
+    </div>
+  </aside>
+
+  <script src="script.js"></script>
+</body>
+</html>
