@@ -89,13 +89,14 @@ Complete it. Ship it. Relax. ☕
 | 076 | 💳 Simple Pricing Table | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/076_DynamicPricingTable/index.html) |
 | 077 | 🎛️ Morphism UI Lab | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/077_MorphismUiLab/index.html) |
 | 078 | 💧 Interactive Ripple | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/078_InteractiveRipple/index.html) |
+| 079 | 📅 Weekly Routine Planner | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/079_WeeklyRoutinePlanner/dist/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 78 / 100 ███████████████▋░░░░ 78%
+完成: 79 / 100 ███████████████▉░░░░ 79%
 ```
 
 ---
