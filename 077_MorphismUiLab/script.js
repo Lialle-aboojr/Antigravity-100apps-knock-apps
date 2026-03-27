@@ -45,7 +45,7 @@ let currentStyle = 'neumorphism';
 function init() {
   bindEvents();
   applyStyleTheme(currentStyle);
-  updateAllVariables();
+  updateAllVariables(); // Ensure initial values pass properly to CSS root
 }
 
 // --- Events Binding ---
@@ -61,13 +61,15 @@ function bindEvents() {
   });
 
   // Slider and Color Picker events
+  // Attaching to both 'input' and 'change' handles drag in real-time reliably
   Object.keys(inputs).forEach(key => {
     const el = inputs[key];
-    const updateHandler = (e) => {
+    el.addEventListener('input', (e) => {
       updateSingleVariable(key, e.target.value);
-    };
-    el.addEventListener('input', updateHandler);
-    el.addEventListener('change', updateHandler);
+    });
+    el.addEventListener('change', (e) => {
+      updateSingleVariable(key, e.target.value);
+    });
   });
 
   // Copy CSS Action
@@ -101,17 +103,18 @@ function applyStyleTheme(style) {
   } else if (style === 'flat') {
     groups.blur.style.display = 'none';
     groups.opacity.style.display = 'none';
-    groups.intensity.style.display = 'none'; // Flat has no shadow
+    groups.intensity.style.display = 'none'; 
     blobs.style.display = 'none';
   } else {
     // Neumorphism & Claymorphism
     groups.blur.style.display = 'none';
     groups.opacity.style.display = 'none';
-    groups.intensity.style.display = 'block';
+    groups.intensity.style.display = 'flex'; // Changed to flex to preserve layout
     blobs.style.display = 'none';
   }
 }
 
+// Update single CSS custom property on the Document Root
 function updateSingleVariable(key, value) {
   let unit = '';
   if (['shadowDist', 'blur', 'borderRadius'].includes(key)) unit = 'px';
@@ -119,16 +122,21 @@ function updateSingleVariable(key, value) {
 
   vals[key].textContent = value + unit;
   
+  // Transform camelCase keys to kebab-case CSS vars (e.g. shadowDist -> --shadow-dist)
   const cssProp = '--' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
+  
+  // Write the variable reliably to root
   root.style.setProperty(cssProp, value + unit);
 }
 
+// Run through all inputs entirely once
 function updateAllVariables() {
   Object.keys(inputs).forEach(key => {
     updateSingleVariable(key, inputs[key].value);
   });
 }
 
+// Make sure users input doesn't inject scripts when reflecting inside a tool area.
 function sanitizeInput(el) {
   const map = {
     '&': '&amp;',
@@ -197,6 +205,7 @@ function generateAndCopyCSS() {
 }`;
   }
 
+  // Fallback support for copying CSS securely
   navigator.clipboard.writeText(cssOutput).then(() => {
     showToast();
   }).catch(err => {
@@ -212,4 +221,5 @@ function showToast() {
   }, 2500);
 }
 
+// Kick off immediately. 
 init();

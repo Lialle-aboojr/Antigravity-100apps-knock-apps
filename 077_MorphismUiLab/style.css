@@ -8,18 +8,13 @@
   --accent: #3b82f6;
   --accent-hover: #2563eb;
 
+  /* These default variables will be continually overridden by JS */
   --base-color: #e0e5ec;
   --shadow-dist: 8px;
   --shadow-intensity: 12%;
   --blur: 10px;
   --opacity: 40%;
   --border-radius: 16px;
-
-  --light-shadow: color-mix(in srgb, var(--base-color), white calc(var(--shadow-intensity) * 4));
-  --dark-shadow: color-mix(in srgb, var(--base-color), black var(--shadow-intensity));
-  --glass-bg: color-mix(in srgb, var(--base-color), transparent calc(100% - var(--opacity)));
-  --glass-border: color-mix(in srgb, white, transparent 50%);
-  --clay-highlight: color-mix(in srgb, var(--base-color), white 80%);
 }
 
 * {
@@ -32,7 +27,7 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text-primary);
   background-color: var(--base-color);
-  overflow: hidden; /* Compact, app-like 1 screen */
+  overflow: hidden; /* App like 1 screen if possible */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -91,7 +86,7 @@ body {
 .segment-btn {
   border: none;
   background: transparent;
-  padding: 8px 6px;
+  padding: 10px 6px;
   border-radius: 8px;
   cursor: pointer;
   font-family: inherit;
@@ -104,6 +99,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
 }
 .segment-btn span {
   font-size: 0.55rem;
@@ -143,12 +139,16 @@ body {
 /* Beautiful Color Picker */
 .color-picker-wrapper {
   width: 100%;
-  height: 36px;
+  height: 38px;
   border-radius: 8px;
   overflow: hidden;
   border: 1px solid var(--panel-border);
   position: relative;
   background: #fff;
+  transition: border-color 0.2s;
+}
+.color-picker-wrapper:hover {
+  border-color: var(--accent);
 }
 input[type="color"] {
   position: absolute;
@@ -165,18 +165,19 @@ input[type="color"] {
 input[type="range"] {
   width: 100%;
   cursor: pointer;
-  height: 4px;
+  height: 6px;
   background: #cbd5e1;
   border-radius: 4px;
   appearance: none;
 }
 input[type="range"]::-webkit-slider-thumb {
   appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   background: var(--accent);
   border-radius: 50%;
   cursor: pointer;
+  box-shadow: 0 0 4px rgba(0,0,0,0.2);
   transition: transform 0.1s;
 }
 input[type="range"]::-webkit-slider-thumb:hover {
@@ -207,10 +208,15 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .copy-section {
   margin-top: auto;
 }
+.app-footer {
+  margin-top: auto;
+  padding-top: 10px;
+}
 .app-footer p {
   font-size: 0.65rem;
   font-weight: 500;
   color: var(--text-light);
+  line-height: 1.4;
   text-align: center;
 }
 
@@ -258,15 +264,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
 /* Layout Grid */
 .components-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
   align-items: stretch;
 }
 .span-2-col {
   grid-column: span 2;
-}
-@media (max-width: 900px) {
-  .span-2-col { grid-column: span 1; }
 }
 
 /* Common Morphism Transition */
@@ -280,29 +283,42 @@ input[type="range"]::-webkit-slider-thumb:hover {
   padding: 24px 20px;
   display: flex;
   flex-direction: column;
+  height: 100%; /* Important for stretching correctly in grid */
 }
 .card-label {
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.15em;
   color: var(--text-secondary);
   opacity: 0.8;
-  margin-bottom: 20px;
+  margin-bottom: auto; /* push content down */
+  padding-bottom: 20px;
+  line-height: 1.4;
+}
+.card-label span {
+  font-size: 0.6rem;
+  letter-spacing: 0;
+  display: inline-block;
+  opacity: 0.8;
 }
 
 /* Utilities inside cards */
-.flex-row {
+.component-wrapper {
+  flex: 1; /* take remaining height */
   display: flex;
-  gap: 16px;
-  align-items: center;
+  width: 100%;
 }
-.flex-row.compact { gap: 10px; }
-.center-all { justify-content: center; }
+.flex-row { display: flex; gap: 16px; }
+.flex-col { display: flex; flex-direction: column; }
+.center-all { justify-content: center; align-items: center; }
 .space-between { justify-content: space-between; }
 .space-around { justify-content: space-around; }
-.flex-1 { flex: 1; display: flex; }
-.mt-2 { margin-top: 12px; }
+.align-center { align-items: center; }
+.flex-1 { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.w-full { width: 100%; }
 .mt-4 { margin-top: 24px; }
+.mr-4 { margin-right: 24px; }
+
 .sub-label {
   font-size: 0.7rem;
   font-weight: 700;
@@ -319,6 +335,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 .icon-btn.small-icon {
   width: 40px;
@@ -340,6 +357,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
   cursor: pointer;
   font-family: inherit;
   color: inherit;
+  width: auto;
+  max-width: 100%;
 }
 .small-btn {
   padding: 8px 16px;
@@ -380,7 +399,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* Player & Progress */
 .player-controls {
-  justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-center;
+  gap: 12px;
+  width: 100%;
+  padding: 0 10px;
 }
 .progress-track {
   width: 100%;
@@ -394,7 +418,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
   border-radius: inherit;
   transition: width 0.3s;
 }
-
 .slider-percentage {
   text-align: center;
   font-size: 0.9rem;
@@ -409,6 +432,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   position: relative;
   cursor: pointer;
   border-radius: 100px; 
+  flex-shrink: 0;
 }
 .toggle-knob {
   width: 20px;
@@ -425,13 +449,15 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 /* Card Content Text */
-.card-content {
-  align-items: center;
+.card-content-wrapper {
+  justify-content: space-between;
+  width: 100%;
 }
 .card-title {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 700;
   margin-bottom: 4px;
+  line-height: 1.3;
 }
 .card-desc {
   font-size: 0.75rem;
@@ -441,6 +467,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 
 /* ==========================================================
    Morphism Themes Implementation
+   (Dynamically relying completely on explicit CSS logic set from JS)
    ========================================================== */
 
 /* 1. Neumorphism */
@@ -451,9 +478,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background-color: var(--base-color);
   border-radius: var(--border-radius);
   border: none;
+  /* Box shadow set by JS will apply dynamically correctly without Safari computations failing. */
   box-shadow: 
-    var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 2) var(--dark-shadow),
-    calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 2) var(--light-shadow);
+    var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 2) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
+    calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 2) color-mix(in srgb, var(--base-color), white calc(var(--shadow-intensity) * 4));
 }
 .preview-area[data-theme="neumorphism"] .btn:active,
 .preview-area[data-theme="neumorphism"] .icon-btn:active,
@@ -461,14 +489,15 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .preview-area[data-theme="neumorphism"] .toggle,
 .preview-area[data-theme="neumorphism"] .progress-track {
   box-shadow: 
-    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 2) var(--dark-shadow),
-    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 2) var(--light-shadow);
+    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 2) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
+    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 2) color-mix(in srgb, var(--base-color), white calc(var(--shadow-intensity) * 4));
 }
 .preview-area[data-theme="neumorphism"] .toggle-knob {
   box-shadow: 
-    calc(var(--shadow-dist)*0.5) calc(var(--shadow-dist)*0.5) var(--shadow-dist) var(--dark-shadow),
-    calc(var(--shadow-dist)*-0.5) calc(var(--shadow-dist)*-0.5) var(--shadow-dist) var(--light-shadow);
+    calc(var(--shadow-dist)*0.5) calc(var(--shadow-dist)*0.5) var(--shadow-dist) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
+    calc(var(--shadow-dist)*-0.5) calc(var(--shadow-dist)*-0.5) var(--shadow-dist) color-mix(in srgb, var(--base-color), white calc(var(--shadow-intensity) * 4));
 }
+/* Consistent curves override */
 .preview-area[data-theme="neumorphism"] .toggle,
 .preview-area[data-theme="neumorphism"] .toggle-knob,
 .preview-area[data-theme="neumorphism"] .progress-track,
@@ -481,12 +510,12 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: linear-gradient(135deg, #e0e5ec 0%, #ffffff 100%);
 }
 .preview-area[data-theme="glassmorphism"] .morphism-element {
-  background: var(--glass-bg);
+  background: color-mix(in srgb, var(--base-color), transparent calc(100% - var(--opacity)));
   backdrop-filter: blur(var(--blur));
   -webkit-backdrop-filter: blur(var(--blur));
   border-radius: var(--border-radius);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05); /* very soft shadow */
+  border: 1px solid color-mix(in srgb, white, transparent 50%);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
 }
 .preview-area[data-theme="glassmorphism"] .btn:active,
 .preview-area[data-theme="glassmorphism"] .icon-btn:active {
@@ -510,22 +539,22 @@ input[type="range"]::-webkit-slider-thumb:hover {
   border: none;
   box-shadow: 
     calc(var(--shadow-dist) * 0.8) calc(var(--shadow-dist) * 0.8) calc(var(--shadow-dist) * 1.2) rgba(0,0,0,0.08),
-    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) var(--dark-shadow),
-    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.2) var(--clay-highlight);
+    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
+    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.2) color-mix(in srgb, var(--base-color), white 80%);
 }
 .preview-area[data-theme="claymorphism"] .btn:active,
 .preview-area[data-theme="claymorphism"] .icon-btn:active {
   box-shadow: 
     0px 0px 0px rgba(0,0,0,0),
-    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) var(--dark-shadow),
-    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.2) var(--clay-highlight);
+    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
+    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.2) color-mix(in srgb, var(--base-color), white 80%);
   transform: scale(0.96);
 }
 .preview-area[data-theme="claymorphism"] .input-wrapper,
 .preview-area[data-theme="claymorphism"] .progress-track {
   box-shadow: 
-    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.5) var(--dark-shadow),
-    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) var(--clay-highlight);
+    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.5) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
+    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) color-mix(in srgb, var(--base-color), white 80%);
 }
 .preview-area[data-theme="claymorphism"] .toggle,
 .preview-area[data-theme="claymorphism"] .toggle-knob,
@@ -534,7 +563,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .preview-area[data-theme="claymorphism"] .input-wrapper.round-full { border-radius: 100px; }
 .preview-area[data-theme="claymorphism"] .icon-btn { border-radius: 50%; }
 
-
 /* 4. Flat Design */
 .preview-area[data-theme="flat"] {
   background-color: var(--panel-bg);
@@ -542,10 +570,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .preview-area[data-theme="flat"] .morphism-element {
   background-color: var(--base-color);
   border-radius: var(--border-radius);
-  border: 1px solid color-mix(in srgb, var(--base-color), black 10%); /* Subtle flat border */
-  box-shadow: none;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  border: 1px solid color-mix(in srgb, var(--base-color), black 10%);
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 .preview-area[data-theme="flat"] .btn:active,
 .preview-area[data-theme="flat"] .icon-btn:active {
@@ -590,9 +618,18 @@ input[type="range"]::-webkit-slider-thumb:hover {
   opacity: 1;
 }
 
-@media (max-width: 800px) {
-  .layout { flex-direction: column; overflow: auto; }
-  .control-panel { width: 100%; height: auto; border-right: none; padding: 20px; }
-  .preview-area { height: auto; padding: 20px; overflow: visible; }
+/* Response Fixes */
+@media (max-width: 900px) {
+  .span-2-col { grid-column: span 1; }
+  .span-2-mobile { grid-column: span 2; } /* Keep media player wide on tablets if grid allows */
+}
+
+@media (max-width: 768px) {
+  .layout { flex-direction: column; overflow: auto; height: auto; }
+  .control-panel { width: 100%; height: auto; border-right: none; padding: 24px 20px; box-shadow: none; border-bottom: 1px solid var(--panel-border); }
+  .preview-area { height: auto; min-height: 100vh; overflow: visible; padding: 24px 16px; }
   body { overflow: auto; }
+  .components-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .span-2-mobile { grid-column: span 1; } 
+  .player-controls { gap: 8px; }
 }

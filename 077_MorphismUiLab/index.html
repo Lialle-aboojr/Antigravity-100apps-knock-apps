@@ -93,7 +93,7 @@
       </section>
 
       <footer class="app-footer">
-        <p>Inputs are securely sanitized. / 入力値はサニタイズされます。</p>
+        <p>Inputs are securely sanitized.<br>入力値はサニタイズされます。</p>
       </footer>
     </aside>
 
@@ -110,29 +110,31 @@
           
           <!-- ICON BUTTONS -->
           <div class="morphism-element grid-card">
-            <h3 class="card-label">ICON BUTTONS / アイコンボタン</h3>
-            <div class="flex-row">
-              <button class="morphism-element icon-btn">
-                <span class="material-icons-round">add</span>
-              </button>
-              <button class="morphism-element icon-btn">
-                <span class="material-icons-round">remove</span>
-              </button>
+            <h3 class="card-label">ICON BUTTONS<br><span>アイコンボタン</span></h3>
+            <div class="component-wrapper center-all">
+              <div class="flex-row">
+                <button class="morphism-element icon-btn">
+                  <span class="material-icons-round">add</span>
+                </button>
+                <button class="morphism-element icon-btn">
+                  <span class="material-icons-round">remove</span>
+                </button>
+              </div>
             </div>
           </div>
 
           <!-- BUTTONS -->
           <div class="morphism-element grid-card">
-            <h3 class="card-label">BUTTONS / ボタン</h3>
-            <div class="flex-row center-all flex-1">
-              <button class="morphism-element btn">Button</button>
+            <h3 class="card-label">BUTTONS<br><span>ボタン</span></h3>
+            <div class="component-wrapper center-all">
+              <button class="morphism-element btn">Button / ボタン</button>
             </div>
           </div>
 
           <!-- SEARCH -->
           <div class="morphism-element grid-card">
-            <h3 class="card-label">SEARCH / 検索</h3>
-            <div class="flex-row center-all flex-1">
+            <h3 class="card-label">SEARCH<br><span>検索</span></h3>
+            <div class="component-wrapper center-all">
               <div class="morphism-element input-wrapper round-full">
                 <span class="material-icons-round input-icon">search</span>
                 <input type="text" class="inner-input" placeholder="Search..." oninput="sanitizeInput(this)">
@@ -142,8 +144,8 @@
 
           <!-- INPUT -->
           <div class="morphism-element grid-card">
-            <h3 class="card-label">INPUT / 入力</h3>
-            <div class="flex-row center-all flex-1">
+            <h3 class="card-label">INPUT<br><span>入力</span></h3>
+            <div class="component-wrapper center-all">
               <div class="morphism-element input-wrapper">
                 <span class="material-icons-round input-icon">mail_outline</span>
                 <input type="email" class="inner-input" placeholder="E-mail" oninput="sanitizeInput(this)">
@@ -152,42 +154,44 @@
           </div>
 
           <!-- MEDIA PLAYER -->
-          <div class="morphism-element grid-card">
-            <h3 class="card-label">MEDIA PLAYER / メディアプレーヤー</h3>
-            <div class="flex-row compact space-between player-controls">
-              <button class="morphism-element icon-btn small-icon">
-                <span class="material-icons-round">skip_previous</span>
-              </button>
-              <button class="morphism-element icon-btn play-icon">
-                <span class="material-icons-round">play_arrow</span>
-              </button>
-              <button class="morphism-element icon-btn small-icon">
-                <span class="material-icons-round">pause</span>
-              </button>
-              <button class="morphism-element icon-btn small-icon">
-                <span class="material-icons-round">skip_next</span>
-              </button>
-            </div>
-            <div class="morphism-element progress-track mt-4">
-              <div class="progress-fill" style="width: 35%;"></div>
+          <div class="morphism-element grid-card span-2-mobile">
+            <h3 class="card-label">MEDIA PLAYER<br><span>メディアプレーヤー</span></h3>
+            <div class="component-wrapper center-all flex-col w-full">
+              <div class="player-controls">
+                <button class="morphism-element icon-btn small-icon">
+                  <span class="material-icons-round">skip_previous</span>
+                </button>
+                <button class="morphism-element icon-btn play-icon">
+                  <span class="material-icons-round">play_arrow</span>
+                </button>
+                <button class="morphism-element icon-btn small-icon">
+                  <span class="material-icons-round">pause</span>
+                </button>
+                <button class="morphism-element icon-btn small-icon">
+                  <span class="material-icons-round">skip_next</span>
+                </button>
+              </div>
+              <div class="morphism-element progress-track mt-4">
+                <div class="progress-fill" style="width: 35%;"></div>
+              </div>
             </div>
           </div>
 
           <!-- SLIDER -->
           <div class="morphism-element grid-card">
-            <h3 class="card-label">SLIDER / スライダー</h3>
-            <div class="flex-row center-all mt-2">
+            <h3 class="card-label">SLIDER<br><span>スライダー</span></h3>
+            <div class="component-wrapper center-all flex-col w-full">
               <div class="morphism-element progress-track">
                 <div class="progress-fill" style="width: 41%;"></div>
               </div>
+              <p class="slider-percentage">41%</p>
             </div>
-            <p class="slider-percentage">41%</p>
           </div>
 
           <!-- TOGGLE -->
           <div class="morphism-element grid-card">
-            <h3 class="card-label">TOGGLE / トグル</h3>
-            <div class="flex-row center-all flex-1 space-around">
+            <h3 class="card-label">TOGGLE<br><span>トグル</span></h3>
+            <div class="component-wrapper center-all flex-row space-around w-full">
               <span class="sub-label">OFF</span>
               <div class="morphism-element toggle" id="preview-toggle" role="switch" aria-checked="false" tabindex="0">
                 <div class="morphism-element toggle-knob"></div>
@@ -198,15 +202,13 @@
 
           <!-- CARD / TEXT CONTENT -->
           <div class="morphism-element grid-card span-2-col">
-            <h3 class="card-label">CARD / カード</h3>
-            <div class="card-content flex-row">
-              <div class="flex-1">
-                <h4 class="card-title">Card Title</h4>
-                <p class="card-desc">Sample content showing this morphism style in context. / モーフィズムのUIサンプルです。</p>
+            <h3 class="card-label">CARD<br><span>カード</span></h3>
+            <div class="component-wrapper card-content-wrapper flex-row space-between align-center">
+              <div class="flex-1 mr-4">
+                <h4 class="card-title">CARD TITLE / タイトル</h4>
+                <p class="card-desc">Short description here. / 短い説明文。</p>
               </div>
-              <div class="card-action">
-                <button class="morphism-element btn small-btn">Action</button>
-              </div>
+              <button class="morphism-element btn small-btn">Action / アクション</button>
             </div>
           </div>
 
