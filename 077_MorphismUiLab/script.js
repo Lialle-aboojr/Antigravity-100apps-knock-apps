@@ -38,6 +38,11 @@ const groups = {
   opacity: document.getElementById('opacity-group'),
 };
 
+// Interactive Preview Slider elements
+const previewRange = document.getElementById('preview-interactive-range');
+const previewFill = document.getElementById('preview-fill-elem');
+const previewVal = document.getElementById('preview-interactive-val');
+
 // State
 let currentStyle = 'neumorphism';
 
@@ -45,7 +50,7 @@ let currentStyle = 'neumorphism';
 function init() {
   bindEvents();
   applyStyleTheme(currentStyle);
-  updateAllVariables(); // Ensure initial values pass properly to CSS root
+  updateAllVariables(); // Evaluate everything explicitly on boot
 }
 
 // --- Events Binding ---
@@ -60,16 +65,22 @@ function bindEvents() {
     });
   });
 
-  // Slider and Color Picker events
-  // Attaching to both 'input' and 'change' handles drag in real-time reliably
+  // Main UI Sliders - both input and change for drag and drop reliable tracking
   Object.keys(inputs).forEach(key => {
     const el = inputs[key];
-    el.addEventListener('input', (e) => {
-      updateSingleVariable(key, e.target.value);
-    });
-    el.addEventListener('change', (e) => {
-      updateSingleVariable(key, e.target.value);
-    });
+    const triggerUpdate = () => {
+      updateSingleVariable(key, el.value);
+      updateDependentColors(); // Instantly calculate required colors safely in JS
+    };
+    el.addEventListener('input', triggerUpdate);
+    el.addEventListener('change', triggerUpdate);
+  });
+
+  // Interactive UI Preview Slider binding
+  previewRange.addEventListener('input', (e) => {
+    const val = e.target.value;
+    previewVal.textContent = val + '%';
+    previewFill.style.width = val + '%';
   });
 
   // Copy CSS Action
@@ -94,7 +105,6 @@ function applyStyleTheme(style) {
   currentStyle = style;
   previewArea.setAttribute('data-theme', style);
   
-  // Visibility toggles
   if (style === 'glassmorphism') {
     groups.blur.style.display = 'flex';
     groups.opacity.style.display = 'flex';
@@ -109,34 +119,51 @@ function applyStyleTheme(style) {
     // Neumorphism & Claymorphism
     groups.blur.style.display = 'none';
     groups.opacity.style.display = 'none';
-    groups.intensity.style.display = 'flex'; // Changed to flex to preserve layout
+    groups.intensity.style.display = 'flex'; 
     blobs.style.display = 'none';
   }
 }
 
-// Update single CSS custom property on the Document Root
 function updateSingleVariable(key, value) {
   let unit = '';
   if (['shadowDist', 'blur', 'borderRadius'].includes(key)) unit = 'px';
   if (['shadowIntensity', 'opacity'].includes(key)) unit = '%';
 
   vals[key].textContent = value + unit;
-  
-  // Transform camelCase keys to kebab-case CSS vars (e.g. shadowDist -> --shadow-dist)
   const cssProp = '--' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
-  
-  // Write the variable reliably to root
   root.style.setProperty(cssProp, value + unit);
 }
 
-// Run through all inputs entirely once
+// Critical fix: We generate the light/dark/glass mix outputs in Vanilla JS and attach them to root
+// This prevents older Safari / broken CSS nested calc bugs on `color-mix` with `var()` percentages.
+function updateDependentColors() {
+  const baseHEX = inputs.baseColor.value; // e.g. #e0e5ec
+  const intensity = inputs.shadowIntensity.value; // 0-100
+  const opacityInner = inputs.opacity.value; // 0-100
+
+  // Neumorphism/Claymorphism Dynamic Shadows using browser native color-mix support explicitly injected
+  const darkShadow = `color-mix(in srgb, ${baseHEX}, black ${intensity}%)`;
+  const lightShadow = `color-mix(in srgb, ${baseHEX}, white calc(${intensity}% * 4))`;
+  const clayHighlight = `color-mix(in srgb, ${baseHEX}, white 80%)`;
+  
+  // Glassmorphism overlays
+  const glassBg = `color-mix(in srgb, ${baseHEX}, transparent calc(100% - ${opacityInner}%))`;
+  const glassBorder = `color-mix(in srgb, white, transparent 50%)`;
+
+  root.style.setProperty('--dark-shadow', darkShadow);
+  root.style.setProperty('--light-shadow', lightShadow);
+  root.style.setProperty('--clay-highlight', clayHighlight);
+  root.style.setProperty('--glass-bg', glassBg);
+  root.style.setProperty('--glass-border', glassBorder);
+}
+
 function updateAllVariables() {
   Object.keys(inputs).forEach(key => {
     updateSingleVariable(key, inputs[key].value);
   });
+  updateDependentColors();
 }
 
-// Make sure users input doesn't inject scripts when reflecting inside a tool area.
 function sanitizeInput(el) {
   const map = {
     '&': '&amp;',
@@ -205,7 +232,7 @@ function generateAndCopyCSS() {
 }`;
   }
 
-  // Fallback support for copying CSS securely
+  // Support for copying CSS
   navigator.clipboard.writeText(cssOutput).then(() => {
     showToast();
   }).catch(err => {
@@ -221,5 +248,4 @@ function showToast() {
   }, 2500);
 }
 
-// Kick off immediately. 
 init();

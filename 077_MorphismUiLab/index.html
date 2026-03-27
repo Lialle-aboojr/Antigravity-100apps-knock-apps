@@ -18,7 +18,7 @@
         <p>GENERATE & TEST MODERN UI STYLES</p>
       </header>
 
-      <!-- 1. Style Selection (2x2 Grid Segment Control) -->
+      <!-- 1. Style Selection -->
       <section class="control-section">
         <h2 class="section-title">STYLE / スタイル</h2>
         <div class="segment-grid" id="style-tabs">
@@ -34,52 +34,52 @@
         <h2 class="section-title">PARAMETERS / パラメータ</h2>
         
         <div class="param-group">
-          <label for="base-color">
-            Base Color / ベースカラー
-            <span id="base-color-val" class="param-val">#e0e5ec</span>
-          </label>
+          <div class="param-header">
+            <label class="param-label" for="base-color">Base Color<br><span>ベースカラー</span></label>
+            <span class="param-val" id="base-color-val">#e0e5ec</span>
+          </div>
           <div class="color-picker-wrapper">
              <input type="color" id="base-color" value="#e0e5ec">
           </div>
         </div>
 
         <div class="param-group">
-          <label for="shadow-dist">
-            Shadow Distance / 影の距離
-            <span id="shadow-dist-val" class="param-val">8px</span>
-          </label>
+          <div class="param-header">
+            <label class="param-label" for="shadow-dist">Shadow Distance<br><span>影の距離</span></label>
+            <span class="param-val" id="shadow-dist-val">8px</span>
+          </div>
           <input type="range" id="shadow-dist" min="0" max="40" value="8">
         </div>
 
         <div class="param-group" id="intensity-group">
-          <label for="shadow-intensity">
-            Shadow Intensity / 影の濃淡
-            <span id="shadow-intensity-val" class="param-val">12%</span>
-          </label>
+          <div class="param-header">
+            <label class="param-label" for="shadow-intensity">Shadow Intensity<br><span>影の濃淡</span></label>
+            <span class="param-val" id="shadow-intensity-val">12%</span>
+          </div>
           <input type="range" id="shadow-intensity" min="0" max="100" value="12">
         </div>
 
         <div class="param-group" id="blur-group" style="display: none;">
-          <label for="blur">
-            Blur / ぼかし具合
-            <span id="blur-val" class="param-val">10px</span>
-          </label>
+          <div class="param-header">
+            <label class="param-label" for="blur">Blur<br><span>ぼかし具合</span></label>
+            <span class="param-val" id="blur-val">10px</span>
+          </div>
           <input type="range" id="blur" min="0" max="50" value="10">
         </div>
 
         <div class="param-group" id="opacity-group" style="display: none;">
-          <label for="opacity">
-            Opacity / 透明度
-            <span id="opacity-val" class="param-val">40%</span>
-          </label>
+          <div class="param-header">
+            <label class="param-label" for="opacity">Opacity<br><span>透明度</span></label>
+            <span class="param-val" id="opacity-val">40%</span>
+          </div>
           <input type="range" id="opacity" min="0" max="100" value="40">
         </div>
 
         <div class="param-group">
-          <label for="border-radius">
-            Border Radius / 角丸のサイズ
-            <span id="border-radius-val" class="param-val">16px</span>
-          </label>
+          <div class="param-header">
+            <label class="param-label" for="border-radius">Border Radius<br><span>角丸のサイズ</span></label>
+            <span class="param-val" id="border-radius-val">16px</span>
+          </div>
           <input type="range" id="border-radius" min="0" max="40" value="16">
         </div>
       </section>
@@ -112,7 +112,7 @@
           <div class="morphism-element grid-card">
             <h3 class="card-label">ICON BUTTONS<br><span>アイコンボタン</span></h3>
             <div class="component-wrapper center-all">
-              <div class="flex-row">
+              <div class="flex-row gap-16">
                 <button class="morphism-element icon-btn">
                   <span class="material-icons-round">add</span>
                 </button>
@@ -154,7 +154,7 @@
           </div>
 
           <!-- MEDIA PLAYER -->
-          <div class="morphism-element grid-card span-2-mobile">
+          <div class="morphism-element grid-card span-2-mobile" id="media-card">
             <h3 class="card-label">MEDIA PLAYER<br><span>メディアプレーヤー</span></h3>
             <div class="component-wrapper center-all flex-col w-full">
               <div class="player-controls">
@@ -171,20 +171,27 @@
                   <span class="material-icons-round">skip_next</span>
                 </button>
               </div>
-              <div class="morphism-element progress-track mt-4">
-                <div class="progress-fill" style="width: 35%;"></div>
+              <!-- Static slider for media track -->
+              <div class="interactive-slider-wrapper mt-4">
+                <div class="morphism-element progress-track">
+                  <div class="progress-fill" style="width: 35%;"></div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- SLIDER -->
+          <!-- SLIDER (Interactive) -->
           <div class="morphism-element grid-card">
             <h3 class="card-label">SLIDER<br><span>スライダー</span></h3>
             <div class="component-wrapper center-all flex-col w-full">
-              <div class="morphism-element progress-track">
-                <div class="progress-fill" style="width: 41%;"></div>
+              <div class="interactive-slider-wrapper">
+                <div class="morphism-element progress-track">
+                  <div class="progress-fill" id="preview-fill-elem" style="width: 41%;"></div>
+                </div>
+                <!-- Invisible native range slider to capture touch & drag -->
+                <input type="range" class="ghost-slider" id="preview-interactive-range" min="0" max="100" value="41">
               </div>
-              <p class="slider-percentage">41%</p>
+              <p class="slider-percentage" id="preview-interactive-val">41%</p>
             </div>
           </div>
 
@@ -201,14 +208,16 @@
           </div>
 
           <!-- CARD / TEXT CONTENT -->
-          <div class="morphism-element grid-card span-2-col">
+          <div class="morphism-element grid-card span-2-col layout-relative">
             <h3 class="card-label">CARD<br><span>カード</span></h3>
-            <div class="component-wrapper card-content-wrapper flex-row space-between align-center">
-              <div class="flex-1 mr-4">
+            <div class="component-wrapper flex-col h-full card-inner-content">
+              <div>
                 <h4 class="card-title">CARD TITLE / タイトル</h4>
                 <p class="card-desc">Short description here. / 短い説明文。</p>
               </div>
-              <button class="morphism-element btn small-btn">Action / アクション</button>
+              <div class="card-footer">
+                <button class="morphism-element btn small-btn">Action / アクション</button>
+              </div>
             </div>
           </div>
 

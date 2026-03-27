@@ -8,13 +8,18 @@
   --accent: #3b82f6;
   --accent-hover: #2563eb;
 
-  /* These default variables will be continually overridden by JS */
+  /* These will be explicitly updated by JS instantly */
   --base-color: #e0e5ec;
   --shadow-dist: 8px;
-  --shadow-intensity: 12%;
   --blur: 10px;
-  --opacity: 40%;
   --border-radius: 16px;
+
+  /* Dynamically calculated shadow colors written by JS directly to avoid calc percentage nesting bugs */
+  --light-shadow: #ffffff;
+  --dark-shadow: #a3b1c6;
+  --glass-bg: rgba(224, 229, 236, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --clay-highlight: #ffffff;
 }
 
 * {
@@ -27,7 +32,7 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   color: var(--text-primary);
   background-color: var(--base-color);
-  overflow: hidden; /* App like 1 screen if possible */
+  overflow: hidden; 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -40,10 +45,10 @@ body {
 
 /* === Control Panel (Left) === */
 .control-panel {
-  width: 340px;
+  width: 360px;
   background-color: var(--panel-bg);
   border-right: 1px solid var(--panel-border);
-  padding: 24px 20px;
+  padding: 24px 24px;
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -54,7 +59,7 @@ body {
 }
 
 .app-header h1 {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: #334155;
   margin-bottom: 4px;
@@ -86,13 +91,13 @@ body {
 .segment-btn {
   border: none;
   background: transparent;
-  padding: 10px 6px;
+  padding: 10px 4px;
   border-radius: 8px;
   cursor: pointer;
   font-family: inherit;
   font-weight: 600;
   font-size: 0.75rem;
-  line-height: 1.2;
+  line-height: 1.25;
   color: var(--text-secondary);
   transition: all 0.2s ease;
   display: flex;
@@ -118,22 +123,33 @@ body {
 
 /* Parameters */
 .param-group {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
 }
-.param-group label {
+.param-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
-  font-size: 0.75rem;
-  font-weight: 600;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.param-label {
+  font-size: 0.7rem;
+  font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.param-label span {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  display: block;
 }
 .param-val {
-  font-weight: 500;
+  font-weight: 600;
   color: var(--accent);
   font-variant-numeric: tabular-nums;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }
 
 /* Beautiful Color Picker */
@@ -258,7 +274,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
 }
 
 /* Layout Grid */
@@ -283,20 +299,20 @@ input[type="range"]::-webkit-slider-thumb:hover {
   padding: 24px 20px;
   display: flex;
   flex-direction: column;
-  height: 100%; /* Important for stretching correctly in grid */
+  height: 100%; /* Ensure uniform height across all cells */
 }
 .card-label {
-  font-size: 0.55rem;
+  font-size: 0.6rem;
   font-weight: 700;
   letter-spacing: 0.15em;
   color: var(--text-secondary);
   opacity: 0.8;
-  margin-bottom: auto; /* push content down */
+  margin-bottom: auto; /* Push component wrappers down */
   padding-bottom: 20px;
   line-height: 1.4;
 }
 .card-label span {
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   letter-spacing: 0;
   display: inline-block;
   opacity: 0.8;
@@ -308,7 +324,8 @@ input[type="range"]::-webkit-slider-thumb:hover {
   display: flex;
   width: 100%;
 }
-.flex-row { display: flex; gap: 16px; }
+.flex-row { display: flex; align-items: center; }
+.gap-16 { gap: 16px; }
 .flex-col { display: flex; flex-direction: column; }
 .center-all { justify-content: center; align-items: center; }
 .space-between { justify-content: space-between; }
@@ -362,7 +379,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 .small-btn {
   padding: 8px 16px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }
 
 .input-wrapper {
@@ -373,9 +390,7 @@ input[type="range"]::-webkit-slider-thumb:hover {
   height: 44px;
   border-radius: 12px;
 }
-.input-wrapper.round-full {
-  border-radius: 100px;
-}
+.input-wrapper.round-full { border-radius: 100px; }
 .inner-input {
   flex: 1;
   background: transparent;
@@ -397,27 +412,49 @@ input[type="range"]::-webkit-slider-thumb:hover {
   font-size: 1.1rem;
 }
 
-/* Player & Progress */
+/* Player & Progress (Interactive Sliders) */
 .player-controls {
   display: flex;
   align-items: center;
-  justify-content: space-center;
-  gap: 12px;
+  justify-content: space-between;
+  max-width: 200px;
   width: 100%;
-  padding: 0 10px;
+  padding: 0;
+}
+.interactive-slider-wrapper {
+  position: relative;
+  width: 100%;
+  height: 12px; /* Touch target */
 }
 .progress-track {
   width: 100%;
   height: 8px;
   border-radius: 100px;
   overflow: hidden;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  pointer-events: none; /* Make clicks pass to ghost slider below */
 }
 .progress-fill {
   height: 100%;
   background: var(--text-primary);
   border-radius: inherit;
-  transition: width 0.3s;
+  transition: width 0.1s linear;
 }
+.ghost-slider {
+  position: absolute;
+  top: 0; 
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  margin: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
 .slider-percentage {
   text-align: center;
   font-size: 0.9rem;
@@ -448,15 +485,17 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background-color: var(--accent) !important;
 }
 
-/* Card Content Text */
-.card-content-wrapper {
+/* Card Content Text - Footer Responsive Placement via Flexbox */
+.card-inner-content {
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  width: 100%;
 }
+.h-full { height: 100%; }
 .card-title {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   line-height: 1.3;
 }
 .card-desc {
@@ -464,10 +503,14 @@ input[type="range"]::-webkit-slider-thumb:hover {
   color: var(--text-secondary);
   line-height: 1.4;
 }
+.card-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
 
 /* ==========================================================
    Morphism Themes Implementation
-   (Dynamically relying completely on explicit CSS logic set from JS)
    ========================================================== */
 
 /* 1. Neumorphism */
@@ -478,10 +521,9 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background-color: var(--base-color);
   border-radius: var(--border-radius);
   border: none;
-  /* Box shadow set by JS will apply dynamically correctly without Safari computations failing. */
   box-shadow: 
-    var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 2) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
-    calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 2) color-mix(in srgb, var(--base-color), white calc(var(--shadow-intensity) * 4));
+    var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 2) var(--dark-shadow),
+    calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 2) var(--light-shadow);
 }
 .preview-area[data-theme="neumorphism"] .btn:active,
 .preview-area[data-theme="neumorphism"] .icon-btn:active,
@@ -489,13 +531,13 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .preview-area[data-theme="neumorphism"] .toggle,
 .preview-area[data-theme="neumorphism"] .progress-track {
   box-shadow: 
-    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 2) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
-    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 2) color-mix(in srgb, var(--base-color), white calc(var(--shadow-intensity) * 4));
+    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 2) var(--dark-shadow),
+    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 2) var(--light-shadow);
 }
 .preview-area[data-theme="neumorphism"] .toggle-knob {
   box-shadow: 
-    calc(var(--shadow-dist)*0.5) calc(var(--shadow-dist)*0.5) var(--shadow-dist) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
-    calc(var(--shadow-dist)*-0.5) calc(var(--shadow-dist)*-0.5) var(--shadow-dist) color-mix(in srgb, var(--base-color), white calc(var(--shadow-intensity) * 4));
+    calc(var(--shadow-dist)*0.5) calc(var(--shadow-dist)*0.5) var(--shadow-dist) var(--dark-shadow),
+    calc(var(--shadow-dist)*-0.5) calc(var(--shadow-dist)*-0.5) var(--shadow-dist) var(--light-shadow);
 }
 /* Consistent curves override */
 .preview-area[data-theme="neumorphism"] .toggle,
@@ -510,11 +552,11 @@ input[type="range"]::-webkit-slider-thumb:hover {
   background: linear-gradient(135deg, #e0e5ec 0%, #ffffff 100%);
 }
 .preview-area[data-theme="glassmorphism"] .morphism-element {
-  background: color-mix(in srgb, var(--base-color), transparent calc(100% - var(--opacity)));
+  background: var(--glass-bg);
   backdrop-filter: blur(var(--blur));
   -webkit-backdrop-filter: blur(var(--blur));
   border-radius: var(--border-radius);
-  border: 1px solid color-mix(in srgb, white, transparent 50%);
+  border: 1px solid var(--glass-border);
   box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
 }
 .preview-area[data-theme="glassmorphism"] .btn:active,
@@ -539,22 +581,22 @@ input[type="range"]::-webkit-slider-thumb:hover {
   border: none;
   box-shadow: 
     calc(var(--shadow-dist) * 0.8) calc(var(--shadow-dist) * 0.8) calc(var(--shadow-dist) * 1.2) rgba(0,0,0,0.08),
-    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
-    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.2) color-mix(in srgb, var(--base-color), white 80%);
+    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) var(--dark-shadow),
+    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.2) var(--clay-highlight);
 }
 .preview-area[data-theme="claymorphism"] .btn:active,
 .preview-area[data-theme="claymorphism"] .icon-btn:active {
   box-shadow: 
     0px 0px 0px rgba(0,0,0,0),
-    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
-    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.2) color-mix(in srgb, var(--base-color), white 80%);
+    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) var(--dark-shadow),
+    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.2) var(--clay-highlight);
   transform: scale(0.96);
 }
 .preview-area[data-theme="claymorphism"] .input-wrapper,
 .preview-area[data-theme="claymorphism"] .progress-track {
   box-shadow: 
-    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.5) color-mix(in srgb, var(--base-color), black var(--shadow-intensity)),
-    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) color-mix(in srgb, var(--base-color), white 80%);
+    inset var(--shadow-dist) var(--shadow-dist) calc(var(--shadow-dist) * 1.5) var(--dark-shadow),
+    inset calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * -1) calc(var(--shadow-dist) * 1.5) var(--clay-highlight);
 }
 .preview-area[data-theme="claymorphism"] .toggle,
 .preview-area[data-theme="claymorphism"] .toggle-knob,
@@ -619,9 +661,9 @@ input[type="range"]::-webkit-slider-thumb:hover {
 }
 
 /* Response Fixes */
-@media (max-width: 900px) {
+@media (max-width: 1024px) {
   .span-2-col { grid-column: span 1; }
-  .span-2-mobile { grid-column: span 2; } /* Keep media player wide on tablets if grid allows */
+  .span-2-mobile { grid-column: span 2; }
 }
 
 @media (max-width: 768px) {
@@ -629,7 +671,9 @@ input[type="range"]::-webkit-slider-thumb:hover {
   .control-panel { width: 100%; height: auto; border-right: none; padding: 24px 20px; box-shadow: none; border-bottom: 1px solid var(--panel-border); }
   .preview-area { height: auto; min-height: 100vh; overflow: visible; padding: 24px 16px; }
   body { overflow: auto; }
-  .components-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-  .span-2-mobile { grid-column: span 1; } 
-  .player-controls { gap: 8px; }
+  .components-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  .span-2-mobile { grid-column: span 1; }
+  
+  /* ensure action btn in card doesnt overflow */
+  .card-footer { margin-top: 16px; justify-content: flex-start; }
 }
