@@ -44,50 +44,32 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas(); // 初回実行
 
 // ==========================================
-// 5. Web Audio API によるサウンド生成 (水滴音)
+// 5. ローカル音声ファイルによるサウンド再生 (水滴音)
 // ==========================================
-// AudioContextの初期化 (一部のブラウザ対応のためwebkitプレフィックスも指定)
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
+// 落水音のオーディオファイル
+const soundFiles = ['drop1.mp3', 'drop2.mp3', 'drop3.mp3'];
+
+// 音声オブジェクトをプレロードして保持する配列
+const audioElements = soundFiles.map(src => {
+    const audio = new Audio(src);
+    audio.preload = 'auto'; // 遅延を防ぐために事前ロード設定
+    return audio;
+});
 
 function playWaterDropSound() {
     if (!soundToggle.checked) return; // サウンドOFF時は鳴らさない
 
-    // AudioContextが未作成、または停止(suspend)している場合は再開する
-    // ブラウザの仕様でユーザーの操作(クリック等)があるまで音声再生がブロックされるため対策が必要
-    if (!audioCtx) {
-        audioCtx = new AudioContext();
-    }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-
-    const now = audioCtx.currentTime;
-
-    // 音の発生源（サイン波）
-    const oscillator = audioCtx.createOscillator();
-    oscillator.type = 'sine';
-
-    // 音量制御のゲインノード
-    const gainNode = audioCtx.createGain();
-
-    // 周波数(ピッチ)のエンベロープ（クリスタルな水滴音にチューニング）
-    // 高めの周波数(1500Hz)から急激に下げることで「ピチョンッ」という高く澄んだ音を作る
-    oscillator.frequency.setValueAtTime(1500, now);
-    oscillator.frequency.exponentialRampToValueAtTime(300, now + 0.08);
-
-    // 音量のエンベロープ（アタックとディケイ）
-    gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(0.6, now + 0.01); // 鋭いアタック
-    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1); // 短いディケイでキレを出す
-
-    // ノードの接続: Oscillator -> Gain -> Destination (スピーカー)
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-
-    // 再生開始・停止スケジューリング
-    oscillator.start(now);
-    oscillator.stop(now + 0.15); 
+    // 0〜2のランダムなインデックスを取得して音源を選ぶ
+    const randomIndex = Math.floor(Math.random() * audioElements.length);
+    const selectedAudio = audioElements[randomIndex];
+    
+    // 高速連打時にも音が途切れず重なって再生されるよう、要素を複製(clone)して鳴らす
+    const clonedAudio = selectedAudio.cloneNode(true);
+    
+    // 再生を実行（ブラウザの自動再生ポリシー制約に引っかかった場合はエラーを出力してクラッシュを防ぐ）
+    clonedAudio.play().catch(e => {
+        console.warn("音声の再生がブロックされました。画面をクリックしてください: ", e);
+    });
 }
 
 // ==========================================
