@@ -60,7 +60,7 @@ function bindEvents() {
     });
   });
 
-  // Slider and Color Picker events (binding to both input and change for complete real-time safety)
+  // Slider and Color Picker events
   Object.keys(inputs).forEach(key => {
     const el = inputs[key];
     const updateHandler = (e) => {
@@ -77,11 +77,8 @@ function bindEvents() {
   toggleEl.addEventListener('click', () => {
     const isChecked = toggleEl.getAttribute('aria-checked') === 'true';
     toggleEl.setAttribute('aria-checked', !isChecked);
-    toggleEl.classList.add('active');
-    setTimeout(() => toggleEl.classList.remove('active'), 150);
   });
   
-  // Enter key on toggle
   toggleEl.addEventListener('keydown', (e) => {
     if(e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -91,18 +88,23 @@ function bindEvents() {
 }
 
 // --- Parameter Handling ---
-
 function applyStyleTheme(style) {
   currentStyle = style;
   previewArea.setAttribute('data-theme', style);
   
   // Visibility toggles
   if (style === 'glassmorphism') {
-    groups.blur.style.display = 'block';
-    groups.opacity.style.display = 'block';
+    groups.blur.style.display = 'flex';
+    groups.opacity.style.display = 'flex';
     groups.intensity.style.display = 'none'; 
     blobs.style.display = 'block';           
+  } else if (style === 'flat') {
+    groups.blur.style.display = 'none';
+    groups.opacity.style.display = 'none';
+    groups.intensity.style.display = 'none'; // Flat has no shadow
+    blobs.style.display = 'none';
   } else {
+    // Neumorphism & Claymorphism
     groups.blur.style.display = 'none';
     groups.opacity.style.display = 'none';
     groups.intensity.style.display = 'block';
@@ -110,7 +112,6 @@ function applyStyleTheme(style) {
   }
 }
 
-// Individually update CSS root elements in real-time
 function updateSingleVariable(key, value) {
   let unit = '';
   if (['shadowDist', 'blur', 'borderRadius'].includes(key)) unit = 'px';
@@ -118,19 +119,16 @@ function updateSingleVariable(key, value) {
 
   vals[key].textContent = value + unit;
   
-  // Format CSS Property Name (e.g. shadowDist -> --shadow-dist)
   const cssProp = '--' + key.replace(/([A-Z])/g, '-$1').toLowerCase();
   root.style.setProperty(cssProp, value + unit);
 }
 
-// Initialize variables by running through each input
 function updateAllVariables() {
   Object.keys(inputs).forEach(key => {
     updateSingleVariable(key, inputs[key].value);
   });
 }
 
-// --- Security ---
 function sanitizeInput(el) {
   const map = {
     '&': '&amp;',
@@ -163,15 +161,13 @@ function generateAndCopyCSS() {
   if (currentStyle === 'neumorphism') {
     cssOutput += `  background-color: ${baseColor};
   border: none;
-  /* Soft Box Shadow Formula */
+  /* Box Shadow Formula */
   box-shadow: 
     ${dist} ${dist} calc(${dist} * 2) color-mix(in srgb, ${baseColor}, black ${intensity}),
     calc(${dist} * -1) calc(${dist} * -1) calc(${dist} * 2) color-mix(in srgb, ${baseColor}, white calc(${intensity} * 4));
 }
 
-/* Form inputs & Pressed button state */
-.morphism-element:active,
-.morphism-element.pressed {
+.morphism-element:active {
   box-shadow: 
     inset ${dist} ${dist} calc(${dist} * 2) color-mix(in srgb, ${baseColor}, black ${intensity}),
     inset calc(${dist} * -1) calc(${dist} * -1) calc(${dist} * 2) color-mix(in srgb, ${baseColor}, white calc(${intensity} * 4));
@@ -182,16 +178,22 @@ function generateAndCopyCSS() {
   backdrop-filter: blur(${blur});
   -webkit-backdrop-filter: blur(${blur});
   border: 1px solid color-mix(in srgb, white, transparent 50%);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.05);
 }`;
   } 
   else if (currentStyle === 'claymorphism') {
     cssOutput += `  background-color: ${baseColor};
   border: none;
   box-shadow: 
-    calc(${dist} * 0.8) calc(${dist} * 0.8) calc(${dist} * 1.5) rgba(0,0,0,0.1),
+    calc(${dist} * 0.8) calc(${dist} * 0.8) calc(${dist} * 1.2) rgba(0,0,0,0.08),
     inset calc(${dist} * -1) calc(${dist} * -1) calc(${dist} * 1.5) color-mix(in srgb, ${baseColor}, black ${intensity}),
     inset ${dist} ${dist} calc(${dist} * 1.2) color-mix(in srgb, ${baseColor}, white 80%);
+}`;
+  }
+  else if (currentStyle === 'flat') {
+    cssOutput += `  background-color: ${baseColor};
+  border: 1px solid color-mix(in srgb, ${baseColor}, black 10%);
+  box-shadow: none;
 }`;
   }
 
@@ -210,5 +212,4 @@ function showToast() {
   }, 2500);
 }
 
-// Run app
 init();

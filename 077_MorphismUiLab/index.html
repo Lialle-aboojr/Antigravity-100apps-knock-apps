@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Morphism UI Lab</title>
   <link rel="icon" href="favicon.png">
-  <!-- Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -19,62 +18,69 @@
         <p>GENERATE & TEST MODERN UI STYLES</p>
       </header>
 
-      <!-- 1. Style Selection (Segment Control) -->
+      <!-- 1. Style Selection (2x2 Grid Segment Control) -->
       <section class="control-section">
-        <h2 class="section-title">STYLE</h2>
-        <div class="segment-control" id="style-tabs">
-          <button class="segment-btn active" data-style="neumorphism">Neumorphism</button>
-          <button class="segment-btn" data-style="glassmorphism">Glassmorphism</button>
-          <button class="segment-btn" data-style="claymorphism">Claymorphism</button>
+        <h2 class="section-title">STYLE / スタイル</h2>
+        <div class="segment-grid" id="style-tabs">
+          <button class="segment-btn active" data-style="neumorphism">Neumorphism<br><span>ニューモーフィズム</span></button>
+          <button class="segment-btn" data-style="glassmorphism">Glassmorphism<br><span>グラスモーフィズム</span></button>
+          <button class="segment-btn" data-style="claymorphism">Claymorphism<br><span>クレイモーフィズム</span></button>
+          <button class="segment-btn" data-style="flat">Flat Design<br><span>フラットデザイン</span></button>
         </div>
       </section>
 
       <!-- 2. Parameters -->
       <section class="control-section">
-        <h2 class="section-title">PARAMETERS</h2>
+        <h2 class="section-title">PARAMETERS / パラメータ</h2>
+        
         <div class="param-group">
           <label for="base-color">
-            Base Color
+            Base Color / ベースカラー
             <span id="base-color-val" class="param-val">#e0e5ec</span>
           </label>
           <div class="color-picker-wrapper">
              <input type="color" id="base-color" value="#e0e5ec">
           </div>
         </div>
+
         <div class="param-group">
           <label for="shadow-dist">
-            Shadow Distance
+            Shadow Distance / 影の距離
             <span id="shadow-dist-val" class="param-val">8px</span>
           </label>
-          <input type="range" id="shadow-dist" min="0" max="50" value="8">
+          <input type="range" id="shadow-dist" min="0" max="40" value="8">
         </div>
+
         <div class="param-group" id="intensity-group">
           <label for="shadow-intensity">
-            Shadow Intensity
-            <span id="shadow-intensity-val" class="param-val">15%</span>
+            Shadow Intensity / 影の濃淡
+            <span id="shadow-intensity-val" class="param-val">12%</span>
           </label>
-          <input type="range" id="shadow-intensity" min="0" max="100" value="15">
+          <input type="range" id="shadow-intensity" min="0" max="100" value="12">
         </div>
+
         <div class="param-group" id="blur-group" style="display: none;">
           <label for="blur">
-            Blur
+            Blur / ぼかし具合
             <span id="blur-val" class="param-val">10px</span>
           </label>
           <input type="range" id="blur" min="0" max="50" value="10">
         </div>
+
         <div class="param-group" id="opacity-group" style="display: none;">
           <label for="opacity">
-            Opacity
+            Opacity / 透明度
             <span id="opacity-val" class="param-val">40%</span>
           </label>
           <input type="range" id="opacity" min="0" max="100" value="40">
         </div>
+
         <div class="param-group">
           <label for="border-radius">
-            Border Radius
-            <span id="border-radius-val" class="param-val">20px</span>
+            Border Radius / 角丸のサイズ
+            <span id="border-radius-val" class="param-val">16px</span>
           </label>
-          <input type="range" id="border-radius" min="0" max="50" value="20">
+          <input type="range" id="border-radius" min="0" max="40" value="16">
         </div>
       </section>
 
@@ -82,12 +88,12 @@
       <section class="control-section copy-section">
         <button id="copy-btn" class="primary-btn">
           <span class="material-icons-round">content_copy</span>
-          COPY CSS
+          COPY CSS / CSSをコピー
         </button>
       </section>
 
       <footer class="app-footer">
-        <p>Inputs are securely sanitized.</p>
+        <p>Inputs are securely sanitized. / 入力値はサニタイズされます。</p>
       </footer>
     </aside>
 
@@ -99,77 +105,112 @@
       </div>
       
       <div class="preview-content">
-        
-        <!-- CARD 1: SEARCH & INPUTS -->
-        <div class="ui-catalog-section morphism-element card">
-          <h3 class="section-label">SEARCH</h3>
-          <div class="input-wrapper morphism-element">
-            <span class="material-icons-round input-icon">search</span>
-            <input type="text" id="preview-input" class="inner-input" placeholder="Search..." oninput="sanitizeInput(this)">
-          </div>
-        </div>
-
-        <!-- CARD 2: MEDIA PLAYER & ICON BUTTONS -->
-        <div class="ui-catalog-section morphism-element card">
-          <h3 class="section-label">MEDIA PLAYER & ICON BUTTONS</h3>
-          <div class="ui-row justify-center">
-            <!-- Icon Buttons -->
-            <button class="morphism-element btn icon-btn" aria-label="Previous">
-              <span class="material-icons-round">skip_previous</span>
-            </button>
-            <button class="morphism-element btn icon-btn play-btn" aria-label="Play">
-              <span class="material-icons-round">play_arrow</span>
-            </button>
-            <button class="morphism-element btn icon-btn" aria-label="Next">
-              <span class="material-icons-round">skip_next</span>
-            </button>
-          </div>
-          <div class="ui-row justify-center mt-2">
-             <button class="morphism-element btn icon-btn small-icon-btn" aria-label="Add">
-              <span class="material-icons-round">add</span>
-            </button>
-            <button class="morphism-element btn icon-btn small-icon-btn" aria-label="Remove">
-              <span class="material-icons-round">remove</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- CARD 3: TOGGLE & CHIPS -->
-        <div class="ui-catalog-section morphism-element card">
-          <div class="ui-row space-between align-center">
-            <div class="toggle-group">
-               <h3 class="section-label mb-0">TOGGLE</h3>
-               <div class="ui-row align-center mt-1">
-                 <span class="sub-label">OFF</span>
-                 <div class="morphism-element toggle" id="preview-toggle" role="switch" aria-checked="false" tabindex="0">
-                   <div class="toggle-knob morphism-element"></div>
-                 </div>
-                 <span class="sub-label">ON</span>
-               </div>
-            </div>
-            
-            <div class="dropdown-group">
-               <h3 class="section-label mb-0">DROPDOWN</h3>
-               <div class="morphism-element select-wrapper mt-1">
-                 <select class="inner-select">
-                   <option value="1">Option 1</option>
-                   <option value="2">Option 2</option>
-                   <option value="3">Option 3</option>
-                 </select>
-                 <span class="material-icons-round select-icon">expand_more</span>
-               </div>
+        <!-- Compact Grid Layout for Components -->
+        <div class="components-grid">
+          
+          <!-- ICON BUTTONS -->
+          <div class="morphism-element grid-card">
+            <h3 class="card-label">ICON BUTTONS / アイコンボタン</h3>
+            <div class="flex-row">
+              <button class="morphism-element icon-btn">
+                <span class="material-icons-round">add</span>
+              </button>
+              <button class="morphism-element icon-btn">
+                <span class="material-icons-round">remove</span>
+              </button>
             </div>
           </div>
-        </div>
 
-        <!-- CARD 4: SLIDER / PROGRESS -->
-        <div class="ui-catalog-section morphism-element card">
-          <h3 class="section-label">SLIDER</h3>
-          <div class="morphism-element progress-track mt-1">
-            <div class="progress-fill" style="width: 65%;"></div>
+          <!-- BUTTONS -->
+          <div class="morphism-element grid-card">
+            <h3 class="card-label">BUTTONS / ボタン</h3>
+            <div class="flex-row center-all flex-1">
+              <button class="morphism-element btn">Button</button>
+            </div>
           </div>
-        </div>
 
+          <!-- SEARCH -->
+          <div class="morphism-element grid-card">
+            <h3 class="card-label">SEARCH / 検索</h3>
+            <div class="flex-row center-all flex-1">
+              <div class="morphism-element input-wrapper round-full">
+                <span class="material-icons-round input-icon">search</span>
+                <input type="text" class="inner-input" placeholder="Search..." oninput="sanitizeInput(this)">
+              </div>
+            </div>
+          </div>
+
+          <!-- INPUT -->
+          <div class="morphism-element grid-card">
+            <h3 class="card-label">INPUT / 入力</h3>
+            <div class="flex-row center-all flex-1">
+              <div class="morphism-element input-wrapper">
+                <span class="material-icons-round input-icon">mail_outline</span>
+                <input type="email" class="inner-input" placeholder="E-mail" oninput="sanitizeInput(this)">
+              </div>
+            </div>
+          </div>
+
+          <!-- MEDIA PLAYER -->
+          <div class="morphism-element grid-card">
+            <h3 class="card-label">MEDIA PLAYER / メディアプレーヤー</h3>
+            <div class="flex-row compact space-between player-controls">
+              <button class="morphism-element icon-btn small-icon">
+                <span class="material-icons-round">skip_previous</span>
+              </button>
+              <button class="morphism-element icon-btn play-icon">
+                <span class="material-icons-round">play_arrow</span>
+              </button>
+              <button class="morphism-element icon-btn small-icon">
+                <span class="material-icons-round">pause</span>
+              </button>
+              <button class="morphism-element icon-btn small-icon">
+                <span class="material-icons-round">skip_next</span>
+              </button>
+            </div>
+            <div class="morphism-element progress-track mt-4">
+              <div class="progress-fill" style="width: 35%;"></div>
+            </div>
+          </div>
+
+          <!-- SLIDER -->
+          <div class="morphism-element grid-card">
+            <h3 class="card-label">SLIDER / スライダー</h3>
+            <div class="flex-row center-all mt-2">
+              <div class="morphism-element progress-track">
+                <div class="progress-fill" style="width: 41%;"></div>
+              </div>
+            </div>
+            <p class="slider-percentage">41%</p>
+          </div>
+
+          <!-- TOGGLE -->
+          <div class="morphism-element grid-card">
+            <h3 class="card-label">TOGGLE / トグル</h3>
+            <div class="flex-row center-all flex-1 space-around">
+              <span class="sub-label">OFF</span>
+              <div class="morphism-element toggle" id="preview-toggle" role="switch" aria-checked="false" tabindex="0">
+                <div class="morphism-element toggle-knob"></div>
+              </div>
+              <span class="sub-label">ON</span>
+            </div>
+          </div>
+
+          <!-- CARD / TEXT CONTENT -->
+          <div class="morphism-element grid-card span-2-col">
+            <h3 class="card-label">CARD / カード</h3>
+            <div class="card-content flex-row">
+              <div class="flex-1">
+                <h4 class="card-title">Card Title</h4>
+                <p class="card-desc">Sample content showing this morphism style in context. / モーフィズムのUIサンプルです。</p>
+              </div>
+              <div class="card-action">
+                <button class="morphism-element btn small-btn">Action</button>
+              </div>
+            </div>
+          </div>
+
+        </div> <!-- /.components-grid -->
       </div>
     </main>
   </div>
@@ -177,7 +218,7 @@
   <!-- Toast Notification -->
   <div id="toast" class="toast">
     <span class="material-icons-round">check_circle</span>
-    Copied to clipboard!
+    Copied to clipboard! / コピーしました！
   </div>
 
   <script src="script.js"></script>
