@@ -37,7 +37,7 @@ body {
   min-height: 100vh;
 }
 
-/* Scrollbar styling */
+/* Global Scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -197,7 +197,6 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  /* Button specific neumorphism could use the base bg or just keep the accent color with soft shadows. Let's make it stand out */
   box-shadow: 
     4px 4px 10px color-mix(in srgb, #d6e3f5, black 15%),
     -4px -4px 10px color-mix(in srgb, #d6e3f5, white 60%);
@@ -214,22 +213,20 @@ body {
     inset -3px -3px 6px rgba(255,255,255,0.1);
 }
 
-/* Kanban Board Container -> Now Grid/Flex Wrap based */
+/* Kanban Board Container -> Now Grid Wrap based */
 .board-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 4 columns upper, 4 columns lower */
   gap: var(--board-gap);
   flex: 1;
   padding-bottom: 20px;
-  overflow-y: auto; /* allows scrolling inside the container if it overflows vertically */
-  padding: 10px; /* To avoid shadows being clipped inside the container */
 }
 
 /* Individual Column */
 .column {
   display: flex;
   flex-direction: column;
-  min-height: 250px; /* Ensures minimum height even if empty */
+  height: 400px; /* 固定高さを指定して伸びるのを制限 */
 }
 
 .column-header {
@@ -263,15 +260,32 @@ body {
   font-weight: 700;
 }
 
+/* 内部スクロールを有効にするための設定 */
 .task-list {
   flex: 1;
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-height: 100px;
+  overflow-y: auto; /* タスクがあふれた場合のみ内側で縦スクロール */
   transition: background 0.2s;
   border-radius: 0 0 15px 15px;
+}
+
+/* Task List Specific Scrollbar (極細でニューモーフィズムに溶け込むスタイル) */
+.task-list::-webkit-scrollbar {
+  width: 4px;
+}
+.task-list::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 10px 0; /* 上下の余白 */
+}
+.task-list::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--bg-color), black 8%); /* 背景に馴染む非常に薄いグレー */
+  border-radius: 4px;
+}
+.task-list::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--bg-color), black 15%); /* ホバー時は少しだけ濃く */
 }
 
 /* Drag over active state */
@@ -289,6 +303,7 @@ body {
   flex-direction: column;
   gap: 10px;
   animation: fadeIn 0.3s ease forwards;
+  flex-shrink: 0; /* スクロール時にカードが潰れないようにする */
 }
 
 .task-card:active {
