@@ -71,15 +71,15 @@ function playWaterDropSound() {
     // 音量制御のゲインノード
     const gainNode = audioCtx.createGain();
 
-    // 周波数(ピッチ)のエンベロープ（音程変化）
-    // 600Hz付近から急激に300Hzに落とすことで「ポツッ」という高い質感を作る
-    oscillator.frequency.setValueAtTime(600, now);
-    oscillator.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+    // 周波数(ピッチ)のエンベロープ（クリスタルな水滴音にチューニング）
+    // 高めの周波数(1500Hz)から急激に下げることで「ピチョンッ」という高く澄んだ音を作る
+    oscillator.frequency.setValueAtTime(1500, now);
+    oscillator.frequency.exponentialRampToValueAtTime(300, now + 0.08);
 
     // 音量のエンベロープ（アタックとディケイ）
     gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(0.4, now + 0.02); // 0.02秒で音量MAX
-    gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.1); // その後急激に減衰
+    gainNode.gain.linearRampToValueAtTime(0.6, now + 0.01); // 鋭いアタック
+    gainNode.gain.exponentialRampToValueAtTime(0.001, now + 0.1); // 短いディケイでキレを出す
 
     // ノードの接続: Oscillator -> Gain -> Destination (スピーカー)
     oscillator.connect(gainNode);
@@ -87,7 +87,7 @@ function playWaterDropSound() {
 
     // 再生開始・停止スケジューリング
     oscillator.start(now);
-    oscillator.stop(now + 0.15); // ちょっと余韻を残して150msで完全停止処理
+    oscillator.stop(now + 0.15); 
 }
 
 // ==========================================
