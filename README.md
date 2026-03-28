@@ -93,13 +93,14 @@ Complete it. Ship it. Relax. ☕
 | 080 | 🎨 PixelArtEditor | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/080_PixelArtEditor/index.html) |
 | 081 | 🧩 15 Puzzle | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/081_FifteenPuzzle/index.html) |
 | 082 | 🎆 Hanabi Canvas | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/082_HanabiCanvas/index.html) |
+| 083 | 📊 Simple D3 Graph Maker | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/083_SimpleD3GraphMaker/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 82 / 100 ████████████████░░░░ 82%
+完成: 83 / 100 ████████████████▋░░░ 83%
 ```
 
 ---
