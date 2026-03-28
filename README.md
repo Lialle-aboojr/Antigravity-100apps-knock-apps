@@ -90,13 +90,14 @@ Complete it. Ship it. Relax. ☕
 | 077 | 🎛️ Morphism UI Lab | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/077_MorphismUiLab/index.html) |
 | 078 | 💧 Interactive Ripple | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/078_InteractiveRipple/index.html) |
 | 079 | 📅 Weekly Routine Planner | [▶ Demo](https://079-weekly-routine-planner.vercel.app/) |
+| 080 | 🎨 PixelArtEditor | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/080_PixelArtEditor/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 79 / 100 ███████████████▉░░░░ 79%
+完成: 80 / 100 ████████████████░░░░ 80%
 ```
 
 ---
