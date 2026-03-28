@@ -11,10 +11,17 @@ body {
     height: 100vh;
     overflow: hidden;
     font-family: 'Helvetica Neue', 'Arial', sans-serif;
-    background-color: #000;
     color: #fff;
-    /* 背景を切り替える際にフワッと変わるアニメーション */
-    transition: background 1s ease-in-out;
+    
+    /* 
+    画像の読み込み前や見つからない場合のフォールバックとなるデフォルト背景設定
+    深い紺色のグラデーションを指定
+    （JavaScriptによりこの背景の上に画像が動的に設定されます）
+    */
+    background-color: #011428;
+    background-image: linear-gradient(to bottom, #011428 0%, #000000 100%);
+    background-size: cover;
+    background-position: center;
 }
 
 /* 花火を描画するキャンバス */
@@ -27,32 +34,6 @@ body {
     z-index: 1;
     /* キャンバス自体は透明にして、bodyの背景素材を見せる */
     background-color: transparent;
-}
-
-/* 
-==================================================
- 背景の定義
- 背景画像がない場合でも美しく表示されるように、高品質なグラデーションを設定します
- 画像ファイルをフォルダに入れるとそちらが優先的に表示されます
-================================================== 
-*/
-.bg-starry {
-    background: url('bg-starry.png') center/cover no-repeat, radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
-}
-.bg-city {
-    background: url('bg-city.png') center/cover no-repeat, linear-gradient(to top, #2b1055 0%, #7597de 100%);
-}
-.bg-ocean {
-    background: url('bg-ocean.png') center/cover no-repeat, linear-gradient(to bottom, #011E39 0%, #000B18 100%);
-}
-.bg-snow {
-    background: url('bg-snow.png') center/cover no-repeat, linear-gradient(to bottom, #111424 0%, #3a4b69 100%);
-}
-.bg-river {
-    background: url('bg-river.png') center/cover no-repeat, linear-gradient(to top, #0f2027, #203a43, #2c5364);
-}
-.bg-country {
-    background: url('bg-country.png') center/cover no-repeat, linear-gradient(to top, #1e3c72 0%, #2a5298 100%);
 }
 
 /* 
