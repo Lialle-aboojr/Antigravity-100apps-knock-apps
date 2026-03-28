@@ -10,8 +10,11 @@ const state = {
     moves: 0,          // 手数
     timer: 0,          // 経過時間（秒）
     intervalId: null,  // タイマーのID
+    autoSolveInterval: null, // お手本動作のインターバルID
+    history: [],       // 移動履歴を保持する配列 (スタック構造)
     isPlaying: false,  // プレイ中かどうか（1手目を動かしたか）
-    isCleared: false   // クリア状態か
+    isCleared: false,  // クリア状態か
+    isAutoSolving: false // お手本実行中かどうか
 };
 
 // --- DOM要素の取得 ---
@@ -19,6 +22,7 @@ const boardEl = document.getElementById('puzzle-board');
 const movesDisplay = document.getElementById('moves-display');
 const timeDisplay = document.getElementById('time-display');
 const shuffleBtn = document.getElementById('shuffle-btn');
+const autoSolveBtn = document.getElementById('auto-solve-btn'); // 追加
 const clearOverlay = document.getElementById('clear-overlay');
 const finalTimeDisplay = document.getElementById('final-time');
 const finalMovesDisplay = document.getElementById('final-moves');
@@ -38,6 +42,7 @@ function init() {
 
     // イベントリスナーの設定
     shuffleBtn.addEventListener('click', handleShuffleClick);
+    autoSolveBtn.addEventListener('click', handleAutoSolveClick); // お手本ボタン
     playAgainBtn.addEventListener('click', handleShuffleClick);
 }
 
@@ -110,10 +115,22 @@ function updateTilePositions() {
     }
 }
 
+// --- 履歴の記録 (最適化付きスタック管理) ---
+function recordMove(num) {
+    // もしユーザーが「直前に動かしたタイル」をさらに触った場合、
+    // まったく元の状態に戻るだけなので、履歴を増やすのではなく直前の履歴を削除します。
+    // こうすることで、自動クリア（お手本）がユーザーの無駄な往復をそのまま再現することを防ぎます。
+    if (state.history.length > 0 && state.history[state.history.length - 1] === num) {
+        state.history.pop();
+    } else {
+        state.history.push(num);
+    }
+}
+
 // --- 操作 (Interaction) ---
 function handleTileClick(num) {
-    // クリア済みの場合は動かさない
-    if (state.isCleared) return;
+    // クリア済み、もしくはお手本実行中の場合はユーザー操作をブロック
+    if (state.isCleared || state.isAutoSolving) return;
 
     // クリックされたタイルと、空きマス(0)の「現在の配列上での座標」を探す
     const pos = findTilePosition(num);
@@ -127,6 +144,9 @@ function handleTileClick(num) {
             state.isPlaying = true;
         }
 
+        // 履歴にタイルの番号を記録
+        recordMove(num);
+
         // 配列のデータを入れ替え
         swapTiles(pos.r, pos.c, emptyPos.r, emptyPos.c);
         
@@ -137,11 +157,50 @@ function handleTileClick(num) {
         // 画面のタイルをアニメーションとともに移動させる
         updateTilePositions();
 
-        // 目視で移動した後にクリア判定を行う
+        // クリア判定を行う
         if (checkWinCondition()) {
             handleWin();
         }
     }
+}
+
+// お手本（Auto-Solve）ボタンが押された時の処理
+function handleAutoSolveClick() {
+    // 既にクリア済み、すでにお手本動作中、または動かす履歴がない場合は何もしない
+    if (state.isCleared || state.isAutoSolving || state.history.length === 0) return;
+    
+    state.isAutoSolving = true;
+    stopTimer(); // お手本動作中はゲームのタイマーを停止
+    
+    // 一定間隔（120ms）で履歴をスタックから取り出し逆再生する
+    state.autoSolveInterval = setInterval(() => {
+        // 履歴が空になれば完了
+        if (state.history.length === 0) {
+            clearInterval(state.autoSolveInterval);
+            state.autoSolveInterval = null;
+            state.isAutoSolving = false;
+            
+            if (checkWinCondition()) {
+                handleWin();
+            }
+            return;
+        }
+
+        // 直前に動かされたタイルの番号を取り出す（これで逆再生になる）
+        const numToMove = state.history.pop();
+        
+        const pos = findTilePosition(numToMove);
+        const emptyPos = findTilePosition(0);
+        
+        // タイルを移動させる
+        swapTiles(pos.r, pos.c, emptyPos.r, emptyPos.c);
+        updateTilePositions();
+        
+        // お手本中も手数は加算してあげる（動いている感の演出）
+        state.moves++;
+        movesDisplay.textContent = state.moves;
+
+    }, 120); // 120ms間隔で心地よく「シャッシャッ」と動かす
 }
 
 // --- ロジック (Logic) ---
@@ -175,6 +234,7 @@ function swapTiles(r1, c1, r2, c2) {
 
 // シャッフルボタンやもう一度ボタンが押された時の処理
 function handleShuffleClick() {
+    if (state.isAutoSolving) return; // お手本実行中はブロック
     resetGame();
     // ボタンクリック時はアニメーションを楽しめるように、false(再描画ではなく更新)を渡す
     shuffleBoardSimulated(false);
@@ -183,10 +243,16 @@ function handleShuffleClick() {
 // ゲームのリセット（UIや状態を0に戻す）
 function resetGame() {
     stopTimer();
+    if (state.autoSolveInterval) {
+        clearInterval(state.autoSolveInterval);
+        state.autoSolveInterval = null;
+    }
+    
     state.moves = 0;
     state.timer = 0;
     state.isPlaying = false;
     state.isCleared = false;
+    state.isAutoSolving = false;
     
     movesDisplay.textContent = '0';
     timeDisplay.textContent = '00:00';
@@ -198,6 +264,7 @@ function resetGame() {
 function shuffleBoardSimulated(isInitial = false) {
     // 一度内部的に完成状態にする
     createSolvedBoard(); 
+    state.history = []; // 履歴（スタック）を初期化
     let emptyPos = { r: state.size - 1, c: state.size - 1 }; // (3,3) が最初は空きマス
     
     let previousPos = null;
@@ -242,11 +309,16 @@ function shuffleBoardSimulated(isInitial = false) {
         const randomIndex = Math.floor(Math.random() * candidates.length);
         const selected = candidates[randomIndex];
         
+        // 選ばれたタイルの番号を取得
+        const numToMove = state.board[selected.r][selected.c];
+
         swapTiles(selected.r, selected.c, emptyPos.r, emptyPos.c);
         
-        // PreviousPosを元いた空きマス位置に更新
-        previousPos = { r: emptyPos.r, c: emptyPos.c };
+        // シャッフルで行った移動を履歴に記録（ここから逆算してお手本になる）
+        recordMove(numToMove);
         
+        // PreviousPosを更新
+        previousPos = { r: emptyPos.r, c: emptyPos.c };
         // 空きマス位置を変数に保持
         emptyPos = selected;
     }
@@ -282,6 +354,10 @@ function checkWinCondition() {
 function handleWin() {
     state.isCleared = true;
     stopTimer();
+    if (state.autoSolveInterval) {
+        clearInterval(state.autoSolveInterval);
+        state.autoSolveInterval = null;
+    }
     
     // 少し遅らせてからオーバーレイを表示（最後のアニメーションが終わるのを待つため）
     setTimeout(() => {

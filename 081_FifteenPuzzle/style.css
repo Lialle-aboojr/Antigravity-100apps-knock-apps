@@ -61,6 +61,14 @@ header {
     margin-top: 4px;
 }
 
+/* ルール説明のスタイル */
+.instruction {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    line-height: 1.6;
+}
+
 /* ステータス（時間・手数） */
 .stats-container {
     display: flex;
@@ -211,6 +219,7 @@ header {
 .controls {
     display: flex;
     justify-content: center;
+    gap: 16px; /* ボタンが複数ある場合の隙間 */
 }
 
 .primary-btn {
@@ -218,7 +227,7 @@ header {
     border: none;
     background-color: var(--btn-bg);
     color: var(--text-primary);
-    padding: 16px 32px;
+    padding: 16px 20px;
     font-size: 1rem;
     font-weight: 500;
     font-family: inherit;
@@ -226,8 +235,8 @@ header {
     cursor: pointer;
     transition: background-color var(--transition-fast), transform var(--transition-fast);
     box-shadow: var(--shadow-soft);
-    width: 100%;
-    max-width: 300px;
+    flex: 1;
+    max-width: 220px;
 }
 
 .primary-btn:hover {
@@ -249,5 +258,14 @@ header {
     }
     .stat-value {
         font-size: 1.3rem;
+    }
+    .controls {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+    .primary-btn {
+        width: 100%;
+        max-width: 100%;
     }
 }
