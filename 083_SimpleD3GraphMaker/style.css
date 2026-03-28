@@ -1,0 +1,320 @@
+/* style.css */
+:root {
+    --primary-color: #4A90E2;    /* 鮮やかなブルー */
+    --primary-hover: #357ABD;
+    --danger-color: #E74C3C;     /* アラート・削除用レッド */
+    --danger-hover: #C0392B;
+    --bg-color: #F8FAFC;         /* 明るい背景色 */
+    --card-bg: #FFFFFF;
+    --text-main: #2C3E50;
+    --text-muted: #7F8C8D;
+    --border-color: #E2E8F0;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.08);
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --transition: all 0.3s ease;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+/* 英語のテキストは少し小さく・薄く表示する */
+.en-text {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    font-weight: normal;
+}
+
+/* ヘッダー */
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.header h1 {
+    font-size: 2.2rem;
+    color: var(--text-main);
+    margin-bottom: 10px;
+}
+
+.header p {
+    color: var(--text-muted);
+}
+
+/* レイアウト */
+.main-content {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 30px;
+}
+
+/* カード共通スタイル */
+.card {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+}
+
+.card h2 {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--bg-color);
+}
+
+/* フォーム */
+.input-group {
+    margin-bottom: 16px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 0.95rem;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+/* ボタン */
+.btn {
+    display: inline-block;
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.primary-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+    width: 100%;
+}
+
+.primary-btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+}
+
+.primary-btn .en-text {
+    color: rgba(255,255,255,0.8);
+}
+
+.delete-btn {
+    background-color: var(--danger-color);
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.delete-btn:hover {
+    background-color: var(--danger-hover);
+}
+
+/* データリスト */
+.data-list {
+    list-style: none;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.data-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 8px;
+    background-color: var(--bg-color);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+    animation: fadeIn 0.3s ease;
+}
+
+.data-list li:hover {
+    border-color: var(--primary-color);
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-name-display {
+    font-weight: bold;
+}
+
+.item-value-display {
+    color: var(--primary-color);
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+/* グラフエリア */
+.graph-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.graph-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.graph-header h2 {
+    margin-bottom: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.toggle-group {
+    display: flex;
+    background-color: var(--bg-color);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+}
+
+.toggle-btn {
+    background-color: transparent;
+    color: var(--text-muted);
+    padding: 8px 16px;
+    font-size: 0.9rem;
+}
+
+.toggle-btn.active {
+    background-color: #fff;
+    color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.chart-container {
+    flex-grow: 1;
+    width: 100%;
+    min-height: 400px;
+    position: relative;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+/* D3.js グラフ用スタイル */
+.bar {
+    fill: var(--primary-color);
+    transition: fill 0.3s ease;
+}
+
+.bar:hover {
+    fill: var(--primary-hover);
+}
+
+.line {
+    fill: none;
+    stroke: var(--primary-color);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.dot {
+    fill: #fff;
+    stroke: var(--primary-color);
+    stroke-width: 2px;
+}
+
+.dot:hover {
+    fill: var(--primary-hover);
+    /* D3のJS側でradiusを6にしているのでここはそのままでよい。トランジションのみ記載 */
+    transition: fill 0.2s;
+}
+
+/* 軸のテキスト */
+.axis text {
+    font-family: inherit;
+    font-size: 12px;
+    fill: var(--text-muted);
+}
+
+.axis path, .axis line {
+    stroke: var(--border-color);
+}
+
+/* グリッドライン */
+.grid line {
+    stroke: var(--border-color);
+    stroke-opacity: 0.7;
+    shape-rendering: crispEdges;
+}
+
+.grid path {
+    stroke-width: 0;
+}
+
+/* ツールチップ（D3のJS側で表示制御） */
+.tooltip {
+    position: absolute;
+    background: rgba(44, 62, 80, 0.9);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0; /* 初期非表示 */
+    z-index: 10;
+}
+
+/* アニメーション */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* レスポンシブ構成 */
+@media (max-width: 900px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+    .chart-container {
+        min-height: 300px;
+    }
+}

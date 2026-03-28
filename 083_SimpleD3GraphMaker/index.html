@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡単D3.jsグラフメーカー / Simple D3 Graph Maker</title>
+    <!-- ファビコンの読み込み。画像生成エラー時は下の絵文字SVGのフォールバックを使用できます -->
+    <link rel="icon" href="favicon.png">
+    <!-- フォールバック用: <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>"> -->
+    <link rel="stylesheet" href="style.css">
+    <!-- D3.js v7 CDNの読み込み -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- ヘッダー部分 -->
+        <header class="header">
+            <h1>簡単D3.jsグラフメーカー <br><span class="en-text">Simple D3 Graph Maker</span></h1>
+            <p>エクセルを使わずに、ちょっとカッコいいグラフをサクッと作成。<br><span class="en-text">Create beautiful graphs without Excel.</span></p>
+        </header>
+
+        <div class="main-content">
+            <!-- 左側（入力とリスト） -->
+            <section class="control-panel">
+                <div class="card">
+                    <h2>データ入力 <span class="en-text">/ Add Data</span></h2>
+                    <form id="data-form" class="data-form">
+                        <div class="input-group">
+                            <label for="item-name">項目名 <span class="en-text">/ Item Name</span></label>
+                            <input type="text" id="item-name" placeholder="例: A社 / e.g. Company A" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="item-value">数値 <span class="en-text">/ Value</span></label>
+                            <input type="number" id="item-value" placeholder="例: 150 / e.g. 150" required min="0">
+                        </div>
+                        <button type="submit" class="btn primary-btn">追加 <span class="en-text">/ Add</span></button>
+                    </form>
+                </div>
+
+                <div class="card data-list-card">
+                    <h2>データ一覧 <span class="en-text">/ Data List</span></h2>
+                    <ul id="data-list" class="data-list">
+                        <!-- ここにデータが追加されます -->
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 右側（グラフエリア） -->
+            <section class="graph-panel">
+                <div class="card graph-card">
+                    <div class="graph-header">
+                        <h2>グラフ表示 <span class="en-text">/ Graph Preview</span></h2>
+                        <div class="toggle-group">
+                            <button class="btn toggle-btn active" data-type="bar">棒グラフ <span class="en-text">/ Bar</span></button>
+                            <button class="btn toggle-btn" data-type="line">折れ線 <span class="en-text">/ Line</span></button>
+                        </div>
+                    </div>
+                    <!-- svgが描画されるコンテナ -->
+                    <div id="chart-container" class="chart-container"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
