@@ -1,0 +1,214 @@
+/* 基本リセットとフォント指定 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    /* 画面全体を使用し、スクロールバーを出さない */
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Helvetica Neue', 'Arial', sans-serif;
+    background-color: #000;
+    color: #fff;
+    /* 背景を切り替える際にフワッと変わるアニメーション */
+    transition: background 1s ease-in-out;
+}
+
+/* 花火を描画するキャンバス */
+#hanabiCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    /* キャンバス自体は透明にして、bodyの背景素材を見せる */
+    background-color: transparent;
+}
+
+/* 
+==================================================
+ 背景の定義
+ 背景画像がない場合でも美しく表示されるように、高品質なグラデーションを設定します
+ 画像ファイルをフォルダに入れるとそちらが優先的に表示されます
+================================================== 
+*/
+.bg-starry {
+    background: url('bg-starry.jpg') center/cover no-repeat, radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+}
+.bg-city {
+    background: url('bg-city.jpg') center/cover no-repeat, linear-gradient(to top, #2b1055 0%, #7597de 100%);
+}
+.bg-ocean {
+    background: url('bg-ocean.jpg') center/cover no-repeat, linear-gradient(to bottom, #011E39 0%, #000B18 100%);
+}
+.bg-snow {
+    background: url('bg-snow.jpg') center/cover no-repeat, linear-gradient(to bottom, #111424 0%, #3a4b69 100%);
+}
+.bg-river {
+    background: url('bg-river.jpg') center/cover no-repeat, linear-gradient(to top, #0f2027, #203a43, #2c5364);
+}
+.bg-country {
+    background: url('bg-country.jpg') center/cover no-repeat, linear-gradient(to top, #1e3c72 0%, #2a5298 100%);
+}
+
+/* 
+==================================================
+ 操作パネルのグラスモーフィズムデザイン
+================================================== 
+*/
+.glass-panel {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    
+    /* 背景を半透明にし、後ろをぼかす */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px); /* Safari対応 */
+    
+    /* 光の反射を表現するボーダー */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.4);
+    border-left: 1px solid rgba(255, 255, 255, 0.4);
+    
+    border-radius: 16px;
+    padding: 20px 30px;
+    display: flex;
+    gap: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    align-items: center;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.switch-group {
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
+}
+
+label {
+    user-select: none; /* テキスト選択防止 */
+}
+
+label span {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: bold;
+    letter-spacing: 0.05em;
+}
+
+label .en-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: normal;
+}
+
+/* セレクトボックスの装飾 */
+select {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.4);
+    color: #fff;
+    font-size: 1rem;
+    outline: none;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    transition: border-color 0.3s ease;
+}
+
+select:focus, select:hover {
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+select option {
+    background: #222; /* セレクト時のドロップダウン背景色 */
+    color: #fff;
+}
+
+/* 
+==================================================
+ トグルスイッチ（チェックボックスをスイッチに見立てる）
+================================================== 
+*/
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 26px;
+    cursor: pointer;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 26px;
+    transition: 0.4s ease;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* 弾むようなアニメーション */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+
+/* スイッチON（オートモードON）の状態 */
+input:checked + .slider {
+    background-color: #ff4081; /* はっきりとしたピンク色 */
+    border-color: #ff4081;
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+/* 
+==================================================
+ レスポンシブ対応（スマホやタブレットの縦画面）
+================================================== 
+*/
+@media (max-width: 768px) {
+    .glass-panel {
+        flex-direction: column;
+        bottom: 15px;
+        width: 90%;
+        padding: 20px;
+        gap: 20px;
+    }
+    .control-group {
+        width: 100%;
+    }
+    select {
+        width: 100%;
+    }
+    .switch-group {
+        justify-content: space-between;
+        width: 100%;
+    }
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hanabi Canvas</title>
+    
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- AI生成したファビコンを設定（未生成・エラー時のための絵文字フォールバック入り） -->
+    <link rel="icon" href="favicon.png" onerror="this.onerror=null;this.href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 style=%22dominant-baseline:central;text-anchor:middle;font-size:90px;%22>🎆</text></svg>';">
+</head>
+<body class="bg-starry">
+    <!-- 背景を透過し、花火の光だけを描画する全画面キャンバス -->
+    <canvas id="hanabiCanvas"></canvas>
+
+    <!-- 画面下部：グラスモーフィズム（すりガラス）の操作パネル -->
+    <div id="controlPanel" class="glass-panel">
+        
+        <!-- 花火の種類選択 -->
+        <div class="control-group">
+            <label for="fireworkType">
+                <span>花火の種類</span>
+                <span class="en-label">Type</span>
+            </label>
+            <select id="fireworkType">
+                <option value="random">ランダム (Random)</option>
+                <option value="chrysanthemum">菊 (Chrysanthemum)</option>
+                <option value="peony">牡丹 (Peony)</option>
+                <option value="willow">しだれ柳 (Willow)</option>
+                <option value="senrin">千輪 (Senrin)</option>
+            </select>
+        </div>
+
+        <!-- 背景選択 -->
+        <div class="control-group">
+            <label for="backgroundType">
+                <span>背景</span>
+                <span class="en-label">Background</span>
+            </label>
+            <select id="backgroundType">
+                <option value="starry">星空 (Starry Sky)</option>
+                <option value="city">都会の夜景 (Cityscape)</option>
+                <option value="ocean">海 (Ocean)</option>
+                <option value="snow">雪山 (Snowy Mountain)</option>
+                <option value="river">川辺 (Riverside)</option>
+                <option value="country">田舎の風景 (Countryside)</option>
+            </select>
+        </div>
+
+        <!-- オートモード切替トグル -->
+        <div class="control-group switch-group">
+            <label for="autoMode">
+                <span>オートモード</span>
+                <span class="en-label">Auto Mode</span>
+            </label>
+            <label class="toggle-switch">
+                <input type="checkbox" id="autoMode">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+    </div>
+
+    <!-- 花火の物理演算・描画制御スクリプト -->
+    <script src="script.js"></script>
+</body>
+</html>
