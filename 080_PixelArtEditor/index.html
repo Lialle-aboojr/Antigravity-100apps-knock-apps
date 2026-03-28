@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PixelArtEditor - ドット絵エディター</title>
+  <!-- ファビコンの読み込み -->
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="stylesheet" href="style.css">
+  <!-- フォントの読み込み（洗練されたUIのため） -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- ツールバー（操作パネル） -->
+    <aside class="toolbar">
+      <h1 class="app-title">PixelArt<br>Editor</h1>
+
+      <div class="tool-group">
+        <label for="color-picker" class="tool-label">色を選択 / Color</label>
+        <div class="color-picker-wrapper">
+          <input type="color" id="color-picker" value="#ff3b3b">
+        </div>
+      </div>
+
+      <div class="tool-group">
+        <label for="size-selector" class="tool-label">サイズ / Size</label>
+        <select id="size-selector" class="dropdown">
+          <option value="16">16 x 16</option>
+          <option value="32" selected>32 x 32</option>
+          <option value="64">64 x 64</option>
+        </select>
+        <p class="warning-text">※ 変更すると消去されます</p>
+      </div>
+
+      <div class="tool-group flex-group">
+        <button id="btn-draw" class="btn active" title="描画">
+          <span class="icon">✏️</span>
+          描く / Draw
+        </button>
+        <button id="btn-eraser" class="btn" title="消しゴム">
+          <span class="icon">🧹</span>
+          消す / Erase
+        </button>
+      </div>
+
+      <div class="tool-group flex-group">
+        <button id="btn-undo" class="btn" title="直前の操作を取り消す">
+          <span class="icon">↩️</span>
+          戻る / Undo
+        </button>
+        <button id="btn-clear" class="btn danger" title="すべて消去する">
+          <span class="icon">🗑️</span>
+          全消去 / Clear
+        </button>
+      </div>
+
+      <div class="tool-group">
+        <button id="btn-grid-toggle" class="btn outline" title="グリッド線の表示可否">
+          <span class="icon">🔲</span>
+          枠線 / Grid: ON
+        </button>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="tool-group">
+        <button id="btn-download" class="btn primary" title="PNG画像として保存">
+          <span class="icon">💾</span>
+          保存 / Save PNG
+        </button>
+      </div>
+    </aside>
+
+    <!-- キャンバスエリア -->
+    <main class="canvas-area">
+      <div class="canvas-wrapper">
+        <canvas id="pixel-canvas"></canvas>
+      </div>
+    </main>
+    
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
