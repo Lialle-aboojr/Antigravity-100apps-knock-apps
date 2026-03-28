@@ -1,5 +1,5 @@
 /**
- * PixelArtEditor - メインスクリプト
+ * PixelArtEditor - 追加機能（塗りつぶし、画像インポート、背景色）対応版
  * Vanilla JSのみで実装。依存ライブラリなし。
  */
 
@@ -9,58 +9,61 @@
 const canvas = document.getElementById('pixel-canvas');
 const ctx = canvas.getContext('2d');
 
-// ツールバーの各種コントロール
+// ツールバーのコントロール群
 const colorPicker = document.getElementById('color-picker');
 const sizeSelector = document.getElementById('size-selector');
 const btnDraw = document.getElementById('btn-draw');
+const btnFill = document.getElementById('btn-fill'); // 追加: 塗りつぶしボタン
 const btnEraser = document.getElementById('btn-eraser');
 const btnUndo = document.getElementById('btn-undo');
 const btnClear = document.getElementById('btn-clear');
 const btnGridToggle = document.getElementById('btn-grid-toggle');
 const btnDownload = document.getElementById('btn-download');
 
+// 背景設定用コントロール
+const chkTransparent = document.getElementById('chk-transparent');
+const customBgGroup = document.getElementById('custom-bg-group');
+const bgColorPicker = document.getElementById('bg-color-picker');
+
+// インポート用コントロール
+const fileImport = document.getElementById('file-import');
+
 // 表示サイズ（キャンバス自体のピクセル解像度）
 const CANVAS_SIZE = 512; 
 
-// 状態変数（アプリケーション全体のデータ）
-let gridSize = parseInt(sizeSelector.value, 10); // 現在のマス目の数（16, 32, 64）
-let gridData = [];     // 各マス目の色を保持する二次元配列
-let undoHistory = [];  // 一手戻る（Undo）ための履歴保持用配列
-
-let isDrawing = false; // 現在マウスドラッグ中かどうか
+// 状態変数
+let gridSize = parseInt(sizeSelector.value, 10);
+let gridData = [];
+let undoHistory = [];
+let isDrawing = false;
 let currentColor = colorPicker.value;
-let currentMode = 'draw'; // 'draw' または 'erase'
-let showGrid = true;   // 枠線を重ねて描画するかどうか
+let currentMode = 'draw'; // 'draw', 'erase', or 'fill'
+let showGrid = true;
 
 // ==========================================
 // 2. 初期化処理
 // ==========================================
-
-// サイズ調整処理
 function initCanvas() {
   canvas.width = CANVAS_SIZE;
   canvas.height = CANVAS_SIZE;
   
-  // 透明なチェッカーボードが透けるように、背景はクリア（透明）のままにします
   resetGridData();
-  undoHistory = []; // リセット時には履歴も消去
-  saveHistory();    // 初期状態を履歴の1番目として登録
+  undoHistory = [];
+  saveHistory();
   drawCanvas();
 }
 
-// データ部分をすべてリセット
 function resetGridData() {
   gridData = [];
   for (let y = 0; y < gridSize; y++) {
     const row = [];
     for (let x = 0; x < gridSize; x++) {
-      row.push(null); // nullは「塗られていない（透明）」を表す
+      row.push(null); // nullは塗られていない（透明）
     }
     gridData.push(row);
   }
 }
 
-// 二次元配列を深くコピーして履歴に残す
 function cloneGridData() {
   return gridData.map(row => [...row]);
 }
@@ -68,40 +71,41 @@ function cloneGridData() {
 // ==========================================
 // 3. 描画ロジック（コア部分）
 // ==========================================
-
-// キャンバスを再描画（グリッドON/OFFやデータの変更時に呼ばれる）
 function drawCanvas(forceHideGrid = false) {
-  // まずキャンバス全体をクリア（透明にする）
+  // ① まず全体をクリア（透過）
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // ② もし背景色が「単色塗り」なら、設定色で背景全体を塗りつぶす
+  if (!chkTransparent.checked) {
+    ctx.fillStyle = bgColorPicker.value;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
 
   const cellSize = CANVAS_SIZE / gridSize;
 
-  // データに基づいてマスを塗りつぶす
+  // ③ ユーザーが描いたドット絵のピクセルを描画
   for (let y = 0; y < gridSize; y++) {
     for (let x = 0; x < gridSize; x++) {
       const color = gridData[y][x];
-      // nullなら塗らない（透過）、色があれば塗る
       if (color !== null) {
         ctx.fillStyle = color;
-        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+        ctx.fillRect(Math.floor(x * cellSize), Math.floor(y * cellSize), Math.ceil(cellSize), Math.ceil(cellSize));
+        // マスの境界線のアンチエイリアスによる隙間を防ぐために floor と ceil を利用
       }
     }
   }
 
-  // 枠線（グリッド）を描画する設定になっていれば、上から線を描画する
-  // ※画像のダウンロード時（forceHideGridがtrueの時）は線を描画しない
+  // ④ グリッド線の描画（設定時、かつ保存時でない場合）
   if (showGrid && !forceHideGrid) {
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)'; // 薄い黒色
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.15)'; // 邪魔にならない半透明グレー
     ctx.lineWidth = 1;
 
     for (let i = 0; i <= gridSize; i++) {
-        const pos = i * cellSize;
+        const pos = Math.floor(i * cellSize) + 0.5; // +0.5で線をシャープにするハック
         
         ctx.beginPath();
-        // 縦線
         ctx.moveTo(pos, 0);
         ctx.lineTo(pos, CANVAS_SIZE);
-        // 横線
         ctx.moveTo(0, pos);
         ctx.lineTo(CANVAS_SIZE, pos);
         ctx.stroke();
@@ -109,22 +113,18 @@ function drawCanvas(forceHideGrid = false) {
   }
 }
 
-// 履歴に現在の盤面を保存
 function saveHistory() {
   undoHistory.push(cloneGridData());
-  // メモリ節約のため履歴の上限を50回までに制限（古いものから消す）
   if (undoHistory.length > 50) {
     undoHistory.shift();
   }
 }
 
 // ==========================================
-// 4. マウス操作と塗り処理関数
+// 4. マウス操作・塗りつぶし・塗り処理関数
 // ==========================================
-
-// 座標をマス目のインデックスに変換して色を塗る
 function paintCell(event) {
-  // マウスの相対座標を取得（CSSで伸縮された場合も考慮してスケールを計算）
+  // CSSのスケールを考慮して座標計算
   const rect = canvas.getBoundingClientRect();
   const scaleX = canvas.width / rect.width;
   const scaleY = canvas.height / rect.height;
@@ -133,41 +133,68 @@ function paintCell(event) {
   const mouseY = (event.clientY - rect.top) * scaleY;
 
   const cellSize = CANVAS_SIZE / gridSize;
-
-  // 0 から gridSize-1 までのマス目インデックス（x, y）を計算
   const gridX = Math.floor(mouseX / cellSize);
   const gridY = Math.floor(mouseY / cellSize);
 
-  // キャンバスの範囲外なら何もしない
   if (gridX < 0 || gridX >= gridSize || gridY < 0 || gridY >= gridSize) return;
 
-  // 現在のモードによって塗りつぶすか、消去する（透明に戻す）か判定
   if (currentMode === 'draw') {
     gridData[gridY][gridX] = currentColor;
+    drawCanvas();
   } else if (currentMode === 'erase') {
-    gridData[gridY][gridX] = null; // 透明化
+    gridData[gridY][gridX] = null;
+    drawCanvas();
+  } else if (currentMode === 'fill') {
+    // 塗りつぶしの場合は、クリックした一度だけ発動させるため isDrawing フラグを無視する（イベント側で制御）
+    const targetColor = gridData[gridY][gridX];
+    if (targetColor !== currentColor) {
+      floodFill(gridX, gridY, targetColor, currentColor);
+      drawCanvas();
+    }
   }
-
-  drawCanvas(); // 画面を更新
 }
 
-// マウスイベントの登録
+// Flood Fill アルゴリズムの実装
+function floodFill(startX, startY, targetColor, replacementColor) {
+  const stack = [[startX, startY]];
+  
+  while (stack.length > 0) {
+    const [x, y] = stack.pop();
+
+    if (x < 0 || x >= gridSize || y < 0 || y >= gridSize) continue;
+    if (gridData[y][x] === targetColor) {
+      gridData[y][x] = replacementColor;
+      
+      stack.push([x + 1, y]); // 右
+      stack.push([x - 1, y]); // 左
+      stack.push([x, y + 1]); // 下
+      stack.push([x, y - 1]); // 上
+    }
+  }
+}
+
+// イベントリスナー
 canvas.addEventListener('mousedown', (e) => {
-  isDrawing = true;
-  paintCell(e); // クリック時にも1マス塗る
+  if (currentMode === 'fill') {
+    // 塗りつぶしモードの場合は、最初のクリック時のみ動作し、ドラッグは無効化する
+    paintCell(e);
+    saveHistory(); // 塗りつぶし完了時に即保存
+  } else {
+    isDrawing = true;
+    paintCell(e);
+  }
 });
 
 canvas.addEventListener('mousemove', (e) => {
-  if (isDrawing) {
-    paintCell(e); // ドラッグ中連続して塗る
+  if (isDrawing && currentMode !== 'fill') {
+    paintCell(e);
   }
 });
 
-// マウスを離したとき（または画面外に出たとき）に描画終了とし、履歴へ保存
 const stopDrawing = () => {
-  if (isDrawing) {
+  if (isDrawing && currentMode !== 'fill') {
     isDrawing = false;
-    saveHistory(); // 描き終わったタイミングで1手分として保存
+    saveHistory();
   }
 };
 
@@ -178,27 +205,32 @@ canvas.addEventListener('mouseleave', stopDrawing);
 // 5. ツールバーの操作イベント
 // ==========================================
 
-// カラーピッカー色変更
+// --- モード切替UIの制御用ヘルパー ---
+function setActiveModeButton(activeBtnId) {
+  [btnDraw, btnFill, btnEraser].forEach(btn => btn.classList.remove('active'));
+  document.getElementById(activeBtnId).classList.add('active');
+}
+
+// ペン色
 colorPicker.addEventListener('input', (e) => {
   currentColor = e.target.value;
-  // 色を変えたら自動的に描画モードに戻す
+  // ペンモードに戻す
   currentMode = 'draw';
-  btnDraw.classList.add('active');
-  btnEraser.classList.remove('active');
+  setActiveModeButton('btn-draw');
 });
 
-// 描画モード（ペン）
+// モード切替イベント
 btnDraw.addEventListener('click', () => {
   currentMode = 'draw';
-  btnDraw.classList.add('active');
-  btnEraser.classList.remove('active');
+  setActiveModeButton('btn-draw');
 });
-
-// 消しゴムモード
+btnFill.addEventListener('click', () => {
+  currentMode = 'fill';
+  setActiveModeButton('btn-fill');
+});
 btnEraser.addEventListener('click', () => {
   currentMode = 'erase';
-  btnEraser.classList.add('active');
-  btnDraw.classList.remove('active');
+  setActiveModeButton('btn-eraser');
 });
 
 // 全消去
@@ -210,27 +242,22 @@ btnClear.addEventListener('click', () => {
   }
 });
 
-// 戻る（Undo）機能
+// 戻る（Undo）
 btnUndo.addEventListener('click', () => {
-  // 履歴が2つ以上（初期状態を含め）ある場合のみ戻せる
   if (undoHistory.length > 1) {
-    undoHistory.pop(); // 現在の状態（最新の履歴）を捨てる
+    undoHistory.pop();
     const previousState = undoHistory[undoHistory.length - 1];
-    
-    // 1つ前の状態を復元
     gridData = previousState.map(row => [...row]);
     drawCanvas();
   } else {
-    // 最初の状態の場合はアラートを出して知らせる（初心者への配慮）
     alert("これ以上戻れません！ / Cannot undo any further.");
   }
 });
 
-// グリッド線表示切り替え
+// グリッドトグル
 btnGridToggle.addEventListener('click', () => {
   showGrid = !showGrid;
   btnGridToggle.innerHTML = showGrid ? `<span class="icon">🔲</span> 枠線 / Grid: ON` : `<span class="icon">⬛</span> 枠線 / Grid: OFF`;
-  // ボタン自体のスタイルを変える（少し透過させるなど）
   if (showGrid) {
     btnGridToggle.classList.add('outline');
     btnGridToggle.style.opacity = '1';
@@ -238,44 +265,106 @@ btnGridToggle.addEventListener('click', () => {
     btnGridToggle.classList.remove('outline');
     btnGridToggle.style.opacity = '0.6';
   }
-  drawCanvas(); // ON/OFFが変わったら再描画
+  drawCanvas();
 });
 
 // サイズ変更
 sizeSelector.addEventListener('change', (e) => {
-  if (confirm("サイズを変更するとキャンバスがリセットされます。 / Changing size will clear the canvas. Continue?")) {
-    // サニタイズ: ユーザーに直接入力させる場所ではないが念のため数値解析と制限
+  if (confirm("サイズを変更するとキャンバスがリセットされます。 / Canvas will be reset. Continue?")) {
     let newSize = parseInt(e.target.value, 10);
     if (!isNaN(newSize) && [16, 32, 64].includes(newSize)) {
       gridSize = newSize;
-      initCanvas(); // 再初期化
+      initCanvas();
     }
   } else {
-    // キャンセルされた場合は選択を元に戻す
     e.target.value = gridSize;
   }
 });
 
-// 画像保存（ダウンロード）機能
-btnDownload.addEventListener('click', () => {
-  // ダウンロード時は「グリッドなし」で再描画する
-  drawCanvas(true); 
-  
-  // キャンバスの中身をPNG形式のデータURLに変換
-  // セキュリティ対策: このURL自体はブラウザ内で生成・完結するため安全です
-  const dataURL = canvas.toDataURL("image/png");
-
-  // 仮想的なリンク（<a>要素）を作ってクリックさせるハックでダウンロードを実行
-  const link = document.createElement("a");
-  link.download = `pixelart_${gridSize}x${gridSize}_${new Date().getTime()}.png`;
-  link.href = dataURL;
-  
-  // DOMに追加しなくてもclickメソッドは呼び出せる
-  link.click();
-
-  // ダウンロード用の一時的な「グリッドなし」状態から元に戻す
+// 背景色の設定切り替え
+chkTransparent.addEventListener('change', (e) => {
+  if (e.target.checked) {
+    customBgGroup.style.display = 'none';
+  } else {
+    customBgGroup.style.display = 'flex';
+  }
   drawCanvas();
 });
+bgColorPicker.addEventListener('input', () => {
+  // 背景色を変更したら即座にプレビューへ反映
+  drawCanvas();
+});
+
+// 画像保存 (ダウンロード)
+btnDownload.addEventListener('click', () => {
+  drawCanvas(true); // グリッドなしで描画
+  const dataURL = canvas.toDataURL("image/png");
+  const link = document.createElement("a");
+  // 背景の状態などをファイル名に含めたい場合はここにロジック追加可
+  link.download = `pixelart_${gridSize}x${gridSize}_${new Date().getTime()}.png`;
+  link.href = dataURL;
+  link.click();
+  drawCanvas(); // 状態を元に戻す
+});
+
+// ==========================================
+// 6. 画像インポート（モザイク化）機能
+// ==========================================
+// 10進数のRGBをHEX(#RRGGBB)に変換する関数
+function rgbToHex(r, g, b) {
+  return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+}
+
+fileImport.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const img = new Image();
+    img.onload = () => {
+      // 内部メモリ上に、キャンバスと同じサイズのオフスクリーンキャンバスを用意
+      const offCanvas = document.createElement('canvas');
+      offCanvas.width = gridSize;
+      offCanvas.height = gridSize;
+      const offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
+
+      // 画像を縮小して書き込む（ここでブラウザがモザイク化をしてくれる）
+      offCtx.drawImage(img, 0, 0, gridSize, gridSize);
+
+      // 縮小した画像のピクセルデータ（RGBA情報）を抽出
+      const imageData = offCtx.getImageData(0, 0, gridSize, gridSize).data;
+
+      // gridData配列に色コードを上書き
+      let i = 0;
+      for (let y = 0; y < gridSize; y++) {
+        for (let x = 0; x < gridSize; x++) {
+          const r = imageData[i];
+          const g = imageData[i + 1];
+          const b = imageData[i + 2];
+          const a = imageData[i + 3];
+
+          // アルファ値（透明度）が低い場合はnull（透明）とする
+          if (a < 128) {
+            gridData[y][x] = null;
+          } else {
+            gridData[y][x] = rgbToHex(r, g, b);
+          }
+          i += 4; // 次のピクセル（R, G, B, A）へ
+        }
+      }
+
+      saveHistory(); // インポート直後を履歴に保存
+      drawCanvas();  // 画面更新
+
+      // input要素のクリア（同じ画像を連続でアップロードできるようにするため）
+      fileImport.value = '';
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
 
 // ==========================================
 // アプリ起動
