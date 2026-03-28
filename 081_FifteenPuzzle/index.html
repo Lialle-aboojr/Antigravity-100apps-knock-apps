@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15 Puzzle | 15パズル</title>
+    <meta name="description" content="シンプルで美しい、無印良品風デザインの15パズルゲーム。Minimalist 15 Puzzle game.">
+    <!-- ファビコンの設定 -->
+    <link rel="icon" href="favicon.png" id="favicon">
+    <script>
+        // 環境による15パズル用ファビコン画像表示のフォールバック
+        document.addEventListener('DOMContentLoaded', () => {
+            const favicon = document.getElementById('favicon');
+            const img = new Image();
+            img.onerror = () => {
+                const svg = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="20" fill="%23faf9f6"/><text y="68" x="50" font-family="Arial" font-size="50" font-weight="bold" fill="%23777" text-anchor="middle">15</text></svg>`;
+                favicon.href = svg;
+            };
+            img.src = favicon.href;
+        });
+    </script>
+
+    <!-- Google Fonts: Inter & Noto Sans JP -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1 class="title">15 Puzzle<span class="subtitle">15パズル</span></h1>
+        </header>
+        
+        <main>
+            <div class="stats-container">
+                <div class="stat-box">
+                    <span class="stat-label">時間 / Time</span>
+                    <span class="stat-value" id="time-display">00:00</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">手数 / Moves</span>
+                    <span class="stat-value" id="moves-display">0</span>
+                </div>
+            </div>
+
+            <div class="puzzle-wrapper">
+                <div id="puzzle-board" class="puzzle-board">
+                    <!-- タイルはJavaScriptで生成されます -->
+                </div>
+                <!-- クリア時のオーバーレイ -->
+                <div id="clear-overlay" class="clear-overlay hidden">
+                    <div class="clear-message">
+                        <h2>Congratulations!</h2>
+                        <p>クリアおめでとうございます！</p>
+                        <div class="clear-stats">
+                            <p>Time: <span id="final-time">00:00</span></p>
+                            <p>Moves: <span id="final-moves">0</span></p>
+                        </div>
+                        <button id="play-again-btn" class="primary-btn">もう一度遊ぶ / Play Again</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button id="shuffle-btn" class="primary-btn">シャッフル / Shuffle</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScriptの読み込み -->
+    <script src="script.js"></script>
+</body>
+</html>
