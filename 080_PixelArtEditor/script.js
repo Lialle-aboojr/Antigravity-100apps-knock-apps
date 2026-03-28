@@ -145,7 +145,7 @@ function paintCell(event) {
     gridData[gridY][gridX] = null;
     drawCanvas();
   } else if (currentMode === 'fill') {
-    // 塗りつぶしの場合は、クリックした一度だけ発動させるため isDrawing フラグを無視する（イベント側で制御）
+    // 塗りつぶしの場合は、クリックした一度だけ発動させるため isDrawing フラグを無視する
     const targetColor = gridData[gridY][gridX];
     if (targetColor !== currentColor) {
       floodFill(gridX, gridY, targetColor, currentColor);
@@ -257,7 +257,11 @@ btnUndo.addEventListener('click', () => {
 // グリッドトグル
 btnGridToggle.addEventListener('click', () => {
   showGrid = !showGrid;
-  btnGridToggle.innerHTML = showGrid ? `<span class="icon">🔲</span> 枠線 / Grid: ON` : `<span class="icon">⬛</span> 枠線 / Grid: OFF`;
+  const textSpan = btnGridToggle.querySelector('.grid-btn-text');
+  if (textSpan) {
+    btnGridToggle.innerHTML = showGrid ? `<span class="icon">🔲</span> <span class="btn-text grid-btn-text">枠線 / Grid: ON</span>` : `<span class="icon">⬛</span> <span class="btn-text grid-btn-text">枠線 / Grid: OFF</span>`;
+  }
+  
   if (showGrid) {
     btnGridToggle.classList.add('outline');
     btnGridToggle.style.opacity = '1';
@@ -291,7 +295,6 @@ chkTransparent.addEventListener('change', (e) => {
   drawCanvas();
 });
 bgColorPicker.addEventListener('input', () => {
-  // 背景色を変更したら即座にプレビューへ反映
   drawCanvas();
 });
 
@@ -300,7 +303,6 @@ btnDownload.addEventListener('click', () => {
   drawCanvas(true); // グリッドなしで描画
   const dataURL = canvas.toDataURL("image/png");
   const link = document.createElement("a");
-  // 背景の状態などをファイル名に含めたい場合はここにロジック追加可
   link.download = `pixelart_${gridSize}x${gridSize}_${new Date().getTime()}.png`;
   link.href = dataURL;
   link.click();
@@ -310,7 +312,6 @@ btnDownload.addEventListener('click', () => {
 // ==========================================
 // 6. 画像インポート（モザイク化）機能
 // ==========================================
-// 10進数のRGBをHEX(#RRGGBB)に変換する関数
 function rgbToHex(r, g, b) {
   return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
 }
@@ -323,16 +324,16 @@ fileImport.addEventListener('change', (e) => {
   reader.onload = (event) => {
     const img = new Image();
     img.onload = () => {
-      // 内部メモリ上に、キャンバスと同じサイズのオフスクリーンキャンバスを用意
+      // 内部メモリ上にオフスクリーンキャンバスを用意
       const offCanvas = document.createElement('canvas');
       offCanvas.width = gridSize;
       offCanvas.height = gridSize;
       const offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
 
-      // 画像を縮小して書き込む（ここでブラウザがモザイク化をしてくれる）
+      // 画像を縮小して書き込む（ブラウザのモザイク化）
       offCtx.drawImage(img, 0, 0, gridSize, gridSize);
 
-      // 縮小した画像のピクセルデータ（RGBA情報）を抽出
+      // ピクセルデータ（RGBA情報）を抽出
       const imageData = offCtx.getImageData(0, 0, gridSize, gridSize).data;
 
       // gridData配列に色コードを上書き
@@ -344,20 +345,17 @@ fileImport.addEventListener('change', (e) => {
           const b = imageData[i + 2];
           const a = imageData[i + 3];
 
-          // アルファ値（透明度）が低い場合はnull（透明）とする
           if (a < 128) {
             gridData[y][x] = null;
           } else {
             gridData[y][x] = rgbToHex(r, g, b);
           }
-          i += 4; // 次のピクセル（R, G, B, A）へ
+          i += 4;
         }
       }
 
-      saveHistory(); // インポート直後を履歴に保存
-      drawCanvas();  // 画面更新
-
-      // input要素のクリア（同じ画像を連続でアップロードできるようにするため）
+      saveHistory();
+      drawCanvas();
       fileImport.value = '';
     };
     img.src = event.target.result;

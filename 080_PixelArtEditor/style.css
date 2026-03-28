@@ -69,7 +69,8 @@ body {
 
 /* ツールバー（操作パネル） */
 .toolbar {
-  width: 280px;
+  /* ボタンテキストが途切れないよう少しだけ広く設計 */
+  width: 300px;
   background-color: var(--panel-bg);
   border-right: 1px solid var(--border-color);
   padding: 24px;
@@ -125,16 +126,21 @@ body {
   display: flex;
   flex-direction: row;
   gap: 6px;
+  /* 激しく縮小された場合は自動で改行し破綻を防ぐ */
+  flex-wrap: wrap;
 }
+
 .flex-group .btn {
-  flex: 1;
+  /* 固定の幅を持たせず柔軟に伸縮させる（最小幅を指定して極小化を防止） */
+  flex: 1 1 auto;
+  min-width: calc(33.333% - 10px);
 }
 
 /* =========================================================
    UI コンポーネント
 ========================================================= */
 
-/* --- カラーピッカーの修正（ストライプ状・枠を消してベタ塗りの四角に） --- */
+/* --- カラーピッカー --- */
 .color-swatch, .color-swatch-small {
   appearance: none;
   -webkit-appearance: none;
@@ -152,7 +158,6 @@ body {
   border-color: var(--text-primary);
 }
 
-/* カラーピッカー内部の要素（ブラウザ特有のスタイル）をリセットし、親要素を100%継承させる */
 .color-swatch::-webkit-color-swatch-wrapper,
 .color-swatch-small::-webkit-color-swatch-wrapper {
   padding: 0;
@@ -160,10 +165,9 @@ body {
 .color-swatch::-webkit-color-swatch,
 .color-swatch-small::-webkit-color-swatch {
   border: none;
-  border-radius: 6px; /* 親の枠に合わせる */
+  border-radius: 6px; 
 }
 
-/* 小さいカラーピッカー用（背景色など） */
 .color-swatch-small {
   height: 32px;
   width: 48px;
@@ -197,7 +201,7 @@ body {
   justify-content: center;
   gap: 6px;
   width: 100%;
-  padding: 10px 12px;
+  padding: 10px 8px; /* パディングを微調整して文字が入りやすくする */
   background-color: var(--bg-color);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
@@ -209,17 +213,22 @@ body {
   text-align: center;
 }
 
-/* ファイルインポートボタン特有のリセット（labelなので） */
+/* ファイルインポートボタン */
 .file-upload-btn {
   background-color: var(--hover-bg);
 }
 
+/* 文字の折り返しを防ぎ、長くなる場合はきれいに1行に収めるためのハック */
 .btn .btn-text {
   font-size: 11px;
   line-height: 1.2;
+  white-space: nowrap; /* 不自然な途中改行を強力に防ぐ */
+  word-break: keep-all; 
 }
+
 .btn .icon {
   font-size: 16px;
+  flex-shrink: 0; /* アイコンが潰れるのを防ぐ */
 }
 
 .btn:hover, .file-upload-btn:hover {
@@ -320,9 +329,7 @@ body {
   background-color: var(--canvas-bg);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   border-radius: 4px;
-  /* サイズがはみ出た場合にスクロールするためのベース設定 */
   flex-shrink: 0;
-  /* 画像がボヤけないようにする設定（Chrome, Firefox, Safari対応） */
   image-rendering: pixelated; 
   image-rendering: -moz-crisp-edges;
 }
@@ -331,7 +338,6 @@ body {
 canvas {
   display: block;
   cursor: crosshair;
-  /* チェッカーボード背景（CSSグラデーションで透明エリアを表現） */
   background-image: 
     linear-gradient(45deg, #ccc 25%, transparent 25%), 
     linear-gradient(-45deg, #ccc 25%, transparent 25%), 
@@ -339,8 +345,6 @@ canvas {
     linear-gradient(-45deg, transparent 75%, #ccc 75%);
   background-size: 32px 32px;
   background-position: 0 0, 0 16px, 16px -16px, -16px 0px;
-  
-  /* スマホで見切れないように最大限画面幅で制限（アスペクト比固定のためmax-widthを利用） */
   max-width: 100%;
   height: auto;
 }
