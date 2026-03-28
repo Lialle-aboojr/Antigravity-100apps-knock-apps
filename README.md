@@ -91,13 +91,14 @@ Complete it. Ship it. Relax. ☕
 | 078 | 💧 Interactive Ripple | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/078_InteractiveRipple/index.html) |
 | 079 | 📅 Weekly Routine Planner | [▶ Demo](https://079-weekly-routine-planner.vercel.app/) |
 | 080 | 🎨 PixelArtEditor | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/080_PixelArtEditor/index.html) |
+| 081 | 🧩 15 Puzzle | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/081_FifteenPuzzle/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 80 / 100 ████████████████░░░░ 80%
+完成: 81 / 100 ████████████████░░░░ 81%
 ```
 
 ---
