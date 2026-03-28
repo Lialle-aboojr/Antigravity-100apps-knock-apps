@@ -37,22 +37,22 @@ body {
 ================================================== 
 */
 .bg-starry {
-    background: url('bg-starry.jpg') center/cover no-repeat, radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+    background: url('bg-starry.png') center/cover no-repeat, radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
 }
 .bg-city {
-    background: url('bg-city.jpg') center/cover no-repeat, linear-gradient(to top, #2b1055 0%, #7597de 100%);
+    background: url('bg-city.png') center/cover no-repeat, linear-gradient(to top, #2b1055 0%, #7597de 100%);
 }
 .bg-ocean {
-    background: url('bg-ocean.jpg') center/cover no-repeat, linear-gradient(to bottom, #011E39 0%, #000B18 100%);
+    background: url('bg-ocean.png') center/cover no-repeat, linear-gradient(to bottom, #011E39 0%, #000B18 100%);
 }
 .bg-snow {
-    background: url('bg-snow.jpg') center/cover no-repeat, linear-gradient(to bottom, #111424 0%, #3a4b69 100%);
+    background: url('bg-snow.png') center/cover no-repeat, linear-gradient(to bottom, #111424 0%, #3a4b69 100%);
 }
 .bg-river {
-    background: url('bg-river.jpg') center/cover no-repeat, linear-gradient(to top, #0f2027, #203a43, #2c5364);
+    background: url('bg-river.png') center/cover no-repeat, linear-gradient(to top, #0f2027, #203a43, #2c5364);
 }
 .bg-country {
-    background: url('bg-country.jpg') center/cover no-repeat, linear-gradient(to top, #1e3c72 0%, #2a5298 100%);
+    background: url('bg-country.png') center/cover no-repeat, linear-gradient(to top, #1e3c72 0%, #2a5298 100%);
 }
 
 /* 
