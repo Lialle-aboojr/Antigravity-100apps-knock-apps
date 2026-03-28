@@ -76,7 +76,8 @@ class Firework {
         
         // 角度を計算して、XとYの速度に分解する
         const angle = Math.atan2(targetY - startY, targetX - startX);
-        const speed = random(12, 18); // やや速めの打ち上げ速度
+        // 上昇スピードを少し遅く調整（0.7〜0.8倍程度）
+        const speed = random(8.4, 13.5); 
         this.vx = Math.cos(angle) * speed;
         this.vy = Math.sin(angle) * speed;
         
@@ -137,33 +138,33 @@ class Particle {
         // 散らばる方向をランダムな角度（0〜360度）で決定
         const angle = random(0, Math.PI * 2);
         
-        // 飛び散るスピード
-        let speed = random(2, 10);
+        // 初期スピードを従来より遅く（0.7〜0.8倍程度）設定
+        let speed = random(1.5, 7.5);
         
         // 牡丹（Peony）の場合は丸く等速で広がるように速度を調整
         if (type === 'peony') {
-            speed = random(5, 8);
+            speed = random(3.5, 6);
         }
         
         this.vx = Math.cos(angle) * speed;
         this.vy = Math.sin(angle) * speed;
         
-        // 物理演算のパラメータ
-        this.friction = 0.95; // 摩擦（毎フレーム速度が95%になり、徐々に止まる）
-        this.gravity = 0.15;  // 重力（毎フレームY方向へ引っ張られる力）
-        this.decay = random(0.015, 0.03); // 消える早さ (毎フレーム透明度が減る量)
+        // 物理演算のパラメータ（ゆっくり広がり、ゆっくり落ちるよう調整）
+        this.friction = 0.96; // 摩擦（減速具合。1に近いほどゆっくり減速）
+        this.gravity = 0.08;  // 重力（落下速度を弱めに）
+        this.decay = random(0.008, 0.018); // 消える早さを遅く（余韻が残るように）
         this.trailLength = 4; // 残像の長さ
         
         // 各花火の種類に応じた特殊設定
         if (type === 'willow') {
-            // しだれ柳: 重力を強くして下に垂らす、色を金色に、長く残るように設定
-            this.gravity = 0.3;
-            this.decay = random(0.005, 0.015);
+            // しだれ柳: 重力を少し強めて下に垂らす、色を金色に、非常に長く残るように設定
+            this.gravity = 0.15;
+            this.decay = random(0.003, 0.01);
             this.color = '#FFD700'; // 金色
             this.trailLength = 6;
         } else if (type === 'peony') {
             // 牡丹: 尾を引かない（点で表現する）
-            this.friction = 0.92;
+            this.friction = 0.94;
             this.trailLength = 1;
         }
     }
@@ -223,7 +224,7 @@ function createParticles(x, y, color, type) {
         // 最初の小さな破裂（音だけのイメージ）
         for (let i = 0; i < 20; i++) {
             const p = new Particle(x, y, '#ffffff', 'peony');
-            p.decay = 0.05; // 一瞬で消える
+            p.decay = 0.03; // 少しゆっくりに
             particles.push(p);
         }
         
@@ -290,16 +291,16 @@ function loop(timestamp) {
     requestAnimationFrame(loop);
     
     // ------------------------------------------
-    // キャンバスの描画クリア（軌跡を残しつつ透過させる）
-    // 'destination-out' により前に描いたピクセルを薄く削り取っていく
-    // 背景のCSS画像は透明キャンバス越しに見える仕組み
+    // キャンバスの描画クリア（軌跡を残しつつ背景を透過させる）
+    // ご指定の通り destination-out を用いてキャンバス自体を徐々に透明にし、
+    // 背景画像が見える状態で軌跡を長く残します。
     // ------------------------------------------
     ctx.globalCompositeOperation = 'destination-out';
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.08)'; // 余韻を長くするため0.1より小さく設定
     ctx.fillRect(0, 0, w, h);
     
-    // 花火をピカッと輝かせるモードに戻す
-    ctx.globalCompositeOperation = 'lighter';
+    // ご指定の通り合成モードを元（source-over）に戻す
+    ctx.globalCompositeOperation = 'source-over';
     
     // ------------------------------------------
     // オートモード処理
@@ -366,8 +367,8 @@ function renderWaterReflection() {
     // 3. 水に映っているように見せるため全体の透明度を下げる
     ctx.globalAlpha = 0.25;
     
-    // 4. 重ね合わせ効果を保持
-    ctx.globalCompositeOperation = 'lighter';
+    // 4. ベースと同様に通常の描画モードを維持
+    ctx.globalCompositeOperation = 'source-over';
     
     // 5. 反転した空間に花火とパーティクルを等しく再描画
     fireworks.forEach(f => f.draw(ctx));
