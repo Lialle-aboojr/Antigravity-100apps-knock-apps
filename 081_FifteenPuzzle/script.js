@@ -115,16 +115,11 @@ function updateTilePositions() {
     }
 }
 
-// --- 履歴の記録 (最適化付きスタック管理) ---
+// --- 履歴の記録 ---
 function recordMove(num) {
-    // もしユーザーが「直前に動かしたタイル」をさらに触った場合、
-    // まったく元の状態に戻るだけなので、履歴を増やすのではなく直前の履歴を削除します。
-    // こうすることで、自動クリア（お手本）がユーザーの無駄な往復をそのまま再現することを防ぎます。
-    if (state.history.length > 0 && state.history[state.history.length - 1] === num) {
-        state.history.pop();
-    } else {
-        state.history.push(num);
-    }
+    // ユーザーからの要望により、ユーザーの回り道や無駄な往復移動に関しても
+    // そのすべてをありのままに記憶し、純粋な完全逆再生の手本にするため全ての移動をPushします
+    state.history.push(num);
 }
 
 // --- 操作 (Interaction) ---
@@ -144,7 +139,7 @@ function handleTileClick(num) {
             state.isPlaying = true;
         }
 
-        // 履歴にタイルの番号を記録
+        // ユーザーの手動移動もすべて履歴にタイルの番号として記録
         recordMove(num);
 
         // 配列のデータを入れ替え
@@ -172,9 +167,9 @@ function handleAutoSolveClick() {
     state.isAutoSolving = true;
     stopTimer(); // お手本動作中はゲームのタイマーを停止
     
-    // 一定間隔（120ms）で履歴をスタックから取り出し逆再生する
+    // 一定間隔（120ms）で履歴をスタックの最後（最新の手）から取り出し逆再生する
     state.autoSolveInterval = setInterval(() => {
-        // 履歴が空になれば完了
+        // 歴史の最初（配列が空になれば）クリア手前に到達し完了
         if (state.history.length === 0) {
             clearInterval(state.autoSolveInterval);
             state.autoSolveInterval = null;
@@ -186,7 +181,7 @@ function handleAutoSolveClick() {
             return;
         }
 
-        // 直前に動かされたタイルの番号を取り出す（これで逆再生になる）
+        // 直前に動かされたタイルの番号を取り出す（これで後ろから順番に完全逆再生になる）
         const numToMove = state.history.pop();
         
         const pos = findTilePosition(numToMove);
@@ -196,7 +191,7 @@ function handleAutoSolveClick() {
         swapTiles(pos.r, pos.c, emptyPos.r, emptyPos.c);
         updateTilePositions();
         
-        // お手本中も手数は加算してあげる（動いている感の演出）
+        // お手本による自動移動が1回行われるたびに、リアルタイムで手数をカウントアップ
         state.moves++;
         movesDisplay.textContent = state.moves;
 
@@ -268,7 +263,7 @@ function shuffleBoardSimulated(isInitial = false) {
     let emptyPos = { r: state.size - 1, c: state.size - 1 }; // (3,3) が最初は空きマス
     
     let previousPos = null;
-    const shuffleCount = 200; // 有効手を200回連続でシミュレート
+    const shuffleCount = 200; // 有効手を200回連続でシミュレートして混ぜる
 
     for (let i = 0; i < shuffleCount; i++) {
         const candidates = [];
@@ -314,7 +309,7 @@ function shuffleBoardSimulated(isInitial = false) {
 
         swapTiles(selected.r, selected.c, emptyPos.r, emptyPos.c);
         
-        // シャッフルで行った移動を履歴に記録（ここから逆算してお手本になる）
+        // シャッフルで行った移動を行動履歴に記録（ここから逆算してお手本になる）
         recordMove(numToMove);
         
         // PreviousPosを更新
