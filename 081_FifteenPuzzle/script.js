@@ -22,7 +22,7 @@ const boardEl = document.getElementById('puzzle-board');
 const movesDisplay = document.getElementById('moves-display');
 const timeDisplay = document.getElementById('time-display');
 const shuffleBtn = document.getElementById('shuffle-btn');
-const autoSolveBtn = document.getElementById('auto-solve-btn'); // 追加
+const autoSolveBtn = document.getElementById('auto-solve-btn'); // お手本ボタン
 const clearOverlay = document.getElementById('clear-overlay');
 const finalTimeDisplay = document.getElementById('final-time');
 const finalMovesDisplay = document.getElementById('final-moves');
@@ -169,7 +169,7 @@ function handleAutoSolveClick() {
     
     // 一定間隔（120ms）で履歴をスタックの最後（最新の手）から取り出し逆再生する
     state.autoSolveInterval = setInterval(() => {
-        // 歴史の最初（配列が空になれば）クリア手前に到達し完了
+        // 歴史の最初（配列が空になれば）クリア状態に到達し完了
         if (state.history.length === 0) {
             clearInterval(state.autoSolveInterval);
             state.autoSolveInterval = null;
@@ -263,7 +263,9 @@ function shuffleBoardSimulated(isInitial = false) {
     let emptyPos = { r: state.size - 1, c: state.size - 1 }; // (3,3) が最初は空きマス
     
     let previousPos = null;
-    const shuffleCount = 200; // 有効手を200回連続でシミュレートして混ぜる
+    
+    // シャッフル手数を120〜180回の間でランダムに決定する（毎回手数が変動する）
+    const shuffleCount = Math.floor(Math.random() * (180 - 120 + 1)) + 120;
 
     for (let i = 0; i < shuffleCount; i++) {
         const candidates = [];
