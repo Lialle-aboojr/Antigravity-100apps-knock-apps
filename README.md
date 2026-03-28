@@ -92,13 +92,14 @@ Complete it. Ship it. Relax. ☕
 | 079 | 📅 Weekly Routine Planner | [▶ Demo](https://079-weekly-routine-planner.vercel.app/) |
 | 080 | 🎨 PixelArtEditor | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/080_PixelArtEditor/index.html) |
 | 081 | 🧩 15 Puzzle | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/081_FifteenPuzzle/index.html) |
+| 082 | 🎆 Hanabi Canvas | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/082_HanabiCanvas/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 81 / 100 ████████████████░░░░ 81%
+完成: 82 / 100 ████████████████░░░░ 82%
 ```
 
 ---
