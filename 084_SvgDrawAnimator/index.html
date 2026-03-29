@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Draw Animator</title>
+    <!-- ファビコンの読み込み -->
+    <link rel="icon" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>SVG Draw Animator</h1>
+        <p>手書き風パス描画アニメーション生成ツール / Hand-drawn SVG Animation Generator</p>
+    </header>
+    
+    <main class="container">
+        <!-- 左側：入力・設定エリア -->
+        <section class="panel control-panel">
+            <h2>1. SVG選択 / Select SVG</h2>
+            <div class="preset-buttons">
+                <!-- 3つのプリセットボタン -->
+                <button class="preset-btn" data-preset="check">Checkmark</button>
+                <button class="preset-btn" data-preset="heart">Heart</button>
+                <button class="preset-btn" data-preset="curve">Curve Line</button>
+            </div>
+            
+            <label for="custom-svg">カスタムSVG / Custom SVG Code (&lt;svg&gt;タグ):</label>
+            <textarea id="custom-svg" placeholder="&lt;svg&gt;...&lt;/svg&gt;"></textarea>
+
+            <h2 class="mt-4">2. パラメータ / Parameters</h2>
+            
+            <!-- アニメーション速度のスライダー -->
+            <div class="control-group">
+                <label for="duration">アニメーション速度 / Duration: <span id="duration-val">2.0</span>s</label>
+                <input type="range" id="duration" min="0.5" max="10" step="0.1" value="2.0">
+            </div>
+            
+            <!-- 線の太さのスライダー -->
+            <div class="control-group">
+                <label for="stroke-width">線の太さ / Stroke Width: <span id="width-val">3</span>px</label>
+                <input type="range" id="stroke-width" min="1" max="20" step="1" value="3">
+            </div>
+            
+            <!-- 線の色のカラーピッカー -->
+            <div class="control-group">
+                <label for="stroke-color">線の色 / Stroke Color:</label>
+                <input type="color" id="stroke-color" value="#00e5ff">
+            </div>
+        </section>
+
+        <!-- 右側：プレビュー＆コードエリア -->
+        <section class="panel preview-panel">
+            <h2>3. プレビュー / Preview</h2>
+            <!-- アニメーションが描画されるエリア -->
+            <div class="preview-box" id="preview-container">
+                <!-- JavascriptによってここにSVGが挿入されます -->
+            </div>
+            
+            <!-- コントロールボタン -->
+            <div class="controls">
+                <button id="btn-play" class="action-btn">▶ 再生 / Play</button>
+                <button id="btn-pause" class="action-btn">⏸ 停止 / Pause</button>
+                <button id="btn-reset" class="action-btn">🔄 リセット / Reset</button>
+            </div>
+
+            <h2 class="mt-4">4. 出力コード / Generated Code</h2>
+            <p class="desc">このコードをHTMLにコピペするだけでアニメーションが実装できます</p>
+            <textarea id="output-code" readonly placeholder="ここに生成されたHTML/CSSが表示されます"></textarea>
+            <button id="btn-copy" class="action-btn full-width">📋 コピー / Copy to Clipboard</button>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
