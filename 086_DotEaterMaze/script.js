@@ -42,9 +42,7 @@ let player = {
   nextDirX: 0,
   nextDirY: 0,
   speed: 2, // TILE_SIZE(20)を割り切れる数にすること
-  radius: 8,
-  mouthOpen: 0, // 口の開閉アニメーション用
-  mouthDir: 1,
+  radius: 8
 };
 
 // エネミー（お邪魔キャラ）設定
@@ -281,14 +279,6 @@ function updatePlayer() {
     gameState = 'CLEAR';
     gameClearScreen.classList.remove('hidden');
   }
-
-  // パックマンの口パクアニメーション値の更新
-  if (player.dirX !== 0 || player.dirY !== 0) {
-    player.mouthOpen += 0.05 * player.mouthDir;
-    if (player.mouthOpen > 0.3 || player.mouthOpen < 0) {
-      player.mouthDir *= -1; // 限界まできたら逆に動かす
-    }
-  }
 }
 
 // エネミーの移動ロジック（簡易AI）
@@ -446,27 +436,19 @@ function drawPlayer() {
   ctx.save();
   ctx.translate(player.x + TILE_SIZE / 2, player.y + TILE_SIZE / 2);
 
-  // 向いている方向に合わせてキャンバスを回転させる
-  if (player.dirX === 1) ctx.rotate(0);                 // 右
-  else if (player.dirX === -1) ctx.rotate(Math.PI);     // 左
-  else if (player.dirY === 1) ctx.rotate(Math.PI / 2);  // 下
-  else if (player.dirY === -1) ctx.rotate(-Math.PI / 2);// 上
+  let cubeSize = player.radius * 2; // サイズを定義
 
-  // パックマン風キャラの描画（円弧で口の開閉を表現）
-  let openMouthAngle = player.mouthOpen * Math.PI; // 0 ～ 0.3π ほど
-  ctx.beginPath();
-  // 右向きを基準として arc(x, y, radius, startAngle, endAngle)
-  ctx.arc(0, 0, player.radius, openMouthAngle, Math.PI * 2 - openMouthAngle);
-  ctx.lineTo(0, 0); // 中心に戻って扇形にする
-  ctx.closePath();
-  
-  ctx.fillStyle = '#ffde59';
+  // 光る青いデータキューブ
+  ctx.fillStyle = '#00f3ff';
   ctx.shadowBlur = 15;
-  ctx.shadowColor = '#ffde59';
+  ctx.shadowColor = '#00f3ff';
+  
+  ctx.beginPath();
+  // 中心座標(0,0)からずらして四角形を描画
+  ctx.rect(-cubeSize / 2, -cubeSize / 2, cubeSize, cubeSize);
   ctx.fill();
 
-  ctx.restore(); // 回転と光彩をリセット
-  ctx.shadowBlur = 0;
+  ctx.restore(); // 光彩などをリセット
 }
 
 function drawEnemy() {
@@ -475,8 +457,9 @@ function drawEnemy() {
   let radius = Math.floor(TILE_SIZE / 2) - 2;
 
   ctx.save();
-  // パワーアップ時は青色（点滅）、通常時はピンク色に
-  let enemyColor = '#ff4b4b'; // ネオンピンク
+  
+  // パワーアップ時は青色（点滅）、通常時は赤色（危険マーク色）にする
+  let enemyColor = '#ff0000'; // 警告の赤色
   if (enemy.powerModeMode) {
     // 残り時間が少ない時は白と青で点滅してピンチを知らせる
     if (enemy.powerTimer < 100 && Math.floor(enemy.powerTimer / 10) % 2 === 0) {
@@ -490,35 +473,12 @@ function drawEnemy() {
   ctx.shadowBlur = 15;
   ctx.shadowColor = enemyColor;
 
-  // エネミー（オバケ風）のシルエット描画
+  // 下向き三角形（セキュリティ警告マーク風）を描画
   ctx.beginPath();
-  // 上半分の半円
-  ctx.arc(cx, cy, radius, Math.PI, 0);
-  // 下半分のヒラヒラ
-  ctx.lineTo(cx + radius, cy + radius);
-  ctx.lineTo(cx + radius / 2, cy + radius - 3);
-  ctx.lineTo(cx, cy + radius);
-  ctx.lineTo(cx - radius / 2, cy + radius - 3);
-  ctx.lineTo(cx - radius, cy + radius);
+  ctx.moveTo(cx - radius, cy - radius + 2);   // 左上
+  ctx.lineTo(cx + radius, cy - radius + 2);   // 右上
+  ctx.lineTo(cx, cy + radius - 2);            // 下中央
   ctx.closePath();
-  ctx.fill();
-
-  ctx.shadowBlur = 0;
-
-  // 目玉の描画
-  ctx.fillStyle = '#fff';
-  ctx.beginPath();
-  ctx.arc(cx - 3, cy - 2, 2.5, 0, Math.PI * 2);
-  ctx.arc(cx + 3, cy - 2, 2.5, 0, Math.PI * 2);
-  ctx.fill();
-  
-  // 黒目（向いている方向に応じて少しズラす）
-  ctx.fillStyle = '#000';
-  let eyeDx = enemy.dirX * 1;
-  let eyeDy = enemy.dirY * 1;
-  ctx.beginPath();
-  ctx.arc(cx - 3 + eyeDx, cy - 2 + eyeDy, 1, 0, Math.PI * 2);
-  ctx.arc(cx + 3 + eyeDx, cy - 2 + eyeDy, 1, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.restore();
