@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- アプリのタイトル -->
     <title>Emotion Journal | 感情日記</title>
-    <!-- 生成したファビコン画像を読み込む -->
+    <!-- ファビコン画像を読み込む -->
     <link rel="icon" href="favicon.png">
     <!-- CSSファイルを読み込む -->
     <link rel="stylesheet" href="style.css">
@@ -72,13 +72,39 @@
                 </div>
             </div>
 
+            <!-- ▼ 新機能：カレンダーコンテナ ▼ -->
+            <div class="calendar-container">
+                <!-- カレンダーのヘッダー部（前月・次月・月表示） -->
+                <div class="calendar-header">
+                    <button id="prev-month-btn" class="month-nav-btn">&lt;</button>
+                    <h3 id="current-month-display"></h3>
+                    <button id="next-month-btn" class="month-nav-btn">&gt;</button>
+                </div>
+                <!-- 曜日表記（日曜始まり） -->
+                <div class="calendar-weekdays">
+                    <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+                </div>
+                <!-- カレンダーのマス目がJSによって追加されます -->
+                <div id="calendar-grid" class="calendar-grid">
+                </div>
+            </div>
+
+            <!-- カレンダーの日付をクリックしたときに表示される詳細結果ボックス -->
+            <div id="selected-date-details" class="selected-date-details" style="display: none;">
+                <div class="details-header">
+                    <h3 id="selected-date-title"></h3>
+                    <!-- 閉じるボタン -->
+                    <button id="close-details-btn" class="close-details-btn">&times;</button>
+                </div>
+                <!-- その日の記録リストが追加される場所 -->
+                <div id="date-journal-list" class="journal-list">
+                    <!-- JavaScriptでここに記録が追加されます -->
+                </div>
+            </div>
+
             <!-- 全件削除ボタン -->
             <button id="delete-all-btn" class="delete-all-btn">全件削除 / Delete All</button>
 
-            <!-- 記録リストが追加される場所 -->
-            <div id="journal-list" class="journal-list">
-                <!-- JavaScriptでここに記録が追加されます -->
-            </div>
         </section>
     </div>
     

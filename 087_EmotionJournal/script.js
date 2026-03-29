@@ -7,111 +7,150 @@ const emotionsData = {
     tired: { emoji: '😫', label: '疲れた / Tired', color: '#fae8ff' }   // やわらかいパープル系
 };
 
-// HTMLの中から操作したい要素（DOM要素）を取得します
+// ==========================================
+// 1. DOM要素の取得（HTMLから操作したい部品を集める）
+// ==========================================
 const emojiBtns = document.querySelectorAll('.emoji-btn');           // 感情ボタンすべて
 const journalText = document.getElementById('journal-text');         // テキスト入力欄
 const saveBtn = document.getElementById('save-btn');                 // 保存ボタン
-const journalList = document.getElementById('journal-list');         // 日記のリスト表示部分
 const emotionFilter = document.getElementById('emotion-filter');     // 絞り込みセレクトボックス
 const deleteAllBtn = document.getElementById('delete-all-btn');      // 全件削除ボタン
 
-// 状態管理用の変数
-let selectedEmotion = null;                                          // 現在選択されている感情
-const STORAGE_KEY = 'emotion_journal_data';                          // 保存時のキー（目印の名前）
+// カレンダーと詳細表示用のDOM要素
+const calendarGrid = document.getElementById('calendar-grid');       // カレンダーのマス目が入る場所
+const prevMonthBtn = document.getElementById('prev-month-btn');      // 前月ボタン
+const nextMonthBtn = document.getElementById('next-month-btn');      // 次月ボタン
+const currentMonthDisplay = document.getElementById('current-month-display'); // 年月表示
+const selectedDateDetails = document.getElementById('selected-date-details'); // 詳細表示の全体ボックス
+const dateJournalList = document.getElementById('date-journal-list');// 詳細表示のリスト部分
+const selectedDateTitle = document.getElementById('selected-date-title');     // 詳細表示のタイトル
+const closeDetailsBtn = document.getElementById('close-details-btn');// 詳細表示の閉じるボタン
 
-// アプリ起動時：ブラウザのローカルストレージからデータを読み込みます（データがなければ空の配列 `[]` になります）
+// ==========================================
+// 2. 状態管理（アプリの今の状態を覚えておく変数）
+// ==========================================
+let selectedEmotion = null;                                          // 新規入力時に選択された感情
+const STORAGE_KEY = 'emotion_journal_data';                          // 保存時のキー
+
+// ローカルストレージからデータを読み込み（データがなければ空の配列 `[]`）
 let journalEntries = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
-// 初期化：保存されている記録を画面に表示します
-renderList();
+// カレンダーで「現在表示している月」と「現在選択されている日付」
+let currentViewDate = new Date(); // 初期値は今日
+let currentlySelectedDate = null; // 例: "2026-03-29"（何も選ばれていない時はnull）
 
 // ==========================================
-// イベントリスナー（ユーザーの操作に対する処理）
+// 3. アプリ起動時の初期化処理
+// ==========================================
+renderCalendar(); // カレンダーを描画する
+
+// ==========================================
+// 4. イベントリスナー（ユーザーの操作に対する処理）
 // ==========================================
 
-// 1. 感情ボタンがクリックされたときの処理
+// 4-1. 感情ボタンのクリック
 emojiBtns.forEach(btn => {
     btn.addEventListener('click', () => {
-        // 全てのボタンから 'active'（選択状態）の印を外します
         emojiBtns.forEach(b => b.classList.remove('active'));
-        
-        // クリックされたボタンに 'active' の印を付け、CSSで目立たせます
         btn.classList.add('active');
-        
-        // どの感情が選ばれたかを変数に保存します（htmlのdata-emotion属性の値を読み取ります）
         selectedEmotion = btn.getAttribute('data-emotion');
     });
 });
 
-// 2. 「記録する / Save」ボタンがクリックされたときの処理
+// 4-2. 「記録する / Save」ボタンのクリック
 saveBtn.addEventListener('click', () => {
-    // 入力エリアの前後の余白スペースを削り取ったテキストを取得します
     const text = journalText.value.trim();
 
-    // 入力チェック（感情が選ばれているか、テキストが書かれているか確認）
+    // 入力チェック
     if (!selectedEmotion) {
         alert('感情を選んでください。(Please select an emotion.)');
-        return; // これ以上処理を進めない
+        return;
     }
     if (!text) {
         alert('今の気持ちを書いてください。(Please write how you feel.)');
         return;
     }
 
-    // 新しい記録のまとまり（オブジェクト）を作成します
+    // 新しい記録のデータを作成
     const newEntry = {
-        id: Date.now(), // 一意のIDとして、現在時刻のミリ秒（連番のようなもの）を使用します
+        id: Date.now(), // 一意のID
         emotion: selectedEmotion,
         text: text,
         date: new Date().toISOString() // 保存時の日時
     };
 
-    // 配列の「一番前（最新）」に新しい記録を追加します
+    // 配列の先頭（最新）に追加して保存
     journalEntries.unshift(newEntry);
-    
-    // データをローカルストレージに保存します
     saveData();
     
-    // 入力フォームをリセット（空に）します
+    // フォームをリセット
     journalText.value = '';
     selectedEmotion = null;
     emojiBtns.forEach(b => b.classList.remove('active'));
 
-    // 最新のデータでリストを再描画します
-    renderList();
-});
-
-// 3. 絞り込み（フィルター）が変更されたときの処理
-emotionFilter.addEventListener('change', () => {
-    // リストを描画し直す（関数の中でフィルターの値を読み取って動作します）
-    renderList();
-});
-
-// 4. 全件削除ボタンがクリックされたときの処理
-deleteAllBtn.addEventListener('click', () => {
-    if (journalEntries.length === 0) return; // すでに空なら何もしない
+    // 保存後は現在の月に戻り、カレンダーを再描画
+    currentViewDate = new Date();
+    renderCalendar();
     
-    // 確認のポップアップを出します
+    // 詳細表示が開いていた場合は閉じて混乱を防ぐ
+    selectedDateDetails.style.display = 'none';
+    currentlySelectedDate = null;
+});
+
+// 4-3. カレンダーの月移動ボタン
+prevMonthBtn.addEventListener('click', () => {
+    // 現在の表示月から1ヶ月引く
+    currentViewDate.setMonth(currentViewDate.getMonth() - 1);
+    renderCalendar();
+});
+
+nextMonthBtn.addEventListener('click', () => {
+    // 現在の表示月に1ヶ月足す
+    currentViewDate.setMonth(currentViewDate.getMonth() + 1);
+    renderCalendar();
+});
+
+// 4-4. 絞り込み（フィルター）の変更
+emotionFilter.addEventListener('change', () => {
+    renderCalendar();
+    
+    // もし詳細ページが開かれていたら、その中身も今のフィルターに合わせて更新する
+    if (currentlySelectedDate && selectedDateDetails.style.display === 'block') {
+        const entries = getEntriesForDate(currentlySelectedDate);
+        showDetailsForDate(currentlySelectedDate, entries);
+    }
+});
+
+// 4-5. 詳細パネルを閉じるボタン
+closeDetailsBtn.addEventListener('click', () => {
+    selectedDateDetails.style.display = 'none';
+    currentlySelectedDate = null;
+});
+
+// 4-6. 全件削除ボタン
+deleteAllBtn.addEventListener('click', () => {
+    if (journalEntries.length === 0) return;
+    
     const confirmDelete = confirm('すべての記録を削除しますか？ / Are you sure you want to delete all records?');
     if (confirmDelete) {
-        journalEntries = []; // 配列を空にする
-        saveData();          // 空のデータを保存
-        renderList();        // 表示を更新
+        journalEntries = [];
+        saveData();
+        renderCalendar(); // カレンダーも空になる
+        selectedDateDetails.style.display = 'none';
+        currentlySelectedDate = null;
     }
 });
 
 // ==========================================
-// 共通関数（何度も呼び出される便利な処理）
+// 5. 共通関数（何度も呼び出される便利な処理）
 // ==========================================
 
-// 最新のデータをブラウザ（ローカルストレージ）に保存する関数
+// データをローカルストレージに保存する関数
 function saveData() {
-    // JSON文字列に変換して保存します
     localStorage.setItem(STORAGE_KEY, JSON.stringify(journalEntries));
 }
 
-// 【重要: XSS（クロスサイトスクリプティング）対策】
-// 悪意のあるコード（<script>など）が入力された場合、ただの文字列として無害化するための関数です。
+// XSS対策：特殊文字を無害化する関数
 function escapeHTML(string) {
     if (!string) return '';
     return string
@@ -120,70 +159,178 @@ function escapeHTML(string) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;')
-        .replace(/\n/g, '<br>'); // 同時に、テキストエリアの改行をHTMLタグの <br> に変換して表示が崩れないようにします。
+        .replace(/\n/g, '<br>');
 }
 
-// 記録のリストを画面に描画する関数
-function renderList() {
-    // 現在のフィルター（絞り込み）の選択値を取得します
+// 現在の絞り込み状態に応じたデータを取得する関数
+function getFilteredEntries() {
     const currentFilter = emotionFilter.value;
-
-    // リストのHTMLを一旦すべて空にします（入れ替えのため）
-    journalList.innerHTML = '';
-
-    // フィルタリング処理： 'all' なら全部、それ以外なら感情が一致するものだけを抽出
-    const filteredEntries = currentFilter === 'all' 
+    return currentFilter === 'all' 
         ? journalEntries 
         : journalEntries.filter(entry => entry.emotion === currentFilter);
+}
 
-    // 空（表示するデータがない）の場合のメッセージ
-    if (filteredEntries.length === 0) {
-        journalList.innerHTML = '<p class="empty-msg">まだ記録がありません。(No records yet.)</p>';
+// 特定の日付（YYYY-MM-DD）の記録だけを抽出する関数
+function getEntriesForDate(dateStr) {
+    const filteredEntries = getFilteredEntries();
+    return filteredEntries.filter(entry => {
+        const d = new Date(entry.date);
+        // 保存されている日付を YYYY-MM-DD に揃えて比較
+        const entryDateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        return entryDateStr === dateStr;
+    });
+}
+
+// ==========================================
+// 6. カレンダーとリストの描画処理
+// ==========================================
+
+// カレンダーを描画する関数
+function renderCalendar() {
+    const year = currentViewDate.getFullYear();
+    const month = currentViewDate.getMonth(); // 0(1月) 〜 11(12月)
+    
+    // ヘッダーに「YYYY年 MM月」を表示
+    currentMonthDisplay.textContent = `${year}年 ${month + 1}月 / ${year}-${String(month + 1).padStart(2, '0')}`;
+    
+    // カレンダーのマス目を一旦空にする
+    calendarGrid.innerHTML = '';
+    
+    // 月初めの日と月末の日を取得
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    
+    const firstDayOfWeek = firstDay.getDay(); // 初日が何曜日か (0:日 〜 6:土)
+    const daysInMonth = lastDay.getDate();    // その月が何日まであるか
+    
+    // カレンダーの最初の空白セル（1日が始まる前の曜日分）を埋める
+    for (let i = 0; i < firstDayOfWeek; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.classList.add('calendar-cell', 'empty-cell');
+        calendarGrid.appendChild(emptyCell);
+    }
+    
+    // 1日〜月末までのセルを作成する
+    for (let day = 1; day <= daysInMonth; day++) {
+        // 対象の日付文字列（例：2026-03-05）を作成
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        
+        // この日付の記録を取得
+        const entriesForDay = getEntriesForDate(dateStr);
+        
+        // セルのDOM要素を作成
+        const cell = document.createElement('div');
+        cell.classList.add('calendar-cell');
+        
+        // 日付の数字を追加
+        const dateNum = document.createElement('span');
+        dateNum.classList.add('cell-date');
+        dateNum.textContent = day;
+        cell.appendChild(dateNum);
+        
+        // 記録があった場合のみ、背景色と絵文字をつける
+        if (entriesForDay.length > 0) {
+            cell.classList.add('has-record');
+            
+            // 背景色は「一番新しい記録（配列の先頭）」の感情に合わせる
+            const latestEmotion = entriesForDay[0].emotion;
+            const emotionData = emotionsData[latestEmotion] || emotionsData.calm;
+            cell.style.backgroundColor = emotionData.color;
+            
+            // 絵文字を表示するコンテナ
+            const emojiContainer = document.createElement('div');
+            emojiContainer.classList.add('cell-emojis');
+            
+            // 小さいマス目があふれないよう、最大4つまで絵文字を表示
+            const maxDisplay = 4;
+            for (let i = 0; i < Math.min(entriesForDay.length, maxDisplay); i++) {
+                const em = entriesForDay[i].emotion;
+                const emData = emotionsData[em] || emotionsData.calm;
+                const emojiSpan = document.createElement('span');
+                emojiSpan.textContent = emData.emoji;
+                emojiContainer.appendChild(emojiSpan);
+            }
+            
+            // もし5回以上記録があった場合は「+」などのしるしを追加
+            if (entriesForDay.length > maxDisplay) {
+                const plusSpan = document.createElement('span');
+                plusSpan.textContent = '+';
+                plusSpan.style.fontSize = '10px';
+                emojiContainer.appendChild(plusSpan);
+            }
+            
+            cell.appendChild(emojiContainer);
+        }
+        
+        // セルをクリックしたときの処理（詳細を表示）
+        cell.addEventListener('click', () => {
+            currentlySelectedDate = dateStr;
+            showDetailsForDate(dateStr, entriesForDay);
+        });
+        
+        // 完成したセルをグリッドに追加
+        calendarGrid.appendChild(cell);
+    }
+}
+
+// 選択された日付の詳細（リスト形式）を下部に表示する関数
+function showDetailsForDate(dateStr, entriesForDay) {
+    // タイトルを選択された日付に書き換える
+    selectedDateTitle.textContent = `${dateStr.replace(/-/g, '/')} の記録 / Records`;
+    
+    // リストの中身をクリアする
+    dateJournalList.innerHTML = '';
+    
+    // 詳細パネルを表示状態にする
+    selectedDateDetails.style.display = 'block';
+    
+    // 記録がない場合
+    if (entriesForDay.length === 0) {
+        dateJournalList.innerHTML = '<p class="empty-msg">記録がありません。(No records.)</p>';
         return;
     }
-
-    // 抽出されたデータ1つずつに対して、HTMLを作成して画面に追加します
-    filteredEntries.forEach(entry => {
-        // 保存されている感情文字列から、色や絵文字のデータを引き出します（見つからなければcalmを代用）
+    
+    // 記録がある場合は、今までと同じようにリスト風のアイテムを作成する
+    entriesForDay.forEach(entry => {
         const emotionData = emotionsData[entry.emotion] || emotionsData.calm; 
         
-        // 日付を「YYYY/MM/DD HH:MM」の分かりやすいフォーマットに変換します
+        // 時間を「HH:MM」フォーマットで取得
         const dateObj = new Date(entry.date);
-        const dateString = `${dateObj.getFullYear()}/${(dateObj.getMonth() + 1).toString().padStart(2, '0')}/${dateObj.getDate().toString().padStart(2, '0')} ${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
+        const timeString = `${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
 
-        // 1つの項目を包む <div> 要素を作成します
         const itemEl = document.createElement('div');
         itemEl.classList.add('journal-item');
-        
-        // 感情に応じたパステルカラーの背景色を設定します
         itemEl.style.backgroundColor = emotionData.color;
 
-        // 【セキュリティ確保】 先ほど作成したエスケープ機能を使ってテキストを無害化します
         const safeText = escapeHTML(entry.text);
 
-        // 要素の中のHTMLを組み立てます
         itemEl.innerHTML = `
             <div class="item-header">
                 <span class="item-emoji" title="${emotionData.label}">${emotionData.emoji}</span>
-                <span class="item-date">${dateString}</span>
+                <span class="item-date">${dateStr.replace(/-/g, '/')} ${timeString}</span>
                 <button class="delete-btn" data-id="${entry.id}" aria-label="Delete">🗑️</button>
             </div>
             <div class="item-text">${safeText}</div>
         `;
 
-        // 作成したアイテムごとに、ごみ箱（削除）ボタンのイベントを追加します
+        // 個別削除ボタンのイベント
         const deleteBtn = itemEl.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', () => {
             const confirmDel = confirm('この記録を削除しますか？ / Delete this record?');
             if (confirmDel) {
-                // 配列の中から「クリックしたアイテムのIDと一致しないもの」だけを残して上書きする（結果として削除される）
+                // 配列から該当するものを削除して上書き
                 journalEntries = journalEntries.filter(e => e.id !== entry.id);
-                saveData();     // 削除した状態を保存
-                renderList();   // 再描画
+                saveData();
+                
+                // カレンダーを再描画（マスの色や絵文字の数が変わるか空になるため）
+                renderCalendar();
+                
+                // 同じ日付の詳細画面も再更新する
+                const updatedEntries = getEntriesForDate(dateStr);
+                showDetailsForDate(dateStr, updatedEntries);
             }
         });
 
-        // 組み立てたアイテムをリストの中へ実際に追加します
-        journalList.appendChild(itemEl);
+        dateJournalList.appendChild(itemEl);
     });
 }
