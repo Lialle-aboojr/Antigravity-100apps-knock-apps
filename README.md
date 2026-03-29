@@ -97,13 +97,14 @@ Complete it. Ship it. Relax. ☕
 | 084 | ✍️ SvgDrawAnimator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/084_SvgDrawAnimator/index.html) |
 | 085 | 🎳 Retro Bowling | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/085_RetroBowling/index.html) |
 | 086 | 👾 DotEaterMaze | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/086_DotEaterMaze/index.html) |
+| 087 | 😌 EmotionJournal | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/087_EmotionJournal/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 86 / 100 █████████████████░░░ 86%
+完成: 87 / 100 █████████████████░░░ 87%
 ```
 
 ---
