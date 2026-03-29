@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retro Bowling / レトロボウリング</title>
+  <!-- ファビコンの読み込み -->
+  <link rel="icon" href="favicon.png">
+  <!-- レトロフォントの読み込み (英語: Press Start 2P, 日本語: DotGothic16) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="game-container">
+    <header>
+      <h1>RETRO BOWLING</h1>
+      <div id="high-score-display" class="score-display">HI-SCORE: 0</div>
+    </header>
+    
+    <div class="canvas-wrapper">
+      <!-- 描画領域 (Canvas) -->
+      <canvas id="gameCanvas" width="800" height="600"></canvas>
+      
+      <!-- テキスト演出用オーバーレイ ("STRIKE!"など) -->
+      <div id="overlay-text" class="hidden"></div>
+      
+      <!-- 操作説明 -->
+      <div id="instruction" class="instruction">
+        クリックし続けると角度決定<br>
+        長押しでパワーを溜め、離して投球<br>
+        (PC: 投球中 ←/→キーでカーブ, スマホ: 画面左右タップでカーブ)
+      </div>
+    </div>
+
+    <!-- 10フレームのスコアボード -->
+    <div class="scoreboard">
+      <table id="scoreTable">
+        <thead>
+          <tr id="frame-headers">
+            <!-- 1〜10フレームまでのヘッダーがJSから自動生成されます -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="roll-scores">
+            <!-- 各投球のスコア (例: X, /, 9 など) がJSから自動生成されます -->
+          </tr>
+          <tr id="frame-totals">
+            <!-- フレームごとの累積合算スコアがJSから自動生成されます -->
+          </tr>
+        </tbody>
+      </table>
+      <div class="current-total">
+        TOTAL SCORE / 合計: <span id="total-score-display">0</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
