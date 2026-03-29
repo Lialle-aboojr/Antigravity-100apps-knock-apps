@@ -4,7 +4,6 @@ const ctx = canvas.getContext('2d');
 
 // UI要素の取得
 const overlayText = document.getElementById('overlay-text');
-const instructionText = document.getElementById('instruction');
 const scoreTableHeaders = document.getElementById('frame-headers');
 const scoreTableRolls = document.getElementById('roll-scores');
 const scoreTableTotals = document.getElementById('frame-totals');
@@ -39,7 +38,6 @@ const ballRadius = 12;
 let ball = { x: 400, y: 550, vx: 0, vy: 0, r: ballRadius, knocked: false };
 
 // カーブ(曲がり)の影響量（ユーザー入力）
-let curveInfluence = 0; 
 let leftDown = false;
 let rightDown = false;
 
@@ -126,9 +124,7 @@ function resetForNextRoll() {
   ball = { x: 400, y: 550, vx: 0, vy: 0, r: ballRadius, knocked: false };
   targetAngle = 0;
   power = 0;
-  curveInfluence = 0;
   currentState = STATE_ANGLE;
-  instructionText.innerHTML = "クリックし続けると角度決定<br>長押しでパワーを溜め、離して投球<br>(PC: ←/→キー, スマホ: 左右タップでカーブ)";
 }
 
 // ゲームリセット(全体)
@@ -144,17 +140,8 @@ function startNewGame() {
 
 // ===== 入力処理 (イベントリスナー) =====
 
-// PC用マウス・スマホ用タップ
-canvas.addEventListener('mousedown', handlePointerDown);
-canvas.addEventListener('touchstart', handlePointerDown, {passive: false});
-
-canvas.addEventListener('mouseup', handlePointerUp);
-canvas.addEventListener('touchend', handlePointerUp, {passive: false});
-
-// スマホ操作時の誤スクロール防止
-canvas.addEventListener('touchmove', (e) => { e.preventDefault(); }, {passive: false});
-
-function handlePointerDown(e) {
+// PC/スマホ共通：投球アクションのハンドラー（スペースキーから呼ばれる）
+function handleActionDown() {
   if (currentState === STATE_GAME_OVER) {
     startNewGame();
     return;
@@ -165,9 +152,43 @@ function handlePointerDown(e) {
     isHoldingInfo = true;
     currentState = STATE_POWER;
   }
-  
-  // スマホ(タッチ)の場合、投球中のカーブ操作
-  if (currentState === STATE_ROLLING && e.type === 'touchstart') {
+}
+
+function handleActionUp() {
+  if (currentState === STATE_POWER && isHoldingInfo) {
+    // パワー決定 -> ボール発射
+    isHoldingInfo = false;
+    launchBall();
+  }
+}
+
+// PC用キーボード操作
+window.addEventListener('keydown', (e) => {
+  // 投球アクション: スペースキー
+  if (e.code === 'Space') {
+    e.preventDefault(); // 画面スクロール防止
+    handleActionDown();
+  }
+  // カーブ操作: 左右矢印キー
+  if (e.code === 'ArrowLeft') leftDown = true;
+  if (e.code === 'ArrowRight') rightDown = true;
+});
+
+window.addEventListener('keyup', (e) => {
+  // 投球アクション離す: スペースキー
+  if (e.code === 'Space') {
+    e.preventDefault();
+    handleActionUp();
+  }
+  // カーブ操作解除
+  if (e.code === 'ArrowLeft') leftDown = false;
+  if (e.code === 'ArrowRight') rightDown = false;
+});
+
+// スマホ操作時のカーブ制御 (タッチ・スクロール防止対応)
+canvas.addEventListener('touchstart', (e) => {
+  e.preventDefault(); // スクロールやジェスチャーを防止（画面揺れ対策）
+  if (currentState === STATE_ROLLING) {
     const rect = canvas.getBoundingClientRect();
     const touchX = e.touches[0].clientX - rect.left;
     const canvasHalfWidth = rect.width / 2;
@@ -177,31 +198,19 @@ function handlePointerDown(e) {
       leftDown = false; rightDown = true;
     }
   }
-}
+}, {passive: false});
 
-function handlePointerUp(e) {
-  if (currentState === STATE_POWER && isHoldingInfo) {
-    // パワー決定 -> ボール発射
-    isHoldingInfo = false;
-    launchBall();
-  }
-  
-  // タッチ操作終了時
-  if (currentState === STATE_ROLLING && e.type === 'touchend') {
+canvas.addEventListener('touchmove', (e) => { 
+  e.preventDefault(); 
+}, {passive: false});
+
+canvas.addEventListener('touchend', (e) => {
+  e.preventDefault();
+  if (currentState === STATE_ROLLING) {
     leftDown = false;
     rightDown = false;
   }
-}
-
-// PC用キーボード(カーブ)
-window.addEventListener('keydown', (e) => {
-  if(e.code === 'ArrowLeft') leftDown = true;
-  if(e.code === 'ArrowRight') rightDown = true;
-});
-window.addEventListener('keyup', (e) => {
-  if(e.code === 'ArrowLeft') leftDown = false;
-  if(e.code === 'ArrowRight') rightDown = false;
-});
+}, {passive: false});
 
 function launchBall() {
   // 最大パワー時 vy は約 -12
@@ -215,7 +224,6 @@ function launchBall() {
   ball.vy = Math.cos(angleRad) * speed; // speedは負なのでcos掛けても上方向
   
   currentState = STATE_ROLLING;
-  instructionText.innerHTML = "ボールが転がっています... 左(←)・右(→)で曲がります！";
 }
 
 
@@ -466,7 +474,8 @@ function endGame() {
   currentState = STATE_GAME_OVER;
   
   const finalScore = cumulativeScores[9] || 0;
-  showOverlay(`GAME OVER<br>SCORE: ${finalScore}<br><span style="font-size:24px">Click to Restart</span>`, false);
+  // スペースキーでもリスタートできるよう、表示を変更
+  showOverlay(`GAME OVER<br>SCORE: ${finalScore}<br><span style="font-size:24px">Press SPACE to Restart</span>`, false);
   saveHighScore(finalScore);
 }
 
