@@ -20,92 +20,102 @@
             <p>今の気持ちを記録しよう / Record your feelings</p>
         </header>
 
-        <!-- 感情を入力するセクション -->
-        <section class="input-section">
-            <div class="emotion-selector">
-                <p class="section-label">今の気分は？ / How are you feeling?</p>
-                <div class="emojis">
-                    <!-- 各感情のボタン（data-emotion属性で感情の種類を管理） -->
-                    <button class="emoji-btn" data-emotion="happy" title="嬉しい / Happy">
-                        <span class="emoji-icon">😄</span><br><span>Happy</span>
-                    </button>
-                    <button class="emoji-btn" data-emotion="calm" title="穏やか / Calm">
-                        <span class="emoji-icon">😌</span><br><span>Calm</span>
-                    </button>
-                    <button class="emoji-btn" data-emotion="sad" title="悲しい / Sad">
-                        <span class="emoji-icon">😢</span><br><span>Sad</span>
-                    </button>
-                    <button class="emoji-btn" data-emotion="angry" title="怒り / Angry">
-                        <span class="emoji-icon">😡</span><br><span>Angry</span>
-                    </button>
-                    <button class="emoji-btn" data-emotion="tired" title="疲れた / Tired">
-                        <span class="emoji-icon">😫</span><br><span>Tired</span>
-                    </button>
+        <!-- ▼ 追記部分：PCでは左右2カラム、スマホでは縦並びにするための親コンテナ ▼ -->
+        <div class="main-content">
+            
+            <!-- 左カラム：感情を入力するセクション -->
+            <section class="input-section">
+                <div class="emotion-selector">
+                    <p class="section-label">今の気分は？ / How are you feeling?</p>
+                    <div class="emojis">
+                        <!-- 各感情のボタン（data-emotion属性で感情の種類を管理） -->
+                        <button class="emoji-btn" data-emotion="happy" title="嬉しい / Happy">
+                            <span class="emoji-icon">😄</span><br><span>Happy</span>
+                        </button>
+                        <button class="emoji-btn" data-emotion="calm" title="穏やか / Calm">
+                            <span class="emoji-icon">😌</span><br><span>Calm</span>
+                        </button>
+                        <button class="emoji-btn" data-emotion="sad" title="悲しい / Sad">
+                            <span class="emoji-icon">😢</span><br><span>Sad</span>
+                        </button>
+                        <button class="emoji-btn" data-emotion="angry" title="怒り / Angry">
+                            <span class="emoji-icon">😡</span><br><span>Angry</span>
+                        </button>
+                        <button class="emoji-btn" data-emotion="tired" title="疲れた / Tired">
+                            <span class="emoji-icon">😫</span><br><span>Tired</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- 理由や詳細を書くテキストエリア -->
-            <div class="text-input">
-                <textarea id="journal-text" placeholder="なぜそう感じたの？自由に書いてみよう / Why do you feel this way? Write freely..." rows="4"></textarea>
-            </div>
-
-            <!-- 保存ボタン -->
-            <button id="save-btn" class="save-btn">記録する / Save</button>
-        </section>
-
-        <!-- 過去の記録を表示するセクション -->
-        <section class="timeline-section">
-            <div class="timeline-header">
-                <h2>過去の記録 / Past Records</h2>
-                
-                <!-- 感情ごとの絞り込み機能 -->
-                <div class="filter-container">
-                    <label for="emotion-filter">絞り込み / Filter:</label>
-                    <select id="emotion-filter">
-                        <option value="all">すべて / All</option>
-                        <option value="happy">😄 Happy</option>
-                        <option value="calm">😌 Calm</option>
-                        <option value="sad">😢 Sad</option>
-                        <option value="angry">😡 Angry</option>
-                        <option value="tired">😫 Tired</option>
-                    </select>
+                <!-- ▼ 新機能：カレンダーで過去の日付を選択できる入力欄 ▼ -->
+                <div class="date-input-container">
+                    <label for="journal-date">記録する日付 / Date</label>
+                    <input type="date" id="journal-date">
                 </div>
-            </div>
 
-            <!-- ▼ 新機能：カレンダーコンテナ ▼ -->
-            <div class="calendar-container">
-                <!-- カレンダーのヘッダー部（前月・次月・月表示） -->
-                <div class="calendar-header">
-                    <button id="prev-month-btn" class="month-nav-btn">&lt;</button>
-                    <h3 id="current-month-display"></h3>
-                    <button id="next-month-btn" class="month-nav-btn">&gt;</button>
+                <!-- 理由や詳細を書くテキストエリア -->
+                <div class="text-input">
+                    <textarea id="journal-text" placeholder="なぜそう感じたの？自由に書いてみよう / Why do you feel this way? Write freely..." rows="4"></textarea>
                 </div>
-                <!-- 曜日表記（日曜始まり） -->
-                <div class="calendar-weekdays">
-                    <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
-                </div>
-                <!-- カレンダーのマス目がJSによって追加されます -->
-                <div id="calendar-grid" class="calendar-grid">
-                </div>
-            </div>
 
-            <!-- カレンダーの日付をクリックしたときに表示される詳細結果ボックス -->
-            <div id="selected-date-details" class="selected-date-details" style="display: none;">
-                <div class="details-header">
-                    <h3 id="selected-date-title"></h3>
-                    <!-- 閉じるボタン -->
-                    <button id="close-details-btn" class="close-details-btn">&times;</button>
-                </div>
-                <!-- その日の記録リストが追加される場所 -->
-                <div id="date-journal-list" class="journal-list">
-                    <!-- JavaScriptでここに記録が追加されます -->
-                </div>
-            </div>
+                <!-- 保存ボタン -->
+                <button id="save-btn" class="save-btn">記録する / Save</button>
+            </section>
 
-            <!-- 全件削除ボタン -->
-            <button id="delete-all-btn" class="delete-all-btn">全件削除 / Delete All</button>
+            <!-- 右カラム：過去の記録を表示するセクション -->
+            <section class="timeline-section">
+                <div class="timeline-header">
+                    <h2>過去の記録 / Past Records</h2>
+                    
+                    <!-- 感情ごとの絞り込み機能 -->
+                    <div class="filter-container">
+                        <label for="emotion-filter">絞り込み / Filter:</label>
+                        <select id="emotion-filter">
+                            <option value="all">すべて / All</option>
+                            <option value="happy">😄 Happy</option>
+                            <option value="calm">😌 Calm</option>
+                            <option value="sad">😢 Sad</option>
+                            <option value="angry">😡 Angry</option>
+                            <option value="tired">😫 Tired</option>
+                        </select>
+                    </div>
+                </div>
 
-        </section>
+                <!-- カレンダーコンテナ -->
+                <div class="calendar-container">
+                    <!-- カレンダーのヘッダー部（前月・次月・月表示） -->
+                    <div class="calendar-header">
+                        <button id="prev-month-btn" class="month-nav-btn">&lt;</button>
+                        <h3 id="current-month-display"></h3>
+                        <button id="next-month-btn" class="month-nav-btn">&gt;</button>
+                    </div>
+                    <!-- 曜日表記（日曜始まり） -->
+                    <div class="calendar-weekdays">
+                        <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+                    </div>
+                    <!-- カレンダーのマス目がJSによって追加されます -->
+                    <div id="calendar-grid" class="calendar-grid">
+                    </div>
+                </div>
+
+                <!-- カレンダーの日付をクリックしたときに表示される詳細結果ボックス -->
+                <div id="selected-date-details" class="selected-date-details" style="display: none;">
+                    <div class="details-header">
+                        <h3 id="selected-date-title"></h3>
+                        <!-- 閉じるボタン -->
+                        <button id="close-details-btn" class="close-details-btn">&times;</button>
+                    </div>
+                    <!-- その日の記録リストが追加される場所 -->
+                    <div id="date-journal-list" class="journal-list">
+                        <!-- JavaScriptでここに追加が表示されます -->
+                    </div>
+                </div>
+
+                <!-- 全件削除ボタン -->
+                <button id="delete-all-btn" class="delete-all-btn">全件削除 / Delete All</button>
+
+            </section>
+        </div> <!-- /.main-content -->
     </div>
     
     <!-- JavaScriptファイルを読み込む -->
