@@ -6,6 +6,9 @@ const presets = {
     curve: `<svg viewBox="0 0 200 100"><path d="M 20 70 Q 20 20 40 20 Q 60 20 60 70 Q 60 40 80 40 Q 100 40 100 80 Q 100 50 120 50 Q 140 50 140 80 Q 140 30 160 30 Q 180 30 180 70" /></svg>`
 };
 
+// 対象となるSVG要素のセレクタ（パスや各種図形の線を含む）
+const targetElementsSelector = 'path, polyline, polygon, line, rect, circle, ellipse';
+
 // ====== 要素の取得 ======
 const customSvgTextarea = document.getElementById('custom-svg');
 const presetButtons = document.querySelectorAll('.preset-btn');
@@ -27,30 +30,23 @@ let isPaused = false;
 // ====== 関数 ======
 
 // 1. セキュリティ対策 (XSSサニタイズ)
-// ユーザーが入力したカスタムSVGから危険なタグや属性を取り除きます
 function sanitizeSVG(svgString) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(svgString, 'image/svg+xml');
     
-    // パースエラーがあればnullを返す
-    if (doc.getElementsByTagName('parsererror').length > 0) {
-        return null;
-    }
+    if (doc.getElementsByTagName('parsererror').length > 0) return null;
     
     const svgElement = doc.querySelector('svg');
     if (!svgElement) return null;
 
-    // 1-1. 危険なタグを削除
     const forbiddenTags = ['script', 'iframe', 'object', 'embed', 'link', 'style'];
     forbiddenTags.forEach(tag => {
         const elements = svgElement.getElementsByTagName(tag);
-        // 後ろから削除していく（インデックスずれを防ぐため）
         for (let i = elements.length - 1; i >= 0; i--) {
             elements[i].parentNode.removeChild(elements[i]);
         }
     });
 
-    // 1-2. イベントハンドラ属性（onload, onclick など "on" で始まるもの）を削除
     const allElements = svgElement.getElementsByTagName('*');
     for (let i = 0; i < allElements.length; i++) {
         const el = allElements[i];
@@ -70,14 +66,12 @@ function sanitizeSVG(svgString) {
 function updatePreview() {
     const rawSvg = customSvgTextarea.value;
     
-    // 入力が空の場合
     if (!rawSvg.trim()) {
         previewContainer.innerHTML = '<span style="color:#64748b;">SVGを入力してください</span>';
         outputCodeTextarea.value = '';
         return;
     }
 
-    // サニタイズ処理
     const safeSvg = sanitizeSVG(rawSvg);
     if (!safeSvg) {
         previewContainer.innerHTML = '<span style="color:#ef4444;">無効なSVG形式です</span>';
@@ -85,23 +79,19 @@ function updatePreview() {
         return;
     }
 
-    // SVGを描画
     previewContainer.innerHTML = safeSvg;
     const svgEl = previewContainer.querySelector('svg');
     
-    // 設定値の取得
     const duration = parseFloat(durationInput.value);
     const width = parseInt(strokeWidthInput.value);
     const color = strokeColorInput.value;
 
-    const paths = svgEl.querySelectorAll('path');
+    // パス以外の図形（circleやrectなど）も取得対象に拡張
+    const paths = svgEl.querySelectorAll(targetElementsSelector);
     
-    // 各パスの長さを計算し、プロパティを設定
     paths.forEach(path => {
         try {
-            // パスの全長を取得
             const length = path.getTotalLength();
-            // 線のパターンの長さと、開始位置のオフセットを全長に設定する（最初は見えない状態）
             path.style.strokeDasharray = length;
             path.style.strokeDashoffset = length;
         } catch(e) {
@@ -109,22 +99,33 @@ function updatePreview() {
         }
     });
 
-    // 出力用HTMLを作るために、スタイル追加済のsvgを複製しておく
     const cloneSvgForOutput = svgEl.cloneNode(true);
-    // クラス名を追加して、後からCSSが当たるようにする
     cloneSvgForOutput.classList.add('animated-svg');
 
-    // 出力用CSSの生成
+    // CSSの生成（各種図形にも対応し、鉛筆風テクスチャと端の丸みを適用）
     const cssCode = `
 <style>
-/* SVGアニメーション用のスタイル */
-.animated-svg path {
+/* カスタムSVGアニメーション用のスタイル */
+.animated-svg path,
+.animated-svg polyline,
+.animated-svg polygon,
+.animated-svg line,
+.animated-svg rect,
+.animated-svg circle,
+.animated-svg ellipse {
+    /* 線のスタイル設定 */
     fill: none !important;
     stroke: ${color} !important;
     stroke-width: ${width}px !important;
+    
+    /* 線の端と角を丸くする設定を追加 */
     stroke-linecap: round !important;
     stroke-linejoin: round !important;
-    /* dashoffsetを0に減らしていくアニメーション */
+    
+    /* 鉛筆風テクスチャのフィルターを適用 */
+    filter: url(#pencilTexture) !important;
+    
+    /* アニメーション設定 */
     animation: drawAnimation ${duration}s ease forwards !important;
 }
 
@@ -135,23 +136,31 @@ function updatePreview() {
 }
 </style>
 `;
-    // HTMLの生成（属性の整形など）
-    const htmlCode = cloneSvgForOutput.outerHTML;
-
-    // 出力テキストエリアに表示
-    outputCodeTextarea.value = cssCode.trim() + '\n\n' + htmlCode;
     
-    // プレビュー領域にも <style> を追加してアニメーションを適用する
-    // ただしプレビュー自身のスコープだけで効くようにIDセレクタを利用
+    const htmlCode = cloneSvgForOutput.outerHTML;
+    // フィルターのSVG定義も出力結果に含める
+    const filterSvgStr = document.getElementById('pencil-filter-svg').outerHTML;
+
+    // コピー用のコードとして統合して表示
+    outputCodeTextarea.value = cssCode.trim() + '\n\n' + filterSvgStr + '\n\n' + htmlCode;
+    
+    // プレビュー用に動的なCSSを挿入
     const styleEl = document.createElement('style');
     styleEl.id = 'preview-style';
     styleEl.innerHTML = `
-        #preview-container svg path {
+        #preview-container svg path,
+        #preview-container svg polyline,
+        #preview-container svg polygon,
+        #preview-container svg line,
+        #preview-container svg rect,
+        #preview-container svg circle,
+        #preview-container svg ellipse {
             fill: none !important;
             stroke: ${color} !important;
             stroke-width: ${width}px !important;
             stroke-linecap: round !important;
             stroke-linejoin: round !important;
+            filter: url(#pencilTexture) !important;
             animation: drawAnimationPreview ${duration}s ease forwards !important;
         }
         @keyframes drawAnimationPreview {
@@ -159,44 +168,33 @@ function updatePreview() {
         }
     `;
     
-    // 既存のstyleタグがあれば削除してから新規追加
     const oldStyle = document.getElementById('preview-style');
     if (oldStyle) {
         oldStyle.remove();
     }
     document.head.appendChild(styleEl);
 
-    // リセット時に再生状態を初期化
     isPaused = false;
     updatePauseButtonState();
 }
 
-// 3. 全てのイベントリスナー
-
-// プリセットボタンのクリックイベント
+// 3. イベントリスナー
 presetButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-        // 全ボタンからactiveクラスを外し、クリックされたものだけに付与
         presetButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        
-        // svgを取得してテキストエリアにセットし、更新
         const presetKey = btn.getAttribute('data-preset');
         customSvgTextarea.value = presets[presetKey];
         updatePreview();
     });
 });
 
-// カスタムSVGが直接編集された時
 customSvgTextarea.addEventListener('input', () => {
-    // プリセットの選択状態を解除
     presetButtons.forEach(b => b.classList.remove('active'));
     updatePreview();
 });
 
-// パラメータ変更イベント
 durationInput.addEventListener('input', (e) => {
-    // 数値を表示用に更新
     durationVal.textContent = parseFloat(e.target.value).toFixed(1);
     updatePreview();
 });
@@ -208,59 +206,46 @@ strokeWidthInput.addEventListener('input', (e) => {
 
 strokeColorInput.addEventListener('input', updatePreview);
 
-// 4. コントロールボタン (Play / Pause / Reset)
-
-// 再生ボタン
+// 4. コントロールボタン
 btnPlay.addEventListener('click', () => {
     if (isPaused) {
-        // ポーズ中なら再開
-        const paths = previewContainer.querySelectorAll('path');
+        const paths = previewContainer.querySelectorAll(targetElementsSelector);
         paths.forEach(p => p.style.animationPlayState = 'running');
         isPaused = false;
         updatePauseButtonState();
     } else {
-        // 最初から再生する場合（DOMを再描画することでアニメーションをリスタート）
         updatePreview();
     }
 });
 
-// ポーズボタンの見た目とテキストを更新する関数
 function updatePauseButtonState() {
     if (isPaused) {
         btnPause.textContent = '▶ 再開 / Resume';
-        btnPause.style.backgroundColor = '#10b981'; // グリーン
+        btnPause.style.backgroundColor = '#10b981';
     } else {
         btnPause.textContent = '⏸ 停止 / Pause';
-        btnPause.style.backgroundColor = '#f59e0b'; // アンバー
+        btnPause.style.backgroundColor = '#f59e0b';
     }
 }
 
-// 停止ボタン
 btnPause.addEventListener('click', () => {
-    const paths = previewContainer.querySelectorAll('path');
+    const paths = previewContainer.querySelectorAll(targetElementsSelector);
     if (!isPaused) {
-        // 一時停止する
         paths.forEach(p => p.style.animationPlayState = 'paused');
         isPaused = true;
     } else {
-        // 再開する
         paths.forEach(p => p.style.animationPlayState = 'running');
         isPaused = false;
     }
     updatePauseButtonState();
 });
 
-// リセットボタン
 btnReset.addEventListener('click', () => {
-    // 一度プレビューを更新して設定などを初期化
     updatePreview();
-    
-    // すぐにアニメーションを none にしてリセット状態（描画前）を維持する
-    const paths = previewContainer.querySelectorAll('path');
+    const paths = previewContainer.querySelectorAll(targetElementsSelector);
     paths.forEach(p => {
-        p.style.animation = 'none'; // これで進行度0のまま止まる
+        p.style.animation = 'none';
     });
-    
     isPaused = false;
     updatePauseButtonState();
 });
@@ -268,26 +253,20 @@ btnReset.addEventListener('click', () => {
 // 5. コピー機能
 btnCopy.addEventListener('click', async () => {
     try {
-        // クリップボードAPIを使用してコピー
         await navigator.clipboard.writeText(outputCodeTextarea.value);
-        
-        // ボタンの見た目を一時的に変更
         const originalText = btnCopy.textContent;
         btnCopy.textContent = '✓ コピーしました / Copied!';
-        btnCopy.style.backgroundColor = '#059669'; // より濃いグリーン
-        
-        // 2秒後に元の見た目に戻す
+        btnCopy.style.backgroundColor = '#059669';
         setTimeout(() => {
             btnCopy.textContent = originalText;
-            btnCopy.style.backgroundColor = ''; // CSSのデフォルトに戻る
+            btnCopy.style.backgroundColor = '';
         }, 2000);
     } catch (err) {
         alert('クリップボードへのコピーに失敗しました。');
     }
 });
 
-// ====== 初期化処理 ======
+// 初期化
 window.onload = () => {
-    // 最初のプリセット(Checkmark)を選択状態にして描画
     presetButtons[0].click();
 };
