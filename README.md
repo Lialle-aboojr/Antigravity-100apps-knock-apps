@@ -98,7 +98,7 @@ Complete it. Ship it. Relax. ☕
 | 085 | 🎳 Retro Bowling | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/085_RetroBowling/index.html) |
 | 086 | 👾 DotEaterMaze | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/086_DotEaterMaze/index.html) |
 | 087 | 😌 EmotionJournal | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/087_EmotionJournal/index.html) |
-| 088 | 🎨 Theme Switcher UI Collection | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/088_ThemeSwitcherUiCollection/index.html) |
+| 088 | 🎨 Theme Switcher UI Collection | [▶ Demo](https://088-theme-switcher-ui-collection.vercel.app/) |
 
 ---
 
