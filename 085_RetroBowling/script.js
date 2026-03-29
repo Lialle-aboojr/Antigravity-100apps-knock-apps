@@ -185,9 +185,9 @@ window.addEventListener('keyup', (e) => {
   if (e.code === 'ArrowRight') rightDown = false;
 });
 
-// スマホ操作時のカーブ制御 (タッチ・スクロール防止対応)
+// 変更箇所: スマホ操作時のカーブ制御における画面揺れ（横スワイプ、スクロール等）完全防止
 canvas.addEventListener('touchstart', (e) => {
-  e.preventDefault(); // スクロールやジェスチャーを防止（画面揺れ対策）
+  e.preventDefault(); // タップによるブラウザの標準挙動を完全にブロック
   if (currentState === STATE_ROLLING) {
     const rect = canvas.getBoundingClientRect();
     const touchX = e.touches[0].clientX - rect.left;
@@ -198,19 +198,19 @@ canvas.addEventListener('touchstart', (e) => {
       leftDown = false; rightDown = true;
     }
   }
-}, {passive: false});
+}, { passive: false }); // スクロールブロックのためには必須
 
 canvas.addEventListener('touchmove', (e) => { 
-  e.preventDefault(); 
-}, {passive: false});
+  e.preventDefault(); // スワイプしてもスクロールしないようにする
+}, { passive: false });
 
 canvas.addEventListener('touchend', (e) => {
-  e.preventDefault();
+  e.preventDefault(); // 予期せぬ挙動をブロック
   if (currentState === STATE_ROLLING) {
     leftDown = false;
     rightDown = false;
   }
-}, {passive: false});
+}, { passive: false });
 
 function launchBall() {
   // 最大パワー時 vy は約 -12

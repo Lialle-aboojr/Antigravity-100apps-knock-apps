@@ -22,6 +22,8 @@ body {
   /* レトロな雰囲気を出すブラウン管(CRT)スキャンライン風エフェクト */
   background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0) 0px, rgba(0,0,0,0) 2px, rgba(0,0,0,0.3) 3px, rgba(0,0,0,0.3) 4px);
   background-size: 100% 4px;
+  /* 画面幅が小さい時の横スクロールを防止 */
+  overflow-x: hidden;
 }
 
 .game-container {
@@ -75,6 +77,8 @@ canvas {
   display: block;
   image-rendering: pixelated; /* ピクセルをくっきり表示 */
   cursor: crosshair;
+  /* 変更箇所: ブラウザ標準のパン・ズーム操作等を無効化して画面揺れを防止 */
+  touch-action: none;
 }
 
 #overlay-text {
@@ -105,7 +109,7 @@ canvas {
   animation: flashText 0.3s infinite alternate;
 }
 
-/* 変更箇所: 操作説明用ボックス */
+/* 操作説明用ボックス */
 .instruction-box {
   width: 100%;
   max-width: 800px;
