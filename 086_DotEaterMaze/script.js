@@ -45,7 +45,7 @@ let player = {
   radius: 8
 };
 
-// エネミー（お邪魔キャラ）設定
+// エネミー設定
 let enemy = {
   x: 0,
   y: 0,
@@ -57,6 +57,35 @@ let enemy = {
   powerModeMode: false, // プレイヤーがパワーアップアイテムを取ったか
   powerTimer: 0,        // パワーアップの残り時間
 };
+
+// --- キャラクターのドット絵（8-Bit風スプライトデータ / 10x10ドット） ---
+// 1 = 描画する, 0 = 透明
+const playerSprite = [
+  "0000000000",
+  "0001111000",
+  "0011111110",
+  "0111111111",
+  "0111100111", // 目
+  "1111111111",
+  "1111101010", // ギザギザの口
+  "1111111111",
+  "0111111100", 
+  "0011001100"  // 足
+];
+
+const enemySprite = [
+  "1000000001",
+  "0100110010",
+  "0111111110",
+  "1110011001", // 怒ったツリ目 \ /
+  "1101111101", 
+  "1111111111",
+  "0110110110", // 縦格子の金属ロボット口
+  "0111111110",
+  "0111001110",
+  "1100000011"
+];
+
 
 // --- マップデータ作成 ---
 // # : 壁 (Wall)
@@ -177,14 +206,12 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowRight') setNextDirection(1, 0);
 });
 
-// スマホ用ボタン操作（touchstartで反応を良くし、mousedownもフォールバックとして追加）
+// スマホ用ボタン操作
 function addBtnListener(btn, dx, dy) {
-  // タッチ操作時
   btn.addEventListener('touchstart', (e) => {
-    e.preventDefault(); // デフォルトのスクロールなどを防ぐ
+    e.preventDefault();
     setNextDirection(dx, dy);
   }, {passive: false});
-  // マウス操作時
   btn.addEventListener('mousedown', (e) => {
     e.preventDefault();
     setNextDirection(dx, dy);
@@ -211,7 +238,7 @@ addBtnListener(btnRight, 1, 0);
 
 // 指定座標(col, row)が壁(1)かどうか判定
 function isWall(col, row) {
-  // 画面外も壁扱いにする（ワープ用トンネルを作る場合はここで調整）
+  // 画面外も壁扱いにする
   if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return true;
   return map[row][col] === 1;
 }
@@ -270,7 +297,6 @@ function updatePlayer() {
       // パワーアップモード発動（約500フレーム）
       enemy.powerModeMode = true;
       enemy.powerTimer = 500;
-      // 捕食モードになったらおばけのスピードを遅くしてあげると遊びやすい（今回はそのままの速度）
     }
   }
 
@@ -306,8 +332,7 @@ function updateEnemy() {
     ];
 
     directions.forEach(dir => {
-      // 逆戻り（Uターン）の禁止措置。ただし壁に挟まれて動けない場合は許可。
-      // 現在動いている方向（enemy.dirX, enemy.dirY）と真逆かを判定
+      // 逆戻り（Uターン）の禁止措置。
       let isUturn = (dir.dx === -enemy.dirX && dir.dy === -enemy.dirY) && (enemy.dirX !== 0 || enemy.dirY !== 0);
       
       if (!isWall(col + dir.dx, row + dir.dy) && !isUturn) {
@@ -333,17 +358,16 @@ function updateEnemy() {
         let playerCol = Math.floor(player.x / TILE_SIZE);
         let playerRow = Math.floor(player.y / TILE_SIZE);
         
-        // 距離の二乗（三平方の定理のルート無し版）
         let dist = Math.pow(targetCol - playerCol, 2) + Math.pow(targetRow - playerRow, 2);
 
         if (enemy.powerModeMode) {
-          // パワーモード中は逃げる（距離が一番遠くなる道を選ぶ）
+          // パワーモード中は逃げる
           if (dist > longestDistance) {
             longestDistance = dist;
             bestMove = move;
           }
         } else {
-          // 通常時は追いかける（距離が一番短くなる道を選ぶ）
+          // 通常時は追いかける
           if (dist < shortestDistance) {
             shortestDistance = dist;
             bestMove = move;
@@ -351,7 +375,7 @@ function updateEnemy() {
         }
       });
 
-      // ランダム性も少し加えて単調になりすぎないようにする（20%の確率で別の道を選ぶ）
+      // 単調にならないよう20%の確率で別の道を選ぶ
       if (Math.random() < 0.2 && validMoves.length > 1) {
         bestMove = validMoves[Math.floor(Math.random() * validMoves.length)];
       }
@@ -384,7 +408,7 @@ function checkCollision() {
       enemy.y = enemy.startY;
       enemy.dirX = 0;
       enemy.dirY = 0;
-      enemy.powerModeMode = false; // 食べたら効果終了とするか、時間まで続くかは自由（今回は効果時間継続）
+      enemy.powerModeMode = false;
     } else {
       // ゲームオーバー処理
       gameState = 'GAMEOVER';
@@ -422,11 +446,10 @@ function drawMap() {
         ctx.arc(px + TILE_SIZE/2, py + TILE_SIZE/2, 6, 0, Math.PI * 2);
         ctx.fillStyle = '#ffde59';
         ctx.fill();
-        // 光彩効果
         ctx.shadowBlur = 10;
         ctx.shadowColor = '#ffde59';
         ctx.fill();
-        ctx.shadowBlur = 0; // リセット
+        ctx.shadowBlur = 0; 
       }
     }
   }
@@ -436,32 +459,38 @@ function drawPlayer() {
   ctx.save();
   ctx.translate(player.x + TILE_SIZE / 2, player.y + TILE_SIZE / 2);
 
-  let cubeSize = player.radius * 2; // サイズを定義
+  // 向いている方向に合わせてキャンバスを回転（右向きを基準に設計されたドット絵）
+  if (player.dirX === 1) ctx.rotate(0);
+  else if (player.dirX === -1) ctx.rotate(Math.PI);
+  else if (player.dirY === 1) ctx.rotate(Math.PI / 2);
+  else if (player.dirY === -1) ctx.rotate(-Math.PI / 2);
 
-  // 光る青いデータキューブ
-  ctx.fillStyle = '#00f3ff';
-  ctx.shadowBlur = 15;
-  ctx.shadowColor = '#00f3ff';
+  // 光るネオンブルーのドット絵（エイリアン）
+  ctx.fillStyle = '#00ffff';
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = '#00ffff';
   
-  ctx.beginPath();
-  // 中心座標(0,0)からずらして四角形を描画
-  ctx.rect(-cubeSize / 2, -cubeSize / 2, cubeSize, cubeSize);
-  ctx.fill();
+  // 10x10のドット絵を描画 (TILE_SIZE=20 なので 1ドットは2px)
+  let pSize = TILE_SIZE / 10;
+  for (let r = 0; r < 10; r++) {
+    for (let c = 0; c < 10; c++) {
+      if (playerSprite[r][c] === '1') {
+        // 中心部分(-TILE_SIZE/2)を起点にして描画
+        ctx.fillRect(-TILE_SIZE / 2 + c * pSize, -TILE_SIZE / 2 + r * pSize, pSize, pSize);
+      }
+    }
+  }
 
-  ctx.restore(); // 光彩などをリセット
+  ctx.restore(); 
 }
 
 function drawEnemy() {
-  let cx = enemy.x + TILE_SIZE / 2;
-  let cy = enemy.y + TILE_SIZE / 2;
-  let radius = Math.floor(TILE_SIZE / 2) - 2;
-
   ctx.save();
+  ctx.translate(enemy.x + TILE_SIZE / 2, enemy.y + TILE_SIZE / 2);
   
-  // パワーアップ時は青色（点滅）、通常時は赤色（危険マーク色）にする
-  let enemyColor = '#ff0000'; // 警告の赤色
+  // パワーアップ時は青色（点滅）、通常時は赤色（怒ったロボット色）
+  let enemyColor = '#ff0000'; // ネオンレッド
   if (enemy.powerModeMode) {
-    // 残り時間が少ない時は白と青で点滅してピンチを知らせる
     if (enemy.powerTimer < 100 && Math.floor(enemy.powerTimer / 10) % 2 === 0) {
       enemyColor = '#ffffff';
     } else {
@@ -470,16 +499,18 @@ function drawEnemy() {
   }
 
   ctx.fillStyle = enemyColor;
-  ctx.shadowBlur = 15;
+  ctx.shadowBlur = 10;
   ctx.shadowColor = enemyColor;
 
-  // 下向き三角形（セキュリティ警告マーク風）を描画
-  ctx.beginPath();
-  ctx.moveTo(cx - radius, cy - radius + 2);   // 左上
-  ctx.lineTo(cx + radius, cy - radius + 2);   // 右上
-  ctx.lineTo(cx, cy + radius - 2);            // 下中央
-  ctx.closePath();
-  ctx.fill();
+  // 10x10のドット絵を描画 (正面向きのロボット)
+  let pSize = TILE_SIZE / 10;
+  for (let r = 0; r < 10; r++) {
+    for (let c = 0; c < 10; c++) {
+      if (enemySprite[r][c] === '1') {
+        ctx.fillRect(-TILE_SIZE / 2 + c * pSize, -TILE_SIZE / 2 + r * pSize, pSize, pSize);
+      }
+    }
+  }
 
   ctx.restore();
 }
@@ -507,7 +538,6 @@ function gameLoop() {
 
 // 最初の描画だけ行っておく（背景表示）
 map = [];
-// 空のダミーを描画するためレベルストリングだけ解析
 for (let r = 0; r < ROWS; r++) {
   let rowArray = [];
   for (let c = 0; c < COLS; c++) {
