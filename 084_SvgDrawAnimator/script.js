@@ -122,9 +122,6 @@ function updatePreview() {
     stroke-linecap: round !important;
     stroke-linejoin: round !important;
     
-    /* 鉛筆風テクスチャのフィルターを適用 */
-    filter: url(#pencilTexture) !important;
-    
     /* アニメーション設定 */
     animation: drawAnimation ${duration}s ease forwards !important;
 }
@@ -138,11 +135,9 @@ function updatePreview() {
 `;
     
     const htmlCode = cloneSvgForOutput.outerHTML;
-    // フィルターのSVG定義も出力結果に含める
-    const filterSvgStr = document.getElementById('pencil-filter-svg').outerHTML;
 
     // コピー用のコードとして統合して表示
-    outputCodeTextarea.value = cssCode.trim() + '\n\n' + filterSvgStr + '\n\n' + htmlCode;
+    outputCodeTextarea.value = cssCode.trim() + '\n\n' + htmlCode;
     
     // プレビュー用に動的なCSSを挿入
     const styleEl = document.createElement('style');
@@ -160,7 +155,6 @@ function updatePreview() {
             stroke-width: ${width}px !important;
             stroke-linecap: round !important;
             stroke-linejoin: round !important;
-            filter: url(#pencilTexture) !important;
             animation: drawAnimationPreview ${duration}s ease forwards !important;
         }
         @keyframes drawAnimationPreview {

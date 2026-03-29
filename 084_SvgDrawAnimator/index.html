@@ -15,22 +15,6 @@
     </header>
     
     <main class="container">
-        <!-- 鉛筆風テクスチャのフィルター定義 -->
-        <!-- 表示はされないようサイズを0にしています -->
-        <svg style="position: absolute; width: 0; height: 0;" aria-hidden="true" id="pencil-filter-svg">
-            <defs>
-                <!-- 鉛筆のようなカスレや揺らぎを再現するフィルター -->
-                <filter id="pencilTexture" x="-20%" y="-20%" width="140%" height="140%">
-                    <!-- feTurbulence：フラクタルノイズで紙のザラつきを表現 -->
-                    <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="4" result="noise" />
-                    <!-- feColorMatrix：ノイズの透明度や色をマイルドに調整 -->
-                    <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.5 0" in="noise" result="coloredNoise" />
-                    <!-- feDisplacementMap：ノイズをベースに元の線をわずかに歪ませる -->
-                    <feDisplacementMap in="SourceGraphic" in2="coloredNoise" scale="3" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-                </filter>
-            </defs>
-        </svg>
-
         <!-- 左側：入力・設定エリア -->
         <section class="panel control-panel">
             <h2>1. SVG選択 / Select SVG</h2>
