@@ -94,13 +94,14 @@ Complete it. Ship it. Relax. ☕
 | 081 | 🧩 15 Puzzle | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/081_FifteenPuzzle/index.html) |
 | 082 | 🎆 Hanabi Canvas | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/082_HanabiCanvas/index.html) |
 | 083 | 📊 Simple D3 Graph Maker | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/083_SimpleD3GraphMaker/index.html) |
+| 084 | ✍️ SvgDrawAnimator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/084_SvgDrawAnimator/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 83 / 100 ████████████████▋░░░ 83%
+完成: 84 / 100 ████████████████▊░░░ 84%
 ```
 
 ---
