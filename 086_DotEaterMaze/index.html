@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Dot Eater Maze</title>
+  <meta name="description" content="レトロアーケード風のドットイートゲームです。">
+  <!-- フォント: Google Fontsからサイバーパンク・ネオンに合うフォントを読み込み -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="favicon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- メインコンテナ -->
+  <div class="game-container">
+    
+    <!-- ハッダー領域：タイトルとスコア -->
+    <header class="game-header">
+      <h1 class="game-title">DOT EATER MAZE</h1>
+      <div class="score-board">
+        <span class="score-label">スコア / SCORE :</span>
+        <span id="scoreDisplay" class="score-value">0</span>
+      </div>
+    </header>
+
+    <!-- ゲーム画面（キャンバスとオーバーレイ） -->
+    <main class="canvas-wrapper">
+      <canvas id="gameCanvas" width="420" height="420"></canvas>
+      
+      <!-- スタート画面 -->
+      <div id="startScreen" class="overlay">
+        <h2>READY?</h2>
+        <p>画面タップまたはボタンでスタート</p>
+        <p class="en-sub">Tap or Click to Start</p>
+        <button id="startBtn" class="neon-btn">スタート / Start</button>
+      </div>
+
+      <!-- ゲームオーバー画面 -->
+      <div id="gameOverScreen" class="overlay hidden">
+        <h2 class="danger-text">GAME OVER</h2>
+        <p>エネミーに捕まった！</p>
+        <p class="en-sub">Caught by the Enemy!</p>
+        <button id="retryBtn" class="neon-btn">リトライ / Retry</button>
+      </div>
+
+      <!-- ゲームクリア画面 -->
+      <div id="gameClearScreen" class="overlay hidden">
+        <h2 class="success-text">CLEAR!</h2>
+        <p>すべてのドットを食べた！</p>
+        <p class="en-sub">Ate all the dots!</p>
+        <button id="nextRetryBtn" class="neon-btn">もう一度 / Play Again</button>
+      </div>
+    </main>
+
+    <!-- モバイル用・オンスクリーンコントローラー（十字キー） -->
+    <div class="controls">
+      <div class="dpad">
+        <button class="dpad-btn up" id="btnUp" aria-label="Up">▲</button>
+        <div class="dpad-middle">
+          <button class="dpad-btn left" id="btnLeft" aria-label="Left">◀</button>
+          <div class="dpad-center"></div>
+          <button class="dpad-btn right" id="btnRight" aria-label="Right">▶</button>
+        </div>
+        <button class="dpad-btn down" id="btnDown" aria-label="Down">▼</button>
+      </div>
+    </div>
+    
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
