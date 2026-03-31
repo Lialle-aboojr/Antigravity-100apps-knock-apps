@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizMail DX - スマートメール生成 / Smart Email Generator</title>
+    <!-- ファビコンの指定 (画像が利用できない場合のフォールバックはJSで処理) -->
+    <link rel="icon" id="dynamic-favicon" href="favicon.png" type="image/png">
+    
+    <!-- Google Fonts の読み込み（シンプルで洗練された無印良品風デザイン向け） -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- スタイルシートの読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="logo-area">
+                <img src="favicon.png" alt="Icon" class="logo-icon" id="headerIcon">
+                <h1>BizMail DX</h1>
+            </div>
+            <p class="subtitle">メール作成をスマートに / Smart Email Generator</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 左カラム：入力・検索エリア -->
+        <section class="left-col">
+            <div class="step-box">
+                <h2>1. 宛先を検索・選択 / Select Recipient</h2>
+                <div class="search-wrap">
+                    <input type="text" id="searchInput" placeholder="取引先名・担当者名で検索 / Search...">
+                    <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+                
+                <ul id="resultList" class="result-list">
+                    <li class="loading">データを読み込んでいます... / Loading...</li>
+                </ul>
+
+                <div class="selected-status">
+                    <span class="status-label">選択中 / Selected:</span>
+                    <span id="displaySelected" class="status-value" title="">未選択 / None</span>
+                </div>
+            </div>
+
+            <div class="step-box">
+                <h2>2. テンプレートを選択 / Select Template</h2>
+                <div class="select-wrap">
+                    <select id="templateSelect">
+                        <option value="" disabled selected>テンプレートを選んでください / Choose...</option>
+                        <option value="1">1. 見積依頼 / Request for Quotation</option>
+                        <option value="2">2. 発注書の送付 / Purchase Order</option>
+                        <option value="3">3. 納期確認 / Delivery Schedule Confirmation</option>
+                        <option value="4">4. 発送完了のお知らせ / Shipping Notification</option>
+                        <option value="5">5. 受領連絡と検収結果 / Receipt & Inspection Report</option>
+                        <option value="6">6. 請求書発行のお願い / Request for Invoice</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- 右カラム：プレビューエリア -->
+        <section class="right-col">
+            <div class="step-box preview-box">
+                <h2>3. プレビュー / Preview</h2>
+                <textarea id="emailPreview" readonly placeholder="ここにメール本文が生成されます。&#10;宛先とテンプレートを選択してください。&#10;/ Email preview will appear here."></textarea>
+                <div class="action-area">
+                    <button id="copyBtn" class="btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        コピー / Copy
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- JavaScriptファイルの読み込み -->
+    <script src="script.js"></script>
+</body>
+</html>
