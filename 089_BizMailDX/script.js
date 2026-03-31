@@ -2,6 +2,40 @@
 let csvData = [];          // 取得した全顧客データ
 let selectedCompany = null; // 現在選択されている顧客情報
 
+// --- フォールバック用のダミーデータ (30件) ---
+// プレビュー環境等でfetchがブロックされた際の非常用データ
+const FALLBACK_CSV_DATA = `取引先名,部署名,担当者名,敬称,主要取引品目
+株式会社サトー鋼材,第一営業部,佐藤 健一,様,ステンレス鋼材
+鈴木スプリング工業,製造部,鈴木 一郎,様,精密バネ
+高橋ボルト株式会社,購買課,高橋 美咲,様,特殊ボルト・ナット
+田中精密加工,営業推進部,田中 太郎,様,アルミ切削加工品
+伊藤ベアリング(株),営業部,伊藤 健太,様,産業用ベアリング
+渡辺ギアテック,開発営業グループ,渡辺 真理,様,特殊ギア部品
+山本モーター製作所,購買部,山本 裕太,様,小型モーター
+中村電子部品,調達課,中村 彩,様,基板実装部品
+小林金型工業,営業１課,小林 誠,様,プラスチック成形金型
+加藤マテリアル,素材部,加藤 涼子,様,特殊合成樹脂
+吉田ツールズ,営業本部,吉田 翔,様,切削工具
+山田油圧機器,購買第一課,山田 直樹,様,油圧シリンダー
+佐々木シールド,テクニカルセールス,佐々木 舞,様,EMIシールド材
+山口ケーブル(株),営業第一部,山口 剛,様,産業用ケーブル
+松本センサーテクノロジー,調達戦略部,松本 リサ,様,光電センサー
+井上ポンプ製作所,国内営業部,井上 達也,様,工業用水中ポンプ
+木村バルブ工業,購買部,木村 浩二,様,高圧バルブ
+林ファスナー(株),営業開発課,林 結衣,様,特殊ファスナー
+清水パッキン,調達部,清水 健,様,ゴムパッキン
+山崎ベルト,営業第二部,山崎 大輔,様,伝動ベルト
+池田シャフト,購買管理課,池田 恵理,様,精密シャフト
+橋本ギアボックス,第三営業部,橋本 圭介,様,減速機
+阿部キャスター,営業部,阿部 慎之介,様,産業用キャスター
+石川ホース(株),調達第一課,石川 由美,様,耐圧ホース
+中島メッシュ,営業推進室,中島 拓哉,様,ステンレスメッシュ
+前田マグネット,テクニカルセンター,前田 香織,様,ネオジム磁石
+藤田ダンパー,購買部,藤田 浩,様,ショックアブソーバー
+岡田スライダー,営業第一部,岡田 陸,様,リニアガイド
+後藤ヒンジ製作所,調達課,後藤 絵美,様,産業用ヒンジ
+長谷川ジョイント,国内営業課,長谷川 大樹,様,ロータリージョイント`;
+
 // 定型文テンプレートの定義 (6種類)
 const templates = {
     '1': "件名: 【見積依頼】図面送付およびお見積りのお願い / Request for Quotation\n\n{取引先名}\n{部署名}\n{担当者名} {敬称}\n\nいつも大変お世話になっております。\n株式会社〇〇の〇〇です。\n\nさて、首記の件につきまして、新規部品（{主要取引品目}）の見積りをお願いしたくご連絡いたしました。\n詳細な仕様および図面ファイルにつきましては、別途添付の通りです。\n\nお手数ですが、ご確認いただき、〇月〇日までにお見積書をご提示いただけますでしょうか。\nご不明な点がございましたら、遠慮なくご連絡ください。\n\nよろしくお願い申し上げます。",
@@ -18,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setupEventListeners();
     setupFaviconFallback();
     
-    // 初期状態でプレビュー生成（もしテンプレートが選ばれていれば反映）
+    // 初期状態でプレビュー生成（テンプレートが選ばれていれば反映）
     generateMail();
 });
 
@@ -28,10 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
  */
 async function loadCSVData() {
     const listContainer = document.getElementById('resultList');
-    // データ読み込み中状態の可視化
     listContainer.innerHTML = '<li class="loading">データ読み込み中... / Loading data...</li>';
     
-    // ユーザー提供のCSV URL
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQxeWpivMTShKMyNpxUGq-uaaYpc5F9dM6D3TSI3CA3cne3znBn6Fyi2N4x5_2ESWALTW2Hf6IYMR7R/pub?gid=0&single=true&output=csv';
     
     try {
@@ -41,12 +73,31 @@ async function loadCSVData() {
         const csvText = await response.text();
         csvData = parseCSV(csvText);
         
-        // 取得したデータをリストに表示
         renderList(csvData);
     } catch (error) {
-        console.error('CSV読み込みエラー:', error);
-        // エラー状態の可視化
-        listContainer.innerHTML = `<li class="no-results" style="color:#ef4444;">データの読み込みに失敗しました / Failed to load data.</li>`;
+        console.warn('CSV読み込みエラー（CORS制限等）により、フォールバックデータを使用します:', error);
+        
+        // フォールバック（ダミーデータ）を使用
+        csvData = parseCSV(FALLBACK_CSV_DATA);
+        
+        // ユーザー向けにバックアップデータ仕様の警告を表示
+        showFallbackNotice();
+        
+        // フォールバックデータでリストを生成
+        renderList(csvData);
+    }
+}
+
+/**
+ * フォールバックデータ使用時の通知DOMを追加する
+ */
+function showFallbackNotice() {
+    const searchWrap = document.querySelector('.search-wrap');
+    if (!document.querySelector('.fallback-notice')) {
+        const fallbackMsg = document.createElement('div');
+        fallbackMsg.className = 'fallback-notice';
+        fallbackMsg.innerHTML = '※プレビュー環境の制限により、バックアップデータを使用しています';
+        searchWrap.parentNode.insertBefore(fallbackMsg, searchWrap);
     }
 }
 
@@ -54,7 +105,6 @@ async function loadCSVData() {
  * 改行コード(\r\n, \n)およびダブルクォーテーションを考慮した堅牢なCSVパーサー
  */
 function parseCSV(csv) {
-    // ダブルクォートで囲まれたカンマや改行も正しく処理する正規表現
     const objPattern = new RegExp(
         (
             "(\\,|\\r?\\n|\\r|^)" + // カンマ、改行、または先頭
@@ -88,8 +138,8 @@ function parseCSV(csv) {
 
     if (arrData.length === 0) return [];
     
-    // ヘッダー行を抽出
-    const headers = arrData[0].map(h => (h || '').trim());
+    // ヘッダー行を抽出（BOM除去などのためプレーン文字に正規化）
+    const headers = arrData[0].map(h => (h || '').replace(/^\uFEFF/, '').trim());
     const dataList = [];
     
     // データ行をオブジェクト化
@@ -154,7 +204,7 @@ function renderList(list) {
              document.getElementById('displaySelected').textContent = displayName;
              document.getElementById('displaySelected').title = displayName; // ツールチップ用
              
-             // メール本文の生成をトリガー（宛先が選択されたら即座に置換）
+             // 左カラムで取引先が選択された時点でプレビュー生成関数を呼び出し
              generateMail();
         });
         
@@ -177,15 +227,14 @@ function generateMail() {
     
     let text = templates[templateId];
     
-    // 宛先が選択されている場合のみ、プレースホルダーを実データに置換する
+    // 宛先が選択されている場合、プレースホルダーを実データに確実に全置換する
     if (selectedCompany) {
-        text = text.replace(/{取引先名}/g, selectedCompany['取引先名'] || '');
-        text = text.replace(/{部署名}/g, selectedCompany['部署名'] || '');
-        text = text.replace(/{担当者名}/g, selectedCompany['担当者名'] || '');
-        text = text.replace(/{敬称}/g, selectedCompany['敬称'] || '様');
-        text = text.replace(/{主要取引品目}/g, selectedCompany['主要取引品目'] || '製品');
+        text = text.replace(/{取引先名}/g, selectedCompany['取引先名'] || '')
+                   .replace(/{部署名}/g, selectedCompany['部署名'] || '')
+                   .replace(/{担当者名}/g, selectedCompany['担当者名'] || '')
+                   .replace(/{敬称}/g, selectedCompany['敬称'] || '様')
+                   .replace(/{主要取引品目}/g, selectedCompany['主要取引品目'] || '製品');
     }
-    // 宛先が選択されていない場合は、テンプレートの基本文章がそのまま（プレースホルダーのまま）表示される
     
     // テキストエリアに挿入
     previewArea.value = text;

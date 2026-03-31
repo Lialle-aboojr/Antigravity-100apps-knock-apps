@@ -104,6 +104,19 @@ body {
     align-items: center;
 }
 
+/* フォールバック通知 (追加) */
+.fallback-notice {
+    font-size: 0.8rem;
+    color: #eab308;
+    background-color: #fefce8;
+    border: 1px solid #fef08a;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+}
+
 /* 検索ボックス */
 .search-wrap {
     position: relative;
