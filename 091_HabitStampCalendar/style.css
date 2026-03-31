@@ -310,7 +310,7 @@ input:focus {
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     border: 4px solid var(--primary-color); /* 目立つように太枠 */
     
-    /* 修正：モーダルの高さを画面サイズ内に制限し、内部を縦並びのフレックスボックスにする */
+    /* モーダルの高さを画面サイズ内に制限し、内部を縦並びのフレックスボックスにする */
     max-height: 90vh;
     display: flex;
     flex-direction: column;
@@ -366,10 +366,13 @@ input:focus {
     flex-direction: column;
     gap: 12px;
     
-    /* 修正：リストが増えた場合、この領域だけを縦スクロールさせる */
+    /* リストが増えた場合、この領域だけを縦スクロールさせる */
     overflow-y: auto;
     flex-grow: 1; /* 空きスペースを埋める */
-    padding-right: 6px; /* スクロールバーと内容が被らないように余白を作る */
+    
+    /* 修正: リストアイテムが scale で拡大された時に見切れないよう親コンテナに上下左右の余白を追加 */
+    padding: 8px;
+    margin: -8px; /* 余白を相殺してレイアウトのズレを防ぐ */
 }
 
 /* モーダル内リストのスクロールバーを細いデザインにする */
@@ -391,7 +394,10 @@ input:focus {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
+    
+    /* 修正: 左側が切れないように左右の padding を十分に確保（特に左側）*/
+    padding: 16px 24px;
+    
     border: 2px solid var(--border-color);
     border-radius: 12px;
     font-size: 1.2rem;
@@ -399,6 +405,13 @@ input:focus {
     transition: all 0.2s;
     user-select: none; /* タップ時の文字選択を無効化 */
     background-color: #fafafa;
+}
+
+/* 修正: リストアイテム内のテキストや要素の中央揃えを確実に維持 */
+.modal-habit-item > div:first-child {
+    display: flex;
+    align-items: center;
+    flex-grow: 1; /* テキスト部分を伸ばす */
 }
 
 /* スタンプが押された（達成した）状態 */
@@ -414,6 +427,12 @@ input:focus {
     font-size: 1.8rem;
     opacity: 0.2; /* 未達成時は薄く表示 */
     transition: opacity 0.2s, transform 0.2s;
+    
+    /* 修正: 絵文字の中央配置を維持するためflexを使用 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 12px; /* テキストとの間に少し余裕を持たせる */
 }
 
 /* 達成時はスタンプをはっきり表示し、大きく反動をつける */
@@ -424,8 +443,8 @@ input:focus {
 
 /* --- 追加：決定して閉じるボタンのスタイル --- */
 .modal-footer {
-    margin-top: 16px;
-    flex-shrink: 0; /* 修正：フッターは縮小させず下に固定する */
+    margin-top: 24px;
+    flex-shrink: 0; /* フッターは縮小させず下に固定する */
 }
 
 .save-close-btn {
