@@ -100,13 +100,14 @@ Complete it. Ship it. Relax. ☕
 | 087 | 😌 EmotionJournal | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/087_EmotionJournal/index.html) |
 | 088 | 🎨 Theme Switcher UI Collection | [▶ Demo](https://088-theme-switcher-ui-collection.vercel.app/) |
 | 089 | 📩 BizMail DX | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/089_BizMailDX/index.html) |
+| 090 | 🍽️ Recipe Cost Calculator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/090_RecipeCostCalculator/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 89 / 100 ██████████████████░░ 89%
+完成: 90 / 100 ██████████████████░░ 90%
 ```
 
 ---
