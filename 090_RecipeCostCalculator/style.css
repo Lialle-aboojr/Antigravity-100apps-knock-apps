@@ -1,0 +1,286 @@
+/* =========================================================================
+   基本リセットとCSS変数（デザインの骨組み）
+========================================================================= */
+:root {
+  --primary-color: #2e7d32;      /* 清潔感のあるグリーン（ベース） */
+  --primary-hover: #1b5e20;      /* ホバー時の濃いグリーン */
+  --bg-color: #f4f6f8;        /* アプリ全体の背景色（クリーンなグレー） */
+  --card-bg: #ffffff;         /* カードの背景色（白） */
+  --text-main: #333333;       /* メインテキスト色 */
+  --text-sub: #666666;        /* サブテキスト・ラベル色 */
+  --border-color: #e0e0e0;    /* 枠線の色 */
+  --danger-color: #e53935;    /* 削除ボタンの赤色 */
+  --danger-hover: #c62828;    /* 削除ボタンホバー時の濃い赤 */
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* 柔らかい影 */
+  --border-radius: 12px;      /* 角丸の大きさ */
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  line-height: 1.6;
+  /* フッターが画面に被らないように、下部に余白を設ける */
+  padding-bottom: 120px; 
+}
+
+.app-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* =========================================================================
+   ヘッダー部分
+========================================================================= */
+header {
+  text-align: center;
+  margin-bottom: 30px;
+  margin-top: 10px;
+}
+
+header h1 {
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  margin-bottom: 5px;
+  line-height: 1.3;
+}
+
+header h1 span {
+  font-size: 1.2rem;
+  color: var(--text-main);
+}
+
+header p {
+  font-size: 0.9rem;
+  color: var(--text-sub);
+}
+
+/* =========================================================================
+   カード共通のスタイル
+========================================================================= */
+.card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: var(--shadow);
+}
+
+h2 {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+  color: var(--text-main);
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+/* =========================================================================
+   フォーム要素（入力欄）
+========================================================================= */
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: var(--text-sub);
+  margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background-color: #fafbfc;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+  background-color: #ffffff;
+}
+
+/* =========================================================================
+   材料リストの個別の行
+========================================================================= */
+.ingredient-row {
+  background-color: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.ingredient-cost {
+  text-align: right;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+/* 上段：材料名 */
+.ingredient-grid.top-row {
+  margin-bottom: 15px;
+}
+
+/* 下段：価格、購入量、使用量、削除ボタンのグリッド配置の設定 */
+.ingredient-grid.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 15px;
+  align-items: end; /* 下揃えにしてボタンと入力欄の高さを合わせる */
+}
+
+.ingredient-grid.bottom-row .input-group {
+  margin-bottom: 0;
+}
+
+/* =========================================================================
+   ボタン類
+========================================================================= */
+.btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-outline {
+  background-color: rgba(46, 125, 50, 0.05);
+  color: var(--primary-color);
+  border: 2px dashed var(--primary-color);
+  width: 100%;
+}
+
+.btn-outline:hover {
+  background-color: rgba(46, 125, 50, 0.1);
+}
+
+.btn-delete {
+  background-color: #ffebee;
+  color: var(--danger-color);
+  padding: 12px 14px;
+}
+
+.btn-delete:hover {
+  background-color: var(--danger-hover);
+  color: white;
+}
+
+/* =========================================================================
+   結果を表示する固定フッター
+========================================================================= */
+.results-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px); /* すりガラス効果 */
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.08);
+  padding: 15px 20px;
+  z-index: 100;
+}
+
+.results-container {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.result-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-label {
+  font-size: 0.85rem;
+  color: var(--text-sub);
+  font-weight: bold;
+}
+
+.result-value {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--text-main);
+}
+
+.result-divider {
+  width: 1px;
+  height: 45px;
+  background-color: var(--border-color);
+  margin: 0 15px;
+}
+
+.result-box.highlighted .result-value {
+  color: var(--primary-color);
+  font-size: 2rem;
+}
+
+/* =========================================================================
+   レスポンシブ対応（スマホ画面など幅が狭い場合の調整）
+========================================================================= */
+@media (max-width: 650px) {
+  /* グリッドを縦積みに変更 */
+  .ingredient-grid.bottom-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  /* 削除ボタンを下部にフルサイズで表示 */
+  .delete-container {
+    grid-column: span 2;
+    margin-top: 5px;
+  }
+  
+  .btn-delete {
+    width: 100%;
+  }
+
+  /* フッターのレイアウトを縦積みに変更 */
+  .results-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .result-divider {
+    width: 60%;
+    height: 1px;
+    margin: 12px auto;
+  }
+  
+  .result-box.highlighted .result-value {
+    font-size: 1.8rem;
+  }
+  
+  body {
+    padding-bottom: 170px; /* フッターが高くなる分、余白を増やす */
+  }
+}
