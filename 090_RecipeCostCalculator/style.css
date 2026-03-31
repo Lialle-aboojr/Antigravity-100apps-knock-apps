@@ -170,15 +170,15 @@ input:focus {
   transition: all 0.2s ease;
 }
 
-.btn-outline {
-  background-color: rgba(46, 125, 50, 0.05);
-  color: var(--primary-color);
-  border: 2px dashed var(--primary-color);
+/* 上部の新規追加用ボタン */
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
   width: 100%;
 }
 
-.btn-outline:hover {
-  background-color: rgba(46, 125, 50, 0.1);
+.btn-primary:hover {
+  background-color: var(--primary-hover);
 }
 
 .btn-delete {
@@ -190,6 +190,13 @@ input:focus {
 .btn-delete:hover {
   background-color: var(--danger-hover);
   color: white;
+}
+
+/* 上部の新規追加フォームの特別装飾 */
+.fixed-form {
+  border: 2px solid var(--primary-color);
+  background-color: #f1f8e9; /* うっすらグリーンで入力欄であることをアピール */
+  margin-bottom: 0; /* カード内のマージン調整のためリセット */
 }
 
 /* =========================================================================
@@ -254,12 +261,14 @@ input:focus {
     grid-template-columns: 1fr 1fr;
   }
   
-  /* 削除ボタンを下部にフルサイズで表示 */
+  /* 追加ボタンや削除ボタンを下部にフルサイズで表示 */
+  .add-container,
   .delete-container {
     grid-column: span 2;
     margin-top: 5px;
   }
   
+  .btn-primary,
   .btn-delete {
     width: 100%;
   }

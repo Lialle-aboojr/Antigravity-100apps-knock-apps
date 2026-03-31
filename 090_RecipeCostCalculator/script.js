@@ -1,19 +1,14 @@
 /* =========================================================================
    アプリの状態（データ）を管理する変数
-   各材料ごとのID、名前、価格、購入量、使用量を配列で管理します。
+   初期状態は空配列（まだ何も追加されていない状態）とします。
 ========================================================================= */
-let ingredients = [
-  // 初期データとして空の項目を1つ用意しておく
-  { id: Date.now(), name: "", price: null, totalQty: null, usedQty: null }
-];
+let ingredients = [];
 
 /* =========================================================================
    ユーティリティ関数（便利な道具）
 ========================================================================= */
 
 // 1. XSS（クロスサイトスクリプティング）対策関数
-// ユーザーが入力した文字を画面にそのまま表示すると危険な場合があるため、
-// 特殊記号を安全な文字（HTMLエンティティ）に変換します。
 function escapeHTML(str) {
   if (typeof str !== 'string') return str;
   return str.replace(/[&<>'"]/g, function(match) {
@@ -41,9 +36,10 @@ function formatCurrency(number) {
 // 原価計算を実行し、画面下の合計表示などを更新する関数
 function calculateTotals() {
   const servingsInput = document.getElementById('servings');
-  let servings = parseFloat(servingsInput.value);
+  // parseInt を使って小数点以下の入力を無視し、整数のみとして処理します。
+  let servings = parseInt(servingsInput.value, 10);
   
-  // スマホ等で間違えて空欄にしたり、0が入力された場合の安全対策
+  // スマホ等で間違えて空欄にしたり、0や負の値が入力された場合の安全対策
   if (isNaN(servings) || servings <= 0) {
     servings = 1;
   }
@@ -56,21 +52,17 @@ function calculateTotals() {
     const totalQty = parseFloat(item.totalQty);
     const usedQty = parseFloat(item.usedQty);
 
-    // 金額、購入量、使用量がすべて正しく数字で入力されており、
-    // かつ 0 で割るエラー（ゼロ除算）を防止できている場合のみ計算
+    // 全て数値として正しく、ゼロ除算しない場合のみ計算
     if (!isNaN(price) && !isNaN(totalQty) && !isNaN(usedQty) && totalQty > 0) {
-      
-      // 単価計算ロジック: (購入価格 / 購入した量) × 今回使った量 = その材料の原価
+      // (購入価格 / 購入した量) × 今回使った量 = その材料の原価
       const itemCost = (price / totalQty) * usedQty;
       totalCost += itemCost;
       
-      // その材料カード内の「材料の原価」表示を更新
       const costDisplay = document.getElementById(`cost-${item.id}`);
       if (costDisplay) {
         costDisplay.innerHTML = `<span class="result-label" style="font-size:0.85rem; margin-right:8px; color:#666; font-weight:normal;">この材料の原価 / Cost:</span>${formatCurrency(itemCost)}`;
       }
     } else {
-      // まだ入力が不十分な場合などは ¥0 と表示しておく
       const costDisplay = document.getElementById(`cost-${item.id}`);
       if (costDisplay) {
         costDisplay.innerHTML = `<span class="result-label" style="font-size:0.85rem; margin-right:8px; color:#666; font-weight:normal;">この材料の原価 / Cost:</span>¥0`;
@@ -81,29 +73,34 @@ function calculateTotals() {
   // 全体の合計原価を画面に反映
   document.getElementById('total-cost').textContent = formatCurrency(totalCost);
   
-  // 1人前あたりの原価を計算して画面に反映
+  // 1人前あたりの原価計算
   const costPerServing = totalCost / servings;
   document.getElementById('cost-per-serving').textContent = formatCurrency(costPerServing);
 }
 
-// データに基づいて画面上にHTMLの材料リストを作り直す関数
+// データに基づいて「追加済み材料リスト」を画面上に作り直す関数
 function renderIngredients() {
   const container = document.getElementById('ingredients-container');
   container.innerHTML = ''; // まずは中身を空っぽにする
 
+  // まだ追加されていない場合の案内メッセージ
+  if (ingredients.length === 0) {
+    container.innerHTML = `<p style="text-align:center; color:#999; padding: 20px 0;">まだ追加されていません / No ingredients yet</p>`;
+    calculateTotals();
+    return;
+  }
+
   // ingredients配列の中身を一つずつHTMLに変換していく
-  ingredients.forEach((item, index) => {
+  ingredients.forEach((item) => {
     const row = document.createElement('div');
     row.className = 'ingredient-row';
     
-    // テンプレートリテラル（バッククォート ` `）を使ってHTML文字列を作る
-    // 注：ユーザー入力が関わる item.name は必ず escapeHTML を通すこと！
+    // リスト内でも数値を編集できるように input 要素を配置しています。
     row.innerHTML = `
       <div class="ingredient-cost" id="cost-${item.id}">
          <span class="result-label" style="font-size:0.85rem; margin-right:8px; color:#666; font-weight:normal;">この材料の原価 / Cost:</span>¥0
       </div>
       
-      <!-- 上段：材料名 -->
       <div class="ingredient-grid top-row">
         <div class="input-group">
           <label>材料名 / Ingredient Name</label>
@@ -114,35 +111,31 @@ function renderIngredients() {
         </div>
       </div>
       
-      <!-- 下段：数値入力と削除ボタン -->
       <div class="ingredient-grid bottom-row">
         <div class="input-group">
           <label>購入価格 / Price (¥)</label>
           <input type="number" min="0" 
-                 placeholder="例: 200" 
+                 placeholder="例: 200 (数字のみ)" 
                  value="${item.price !== null ? escapeHTML(String(item.price)) : ''}" 
                  oninput="updateIngredient(${item.id}, 'price', this.value)">
         </div>
         <div class="input-group">
           <label>購入量 / Total Qty</label>
           <input type="number" min="0" step="0.1" 
-                 placeholder="例: 500" 
+                 placeholder="例: 500 (単位不要)" 
                  value="${item.totalQty !== null ? escapeHTML(String(item.totalQty)) : ''}" 
                  oninput="updateIngredient(${item.id}, 'totalQty', this.value)">
         </div>
         <div class="input-group">
           <label>使った量 / Used Qty</label>
           <input type="number" min="0" step="0.1"
-                 placeholder="例: 100" 
+                 placeholder="例: 100 (単位不要)" 
                  value="${item.usedQty !== null ? escapeHTML(String(item.usedQty)) : ''}" 
                  oninput="updateIngredient(${item.id}, 'usedQty', this.value)">
         </div>
         
         <div class="delete-container">
-          <!-- 要素が1つしかない場合は削除ボタンを押せないように（opacityで半透明に） -->
-          <button class="btn btn-delete" 
-                  onclick="removeIngredient(${item.id})"
-                  ${ingredients.length === 1 ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
+          <button class="btn btn-delete" onclick="removeIngredient(${item.id})">
             🗑️ 削除
           </button>
         </div>
@@ -160,42 +153,65 @@ function renderIngredients() {
    イベント（ユーザーの操作）に関する処理
 ========================================================================= */
 
-// 【更新】文字や数字が入力されるたびに呼ばれる処理
+// 【追加】「＋追加 / Add」ボタンが押された時の処理（固定フォームからのデータ取得）
+document.getElementById('add-btn').addEventListener('click', () => {
+  const nameInput = document.getElementById('new-name');
+  const priceInput = document.getElementById('new-price');
+  const totalQtyInput = document.getElementById('new-totalQty');
+  const usedQtyInput = document.getElementById('new-usedQty');
+
+  // 入力値を取得（前後の空白を削除）
+  const name = nameInput.value.trim();
+  const price = priceInput.value ? parseFloat(priceInput.value) : null;
+  const totalQty = totalQtyInput.value ? parseFloat(totalQtyInput.value) : null;
+  const usedQty = usedQtyInput.value ? parseFloat(usedQtyInput.value) : null;
+
+  // すべて空の場合は追加しない（簡易的な入力チェック）
+  if (!name && price === null && totalQty === null && usedQty === null) {
+    alert("材料名や金額などを入力してください。\nPlease enter ingredient details.");
+    return;
+  }
+
+  // 配列の中に新しいデータを追加する
+  ingredients.push({
+    id: Date.now(), // 現在時刻を被らないIDとして使用
+    name: name,
+    price: price,
+    totalQty: totalQty,
+    usedQty: usedQty
+  });
+
+  // 追加が終わったら、上の入力フォームの中身を空に戻す
+  nameInput.value = '';
+  priceInput.value = '';
+  totalQtyInput.value = '';
+  usedQtyInput.value = '';
+
+  // 新しいデータを含めて画面を作り直す
+  renderIngredients();
+  
+  // スマホ等で連続入力しやすいように名前にフォーカスを戻す
+  nameInput.focus();
+});
+
+// 【リスト内の更新】文字や数字が入力修正されるたびに呼ばれる処理
 window.updateIngredient = function(id, field, value) {
-  // 変更された項目と同じIDを持つデータを配列から探す
   const item = ingredients.find(i => i.id === id);
   if (item) {
     item[field] = value; // データを上書き
-    // 入力の途中でフォーカスが外れるのを防ぐため、画面の再描画（renderIngredients）はせずに
-    // 合計金額の計算（calculateTotals）だけを実行する
+    // 入力の途中でフォーカスが外れるのを防ぐため、画面の再描画はせずに金額計算だけを実行する
     calculateTotals();
   }
 };
 
-// 【追加】「材料を追加」ボタンが押された時の処理
-document.getElementById('add-btn').addEventListener('click', () => {
-  // 配列の中に新しい空のデータを追加する
-  ingredients.push({
-    id: Date.now(), // 識別するための被らないID（現在の時刻）
-    name: "",
-    price: null,
-    totalQty: null,
-    usedQty: null
-  });
-  renderIngredients(); // 新しいデータを入れて画面を作り直す
-});
-
-// 【削除】「削除」ボタンが押された時の処理
+// 【削除】リスト内の「削除」ボタンが押された時の処理
 window.removeIngredient = function(id) {
-  // 万が一最後の1つだったら削除させない（安全対策）
-  if (ingredients.length <= 1) return;
-  
   // filterを使って、削除したいID『以外』のものを集めた新しい配列にする
   ingredients = ingredients.filter(i => i.id !== id);
   renderIngredients(); // 減ったデータで画面を作り直す
 };
 
-// 「何人前」や「料理名」などの基本情報が変更された時は、すぐに計算し直す
+// 「何人前」の基本情報が変更された時は、すぐに計算し直す
 document.getElementById('servings').addEventListener('input', calculateTotals);
 
 // アプリ起動時に最初の1回だけ画面を描画する

@@ -30,19 +30,52 @@
         </div>
         <div class="input-group">
           <label for="servings">何人前作るか / Servings</label>
-          <input type="number" id="servings" value="1" min="1" step="0.1">
+          <!-- 小数点入力を防ぐため step="1" を指定し、JavaScript側でも整数判定を行います -->
+          <input type="number" id="servings" value="1" min="1" step="1">
+        </div>
+      </section>
+
+      <!-- 新規材料の入力フォーム（固定） -->
+      <section class="card section-add-ingredient">
+        <h2>➕ 新しい材料を追加 / Add New Ingredient</h2>
+        <div class="ingredient-row fixed-form">
+          <div class="ingredient-grid top-row">
+            <div class="input-group">
+              <label for="new-name">材料名 / Ingredient Name</label>
+              <input type="text" id="new-name" placeholder="例: じゃがいも / Potato">
+            </div>
+          </div>
+          
+          <div class="ingredient-grid bottom-row">
+            <div class="input-group">
+              <label for="new-price">購入価格 / Price (¥)</label>
+              <!-- プレースホルダーに(数字のみ)等の注釈を追加して単位入力を防ぐ -->
+              <input type="number" id="new-price" min="0" placeholder="例: 200 (数字のみ)">
+            </div>
+            <div class="input-group">
+              <label for="new-totalQty">購入量 / Total Qty</label>
+              <input type="number" id="new-totalQty" min="0" step="0.1" placeholder="例: 500 (単位不要)">
+            </div>
+            <div class="input-group">
+              <label for="new-usedQty">使った量 / Used Qty</label>
+              <input type="number" id="new-usedQty" min="0" step="0.1" placeholder="例: 100 (単位不要)">
+            </div>
+            
+            <div class="add-container">
+              <button id="add-btn" class="btn btn-primary">
+                ＋ 追加 / Add
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
       <!-- 材料リストセクション / Ingredients -->
       <section class="card section-ingredients">
-        <h2>🛒 材料リスト / Ingredients</h2>
+        <h2>🛒 追加済みの材料 / Added Ingredients</h2>
         <div id="ingredients-container" class="ingredients-list">
-          <!-- JSでここに要素が動的に追加されます / Ingredients will be added here via JS -->
+          <!-- JSでここに要素が動的に追加されます -->
         </div>
-        <button id="add-btn" class="btn btn-outline">
-          ➕ 新しい材料を追加 / Add New Ingredient
-        </button>
       </section>
     </main>
 
