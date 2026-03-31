@@ -82,7 +82,7 @@ h2 {
 }
 
 /* =========================================================================
-   フォーム要素（入力欄）
+   フォーム要素（入力欄と注釈テキスト）
 ========================================================================= */
 .input-group {
   margin-bottom: 15px;
@@ -112,6 +112,15 @@ input:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
   background-color: #ffffff;
+}
+
+/* プレースホルダーの代わりとなる入力欄下の注釈テキスト */
+.input-helper {
+  display: block;
+  font-size: 0.75rem;
+  color: #888888;
+  margin-top: 6px;
+  line-height: 1.3;
 }
 
 /* =========================================================================
@@ -147,11 +156,17 @@ input:focus {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr auto;
   gap: 15px;
-  align-items: end; /* 下揃えにしてボタンと入力欄の高さを合わせる */
+  align-items: start; /* 下揃えから上端揃えに変更（注釈テキストによって高さが変わるため） */
 }
 
 .ingredient-grid.bottom-row .input-group {
   margin-bottom: 0;
+}
+
+/* 追加ボタンや削除ボタンをラベル・入力欄の高さに揃えるための位置調整 */
+.add-container,
+.delete-container {
+  padding-top: 26px; /* ラベルの高さ分くらい下に下げる */
 }
 
 /* =========================================================================
@@ -261,11 +276,11 @@ input:focus {
     grid-template-columns: 1fr 1fr;
   }
   
-  /* 追加ボタンや削除ボタンを下部にフルサイズで表示 */
+  /* 追加ボタンや削除ボタンの設定 */
   .add-container,
   .delete-container {
     grid-column: span 2;
-    margin-top: 5px;
+    padding-top: 5px; /* 上部パディングをリセット */
   }
   
   .btn-primary,

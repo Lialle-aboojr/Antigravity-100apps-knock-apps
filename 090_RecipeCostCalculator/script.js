@@ -115,23 +115,26 @@ function renderIngredients() {
         <div class="input-group">
           <label>購入価格 / Price (¥)</label>
           <input type="number" min="0" 
-                 placeholder="例: 200 (数字のみ)" 
+                 placeholder="例: 200" 
                  value="${item.price !== null ? escapeHTML(String(item.price)) : ''}" 
                  oninput="updateIngredient(${item.id}, 'price', this.value)">
+          <span class="input-helper">※数字のみ / Numbers only</span>
         </div>
         <div class="input-group">
           <label>購入量 / Total Qty</label>
           <input type="number" min="0" step="0.1" 
-                 placeholder="例: 500 (単位不要)" 
+                 placeholder="例: 500" 
                  value="${item.totalQty !== null ? escapeHTML(String(item.totalQty)) : ''}" 
                  oninput="updateIngredient(${item.id}, 'totalQty', this.value)">
+          <span class="input-helper">※単位不要(数字のみ) / Numbers only, no units</span>
         </div>
         <div class="input-group">
           <label>使った量 / Used Qty</label>
           <input type="number" min="0" step="0.1"
-                 placeholder="例: 100 (単位不要)" 
+                 placeholder="例: 100" 
                  value="${item.usedQty !== null ? escapeHTML(String(item.usedQty)) : ''}" 
                  oninput="updateIngredient(${item.id}, 'usedQty', this.value)">
+          <span class="input-helper">※単位不要(数字のみ) / Numbers only, no units</span>
         </div>
         
         <div class="delete-container">
