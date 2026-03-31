@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCSVData();
     setupEventListeners();
     setupFaviconFallback();
+    
+    // 初期状態でプレビュー生成（もしテンプレートが選ばれていれば反映）
+    generateMail();
 });
 
 // --- データ取得と解析 ---
@@ -24,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
  * スプレッドシート（公開CSV）からデータを取得して解析する関数
  */
 async function loadCSVData() {
+    const listContainer = document.getElementById('resultList');
+    // データ読み込み中状態の可視化
+    listContainer.innerHTML = '<li class="loading">データ読み込み中... / Loading data...</li>';
+    
     // ユーザー提供のCSV URL
     const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQxeWpivMTShKMyNpxUGq-uaaYpc5F9dM6D3TSI3CA3cne3znBn6Fyi2N4x5_2ESWALTW2Hf6IYMR7R/pub?gid=0&single=true&output=csv';
     
@@ -38,27 +45,60 @@ async function loadCSVData() {
         renderList(csvData);
     } catch (error) {
         console.error('CSV読み込みエラー:', error);
-        document.getElementById('resultList').innerHTML = `<li class="no-results" style="color:#ef4444;">データの読み込みに失敗しました。<br>Failed to load data.</li>`;
+        // エラー状態の可視化
+        listContainer.innerHTML = `<li class="no-results" style="color:#ef4444;">データの読み込みに失敗しました / Failed to load data.</li>`;
     }
 }
 
 /**
- * CSVテキストを配列オブジェクトに変換するパーサー（簡易版）
+ * 改行コード(\r\n, \n)およびダブルクォーテーションを考慮した堅牢なCSVパーサー
  */
 function parseCSV(csv) {
-    const lines = csv.trim().split('\n');
-    if (lines.length === 0) return [];
+    // ダブルクォートで囲まれたカンマや改行も正しく処理する正規表現
+    const objPattern = new RegExp(
+        (
+            "(\\,|\\r?\\n|\\r|^)" + // カンマ、改行、または先頭
+            "(?:\"([^\"]*(?:\"\"[^\"]*)*)\"|" + // ダブルクォートで囲まれた値
+            "([^\"\\,\\r\\n]*))" // ダブルクォートなしの値
+        ),
+        "gi"
+    );
+
+    let arrData = [[]];
+    let matches = null;
+
+    while (matches = objPattern.exec(csv)) {
+        let strMatchedDelimiter = matches[1];
+        if (strMatchedDelimiter.length && strMatchedDelimiter !== ",") {
+            // 新しい行を追加
+            arrData.push([]);
+        }
+        let strMatchedValue;
+        if (matches[2]) {
+            // ダブルクォートをエスケープ解除
+            strMatchedValue = matches[2].replace(new RegExp("\"\"", "g"), "\"");
+        } else {
+            strMatchedValue = matches[3];
+        }
+        arrData[arrData.length - 1].push(strMatchedValue);
+    }
+
+    // 空行を末尾からフィルタして除外
+    arrData = arrData.filter(row => row.length > 0 && row.some(val => val !== undefined && val.trim() !== ""));
+
+    if (arrData.length === 0) return [];
     
-    const headers = lines[0].split(',').map(h => h.trim());
+    // ヘッダー行を抽出
+    const headers = arrData[0].map(h => (h || '').trim());
     const dataList = [];
     
-    for (let i = 1; i < lines.length; i++) {
-        if (!lines[i].trim()) continue; // 空行はスキップ
-        const values = lines[i].split(',').map(v => v.trim());
+    // データ行をオブジェクト化
+    for (let i = 1; i < arrData.length; i++) {
+        const values = arrData[i];
         const dataObj = {};
         
         headers.forEach((header, index) => {
-            dataObj[header] = values[index] || '';
+            dataObj[header] = values[index] ? values[index].trim() : '';
         });
         
         dataList.push(dataObj);
@@ -95,6 +135,11 @@ function renderList(list) {
             <div class="company-details">${dept} ${dept ? '-' : ''} ${person} ${title}</div>
         `;
         
+        // 現在選択中の会社ならハイライトを維持
+        if (selectedCompany && selectedCompany['取引先名'] === item['取引先名'] && selectedCompany['担当者名'] === item['担当者名']) {
+            li.classList.add('selected');
+        }
+        
         // リスト項目がクリックされた時の処理
         li.addEventListener('click', () => {
              // 選択状態のUI更新
@@ -109,7 +154,7 @@ function renderList(list) {
              document.getElementById('displaySelected').textContent = displayName;
              document.getElementById('displaySelected').title = displayName; // ツールチップ用
              
-             // メール本文の生成をトリガー
+             // メール本文の生成をトリガー（宛先が選択されたら即座に置換）
              generateMail();
         });
         
@@ -124,12 +169,6 @@ function generateMail() {
     const previewArea = document.getElementById('emailPreview');
     const templateId = document.getElementById('templateSelect').value;
     
-    // 宛先が未選択の場合
-    if (!selectedCompany) {
-        previewArea.value = '';
-        return;
-    }
-    
     // テンプレートが未選択の場合
     if (!templateId) {
         previewArea.value = '';
@@ -138,12 +177,15 @@ function generateMail() {
     
     let text = templates[templateId];
     
-    // プレースホルダーを実際のデータに置換する
-    text = text.replace(/{取引先名}/g, selectedCompany['取引先名'] || '');
-    text = text.replace(/{部署名}/g, selectedCompany['部署名'] || '');
-    text = text.replace(/{担当者名}/g, selectedCompany['担当者名'] || '');
-    text = text.replace(/{敬称}/g, selectedCompany['敬称'] || '様');
-    text = text.replace(/{主要取引品目}/g, selectedCompany['主要取引品目'] || '製品');
+    // 宛先が選択されている場合のみ、プレースホルダーを実データに置換する
+    if (selectedCompany) {
+        text = text.replace(/{取引先名}/g, selectedCompany['取引先名'] || '');
+        text = text.replace(/{部署名}/g, selectedCompany['部署名'] || '');
+        text = text.replace(/{担当者名}/g, selectedCompany['担当者名'] || '');
+        text = text.replace(/{敬称}/g, selectedCompany['敬称'] || '様');
+        text = text.replace(/{主要取引品目}/g, selectedCompany['主要取引品目'] || '製品');
+    }
+    // 宛先が選択されていない場合は、テンプレートの基本文章がそのまま（プレースホルダーのまま）表示される
     
     // テキストエリアに挿入
     previewArea.value = text;
@@ -160,13 +202,10 @@ function setupEventListeners() {
             return;
         }
         
-        // 取引先名、担当者名、主要取引品目のいずれかに部分一致するか
+        // 文字が「取引先名」に部分一致するかを正確に判定する処理に修正
         const filtered = csvData.filter(item => {
             const company = (item['取引先名'] || '').toLowerCase();
-            const person = (item['担当者名'] || '').toLowerCase();
-            const product = (item['主要取引品目'] || '').toLowerCase();
-            
-            return company.includes(query) || person.includes(query) || product.includes(query);
+            return company.includes(query);
         });
         
         renderList(filtered);
@@ -184,7 +223,7 @@ function setupEventListeners() {
         const btn = document.getElementById('copyBtn');
         
         if (!text || !selectedCompany || !document.getElementById('templateSelect').value) {
-            alert("コピーするメール本文がありません。\n宛先とテンプレートを選択してください。\n\nPlease select recipient and template.");
+            alert("宛先とテンプレートが選択されているか確認してください。\n\nPlease select recipient and template completely.");
             return;
         }
         
@@ -236,22 +275,24 @@ function sanitizeHTML(str) {
  */
 function setupFaviconFallback() {
     const faviconElement = document.getElementById('headerIcon');
-    faviconElement.addEventListener('error', function() {
-        console.warn('ファビコン画像の読み込みに失敗したため、絵文字のフォールバックを使用します。');
-        
-        // 代替画像として非表示にする
-        this.style.display = 'none';
-        
-        // 絵文字をSVG化してDataURIに変換し、ページのfaviconとして適用
-        const emoji = '✉️';
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${emoji}</text></svg>`;
-        const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-        
-        // head内のリンクを上書き
-        const link = document.getElementById('dynamic-favicon');
-        if (link) {
-            link.href = url;
-            link.type = "image/svg+xml";
-        }
-    });
+    if (faviconElement) {
+        faviconElement.addEventListener('error', function() {
+            console.warn('ファビコン画像の読み込みに失敗したため、絵文字のフォールバックを使用します。');
+            
+            // 代替画像として非表示にする
+            this.style.display = 'none';
+            
+            // 絵文字をSVG化してDataURIに変換し、ページのfaviconとして適用
+            const emoji = '✉️';
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">${emoji}</text></svg>`;
+            const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+            
+            // head内のリンクを上書き
+            const link = document.getElementById('dynamic-favicon');
+            if (link) {
+                link.href = url;
+                link.type = "image/svg+xml";
+            }
+        });
+    }
 }
