@@ -96,6 +96,7 @@ function renderIngredients() {
     row.className = 'ingredient-row';
     
     // リスト内でも数値を編集できるように input 要素を配置しています。
+    // ※今回は追加済みデータには注釈テキスト（例: "※数字のみ"）を含めず、スッキリ表示します。
     row.innerHTML = `
       <div class="ingredient-cost" id="cost-${item.id}">
          <span class="result-label" style="font-size:0.85rem; margin-right:8px; color:#666; font-weight:normal;">この材料の原価 / Cost:</span>¥0
@@ -118,7 +119,6 @@ function renderIngredients() {
                  placeholder="例: 200" 
                  value="${item.price !== null ? escapeHTML(String(item.price)) : ''}" 
                  oninput="updateIngredient(${item.id}, 'price', this.value)">
-          <span class="input-helper">※数字のみ / Numbers only</span>
         </div>
         <div class="input-group">
           <label>購入量 / Total Qty</label>
@@ -126,7 +126,6 @@ function renderIngredients() {
                  placeholder="例: 500" 
                  value="${item.totalQty !== null ? escapeHTML(String(item.totalQty)) : ''}" 
                  oninput="updateIngredient(${item.id}, 'totalQty', this.value)">
-          <span class="input-helper">※単位不要(数字のみ) / Numbers only, no units</span>
         </div>
         <div class="input-group">
           <label>使った量 / Used Qty</label>
@@ -134,7 +133,6 @@ function renderIngredients() {
                  placeholder="例: 100" 
                  value="${item.usedQty !== null ? escapeHTML(String(item.usedQty)) : ''}" 
                  oninput="updateIngredient(${item.id}, 'usedQty', this.value)">
-          <span class="input-helper">※単位不要(数字のみ) / Numbers only, no units</span>
         </div>
         
         <div class="delete-container">
