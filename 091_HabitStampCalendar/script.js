@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // モーダル（記録画面）関連
     const modal = document.getElementById('stamp-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
-    const saveCloseBtn = document.getElementById('save-close-btn'); // 追加：決定して閉じるボタン
+    const saveCloseBtn = document.getElementById('save-close-btn'); // 決定して閉じるボタン
     const modalDateTitle = document.getElementById('modal-date-title');
     const modalHabitsContainer = document.getElementById('modal-habits-container');
 

@@ -110,7 +110,8 @@ h2 {
 
 /* 一つ一つのマスの設定 */
 .calendar-cell {
-    aspect-ratio: 1; /* 必ず正方形を維持する */
+    /* アスペクト比の固定をやめ、タップしやすい固定の高さに調整 */
+    height: 90px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
     position: relative;
@@ -151,11 +152,28 @@ h2 {
     flex-grow: 1;
     display: flex;
     flex-wrap: wrap; /* スタンプが多い場合は折り返す */
-    align-items: center;
+    align-content: flex-start; /* 縦スクロール時に上から配置させるため */
     justify-content: center;
     gap: 1px;
-    overflow: hidden;
+    
+    /* 修正：スタンプが多い場合は縦スクロールさせる */
+    overflow-y: auto;
     font-size: 1.1rem;
+}
+
+/* スクロールバーのカスタマイズ（目立たない細めのデザイン） */
+.stamps-container::-webkit-scrollbar {
+    width: 3px;
+}
+.stamps-container::-webkit-scrollbar-track {
+    background: transparent; 
+}
+.stamps-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15); 
+    border-radius: 4px;
+}
+.stamps-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3); 
 }
 
 /* --- 習慣追加セクション --- */
