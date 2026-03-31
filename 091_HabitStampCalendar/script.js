@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // モーダル（記録画面）関連
     const modal = document.getElementById('stamp-modal');
     const closeModalBtn = document.getElementById('close-modal-btn');
+    const saveCloseBtn = document.getElementById('save-close-btn'); // 追加：決定して閉じるボタン
     const modalDateTitle = document.getElementById('modal-date-title');
     const modalHabitsContainer = document.getElementById('modal-habits-container');
 
@@ -81,8 +82,9 @@ document.addEventListener('DOMContentLoaded', () => {
         habitNameInput.value = '';
     });
 
-    // モーダルを閉じるボタン、および背景クリック
+    // モーダルを閉じるボタン、Save & Closeボタン、および背景クリック
     closeModalBtn.addEventListener('click', closeModal);
+    saveCloseBtn.addEventListener('click', closeModal); // 決定して閉じるボタンの動作
     modal.addEventListener('click', (e) => {
         if (e.target === modal) closeModal(); // 背景要素自体がクリックされたら閉じる
     });

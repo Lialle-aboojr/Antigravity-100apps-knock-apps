@@ -377,6 +377,32 @@ input:focus {
     transform: scale(1.3) rotate(10deg);
 }
 
+/* --- 追加：決定して閉じるボタンのスタイル --- */
+.modal-footer {
+    margin-top: 24px;
+}
+
+.save-close-btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(230, 90, 75, 0.3); /* ボタンに少し影をつけて目立たせる */
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+.save-close-btn:active {
+    transform: scale(0.96);
+    background-color: #d14f42; /* 少し暗い朱色にして押し込み感を出す */
+}
+
 /* --- レスポンシブ微調整（非常に小さいスマホ向け） --- */
 @media (max-width: 400px) {
     .calendar-cell {
