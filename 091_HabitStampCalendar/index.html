@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Stamp Calendar | 習慣スタンプカレンダー</title>
+    
+    <!-- ファビコン: 生成されたPNG画像が指定されています -->
+    <link rel="icon" type="image/png" href="favicon.png" id="favicon">
+    
+    <!-- CSS読み込み -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Habit Stamp Calendar<br><span class="ja-title">習慣スタンプカレンダー</span></h1>
+        </header>
+
+        <main>
+            <!-- 1. カレンダーセクション -->
+            <section class="calendar-section">
+                <!-- カレンダーヘッダー：月移動ボタンと現在の月 -->
+                <div class="calendar-header">
+                    <button id="prev-month-btn" class="nav-btn" aria-label="先月 / Previous Month">&lt;</button>
+                    <h2 id="current-month-year">YYYY年 M月</h2>
+                    <button id="next-month-btn" class="nav-btn" aria-label="翌月 / Next Month">&gt;</button>
+                </div>
+                
+                <!-- 曜日表示（日曜はじまり） -->
+                <div class="weekdays">
+                    <div>日/Sun</div>
+                    <div>月/Mon</div>
+                    <div>火/Tue</div>
+                    <div>水/Wed</div>
+                    <div>木/Thu</div>
+                    <div>金/Fri</div>
+                    <div>土/Sat</div>
+                </div>
+                
+                <!-- カレンダー本体（JSでマス目を生成します） -->
+                <div id="calendar-grid" class="calendar-grid">
+                    <!-- ここへ動的にマス目が挿入されます -->
+                </div>
+            </section>
+
+            <!-- 2. 習慣リスト（設定）セクション -->
+            <section class="habits-section">
+                <div class="habits-header">
+                    <h2>📚 習慣リスト / Habit List</h2>
+                </div>
+                
+                <!-- 新しい習慣を追加する入力フォーム -->
+                <div class="add-habit-form">
+                    <input type="text" id="habit-emoji-input" placeholder="絵文字 (例: 💪)" maxlength="2" title="絵文字 / Emoji">
+                    <input type="text" id="habit-name-input" placeholder="習慣の名前 / Habit Name (例: 筋トレ)">
+                    <button id="add-habit-btn" class="primary-btn">追加 / Add</button>
+                </div>
+                
+                <!-- 登録済みの習慣のリスト（JSで生成します） -->
+                <ul id="habit-list" class="habit-list">
+                    <!-- ここへ動的に習慣アイテムが挿入されます -->
+                </ul>
+            </section>
+        </main>
+    </div>
+
+    <!-- 3. スタンプ記録用モーダルウィンドウ（初期状態では非表示） -->
+    <div id="stamp-modal" class="modal hidden">
+        <div class="modal-content">
+            <button id="close-modal-btn" class="close-btn" aria-label="閉じる / Close">&times;</button>
+            <h3 id="modal-date-title">YYYY年M月D日</h3>
+            <p class="modal-subtitle">できた習慣にスタンプ！ / Tap to stamp!</p>
+            
+            <!-- その日のスタンプ可能な習慣リスト（JSで生成します） -->
+            <div id="modal-habits-container" class="modal-habits">
+                <!-- ここへ動的に記録用アイテムが挿入されます -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 絵文字ファビコンのフォールバック用スクリプト -->
+    <!-- 万が一画像生成に失敗して favicon.png が読み込めなかった場合、花丸(💮)の絵文字をファビコンとして表示します -->
+    <script>
+        const favicon = document.getElementById('favicon');
+        favicon.addEventListener('error', function() {
+            this.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50%" y="50%" style="dominant-baseline:central;text-anchor:middle;font-size:90px;">💮</text></svg>';
+        });
+    </script>
+    
+    <!-- メインスクリプト読み込み -->
+    <script src="script.js"></script>
+</body>
+</html>
