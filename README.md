@@ -103,7 +103,7 @@ Complete it. Ship it. Relax. ☕
 | 090 | 🍽️ Recipe Cost Calculator | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/090_RecipeCostCalculator/index.html) |
 | 091 | 💮 Habit Stamp Calendar | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/091_HabitStampCalendar/index.html) |
 | 092 | 🏥 MediLog | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/092_MediLog/index.html) |
-| 093 | 🏗️ Smart LP Architect | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/093_SmartLPArchitect/index.html) |
+| 093 | 🏗️ Smart LP Architect | [▶ Demo](https://093-smart-lp-architect.vercel.app/) |
 
 ---
 
