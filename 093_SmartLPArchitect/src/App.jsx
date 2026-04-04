@@ -16,6 +16,9 @@ function App() {
   // 生成された結果を保持する状態
   const [resultParams, setResultParams] = useState(null)
 
+  // コピー状態
+  const [isCopied, setIsCopied] = useState(false)
+
   // 言語ごとのテキスト定義
   const texts = {
     ja: {
@@ -34,7 +37,9 @@ function App() {
       resCatchphrase: '提案キャッチコピー',
       resBenefits: '主要ベネフィット（利点）',
       resStructure: 'LPセクション構成案',
-      noResultText: '左側のフォームに入力し、「構成案を生成する」ボタンを押してください。'
+      noResultText: '左側のフォームに入力し、「構成案を生成する」ボタンを押してください。',
+      copyBtn: 'クリップボードにコピー',
+      copiedBtn: 'コピーしました！'
     },
     en: {
       title: 'Smart LP Architect',
@@ -52,7 +57,9 @@ function App() {
       resCatchphrase: 'Suggested Catchphrase',
       resBenefits: 'Key Benefits',
       resStructure: 'LP Section Structure',
-      noResultText: 'Fill out the form on the left and click "Generate Structure".'
+      noResultText: 'Fill out the form on the left and click "Generate Structure".',
+      copyBtn: 'Copy to Clipboard',
+      copiedBtn: 'Copied!'
     }
   }
 
@@ -68,6 +75,7 @@ function App() {
 
     setIsGenerating(true)
     setResultParams(null)
+    setIsCopied(false)
 
     // AIの生成を模した擬似的な遅延（1.5秒）を設定
     setTimeout(() => {
@@ -127,6 +135,42 @@ function App() {
 
   const generatedContent = getGeneratedContent()
 
+  // クリップボードへコピーする関数
+  const handleCopy = () => {
+    if (!generatedContent) return
+
+    let textToCopy = ''
+    if (language === 'ja') {
+      textToCopy += `■ ${t.resCatchphrase}\n${generatedContent.catchphrase}\n\n`
+      textToCopy += `■ ${t.resBenefits}\n`
+      generatedContent.benefits.forEach((benefit) => {
+        textToCopy += `・${benefit}\n`
+      })
+      textToCopy += `\n■ ${t.resStructure}\n`
+      generatedContent.structure.forEach((item, index) => {
+        textToCopy += `${index + 1}. ${item.title}\n   ${item.desc}\n`
+      })
+    } else {
+      textToCopy += `[ ${t.resCatchphrase} ]\n${generatedContent.catchphrase}\n\n`
+      textToCopy += `[ ${t.resBenefits} ]\n`
+      generatedContent.benefits.forEach((benefit) => {
+        textToCopy += `- ${benefit}\n`
+      })
+      textToCopy += `\n[ ${t.resStructure} ]\n`
+      generatedContent.structure.forEach((item, index) => {
+        textToCopy += `${index + 1}. ${item.title}\n   ${item.desc}\n`
+      })
+    }
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      setIsCopied(true)
+      setTimeout(() => setIsCopied(false), 2500)
+    }).catch(err => {
+      console.error('Copy failed', err)
+      alert('コピーに失敗しました。')
+    })
+  }
+
   return (
     <div className="app-container">
       <header className="header">
@@ -140,7 +184,10 @@ function App() {
         {/* 言語切り替えボタン */}
         <div style={{ marginTop: '1rem', display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
           <button 
-            onClick={() => setLanguage('ja')} 
+            onClick={() => {
+              setLanguage('ja')
+              setIsCopied(false)
+            }} 
             style={{ 
               padding: '0.4rem 1rem', 
               borderRadius: '4px', 
@@ -152,7 +199,10 @@ function App() {
             {t.btnLangJa}
           </button>
           <button 
-            onClick={() => setLanguage('en')} 
+            onClick={() => {
+              setLanguage('en')
+              setIsCopied(false)
+            }} 
             style={{ 
               padding: '0.4rem 1rem', 
               borderRadius: '4px', 
@@ -244,6 +294,26 @@ function App() {
           ) : (
             // 生成完了後の表示
             <div className="results-content">
+              
+              {/* コピーボタン */}
+              <div className="copy-btn-container">
+                <button 
+                  onClick={handleCopy} 
+                  className={`btn-copy ${isCopied ? 'copied' : ''}`}
+                >
+                  {isCopied ? (
+                    <>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                      {t.copiedBtn}
+                    </>
+                  ) : (
+                    <>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                      {t.copyBtn}
+                    </>
+                  )}
+                </button>
+              </div>
               
               <div className="result-section">
                 <h3><span role="img" aria-label="sparkles">✨</span> {t.resCatchphrase}</h3>

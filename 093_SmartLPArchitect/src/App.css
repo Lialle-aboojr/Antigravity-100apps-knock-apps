@@ -132,6 +132,38 @@
   color: var(--border);
 }
 
+/* Copy Button Styles */
+.copy-btn-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1.5rem;
+}
+
+.btn-copy {
+  padding: 0.5rem 1rem;
+  background-color: var(--white);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s ease;
+}
+
+.btn-copy:hover {
+  background-color: var(--secondary);
+}
+
+.btn-copy.copied {
+  background-color: var(--success);
+  color: var(--white);
+  border-color: var(--success);
+}
+/* End Copy Button Styles */
+
 .result-section {
   margin-bottom: 2rem;
   animation: fadeIn 0.4s ease-out forwards;
