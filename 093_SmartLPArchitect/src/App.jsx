@@ -297,24 +297,22 @@ function App() {
             // 生成完了後の表示
             <div className="results-content">
               
-              {/* コピーボタン */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+              {/* コピーボタン (指定の位置＆スタイル) */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem', width: '100%' }}>
                 <button 
                   onClick={handleCopy} 
                   style={{
+                    padding: '8px 16px',
+                    backgroundColor: isCopied ? '#28a745' : '#0f4c81',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.4rem',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '4px',
-                    border: 'none',
-                    fontWeight: 'bold',
-                    fontSize: '0.9rem',
-                    cursor: 'pointer',
-                    color: '#ffffff',
-                    backgroundColor: isCopied ? '#28a745' : 'var(--primary, #0F4C81)',
-                    transition: 'background-color 0.2s ease',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                    gap: '8px',
+                    fontSize: '14px',
+                    fontWeight: 'bold'
                   }}
                 >
                   {isCopied ? (
