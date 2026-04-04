@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediLog - 通院記録 (Medical Log)</title>
+    <!-- ファビコンリンク。読み込めない場合（生成前など）はJSでフォールバックを表示します -->
+    <link rel="icon" href="favicon.png" id="dynamic-favicon">
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">🏥</span>
+                <h1>MediLog</h1>
+            </div>
+            <p class="subtitle">通院記録 / Medical Log</p>
+        </header>
+
+        <main>
+            <!-- 記録フォーム -->
+            <form id="medilog-form" class="medilog-form">
+                <!-- 通院日時 -->
+                <div class="form-group">
+                    <label for="visit-date">通院日時 / Visit Date & Time</label>
+                    <input type="datetime-local" id="visit-date" required>
+                </div>
+
+                <!-- 病院の名前 -->
+                <div class="form-group">
+                    <label for="hospital-name">病院名 / Hospital Name</label>
+                    <input type="text" id="hospital-name" list="hospital-list" placeholder="例: ○○総合病院" required>
+                    <datalist id="hospital-list">
+                        <option value="○○総合病院"></option>
+                        <option value="××クリニック"></option>
+                        <option value="△△市民病院"></option>
+                        <option value="かかりつけ歯科"></option>
+                        <option value="皮膚科医院"></option>
+                    </datalist>
+                </div>
+
+                <!-- 何科 -->
+                <div class="form-group">
+                    <label for="department">診療科 / Department</label>
+                    <select id="department" required>
+                        <option value="" disabled selected>選択してください / Select...</option>
+                        <option value="内科 (Internal Medicine)">内科 (Internal Medicine)</option>
+                        <option value="外科 (Surgery)">外科 (Surgery)</option>
+                        <option value="皮膚科 (Dermatology)">皮膚科 (Dermatology)</option>
+                        <option value="眼科 (Ophthalmology)">眼科 (Ophthalmology)</option>
+                        <option value="耳鼻咽喉科 (Otolaryngology)">耳鼻咽喉科 (Otolaryngology)</option>
+                        <option value="歯科 (Dentistry)">歯科 (Dentistry)</option>
+                        <option value="その他 (Other)">その他 (Other)</option>
+                    </select>
+                </div>
+
+                <!-- 通院理由 -->
+                <div class="form-group">
+                    <label for="reason">通院理由 / Reason for Visit</label>
+                    <input type="text" id="reason" placeholder="例: 定期健診、風邪の症状など" required>
+                </div>
+
+                <!-- 診察内容 -->
+                <div class="form-group">
+                    <label for="details">診察内容 / Consultation Details</label>
+                    <textarea id="details" rows="4" placeholder="医師に言われたことや、検査結果などを入力 / Notes from the doctor, test results..." required></textarea>
+                </div>
+
+                <!-- 添付ファイル -->
+                <div class="form-group">
+                    <label for="attachment">添付ファイル / Attachment (PDF/Image)</label>
+                    <input type="file" id="attachment" accept="image/*,.pdf">
+                    <p class="help-text">※UIとしてのみ機能します / Mockup UI only</p>
+                </div>
+
+                <!-- 診察費 -->
+                <div class="form-group">
+                    <label for="consultation-fee">診察費 / Consultation Fee (¥)</label>
+                    <input type="number" id="consultation-fee" inputmode="numeric" placeholder="0" min="0" required>
+                </div>
+
+                <!-- 薬代 -->
+                <div class="form-group">
+                    <label for="medicine-fee">薬代 / Medicine Cost (¥)</label>
+                    <input type="number" id="medicine-fee" inputmode="numeric" placeholder="0" min="0" required>
+                </div>
+
+                <!-- 次回予約 -->
+                <div class="form-group">
+                    <label for="next-appointment">次回予約 / Next Appointment (任意 / Optional)</label>
+                    <input type="datetime-local" id="next-appointment">
+                </div>
+
+                <!-- 送信ボタン -->
+                <button type="submit" class="submit-btn" id="submit-btn">
+                    AIで分析＆保存 / Analyze & Save
+                </button>
+            </form>
+
+            <!-- ステータス・結果表示エリア -->
+            <div id="status-container" class="status-container hidden">
+                <!-- ローディング表示 -->
+                <div id="loading-indicator" class="loading-indicator hidden">
+                    <div class="spinner"></div>
+                    <p id="loading-text">AIが診察内容と添付ファイルを分析中...<br><span class="en-text">AI is analyzing...</span></p>
+                </div>
+
+                <!-- AI要約表示 -->
+                <div id="ai-summary" class="ai-summary hidden">
+                    <h3>🩺 AI Summary</h3>
+                    <p id="ai-summary-text"></p>
+                </div>
+
+                <!-- サクセスメッセージ -->
+                <div id="success-message" class="success-message hidden">
+                    <div class="success-icon">✨</div>
+                    <h3>保存が完了しました！</h3>
+                    <p class="success-en">Saved Successfully!</p>
+                    <p class="success-details">カレンダーへの予定登録、次回予約の作成、ドライブへのファイル保存を行いました。<br>(Calendar events and drive files have been updated.)</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- アプリのロジック -->
+    <script src="script.js"></script>
+</body>
+</html>
