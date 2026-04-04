@@ -193,7 +193,8 @@ function App() {
               borderRadius: '4px', 
               border: '1px solid var(--primary)', 
               background: language === 'ja' ? 'var(--primary)' : 'white', 
-              color: language === 'ja' ? 'white' : 'var(--primary)'
+              color: language === 'ja' ? 'white' : 'var(--primary)',
+              cursor: 'pointer'
             }}
           >
             {t.btnLangJa}
@@ -208,7 +209,8 @@ function App() {
               borderRadius: '4px', 
               border: '1px solid var(--primary)', 
               background: language === 'en' ? 'var(--primary)' : 'white', 
-              color: language === 'en' ? 'white' : 'var(--primary)'
+              color: language === 'en' ? 'white' : 'var(--primary)',
+              cursor: 'pointer'
             }}
           >
             {t.btnLangEn}
@@ -296,10 +298,24 @@ function App() {
             <div className="results-content">
               
               {/* コピーボタン */}
-              <div className="copy-btn-container">
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
                 <button 
                   onClick={handleCopy} 
-                  className={`btn-copy ${isCopied ? 'copied' : ''}`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '4px',
+                    border: 'none',
+                    fontWeight: 'bold',
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    color: '#ffffff',
+                    backgroundColor: isCopied ? '#28a745' : 'var(--primary, #0F4C81)',
+                    transition: 'background-color 0.2s ease',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  }}
                 >
                   {isCopied ? (
                     <>
@@ -328,11 +344,11 @@ function App() {
                 <ul className="layout-structure">
                   {generatedContent.benefits.map((benefit, index) => (
                     <li key={index} className="layout-item">
-                      <div className="layout-item-number" style={{ width: '24px', height: '24px', fontSize: '0.8rem', backgroundColor: 'var(--success)' }}>
+                      <div className="layout-item-number" style={{ width: '24px', height: '24px', fontSize: '0.8rem', backgroundColor: 'var(--success, #28A745)' }}>
                          ✓
                       </div>
                       <div className="layout-item-content">
-                        <div className="layout-item-desc" style={{ color: 'var(--text-main)' }}>
+                        <div className="layout-item-desc" style={{ color: 'var(--text-main, #333333)' }}>
                           {benefit}
                         </div>
                       </div>
