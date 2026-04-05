@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import PinList from './components/PinList';
 import PinModal from './components/PinModal';
 import TagFilter from './components/TagFilter';
@@ -8,7 +8,8 @@ import { loadPins, savePins } from './utils/storage';
 function App() {
   const [pins, setPins] = useState([]);
   const [filterTag, setFilterTag] = useState('All');
-  const [editingPin, setEditingPin] = useState(null); // { isNew: true } または 既存の pin object
+  const [searchQuery, setSearchQuery] = useState('');
+  const [editingPin, setEditingPin] = useState(null);
 
   // 初回ロード
   useEffect(() => {
@@ -32,21 +33,35 @@ function App() {
     return Array.from(tagSet).sort();
   }, [pins]);
 
-  // 表示するピンをフィルタリング
+  // 表示するピンをフィルタリング（タグ＋キーワード検索）
   const filteredPins = useMemo(() => {
-    if (filterTag === 'All') return pins;
-    return pins.filter(pin => pin.tags && pin.tags.includes(filterTag));
-  }, [pins, filterTag]);
+    let result = pins;
+
+    // タグ絞り込み
+    if (filterTag !== 'All') {
+      result = result.filter(pin => pin.tags && pin.tags.includes(filterTag));
+    }
+
+    // 検索語で絞り込み（タイトル or ノート）
+    if (searchQuery.trim().length > 0) {
+      const query = searchQuery.toLowerCase().trim();
+      result = result.filter(pin => {
+        const titleMatch = (pin.title || '').toLowerCase().includes(query);
+        const noteMatch = (pin.note || '').toLowerCase().includes(query);
+        return titleMatch || noteMatch;
+      });
+    }
+
+    return result;
+  }, [pins, filterTag, searchQuery]);
 
   // ピンの保存処理 (新規・更新)
   const handleSavePin = (savedPin) => {
     setPins(prev => {
       const exists = prev.find(p => p.id === savedPin.id);
       if (exists) {
-        // 更新 (上に持ってくる場合は別ですが、今回は位置を維持)
         return prev.map(p => p.id === savedPin.id ? savedPin : p);
       } else {
-        // 新規追加は先頭に
         return [savedPin, ...prev];
       }
     });
@@ -65,7 +80,14 @@ function App() {
     <div>
       <header className="header">
         <div className="header-top">
-          <h1>📌 PinNote</h1>
+          <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img 
+              src="/favicon.png" 
+              alt="PinNote Icon" 
+              style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover' }} 
+            />
+            PinNote
+          </h1>
           <button 
             className="btn-primary" 
             onClick={() => setEditingPin({})} // 空オブジェクトで新規作成
@@ -75,7 +97,20 @@ function App() {
           </button>
         </div>
         
-        {/* タグフィルターエリア */}
+        {/* 検索窓とタグフィルターエリア */}
+        <div className="search-container">
+          <div className="search-input-wrapper">
+            <Search size={18} className="search-icon" />
+            <input 
+              type="text" 
+              className="search-input" 
+              placeholder="タイトルやノートを検索 (Search pins...)"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+        </div>
+
         {allTags.length > 0 && (
           <TagFilter 
             tags={allTags} 
