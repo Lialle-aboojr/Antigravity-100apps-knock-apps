@@ -4,14 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mom's AI Recipe Book | お母さんのAIレシピ帳</title>
-    <!-- ファビコン (目玉焼きフライパン) -->
     <link rel="icon" href="favicon.png">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header class="app-header">
         <div class="header-content">
-            <h1>Mom's AI Recipe Book</h1>
+            <h1 id="app-title">Mom's AI Recipe Book</h1>
             <div class="subtitle">お母さんのAIレシピ帳</div>
         </div>
     </header>
@@ -40,13 +39,11 @@
                 <!-- レシピカードが動的に追加されます -->
             </div>
             
-            <!-- 追加用フローティングアクションボタン (FAB) -->
             <button id="fab-add" class="fab">+</button>
         </section>
 
         <!-- レシピ追加・編集画面 -->
         <section id="view-add" class="view-section hidden">
-            <!-- 戻るボタン -->
             <button id="back-to-list-btn" class="btn btn-outline back-btn">← 戻る (Back)</button>
 
             <!-- AIレシピ流し込み用エリア -->
@@ -87,7 +84,6 @@
                         <textarea id="recipe-steps" rows="5" required placeholder="1. 玉ねぎを切る..."></textarea>
                     </div>
 
-                    <!-- 美しいファイルアップロードUI -->
                     <div class="form-group">
                         <label>写真 (Photo):</label>
                         <div class="file-upload-wrapper">
@@ -143,18 +139,19 @@
             
             <div class="modal-history-section">
                 <h3>作った記録に残す (Add Cook History)</h3>
-                <div class="history-form">
-                    <input type="date" id="history-date">
+                
+                <!-- 履歴の高さ調整用フレックスボックス -->
+                <div class="history-form align-height-form">
+                    <input type="date" id="history-date" class="fixed-height-input">
                     
-                    <!-- 美しいファイルアップロードUI (履歴用) -->
-                    <div class="history-file-wrapper">
-                        <label for="history-photo" class="btn btn-secondary file-btn btn-sm">📸 写真を選ぶ (Choose)</label>
-                        <span id="history-photo-name" class="file-name" style="font-size: 11px;">未選択 (None)</span>
+                    <div class="history-file-wrapper fixed-height-wrapper">
+                        <label for="history-photo" class="btn btn-secondary file-btn btn-sm fixed-height-input">📸 写真を選ぶ</label>
                         <input type="file" id="history-photo" accept="image/*" class="hidden-file">
                     </div>
                     
-                    <button id="add-history-btn" class="btn btn-primary btn-sm">＋作った！ (Cooked!)</button>
+                    <button id="add-history-btn" class="btn btn-primary btn-sm fixed-height-input">＋作った！ (Cooked!)</button>
                 </div>
+                <div id="history-photo-name" class="file-name" style="font-size: 11px; margin-top: 5px;">未選択 (None)</div>
             </div>
         </div>
     </div>

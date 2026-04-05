@@ -62,6 +62,11 @@ function compressImage(file, callback) {
 
 document.addEventListener("DOMContentLoaded", () => {
     
+    // --- 5. タイトルクリックでのリロード機能 ---
+    document.getElementById("app-title").addEventListener("click", () => {
+        location.reload();
+    });
+
     // UI Elements
     const viewList = document.getElementById("view-list");
     const viewAdd = document.getElementById("view-add");
@@ -123,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         switchView('list');
     });
 
-    // --- ファイル名の表示とプレビュー圧縮 ---
+    // --- ファイル名の表示 ---
     photoInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -175,7 +180,8 @@ document.addEventListener("DOMContentLoaded", () => {
             stepsText = text;
         }
 
-        document.getElementById("recipe-title").value = titleText;
+        // 1. .trim() への置き換え要件
+        document.getElementById("recipe-title").value = titleText.trim();
         document.getElementById("recipe-ingredients").value = ingredientsText.replace(/[:：-]/g, "").trim();
         document.getElementById("recipe-steps").value = stepsText.replace(/[:：-]/g, "").trim();
         
@@ -187,13 +193,14 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault(); 
         const recipes = loadRecipes();
         
+        // 1. .trim() への置き換え要件
         const rData = {
-            title: document.getElementById("recipe-title").value,
+            title: document.getElementById("recipe-title").value.trim(),
             genre: document.getElementById("recipe-genre").value,
-            ingredients: document.getElementById("recipe-ingredients").value,
-            steps: document.getElementById("recipe-steps").value,
+            ingredients: document.getElementById("recipe-ingredients").value.trim(),
+            steps: document.getElementById("recipe-steps").value.trim(),
             rating: document.getElementById("recipe-rating").value,
-            comments: document.getElementById("recipe-comments").value,
+            comments: document.getElementById("recipe-comments").value.trim(),
         };
         const editId = document.getElementById("edit-id").value;
 
@@ -229,14 +236,11 @@ document.addEventListener("DOMContentLoaded", () => {
     function resetForm() {
         recipeForm.reset();
         document.getElementById("edit-id").value = "";
-        
-        // ファイル入力の見た目もリセット
         currentPhotoBase64 = null;
         photoInput.value = "";
         photoNameDisplay.textContent = "未選択 (No file chosen)";
         photoPreview.src = "";
         photoPreview.classList.add("hidden");
-        
         document.getElementById("save-btn").textContent = "保存 (Save)";
         formTitle.textContent = "手動入力・追加 (Manual Input)";
         aiText.value = "";
@@ -245,7 +249,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- レシピ表示・絞り込み ---
     function renderRecipes() {
         let recipes = loadRecipes();
-        const kw = searchKeyword.value.toLowerCase();
+        const kw = searchKeyword.value.toLowerCase().trim();
         const gen = filterGenre.value;
         const sort = sortOrder.value;
 
@@ -313,17 +317,21 @@ document.addEventListener("DOMContentLoaded", () => {
         const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
         const imgHtml = r.photo 
                 ? `<img src="${r.photo}" class="modal-img">`
-                : `<div class="card-emoji" style="font-size:48px;">🍲</div>`;
+                : `<div class="card-emoji" style="font-size:48px; width:100%; height:100%; display:flex; align-items:center; justify-content:center;">🍲</div>`;
 
         let historyHtml = "";
         if (r.history && r.history.length > 0) {
             historyHtml = `<div class="history-list">`;
-            r.history.forEach(h => {
+            r.history.forEach((h, index) => {
                 const hImg = h.photo ? `<img src="${h.photo}" class="history-photo">` : `<div style="font-size:30px; margin-top:10px;">🍽️</div>`;
+                // 4. 履歴画像の削除機能
                 historyHtml += `
-                    <div class="history-item">
-                        <div>📅 ${sanitizeHTML(h.date)}</div>
-                        ${hImg}
+                    <div class="history-item-wrap">
+                        <button class="history-delete-btn" onclick="appContext.deleteHistory('${r.id}', ${index}, event)">&times;</button>
+                        <div class="history-item">
+                            <div>📅 ${sanitizeHTML(h.date)}</div>
+                            ${hImg}
+                        </div>
                     </div>
                 `;
             });
@@ -394,7 +402,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const file = historyPhotoInput.files[0];
         
-        // 画像がある場合は圧縮して保存、無い場合はそのまま保存
         if (file) {
             compressImage(file, (base64) => {
                 saveHistoryData(dateVal, base64);
@@ -428,7 +435,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- Global Methods ---
     window.appContext = {
         triggerDelete: (id) => {
-            if(confirm("本当に削除しますか？\n(Are you sure?)")) {
+            if(confirm("本当にこのレシピを削除しますか？\n(Are you sure?)")) {
                 let recipes = loadRecipes();
                 recipes = recipes.filter(r => r.id !== id);
                 saveRecipes(recipes);
@@ -464,6 +471,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 document.getElementById("save-btn").textContent = "更新 (Update)";
             }
+        },
+        // 4. 履歴画像の削除機能
+        deleteHistory: (recipeId, historyIndex, event) => {
+            event.stopPropagation(); // モーダルの閉じなどを防ぐ
+            if(confirm("この記録を削除しますか？\n(Delete this record?)")) {
+                const recipes = loadRecipes();
+                const idx = recipes.findIndex(r => r.id === recipeId);
+                if(idx > -1 && recipes[idx].history) {
+                    recipes[idx].history.splice(historyIndex, 1);
+                    // 作った回数を調整
+                    recipes[idx].cookCount = Math.max(recipes[idx].cookCount || 0, recipes[idx].history.length);
+                    saveRecipes(recipes);
+                    renderRecipes();
+                    openModal(recipeId); // モーダル表示を更新
+                }
+            }
         }
     };
 
@@ -497,8 +520,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         saveRecipes(safeData);
                         renderRecipes();
                         alert("インポートが完了しました。\n(Done!)");
-                        
-                        // インポート後一旦一覧に戻る（追加画面にいる場合を考慮）
                         switchView('list');
                     }
                 } else {
