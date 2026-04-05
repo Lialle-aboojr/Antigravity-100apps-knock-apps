@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mom's AI Recipe Book | お母さんのAIレシピ帳</title>
+    <!-- ファビコンの指定 (1つだけの要素を持ったシンプルなシンボル画像) -->
+    <link rel="icon" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <h1>Mom's AI Recipe Book <br><span class="subtitle">お母さんのAIレシピ帳</span></h1>
+        <!-- エクスポート/インポート -->
+        <div class="data-actions">
+            <button id="export-btn" class="btn btn-outline">エクスポート (Export)</button>
+            <label class="btn btn-outline">
+                インポート (Import)
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+            </label>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- AIレシピ流し込み用エリア -->
+        <section class="ai-import-section">
+            <h2>AIレシピ解析 (AI Recipe Parse)</h2>
+            <p>AIが出力したレシピ文章を下の枠に貼り付け、「自動入力 (Auto Fill)」を押してください。</p>
+            <textarea id="ai-text" rows="5" placeholder="AIのレシピ文章をここにペースト... (Paste AI recipe text here...)"></textarea>
+            <button id="auto-fill-btn" class="btn btn-primary">自動入力 (Auto Fill)</button>
+        </section>
+
+        <!-- レシピ入力フォーム -->
+        <section class="recipe-form-section">
+            <h2>新しいレシピを追加 (Add New Recipe)</h2>
+            <form id="recipe-form">
+                <div class="form-group">
+                    <label>タイトル (Title):</label>
+                    <input type="text" id="recipe-title" required placeholder="例: ふわふわオムライス">
+                </div>
+                
+                <div class="form-group">
+                    <label>ジャンル (Genre):</label>
+                    <select id="recipe-genre">
+                        <option value="和食">和食 (Japanese)</option>
+                        <option value="洋食">洋食 (Western)</option>
+                        <option value="中華">中華 (Chinese)</option>
+                        <option value="デザート">デザート (Dessert)</option>
+                        <option value="その他">その他 (Other)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>材料 (Ingredients):</label>
+                    <textarea id="recipe-ingredients" rows="4" required placeholder="例: 卵 2個、玉ねぎ 半分..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>作り方 (Steps):</label>
+                    <textarea id="recipe-steps" rows="6" required placeholder="1. 玉ねぎを切る..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>写真 (Photo):</label>
+                    <!-- 画像アップロード用（容量調整のロジックはJS側で実装） -->
+                    <input type="file" id="recipe-photo" accept="image/*">
+                    <img id="photo-preview" class="photo-preview hidden" alt="プレビュー">
+                </div>
+
+                <div class="form-group">
+                    <label>星評価 (Rating):</label>
+                    <select id="recipe-rating">
+                        <option value="5">★★★★★ (5)</option>
+                        <option value="4">★★★★☆ (4)</option>
+                        <option value="3" selected>★★★☆☆ (3)</option>
+                        <option value="2">★★☆☆☆ (2)</option>
+                        <option value="1">★☆☆☆☆ (1)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>家族のコメント (Family's Comments):</label>
+                    <input type="text" id="recipe-comments" placeholder="例: おいしかった！また作って！">
+                </div>
+
+                <input type="hidden" id="edit-id" value="">
+                <button type="submit" id="save-btn" class="btn btn-primary btn-large">保存 (Save)</button>
+                <button type="button" id="cancel-edit-btn" class="btn btn-outline hidden" style="margin-top: 10px; width: 100%;">キャンセル (Cancel)</button>
+            </form>
+        </section>
+
+        <!-- レシピ一覧エリア -->
+        <section class="recipe-list-section">
+            <h2>レシピ一覧 (Recipe List)</h2>
+            <div class="list-controls">
+                <input type="text" id="search-keyword" placeholder="キーワード検索 (Search keywords...)">
+                <select id="filter-genre">
+                    <option value="all">すべてのジャンル (All Genres)</option>
+                    <option value="和食">和食 (Japanese)</option>
+                    <option value="洋食">洋食 (Western)</option>
+                    <option value="中華">中華 (Chinese)</option>
+                    <option value="デザート">デザート (Dessert)</option>
+                    <option value="その他">その他 (Other)</option>
+                </select>
+                <select id="sort-order">
+                    <option value="newest">新着順 (Newest)</option>
+                    <option value="count">作った回数順 (Most Cooked)</option>
+                    <option value="rating">星評価順 (Highest Rating)</option>
+                </select>
+            </div>
+
+            <div id="recipe-grid" class="recipe-grid">
+                <!-- レシピカードがここに動的に追加されます -->
+            </div>
+        </section>
+    </main>
+
+    <!-- 画像圧縮用の非表示キャンバス -->
+    <canvas id="image-canvas" style="display: none;"></canvas>
+
+    <script src="app.js"></script>
+</body>
+</html>
