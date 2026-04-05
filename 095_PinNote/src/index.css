@@ -421,13 +421,9 @@ textarea.input-field {
 .filter-tags {
   display: flex;
   gap: 10px;
-  overflow-x: auto;
+  flex-wrap: wrap; /* タグが多い場合は自動で折り返して複数行にする */
   padding-bottom: 4px;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
-
-.filter-tags::-webkit-scrollbar { display: none; }
 
 .filter-tag {
   padding: 8px 16px;
