@@ -11,25 +11,13 @@
 <body>
     <header class="app-header">
         <div class="header-content">
-            <h1>Mom's AI Recipe Book <br><span class="subtitle">お母さんのAIレシピ帳</span></h1>
-            <div class="data-actions">
-                <button id="export-btn" class="btn btn-outline btn-fixed">エクスポート (Export)</button>
-                <label class="btn btn-outline btn-fixed label-btn">
-                    <span>インポート (Import)</span>
-                    <input type="file" id="import-file" accept=".json" style="display: none;">
-                </label>
-            </div>
+            <h1>Mom's AI Recipe Book</h1>
+            <div class="subtitle">お母さんのAIレシピ帳</div>
         </div>
-        
-        <!-- タブナビゲーション (SPA化) -->
-        <nav class="tab-nav">
-            <button class="tab-btn active" data-target="view-list">レシピ一覧<br>(List)</button>
-            <button class="tab-btn" data-target="view-add">レシピを追加<br>(Add Recipe)</button>
-        </nav>
     </header>
 
     <main class="container">
-        <!-- レシピ一覧タブ -->
+        <!-- レシピ一覧画面 (メイン) -->
         <section id="view-list" class="view-section active">
             <div class="list-controls">
                 <input type="text" id="search-keyword" placeholder="キーワード検索 (Search...)">
@@ -51,10 +39,16 @@
             <div id="recipe-grid" class="recipe-grid">
                 <!-- レシピカードが動的に追加されます -->
             </div>
+            
+            <!-- 追加用フローティングアクションボタン (FAB) -->
+            <button id="fab-add" class="fab">+</button>
         </section>
 
-        <!-- レシピ追加・編集タブ -->
+        <!-- レシピ追加・編集画面 -->
         <section id="view-add" class="view-section hidden">
+            <!-- 戻るボタン -->
+            <button id="back-to-list-btn" class="btn btn-outline back-btn">← 戻る (Back)</button>
+
             <!-- AIレシピ流し込み用エリア -->
             <div class="card-box ai-import-box">
                 <h2>AIレシピ解析 (AI Parse)</h2>
@@ -93,9 +87,14 @@
                         <textarea id="recipe-steps" rows="5" required placeholder="1. 玉ねぎを切る..."></textarea>
                     </div>
 
+                    <!-- 美しいファイルアップロードUI -->
                     <div class="form-group">
                         <label>写真 (Photo):</label>
-                        <input type="file" id="recipe-photo" accept="image/*">
+                        <div class="file-upload-wrapper">
+                            <label for="recipe-photo" class="btn btn-secondary file-btn">📸 写真を選ぶ (Choose Photo)</label>
+                            <span id="recipe-photo-name" class="file-name">未選択 (No file chosen)</span>
+                            <input type="file" id="recipe-photo" accept="image/*" class="hidden-file">
+                        </div>
                         <img id="photo-preview" class="photo-preview hidden" alt="プレビュー">
                     </div>
 
@@ -116,9 +115,20 @@
                     </div>
 
                     <input type="hidden" id="edit-id" value="">
-                    <button type="submit" id="save-btn" class="btn btn-primary btn-large">保存 (Save)</button>
-                    <button type="button" id="cancel-edit-btn" class="btn btn-outline hidden" style="margin-top:10px; width:100%;">キャンセル (Cancel)</button>
+                    <button type="submit" id="save-btn" class="btn btn-primary btn-large" style="margin-top: 15px;">保存 (Save)</button>
                 </form>
+            </div>
+
+            <!-- エクスポート/インポート -->
+            <div class="data-actions-bottom card-box">
+                <p class="help-text" style="margin-bottom: 10px;">データの引き継ぎ・バックアップはこちら (Backup Data)</p>
+                <div class="data-actions-flex">
+                    <button id="export-btn" class="btn btn-outline">エクスポート (Export)</button>
+                    <label class="btn btn-outline label-btn">
+                        <span>インポート (Import)</span>
+                        <input type="file" id="import-file" accept=".json" class="hidden-file">
+                    </label>
+                </div>
             </div>
         </section>
     </main>
@@ -135,7 +145,14 @@
                 <h3>作った記録に残す (Add Cook History)</h3>
                 <div class="history-form">
                     <input type="date" id="history-date">
-                    <input type="file" id="history-photo" accept="image/*">
+                    
+                    <!-- 美しいファイルアップロードUI (履歴用) -->
+                    <div class="history-file-wrapper">
+                        <label for="history-photo" class="btn btn-secondary file-btn btn-sm">📸 写真を選ぶ (Choose)</label>
+                        <span id="history-photo-name" class="file-name" style="font-size: 11px;">未選択 (None)</span>
+                        <input type="file" id="history-photo" accept="image/*" class="hidden-file">
+                    </div>
+                    
                     <button id="add-history-btn" class="btn btn-primary btn-sm">＋作った！ (Cooked!)</button>
                 </div>
             </div>
