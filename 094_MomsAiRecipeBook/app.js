@@ -9,7 +9,6 @@ function sanitizeHTML(str) {
         .replace(/'/g, "&#039;");
 }
 
-// 謎の空白対策：改行ごとにtrimをかけるヘルパー
 function trimLines(str) {
     if (!str) return "";
     return str.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n');
@@ -68,12 +67,10 @@ function compressImage(file, callback) {
 
 document.addEventListener("DOMContentLoaded", () => {
     
-    // タイトルクリックでのリロード機能
     document.getElementById("app-title").addEventListener("click", () => {
         location.reload();
     });
 
-    // UI Elements
     const viewList = document.getElementById("view-list");
     const viewAdd = document.getElementById("view-add");
     const fabAdd = document.getElementById("fab-add");
@@ -98,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalClose = document.getElementById("modal-close");
     const modalBody = document.getElementById("modal-body");
 
-    // History Forms
     const historyDate = document.getElementById("history-date");
     const historyPhotoInput = document.getElementById("history-photo");
     const historyPhotoNameDisplay = document.getElementById("history-photo-name");
@@ -107,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentPhotoBase64 = null; 
     let currentDetailRecipeId = null;
 
-    // --- ビュー切り替え (SPA) ---
     function switchView(target) {
         if (target === 'list') {
             viewList.classList.remove("hidden");
@@ -134,7 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
         switchView('list');
     });
 
-    // --- ファイル名の表示 ---
     photoInput.addEventListener("change", (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -145,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 photoPreview.classList.remove("hidden");
             });
         } else {
-            photoNameDisplay.textContent = "未選択 (No file chosen)";
+            photoNameDisplay.textContent = "未選択 (No file)";
             currentPhotoBase64 = null;
             photoPreview.classList.add("hidden");
         }
@@ -160,7 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // --- AIテキスト解析 ---
     autoFillBtn.addEventListener("click", () => {
         const text = aiText.value;
         if (!text.trim()) {
@@ -186,7 +179,6 @@ document.addEventListener("DOMContentLoaded", () => {
             stepsText = text;
         }
 
-        // 余分なスペースの排除
         document.getElementById("recipe-title").value = titleText.trim();
         document.getElementById("recipe-ingredients").value = ingredientsText.replace(/[:：-]/g, "").trim();
         document.getElementById("recipe-steps").value = stepsText.replace(/[:：-]/g, "").trim();
@@ -194,12 +186,10 @@ document.addEventListener("DOMContentLoaded", () => {
         alert("自動入力を完了しました。\n(Auto-filled.)");
     });
 
-    // --- レシピ保存 ---
     recipeForm.addEventListener("submit", (e) => {
         e.preventDefault(); 
         const recipes = loadRecipes();
         
-        // 保存時にも確実にトリム
         const rData = {
             title: document.getElementById("recipe-title").value.trim(),
             genre: document.getElementById("recipe-genre").value,
@@ -244,7 +234,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("edit-id").value = "";
         currentPhotoBase64 = null;
         photoInput.value = "";
-        photoNameDisplay.textContent = "未選択 (No file chosen)";
+        photoNameDisplay.textContent = "未選択 (No file)";
         photoPreview.src = "";
         photoPreview.classList.add("hidden");
         document.getElementById("save-btn").textContent = "保存 (Save)";
@@ -252,7 +242,6 @@ document.addEventListener("DOMContentLoaded", () => {
         aiText.value = "";
     }
 
-    // --- レシピ表示・絞り込み ---
     function renderRecipes() {
         let recipes = loadRecipes();
         const kw = searchKeyword.value.toLowerCase().trim();
@@ -292,9 +281,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 : `<div class="card-emoji">🍲</div>`;
             const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
 
-            // インデントを含まない1行テンプレートリテラルで綺麗に出力
             card.innerHTML = `<div class="card-img-wrap">${imgHtml}</div><div class="card-content"><h3 class="card-title">${sanitizeHTML(r.title)}</h3><div class="card-rating">${stars}</div><div class="card-meta"><span>🏷️ ${sanitizeHTML(r.genre)}</span><span class="card-count">🍽️ ${displayCount} 回</span></div></div>`;
-            
             recipeGrid.appendChild(card);
         });
     }
@@ -303,7 +290,6 @@ document.addEventListener("DOMContentLoaded", () => {
     filterGenre.addEventListener("change", renderRecipes);
     sortOrder.addEventListener("change", renderRecipes);
 
-    // --- 詳細モーダル処理 ---
     function openModal(id) {
         const recipes = loadRecipes();
         const r = recipes.find(rec => rec.id === id);
@@ -321,8 +307,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (r.history && r.history.length > 0) {
             historyHtml = `<div class="history-list">`;
             r.history.forEach((h, index) => {
-                const hImg = h.photo ? `<img src="${h.photo}" class="history-photo">` : `<div style="font-size:30px; margin-top:10px;">🍽️</div>`;
-                // インデントの排除、1行化
+                // 1. 履歴画像へのアスペクト比絶対固定枠をdivとして適用
+                const hImg = h.photo ? `<div class="history-photo-wrap"><img src="${h.photo}" class="history-photo"></div>` : `<div class="history-photo-wrap" style="display:flex;align-items:center;justify-content:center;font-size:40px;">🍽️</div>`;
                 historyHtml += `<div class="history-item-wrap"><button class="history-delete-btn" onclick="appContext.deleteHistory('${r.id}', ${index}, event)">&times;</button><div class="history-item-date">📅 ${sanitizeHTML(h.date)}</div>${hImg}</div>`;
             });
             historyHtml += `</div>`;
@@ -330,10 +316,8 @@ document.addEventListener("DOMContentLoaded", () => {
             historyHtml = `<p style="font-size:12px; color:#999; margin:0;">(まだ履歴はありません)</p>`;
         }
 
-        // HTML内の無駄なインデントやスペースを削除し、変数展開を密着させる
         modalBody.innerHTML = `<div class="modal-img-wrap">${imgHtml}</div><div class="modal-tag">🏷️ ${sanitizeHTML(r.genre)}</div><h2 class="modal-title">${sanitizeHTML(r.title)}</h2><div style="color: #ffb400; font-size:18px; margin-bottom:10px;">${stars} <span style="color:#d85c1f;font-size:14px;margin-left:10px;">作った回数: ${displayCount}回</span></div><div class="modal-controls"><button class="btn btn-outline btn-sm" onclick="appContext.triggerEdit('${r.id}')">✏️ 編集 (Edit)</button><button class="btn btn-outline btn-sm" onclick="appContext.triggerDelete('${r.id}')">🗑️ 削除 (Delete)</button></div><div class="modal-text-block"><h4>材料 (Ingredients)</h4>${sanitizeHTML(trimLines(r.ingredients))}</div><div class="modal-text-block"><h4>作り方 (Steps)</h4>${sanitizeHTML(trimLines(r.steps))}</div><div class="modal-text-block"><h4>コメント (Comments)</h4>${r.comments ? sanitizeHTML(trimLines(r.comments)) : 'なし'}</div><div class="modal-text-block"><h4>これまでの記録 (Cook History)</h4>${historyHtml}</div>`;
         
-        // 履歴フォームの初期化
         const today = new Date().toISOString().split('T')[0];
         historyDate.value = today;
         historyPhotoInput.value = "";
@@ -353,7 +337,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // --- 履歴追加 ---
     addHistoryBtn.addEventListener("click", () => {
         if(!currentDetailRecipeId) return;
         
@@ -395,7 +378,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- Global Methods ---
     window.appContext = {
         triggerDelete: (id) => {
             if(confirm("本当にこのレシピを削除しますか？\n(Are you sure?)")) {
@@ -430,7 +412,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 } else {
                     currentPhotoBase64 = null;
                     photoPreview.classList.add("hidden");
-                    photoNameDisplay.textContent = "未選択 (No file chosen)";
+                    photoNameDisplay.textContent = "未選択 (No file)";
                 }
                 document.getElementById("save-btn").textContent = "更新 (Update)";
             }
@@ -451,7 +433,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // --- インポート / エクスポート ---
     document.getElementById("export-btn").addEventListener("click", () => {
         const recipes = loadRecipes();
         const dataStr = JSON.stringify(recipes, null, 2);
@@ -494,6 +475,5 @@ document.addEventListener("DOMContentLoaded", () => {
         e.target.value = ""; 
     });
 
-    // 初期表示設定 (SPA)
     switchView('list');
 });

@@ -87,11 +87,11 @@
                     <div class="form-group">
                         <label>写真 (Photo):</label>
                         <div class="file-upload-wrapper">
-                            <label for="recipe-photo" class="btn btn-secondary file-btn">📸 写真を選ぶ (Choose Photo)</label>
-                            <span id="recipe-photo-name" class="file-name">未選択 (No file chosen)</span>
+                            <label for="recipe-photo" class="btn btn-secondary file-btn sync-height">📸 写真を選ぶ</label>
+                            <span id="recipe-photo-name" class="file-name">未選択 (No file)</span>
                             <input type="file" id="recipe-photo" accept="image/*" class="hidden-file">
                         </div>
-                        <img id="photo-preview" class="photo-preview hidden" alt="プレビュー">
+                        <img id="photo-preview" class="photo-preview hidden" style="margin-top:10px;max-width:100%;border-radius:8px;" alt="プレビュー">
                     </div>
 
                     <div class="form-group">
@@ -120,7 +120,7 @@
                 <p class="help-text" style="margin-bottom: 10px;">データの引き継ぎ・バックアップはこちら (Backup Data)</p>
                 <div class="data-actions-flex">
                     <button id="export-btn" class="btn btn-outline">エクスポート (Export)</button>
-                    <label class="btn btn-outline label-btn">
+                    <label class="btn btn-outline label-btn" style="display:inline-flex; align-items:center; justify-content:center;">
                         <span>インポート (Import)</span>
                         <input type="file" id="import-file" accept=".json" class="hidden-file">
                     </label>
@@ -140,16 +140,21 @@
             <div class="modal-history-section">
                 <h3>作った記録に残す (Add Cook History)</h3>
                 
-                <div class="history-form">
-                    <input type="date" id="history-date">
-                    
-                    <div class="history-file-wrapper">
-                        <label for="history-photo" class="btn btn-secondary file-btn btn-sm">📸 写真を選ぶ</label>
-                        <span id="history-photo-name" class="file-name">未選択(None)</span>
-                        <input type="file" id="history-photo" accept="image/*" class="hidden-file">
+                <div class="history-form-container">
+                    <div class="history-inputs-row">
+                        <input type="date" id="history-date" class="sync-height">
+                        
+                        <div class="history-file-wrapper">
+                            <label for="history-photo" class="btn btn-secondary file-btn sync-height">📸 写真を選ぶ</label>
+                            <input type="file" id="history-photo" accept="image/*" class="hidden-file">
+                        </div>
+                        
+                        <span id="history-photo-name" class="file-name">未選択 (None)</span>
                     </div>
                     
-                    <button id="add-history-btn" class="btn btn-primary btn-sm">＋作った！ (Cooked!)</button>
+                    <div class="history-submit-row">
+                        <button id="add-history-btn" class="btn btn-primary btn-large history-add-btn">＋作った！ (Cooked!)</button>
+                    </div>
                 </div>
             </div>
         </div>
