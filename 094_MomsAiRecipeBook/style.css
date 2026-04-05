@@ -1,14 +1,14 @@
-/* ベースの設定スタイル */
+/* ベース仕様・変数 */
 :root {
-    --primary-color: #ff7e36; /* クックパッドや料理を連想させるオレンジ */
+    --primary-color: #ff7e36;
     --hover-color: #e66b2b;
-    --bg-color: #fcf9f5;      /* 温かみのある背景白 */
+    --bg-color: #f7f3ee;
     --card-bg: #ffffff;
-    --text-main: #4a4a4a;
-    --text-light: #888888;
+    --text-main: #333333;
+    --text-light: #777777;
     --border-color: #e5d8cf;
-    --border-radius: 12px;
-    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --border-radius: 8px;
+    --box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 body, html {
@@ -17,106 +17,183 @@ body, html {
     font-family: 'Helvetica Neue', Arial, 'Yu Gothic', sans-serif;
     background-color: var(--bg-color);
     color: var(--text-main);
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
-/* ヘッダー周り */
+.hidden {
+    display: none !important;
+}
+
+/* ヘッダー */
 .app-header {
     background-color: var(--primary-color);
     color: white;
-    padding: 20px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header-content {
+    padding: 15px 10px 10px;
     text-align: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .app-header h1 {
     margin: 0;
-    font-size: 28px;
-    letter-spacing: 1px;
+    font-size: 24px;
+    line-height: 1.2;
 }
 
 .subtitle {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: normal;
     opacity: 0.9;
 }
 
+/* データアクション（インポート/エクスポート）完全にサイズを揃える */
 .data-actions {
-    margin-top: 15px;
+    margin-top: 10px;
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 8px;
 }
 
-/* 共通コンテナ */
+.btn-fixed {
+    width: 140px;
+    height: 32px;
+    box-sizing: border-box;
+    font-size: 12px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.label-btn {
+    cursor: pointer;
+    margin: 0;
+}
+
+/* タブナビゲーション */
+.tab-nav {
+    display: flex;
+    background-color: rgba(0,0,0,0.05);
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: rgba(255,255,255,0.7);
+    padding: 10px 0;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+}
+
+.tab-btn.active {
+    color: white;
+    border-bottom: 3px solid white;
+    background-color: rgba(0,0,0,0.1);
+}
+
+/* メインコンテナ */
 .container {
-    max-width: 900px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 15px 10px;
 }
 
-/* セクションブロック（ノートのような見栄え） */
-section {
+.view-section {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.view-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* カードボックス (セクション共通の白背景) */
+.card-box {
     background: var(--card-bg);
     border-radius: var(--border-radius);
-    padding: 24px;
-    margin-bottom: 30px;
+    padding: 15px;
+    margin-bottom: 15px;
     box-shadow: var(--box-shadow);
     border: 1px solid var(--border-color);
 }
 
-section h2 {
+.card-box h2 {
     color: var(--primary-color);
     border-bottom: 2px dashed var(--primary-color);
-    padding-bottom: 8px;
-    margin-top: 0;
-    font-size: 20px;
+    padding-bottom: 5px;
+    margin: 0 0 10px 0;
+    font-size: 18px;
+}
+
+.help-text {
+    font-size: 13px;
+    color: var(--text-light);
+    margin: 0 0 10px 0;
 }
 
 /* フォーム関連 */
 .form-group {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 label {
     display: block;
     font-weight: bold;
-    margin-bottom: 8px;
-    font-size: 14px;
-    color: #6a6a6a;
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: #555;
 }
 
 input[type="text"],
+input[type="date"],
 textarea,
 select {
     width: 100%;
-    padding: 10px;
+    padding: 8px;
     border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 16px;
+    border-radius: 4px;
+    font-size: 14px;
     box-sizing: border-box;
-    transition: border-color 0.3s;
+    transition: border-color 0.2s;
+    font-family: inherit;
+    /* textarea用に幅とリサイズを制限 */
+    max-width: 100%;
+    resize: vertical;
 }
 
-input[type="text"]:focus,
-textarea:focus,
-select:focus {
+input:focus, textarea:focus, select:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 5px rgba(255, 126, 54, 0.2);
 }
 
-/* ボタン */
+/* ボタン共通 */
 .btn {
     display: inline-block;
-    padding: 8px 16px;
+    padding: 8px 12px;
     cursor: pointer;
-    border-radius: 6px;
-    font-size: 14px;
+    border-radius: 4px;
     font-weight: bold;
     border: none;
-    transition: all 0.2s;
     text-align: center;
+    transition: all 0.2s;
+    font-size: 13px;
+    box-sizing: border-box;
 }
 
 .btn-primary {
@@ -126,68 +203,55 @@ select:focus {
 
 .btn-primary:hover {
     background-color: var(--hover-color);
-    transform: translateY(-1px);
 }
 
 .btn-outline {
     background-color: transparent;
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
+    color: white;
+    border: 1px solid white;
 }
 
 .btn-outline:hover {
-    background-color: rgb(255, 245, 240);
+    background-color: rgba(255,255,255,0.2);
 }
 
-.app-header .btn-outline {
-    color: white;
-    border-color: white;
+/* カード内等の白背景でのoutlineボタンの反転調整 */
+main .btn-outline {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
 }
-.app-header .btn-outline:hover {
-    background-color: rgba(255,255,255,0.2);
+main .btn-outline:hover {
+    background-color: #fff0E8;
 }
 
 .btn-large {
     width: 100%;
-    font-size: 16px;
-    padding: 14px;
+    padding: 12px;
+    font-size: 15px;
 }
 
 .btn-sm {
-    padding: 4px 8px;
+    padding: 6px 10px;
     font-size: 12px;
 }
 
-.hidden {
-    display: none !important;
-}
-
-/* 画像プレビュー */
-.photo-preview {
-    margin-top: 10px;
-    max-width: 100%;
-    max-height: 200px;
-    border-radius: 8px;
-    object-fit: cover;
-}
-
-/* 検索・絞り込みコントロール */
+/* レシピ一覧のコントロール */
 .list-controls {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 15px;
 }
 .list-controls input, .list-controls select {
     flex: 1;
-    min-width: 150px;
+    min-width: 120px;
 }
 
-/* カード型UIのグリッド */
+/* グリッド（コンパクト版） */
 .recipe-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
 }
 
 .recipe-card {
@@ -195,84 +259,218 @@ select:focus {
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     overflow: hidden;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .recipe-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.1);
 }
 
-.card-img-placeholder {
-    height: 180px;
-    background-color: #f0f0f0;
+.card-img-wrap {
+    height: 120px;
+    background-color: #eee;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #aaa;
-    font-size: 24px;
+    overflow: hidden;
 }
 
 .card-img {
-    height: 180px;
     width: 100%;
+    height: 100%;
     object-fit: cover;
 }
 
+.card-emoji {
+    font-size: 32px;
+    color: #aaa;
+}
+
 .card-content {
-    padding: 16px;
-    flex: 1;
+    padding: 10px;
 }
 
 .card-title {
-    margin: 0 0 8px 0;
-    font-size: 18px;
+    margin: 0 0 4px 0;
+    font-size: 15px;
     color: var(--primary-color);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-rating {
+    color: #ffb400;
+    font-size: 13px;
+    margin-bottom: 4px;
 }
 
 .card-meta {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-light);
-    margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
 }
 
-.card-rating {
-    color: #ffb400; /* 星の色 */
+.card-count {
+    color: #d85c1f;
     font-weight: bold;
 }
 
-.card-text {
+/* 詳細モーダル (Overlay) */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto; /* 長い場合に対応 */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.modal-content {
+    background: #fff;
+    width: 100%;
+    max-width: 500px;
+    border-radius: var(--border-radius);
+    position: relative;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    line-height: 1;
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-img-wrap {
+    height: 200px;
+    background: #eee;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.modal-title {
+    margin: 0 0 5px 0;
+    color: var(--primary-color);
+    font-size: 22px;
+}
+
+.modal-tag {
+    display: inline-block;
+    background: #f0ead6;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.modal-text-block {
+    background: #fdfaf7;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
     font-size: 14px;
     white-space: pre-wrap;
-    margin-bottom: 12px;
-    border-left: 3px solid #eee;
-    padding-left: 10px;
+    border: 1px solid #f2ece6;
 }
 
-.card-stats {
-    background: rgb(255, 245, 240);
-    padding: 8px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: bold;
-    color: #d85c1f;
-    text-align: center;
-    margin-bottom: 12px;
+.modal-text-block h4 {
+    margin: 0 0 5px 0;
+    color: #555;
+    font-size: 14px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 3px;
 }
 
-.card-actions {
+.modal-controls {
     display: flex;
     gap: 8px;
-    padding: 12px 16px;
-    background-color: #faf8f5;
-    border-top: 1px solid #eee;
+    margin-bottom: 15px;
 }
 
-.card-actions .btn {
+/* モーダル内の履歴追加エリア */
+.modal-history-section {
+    background: #fff0E8;
+    padding: 15px 20px;
+    border-top: 2px dashed #ffcca6;
+    border-bottom-left-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+
+.modal-history-section h3 {
+    margin: 0 0 10px 0;
+    font-size: 15px;
+    color: #d85c1f;
+}
+
+.history-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.history-form input {
     flex: 1;
+    min-width: 100px;
+    background: #fff;
+}
+
+.history-list {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+
+.history-item {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    min-width: 120px;
+    padding: 5px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.history-photo {
+    width: 100%;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-top: 3px;
 }
