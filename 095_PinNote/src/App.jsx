@@ -6,18 +6,15 @@ import TagFilter from './components/TagFilter';
 import { loadPins, savePins } from './utils/storage';
 
 function App() {
-  const [pins, setPins] = useState([]);
+  // useEffectによる初回上書きを防止するため、useStateの初期値として直接ロードします
+  const [pins, setPins] = useState(() => loadPins());
+  
   const [filterTag, setFilterTag] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [editingPin, setEditingPin] = useState(null);
 
-  // 初回ロード
-  useEffect(() => {
-    const loaded = loadPins();
-    setPins(loaded);
-  }, []);
-
   // Pins が更新されたら自動で LocalStorage に保存
+  // (初期値が正しく読み込まれているため、空配列での上書きは発生しません)
   useEffect(() => {
     savePins(pins);
   }, [pins]);
@@ -80,16 +77,37 @@ function App() {
     <div>
       <header className="header">
         <div className="header-top">
-          <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* ロゴ：クリックでリロードする機能を付与 */}
+          <h1 
+            style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
+            onClick={() => window.location.href = '/'}
+            title="ホームに戻る"
+          >
             <img 
               src="/favicon.png" 
               alt="PinNote Icon" 
-              style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover' }} 
+              style={{ width: '40px', height: '40px', borderRadius: '8px', objectFit: 'cover' }} 
             />
             PinNote
           </h1>
+
+          {/* 検索窓：ロゴとボタンの間に配置（Flexboxのflex: 1で広がるよう調整） */}
+          <div className="search-container" style={{ flex: 1, maxWidth: '600px', margin: '0 20px' }}>
+            <div className="search-input-wrapper">
+              <Search size={18} className="search-icon" />
+              <input 
+                type="text" 
+                className="search-input" 
+                placeholder="タイトルやノートを検索 (Search pins...)"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
           <button 
             className="btn-primary" 
+            style={{ flexShrink: 0 }}
             onClick={() => setEditingPin({})} // 空オブジェクトで新規作成
           >
             <Plus size={18} />
@@ -97,20 +115,7 @@ function App() {
           </button>
         </div>
         
-        {/* 検索窓とタグフィルターエリア */}
-        <div className="search-container">
-          <div className="search-input-wrapper">
-            <Search size={18} className="search-icon" />
-            <input 
-              type="text" 
-              className="search-input" 
-              placeholder="タイトルやノートを検索 (Search pins...)"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-
+        {/* タグフィルターエリア */}
         {allTags.length > 0 && (
           <TagFilter 
             tags={allTags} 
