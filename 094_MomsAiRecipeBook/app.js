@@ -9,6 +9,12 @@ function sanitizeHTML(str) {
         .replace(/'/g, "&#039;");
 }
 
+// 謎の空白対策：改行ごとにtrimをかけるヘルパー
+function trimLines(str) {
+    if (!str) return "";
+    return str.split('\n').map(line => line.trim()).filter(line => line.length > 0).join('\n');
+}
+
 const STORAGE_KEY = "moms_ai_recipe_book_data";
 function saveRecipes(recipes) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(recipes));
@@ -62,7 +68,7 @@ function compressImage(file, callback) {
 
 document.addEventListener("DOMContentLoaded", () => {
     
-    // --- 5. タイトルクリックでのリロード機能 ---
+    // タイトルクリックでのリロード機能
     document.getElementById("app-title").addEventListener("click", () => {
         location.reload();
     });
@@ -180,7 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
             stepsText = text;
         }
 
-        // 1. .trim() への置き換え要件
+        // 余分なスペースの排除
         document.getElementById("recipe-title").value = titleText.trim();
         document.getElementById("recipe-ingredients").value = ingredientsText.replace(/[:：-]/g, "").trim();
         document.getElementById("recipe-steps").value = stepsText.replace(/[:：-]/g, "").trim();
@@ -193,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault(); 
         const recipes = loadRecipes();
         
-        // 1. .trim() への置き換え要件
+        // 保存時にも確実にトリム
         const rData = {
             title: document.getElementById("recipe-title").value.trim(),
             genre: document.getElementById("recipe-genre").value,
@@ -286,17 +292,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 : `<div class="card-emoji">🍲</div>`;
             const stars = "★".repeat(r.rating) + "☆".repeat(5 - r.rating);
 
-            card.innerHTML = `
-                <div class="card-img-wrap">${imgHtml}</div>
-                <div class="card-content">
-                    <h3 class="card-title">${sanitizeHTML(r.title)}</h3>
-                    <div class="card-rating">${stars}</div>
-                    <div class="card-meta">
-                        <span>🏷️ ${sanitizeHTML(r.genre)}</span>
-                        <span class="card-count">🍽️ ${displayCount} 回</span>
-                    </div>
-                </div>
-            `;
+            // インデントを含まない1行テンプレートリテラルで綺麗に出力
+            card.innerHTML = `<div class="card-img-wrap">${imgHtml}</div><div class="card-content"><h3 class="card-title">${sanitizeHTML(r.title)}</h3><div class="card-rating">${stars}</div><div class="card-meta"><span>🏷️ ${sanitizeHTML(r.genre)}</span><span class="card-count">🍽️ ${displayCount} 回</span></div></div>`;
+            
             recipeGrid.appendChild(card);
         });
     }
@@ -324,51 +322,16 @@ document.addEventListener("DOMContentLoaded", () => {
             historyHtml = `<div class="history-list">`;
             r.history.forEach((h, index) => {
                 const hImg = h.photo ? `<img src="${h.photo}" class="history-photo">` : `<div style="font-size:30px; margin-top:10px;">🍽️</div>`;
-                // 4. 履歴画像の削除機能
-                historyHtml += `
-                    <div class="history-item-wrap">
-                        <button class="history-delete-btn" onclick="appContext.deleteHistory('${r.id}', ${index}, event)">&times;</button>
-                        <div class="history-item">
-                            <div>📅 ${sanitizeHTML(h.date)}</div>
-                            ${hImg}
-                        </div>
-                    </div>
-                `;
+                // インデントの排除、1行化
+                historyHtml += `<div class="history-item-wrap"><button class="history-delete-btn" onclick="appContext.deleteHistory('${r.id}', ${index}, event)">&times;</button><div class="history-item-date">📅 ${sanitizeHTML(h.date)}</div>${hImg}</div>`;
             });
             historyHtml += `</div>`;
         } else {
             historyHtml = `<p style="font-size:12px; color:#999; margin:0;">(まだ履歴はありません)</p>`;
         }
 
-        modalBody.innerHTML = `
-            <div class="modal-img-wrap">${imgHtml}</div>
-            <div class="modal-tag">🏷️ ${sanitizeHTML(r.genre)}</div>
-            <h2 class="modal-title">${sanitizeHTML(r.title)}</h2>
-            <div style="color: #ffb400; font-size:18px; margin-bottom:10px;">${stars} <span style="color:#d85c1f;font-size:14px;margin-left:10px;">作った回数: ${displayCount}回</span></div>
-            
-            <div class="modal-controls">
-                <button class="btn btn-outline btn-sm" onclick="appContext.triggerEdit('${r.id}')">✏️ 編集 (Edit)</button>
-                <button class="btn btn-outline btn-sm" onclick="appContext.triggerDelete('${r.id}')">🗑️ 削除 (Delete)</button>
-            </div>
-
-            <div class="modal-text-block">
-                <h4>材料 (Ingredients)</h4>
-                ${sanitizeHTML(r.ingredients)}
-            </div>
-            <div class="modal-text-block">
-                <h4>作り方 (Steps)</h4>
-                ${sanitizeHTML(r.steps)}
-            </div>
-            <div class="modal-text-block">
-                <h4>コメント (Comments)</h4>
-                ${r.comments ? sanitizeHTML(r.comments) : 'なし'}
-            </div>
-            
-            <div class="modal-text-block">
-                <h4>これまでの記録 (Cook History)</h4>
-                ${historyHtml}
-            </div>
-        `;
+        // HTML内の無駄なインデントやスペースを削除し、変数展開を密着させる
+        modalBody.innerHTML = `<div class="modal-img-wrap">${imgHtml}</div><div class="modal-tag">🏷️ ${sanitizeHTML(r.genre)}</div><h2 class="modal-title">${sanitizeHTML(r.title)}</h2><div style="color: #ffb400; font-size:18px; margin-bottom:10px;">${stars} <span style="color:#d85c1f;font-size:14px;margin-left:10px;">作った回数: ${displayCount}回</span></div><div class="modal-controls"><button class="btn btn-outline btn-sm" onclick="appContext.triggerEdit('${r.id}')">✏️ 編集 (Edit)</button><button class="btn btn-outline btn-sm" onclick="appContext.triggerDelete('${r.id}')">🗑️ 削除 (Delete)</button></div><div class="modal-text-block"><h4>材料 (Ingredients)</h4>${sanitizeHTML(trimLines(r.ingredients))}</div><div class="modal-text-block"><h4>作り方 (Steps)</h4>${sanitizeHTML(trimLines(r.steps))}</div><div class="modal-text-block"><h4>コメント (Comments)</h4>${r.comments ? sanitizeHTML(trimLines(r.comments)) : 'なし'}</div><div class="modal-text-block"><h4>これまでの記録 (Cook History)</h4>${historyHtml}</div>`;
         
         // 履歴フォームの初期化
         const today = new Date().toISOString().split('T')[0];
@@ -472,19 +435,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("save-btn").textContent = "更新 (Update)";
             }
         },
-        // 4. 履歴画像の削除機能
         deleteHistory: (recipeId, historyIndex, event) => {
-            event.stopPropagation(); // モーダルの閉じなどを防ぐ
+            event.stopPropagation();
             if(confirm("この記録を削除しますか？\n(Delete this record?)")) {
                 const recipes = loadRecipes();
                 const idx = recipes.findIndex(r => r.id === recipeId);
                 if(idx > -1 && recipes[idx].history) {
                     recipes[idx].history.splice(historyIndex, 1);
-                    // 作った回数を調整
                     recipes[idx].cookCount = Math.max(recipes[idx].cookCount || 0, recipes[idx].history.length);
                     saveRecipes(recipes);
                     renderRecipes();
-                    openModal(recipeId); // モーダル表示を更新
+                    openModal(recipeId);
                 }
             }
         }

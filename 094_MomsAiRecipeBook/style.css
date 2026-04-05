@@ -39,7 +39,7 @@ body, html {
     margin: 0;
     font-size: 24px;
     line-height: 1.2;
-    cursor: pointer; /* タイトルクリックのリロード用 */
+    cursor: pointer;
 }
 
 .subtitle {
@@ -135,6 +135,11 @@ input:focus, textarea:focus, select:focus {
     gap: 10px;
     margin-top: 5px;
 }
+.history-file-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 .file-name {
     font-size: 13px;
     color: #888;
@@ -160,6 +165,12 @@ input:focus, textarea:focus, select:focus {
     font-size: 13px;
     box-sizing: border-box;
 }
+
+/* ラベルボタンの縦書き・折り返し強制防止 */
+.file-btn {
+    white-space: nowrap;
+}
+
 .btn-primary { background-color: var(--primary-color); color: white; }
 .btn-primary:hover { background-color: var(--hover-color); }
 .btn-secondary { background-color: #f0ead6; color: #555; }
@@ -185,6 +196,7 @@ input:focus, textarea:focus, select:focus {
     max-width: 200px;
     margin: 0;
     height: 36px;
+    white-space: nowrap;
 }
 
 /* FAB */
@@ -316,7 +328,7 @@ input:focus, textarea:focus, select:focus {
     flex: 1;
 }
 
-/* 重要: メイン画像の固定アスペクト制御 */
+/* モーダル画像の確実な固定サイズ */
 .modal-img-wrap {
     width: 100%;
     height: 200px;
@@ -324,16 +336,16 @@ input:focus, textarea:focus, select:focus {
     border-radius: var(--border-radius);
     margin-bottom: 15px;
     padding: 0;
-    overflow: hidden; /* 画像がはみ出ないように */
+    overflow: hidden;
 }
 .modal-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    display: block; /* 隙間対策 */
+    display: block;
 }
 
-/* モーダル内情報 */
+/* モーダル内テキスト */
 .modal-title { margin: 0 0 5px 0; color: var(--primary-color); font-size: 22px; }
 .modal-tag {
     display: inline-block; background: #f0ead6; padding: 2px 6px;
@@ -350,7 +362,7 @@ input:focus, textarea:focus, select:focus {
 }
 .modal-controls { display: flex; gap: 8px; margin-bottom: 15px; }
 
-/* 履歴セクションと入力フォームの高さ合わせ */
+/* 履歴フォームセクションレイアウト崩れ修正 */
 .modal-history-section {
     background: #fff0E8; padding: 15px;
     border-top: 2px dashed #ffcca6;
@@ -359,43 +371,58 @@ input:focus, textarea:focus, select:focus {
 }
 .modal-history-section h3 { margin: 0 0 10px 0; font-size: 15px; color: #d85c1f; }
 
-/* Flexで横並び要素の高さを揃える */
-.align-height-form {
+.history-form {
     display: flex;
-    align-items: stretch; /* 高さを揃える */
-    gap: 8px;
-}
-.fixed-height-input {
-    height: 38px;
-    box-sizing: border-box;
-    margin: 0;
-}
-/* wrapperがflexの子になる場合、align-itemsに追従させる */
-.fixed-height-wrapper {
-    display: flex;
-    align-items: stretch;
-    flex: 1;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap; /* 狭い画面でも縦書きにならないよう折り返しを許可 */
 }
 
-/* 履歴リスト表示 */
+.history-form input[type="date"] {
+    width: 130px; /* ある程度固定 */
+    background: #fff;
+    margin: 0;
+}
+
+/* 履歴リスト表示と画像サイズの絶対統一 */
 .history-list {
     margin-top: 10px; display: flex; flex-wrap: nowrap; gap: 10px;
     overflow-x: auto; padding-bottom: 5px;
 }
 .history-item-wrap {
-    position: relative; /* 削除ボタンの基準位置 */
+    position: relative; /* 削除ボタンの基準 */
+    overflow: hidden;   /* 削除ボタンのはみ出し防止 */
     background: #fff; border: 1px solid #ccc;
-    border-radius: 6px; min-width: 100px;
-    padding: 5px; font-size: 12px; text-align: center;
+    border-radius: 8px; min-width: 140px; 
+    font-size: 12px; text-align: center;
+    display: flex;
+    flex-direction: column; /* 画像とコンテンツの縦並び */
     flex-shrink: 0;
 }
+.history-item-date {
+    padding: 5px;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+}
+
+/* 要求仕様: 画像サイズの完璧な統一 */
+.history-photo {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px; /* 丸み */
+    margin: 0;
+    display: block;
+}
+
+/* 削除ボタンの見切れ修正 (親がoverflow:hiddenなので確実に入る位置に) */
 .history-delete-btn {
     position: absolute;
-    top: -6px;
-    right: -6px;
-    width: 20px;
-    height: 20px;
-    background: #ff4d4f;
+    top: 8px;
+    right: 8px;
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 77, 79, 0.95);
     color: white;
     border: none;
     border-radius: 50%;
@@ -407,18 +434,9 @@ input:focus, textarea:focus, select:focus {
     justify-content: center;
     padding: 0;
     line-height: 1;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 10;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 .history-delete-btn:hover {
     background: #d9363e;
-}
-
-/* 重要: 履歴画像の固定サイズ化 */
-.history-photo {
-    width: 100%;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-top: 5px;
-    display: block;
 }
