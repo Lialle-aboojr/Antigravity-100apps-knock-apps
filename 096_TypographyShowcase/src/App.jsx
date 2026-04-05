@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 
 // --- Intersection Observer Hook (スクロール連動フェードアップ用) ---
@@ -52,16 +52,58 @@ const FadeUp = ({ children }) => {
 
 // 2. メインのAppコンポーネント
 function App() {
+  const [lang, setLang] = useState('ja'); // 'ja' または 'en' で管理
+
+  // ロゴクリック時にページ上部にスムーススクロールで戻る処理
+  const handleLogoClick = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 言語翻訳テキストの定義
+  const text = {
+    ja: {
+      heroSubtitle: "言葉は形を持ち、デザインは声を持つ。静けさの中に浮かび上がる、洗練されたタイポグラフィの世界へ。",
+      sec1Desc: "整然としたデジタルの世界に、意図的なバグを忍ばせる。右のテキストにマウスを乗せると、赤とシアンのノイズが走る「グリッチエフェクト」が発動します。",
+      sec2Desc: "平面のテキストに立体感を与えるCSSアニメーション。左のボックスにマウスを乗せると、CSSの transform: rotateX による3Dフリップが体験できます。余白と驚きが同居します。",
+      card1Back: "タイポグラフィ",
+      card2Back: "ショーケース"
+    },
+    en: {
+      heroSubtitle: "Words have form, and design has a voice. Step into the world of refined typography emerging from silence.",
+      sec1Desc: "Concealing intentional bugs within an orderly digital world. Hover over the text on the right to trigger the 'glitch effect', where red and cyan noise streaks across the screen.",
+      sec2Desc: "A CSS animation that adds three-dimensionality to flat typography. Hover over the boxes on the left to experience a 3D flip using CSS transform: rotateX. Space and surprise coexist.",
+      card1Back: "Typography",
+      card2Back: "Showcase"
+    }
+  };
+
+  const t = text[lang];
+
   return (
     <div className="app-container">
       
       {/* ナビゲーションバー（上部固定） */}
       <nav className="top-nav">
-        <div className="logo font-sans">
+        {/* ロゴクリック可能化 */}
+        <div className="logo font-sans" onClick={handleLogoClick} role="button" tabIndex={0}>
           Showcase<span style={{ color: 'var(--accent-color)' }}>.</span>
         </div>
+        
+        {/* 言語切り替えボタン */}
         <div className="lang-switch font-mono">
-          JP / EN
+          <button 
+            className={`lang-btn ${lang === 'ja' ? 'active' : ''}`}
+            onClick={() => setLang('ja')}
+          >
+            JP
+          </button>
+          <span className="lang-separator">/</span>
+          <button 
+            className={`lang-btn ${lang === 'en' ? 'active' : ''}`}
+            onClick={() => setLang('en')}
+          >
+            EN
+          </button>
         </div>
       </nav>
 
@@ -84,7 +126,7 @@ function App() {
           
           <div className="mask-reveal-wrapper" style={{ marginTop: '2rem' }}>
             <p className="hero-subtitle font-sans mask-reveal delay-400">
-              言葉は形を持ち、デザインは声を持つ。静けさの中に浮かび上がる、洗練されたタイポグラフィの世界へ。
+              {t.heroSubtitle}
             </p>
           </div>
         </div>
@@ -103,8 +145,7 @@ function App() {
                 <span className="section-label font-mono">01 - Cybernetics</span>
                 <h2 className="section-title font-serif">Digital Distortion</h2>
                 <p className="section-description font-sans">
-                  整然としたデジタルの世界に、意図的なバグを忍ばせる。
-                  右のテキストにマウスを乗せると、赤とシアンのノイズが走る「グリッチエフェクト」が発動します。
+                  {t.sec1Desc}
                 </p>
               </div>
             </FadeUp>
@@ -134,8 +175,7 @@ function App() {
                 <span className="section-label font-mono">02 - Dimensions</span>
                 <h2 className="section-title font-serif">Space & Depth</h2>
                 <p className="section-description font-sans">
-                  平面のテキストに立体感を与えるCSSアニメーション。
-                  左のボックスにマウスを乗せると、CSSの `transform: rotateX` による3Dフリップが体験できます。余白と驚きが同居します。
+                  {t.sec2Desc}
                 </p>
               </div>
             </FadeUp>
@@ -151,7 +191,7 @@ function App() {
                     </div>
                     <div className="flip-back">
                       <span className="font-sans card-text text-black">
-                        タイポグラフィ
+                        {t.card1Back}
                       </span>
                     </div>
                   </div>
@@ -165,7 +205,7 @@ function App() {
                     </div>
                     <div className="flip-back">
                       <span className="font-sans card-text">
-                        ショーケース
+                        {t.card2Back}
                       </span>
                     </div>
                   </div>
