@@ -417,14 +417,52 @@ textarea.input-field {
 
 .save-btn:hover { opacity: 0.8; }
 
-/* Filter Tags (タグ機能の修正箇所) */
+/* Tag Filter Container */
+.tag-filter-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Scroll Arrow Buttons */
+.scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  background: white;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  border: 1px solid #eaeaea;
+  color: #333;
+  transition: all 0.2s;
+}
+.scroll-btn:hover {
+  background: #f8f8f8;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.scroll-btn.left {
+  left: 0px;
+}
+.scroll-btn.right {
+  right: 0px;
+}
+
+/* Filter Tags (横スクロール・バー非表示) */
 .filter-tags {
   display: flex;
   gap: 10px;
   overflow-x: auto;
   padding-bottom: 4px;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  -ms-overflow-style: none; /* IE, Edge用 */
+  scrollbar-width: none;    /* Firefox用 */
+  width: 100%;
 }
 
 .filter-tags::-webkit-scrollbar {
