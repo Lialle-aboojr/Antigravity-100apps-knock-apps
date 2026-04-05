@@ -106,13 +106,14 @@ Complete it. Ship it. Relax. ☕
 | 093 | 🏗️ Smart LP Architect | [▶ Demo](https://093-smart-lp-architect.vercel.app/) |
 | 094 | 🍳 Mom's AI Recipe Book | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/094_MomsAiRecipeBook/index.html) |
 | 095 | 📌 PinNote | [▶ Demo](https://095-pin-note-deh6k24x3-lialle-aboojrs-projects.vercel.app/) |
+| 096 | 🔠 TypographyShowcase | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/096_TypographyShowcase/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 95 / 100 ███████████████████░ 95%
+完成: 96 / 100 ███████████████████░ 96%
 ```
 
 ---
