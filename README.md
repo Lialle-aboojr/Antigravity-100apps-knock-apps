@@ -104,13 +104,14 @@ Complete it. Ship it. Relax. ☕
 | 091 | 💮 Habit Stamp Calendar | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/091_HabitStampCalendar/index.html) |
 | 092 | 🏥 MediLog | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/092_MediLog/index.html) |
 | 093 | 🏗️ Smart LP Architect | [▶ Demo](https://093-smart-lp-architect.vercel.app/) |
+| 094 | 🍳 Mom's AI Recipe Book | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/094_MomsAiRecipeBook/index.html) |
 
 ---
 
 ## 📊 Progress
 
 ```
-完成: 93 / 100 ██████████████████▎░ 93%
+完成: 94 / 100 ██████████████████▊░ 94%
 ```
 
 ---
