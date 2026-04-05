@@ -3,20 +3,36 @@ import { Plus, Search } from 'lucide-react';
 import PinList from './components/PinList';
 import PinModal from './components/PinModal';
 import TagFilter from './components/TagFilter';
-import { loadPins, savePins } from './utils/storage';
+
+const STORAGE_KEY = 'pinNoteData';
 
 function App() {
-  // useEffectによる初回上書きを防止するため、useStateの初期値として直接ロードします
-  const [pins, setPins] = useState(() => loadPins());
+  // 1. 初回マウント時に確実にLocalStorageからデータを読み込む
+  const [pins, setPins] = useState(() => {
+    try {
+      const savedData = localStorage.getItem(STORAGE_KEY);
+      if (savedData) {
+        return JSON.parse(savedData);
+      }
+    } catch (error) {
+      console.error("LocalStorageの読み込みに失敗しました:", error);
+    }
+    return []; // データがない場合やエラー時は空配列
+  });
   
   const [filterTag, setFilterTag] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [editingPin, setEditingPin] = useState(null);
 
-  // Pins が更新されたら自動で LocalStorage に保存
-  // (初期値が正しく読み込まれているため、空配列での上書きは発生しません)
+  // 2. ピンのリスト(pins)が更新されるたびに必ずLocalStorageに保存する
   useEffect(() => {
-    savePins(pins);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(pins));
+    } catch (error) {
+      // Base64化されたローカル画像を多数保存するとブラウザの容量上限(約5MB)になる可能性があるためエラーを捕捉
+      console.error("LocalStorageへの保存に失敗しました。容量上限がいっぱいの可能性があります:", error);
+      alert("データの保存に失敗しました。画像のサイズや保存件数が多すぎる可能性があります。");
+    }
   }, [pins]);
 
   // 全てのピンから固有のタグを収集する
@@ -59,7 +75,7 @@ function App() {
       if (exists) {
         return prev.map(p => p.id === savedPin.id ? savedPin : p);
       } else {
-        return [savedPin, ...prev];
+        return [savedPin, ...prev]; // 新規は一番上に追加
       }
     });
     setEditingPin(null);
@@ -77,7 +93,7 @@ function App() {
     <div>
       <header className="header">
         <div className="header-top">
-          {/* ロゴ：クリックでリロードする機能を付与 */}
+          {/* ロゴ：クリックでリロード（ホームに戻る）機能 */}
           <h1 
             style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}
             onClick={() => window.location.href = '/'}
@@ -91,7 +107,7 @@ function App() {
             PinNote
           </h1>
 
-          {/* 検索窓：ロゴとボタンの間に配置（Flexboxのflex: 1で広がるよう調整） */}
+          {/* 検索窓 */}
           <div className="search-container" style={{ flex: 1, maxWidth: '600px', margin: '0 20px' }}>
             <div className="search-input-wrapper">
               <Search size={18} className="search-icon" />
