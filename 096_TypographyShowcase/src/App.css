@@ -1,0 +1,214 @@
+/* src/App.css */
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------- Header / Navigation --------- */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem 4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+  pointer-events: none; /* Let clicks pass through if background, but re-enable on children */
+}
+
+.top-nav * {
+  pointer-events: auto;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lang-switch {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+}
+
+/* --------- Hero Section (Mask Reveal) --------- */
+.hero-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4rem;
+  position: relative;
+}
+
+.hero-content {
+  text-align: center;
+  max-width: 1000px;
+}
+
+.hero-title {
+  font-size: clamp(3rem, 8vw, 8rem);
+  line-height: 1.1;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+  font-weight: 300;
+}
+
+/* --------- Showcase Sections --------- */
+.section {
+  padding: 12rem 4rem; /* たっぷりとした余白 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.section-inner {
+  max-width: 1200px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8rem;
+  align-items: center;
+}
+
+.section-reversed .section-inner {
+  direction: rtl;
+}
+
+.section-reversed .section-inner > * {
+  direction: ltr; /* Reset direction for content */
+}
+
+/* Typography within sections */
+.section-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  display: block;
+}
+
+.section-title {
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 1.2;
+  margin-bottom: 2rem;
+}
+
+.section-description {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  font-weight: 300;
+  max-width: 480px;
+}
+
+/* --------- Glitch Specific Layout --------- */
+.glitch-wrapper {
+  background-color: #1a1a1f;
+  padding: 4rem;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.glitch-huge-text {
+  font-size: clamp(4rem, 6vw, 6rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --------- 3D Flip Specific Layout --------- */
+.flip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.flip-card {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.flip-card-front, .flip-card-back {
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.flip-card-front {
+  background-color: #1a1a1f;
+  border: 1px solid #333;
+}
+
+.flip-card-back {
+  background-color: var(--text-primary);
+  color: var(--bg-color);
+}
+
+.card-number {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.card-text {
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/* --------- Footer --------- */
+.footer {
+  padding: 4rem;
+  text-align: center;
+  border-top: 1px solid #222;
+  margin-top: auto;
+}
+
+.footer-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+/* --------- Responsive --------- */
+@media (max-width: 900px) {
+  .section-inner {
+    grid-template-columns: 1fr;
+    gap: 4rem;
+  }
+  
+  .section, .hero-section {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  .top-nav {
+    padding: 1.5rem 2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero-title {
+    font-size: 3rem;
+  }
+  
+  .flip-grid {
+    grid-template-columns: 1fr;
+  }
+}

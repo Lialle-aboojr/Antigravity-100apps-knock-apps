@@ -1,0 +1,189 @@
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Sans+JP:wght@300;400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+  --bg-color: #0c0c0e;
+  --text-primary: #fafafa;
+  --text-secondary: #8a8a93;
+  --accent-color: #fca311;
+  --highlight-red: #ff3366;
+  --highlight-cyan: #00ffff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: 'Noto Sans JP', sans-serif;
+  overflow-x: hidden;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Typography Classes */
+.font-serif {
+  font-family: 'Cinzel', serif;
+}
+
+.font-mono {
+  font-family: 'Space Mono', monospace;
+}
+
+.font-sans {
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+/* -------------------------
+   Animations
+------------------------- */
+
+/* 1. Mask Reveal (Hero) */
+.mask-reveal-wrapper {
+  overflow: hidden;
+  display: block;
+}
+
+.mask-reveal {
+  display: block;
+  transform: translateY(100%);
+  opacity: 0;
+  animation: revealUp 1.2s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+}
+
+/* Add delays for multiple lines */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+
+@keyframes revealUp {
+  0% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 2. Fade Up (Scroll Observer) */
+.fade-up-element {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 1s ease-out, transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: opacity, transform;
+}
+
+.fade-up-element.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 3. Glitch Effect */
+.glitch-effect {
+  position: relative;
+  display: inline-block;
+  cursor: crosshair;
+  transition: color 0.2s;
+}
+
+.glitch-effect:hover {
+  animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite;
+}
+
+.glitch-effect::before,
+.glitch-effect::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glitch-effect:hover::before {
+  left: 2px;
+  text-shadow: -2px 0 var(--highlight-red);
+  animation: glitch-anim-1 2s infinite linear alternate-reverse;
+  opacity: 1;
+}
+
+.glitch-effect:hover::after {
+  left: -2px;
+  text-shadow: -2px 0 var(--highlight-cyan);
+  animation: glitch-anim-2 3s infinite linear alternate-reverse;
+  opacity: 1;
+}
+
+@keyframes glitch-anim-1 {
+  0% { clip: rect(10px, 9999px, 45px, 0); }
+  20% { clip: rect(42px, 9999px, 11px, 0); }
+  40% { clip: rect(86px, 9999px, 58px, 0); }
+  60% { clip: rect(29px, 9999px, 12px, 0); }
+  80% { clip: rect(78px, 9999px, 21px, 0); }
+  100% { clip: rect(31px, 9999px, 73px, 0); }
+}
+
+@keyframes glitch-anim-2 {
+  0% { clip: rect(65px, 9999px, 100px, 0); }
+  20% { clip: rect(12px, 9999px, 45px, 0); }
+  40% { clip: rect(84px, 9999px, 20px, 0); }
+  60% { clip: rect(25px, 9999px, 92px, 0); }
+  80% { clip: rect(4px, 9999px, 76px, 0); }
+  100% { clip: rect(51px, 9999px, 33px, 0); }
+}
+
+@keyframes glitch-skew {
+  0% { transform: skew(0deg); }
+  20% { transform: skew(-5deg); }
+  40% { transform: skew(3deg); }
+  60% { transform: skew(-2deg); }
+  80% { transform: skew(4deg); }
+  100% { transform: skew(0deg); }
+}
+
+/* 4. 3D Flip */
+.flip-container {
+  perspective: 1200px;
+  display: inline-block;
+}
+
+.flip-inner {
+  position: relative;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.flip-container:hover .flip-inner {
+  transform: rotateX(180deg);
+}
+
+.flip-front,
+.flip-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.flip-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotateX(180deg);
+}
