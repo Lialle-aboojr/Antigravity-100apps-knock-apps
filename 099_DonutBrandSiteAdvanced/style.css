@@ -164,13 +164,15 @@ Concept (コンセプト) - 復元
 /* 
 ================================================
 Menu (大画面カルーセル・アップグレード)
+★修正ポイント：ドーナツ画像のダイナミックさを復元し、
+親コンテナを広げることで文字との重なりを防ぎました
 ================================================
 */
 .menu.fullscreen-menu {
     width: 100vw;
-    height: 100vh;
-    min-height: 850px; /* PCで十分な高さを確保し、重なりを防ぐ */
-    padding: 12vh 0; /* 上下のパディングを増やして空間を確保 */
+    /* heightを固定せずmin-heightにすることで、必要に応じてコンテナが広がり画像を押し潰さない */
+    min-height: 100vh;
+    padding: 10vh 0;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -179,13 +181,12 @@ Menu (大画面カルーセル・アップグレード)
 }
 
 .fullscreen-menu .container-center {
-    margin-bottom: 4vh; /* 「おすすめメニュー」タイトルとカルーセルの間隔を拡大 */
+    margin-bottom: 2vh; /* 「おすすめメニュー」との適度な余白 */
 }
 
 .carousel-container {
     position: relative;
     width: 100vw;
-    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -195,20 +196,20 @@ Menu (大画面カルーセル・アップグレード)
 .carousel-track {
     position: relative;
     width: 100%;
-    height: 45vh; /* 高さを調整して文字との被りを防止 */
-    min-height: 380px;
+    /* 画像が大きくても文字と被らないよう、トラック自体をたっぷりと確保 */
+    height: clamp(400px, 45vh, 650px);
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 4vh 0; /* 画像上下にしっかりと余白を持たせる */
+    margin: 4vh 0; /* トラックの上下に広々としたマージンを配置 */
 }
 
 .carousel-item {
     position: absolute;
     top: 50%;
     left: 50%;
-    /* 画面サイズに応じつつ、高さを超えないように min() を活用して上限を設定 */
-    width: clamp(250px, min(32vw, 42vh), 480px);
+    /* ★前回のv/hによる縮小制限を緩和し、画面いっぱいの迫力サイズを復元！ */
+    width: clamp(280px, 45vw, 550px);
     aspect-ratio: 1;
     transform: translate(-50%, -50%);
     /* 切り替え速度やイージングの調整。「ふわっふわ」な動きへ変更 */
@@ -227,7 +228,8 @@ Menu (大画面カルーセル・アップグレード)
 
 /* 各状態のクラス */
 .carousel-item.active {
-    transform: translate(-50%, -50%) scale(1.15); /* 中央は拡大 */
+    /* アクティブなアイテムをこれまで通りダイナミックに1.15倍に拡大 */
+    transform: translate(-50%, -50%) scale(1.15); 
     opacity: 1;
     z-index: 3;
 }
@@ -236,12 +238,13 @@ Menu (大画面カルーセル・アップグレード)
     filter: drop-shadow(0 40px 50px rgba(0,0,0,0.2));
 }
 .carousel-item.prev {
-    transform: translate(calc(-50% - 32vw), -50%) scale(0.65);
+    /* 左右のアイテム。幅広のvwで位置を調整して滑らかな並びに */
+    transform: translate(calc(-50% - 35vw), -50%) scale(0.65);
     opacity: 0.4;
     z-index: 2;
 }
 .carousel-item.next {
-    transform: translate(calc(-50% + 32vw), -50%) scale(0.65);
+    transform: translate(calc(-50% + 35vw), -50%) scale(0.65);
     opacity: 0.4;
     z-index: 2;
 }
@@ -265,7 +268,7 @@ Menu (大画面カルーセル・アップグレード)
 /* ドーナツ情報（テキスト） */
 .carousel-info {
     text-align: center;
-    margin-top: 6vh; /* 上部（画像）との間隔をさらに拡大し余裕を持たせる */
+    margin-top: 2vh; /* 下の文字。トラックの広大な枠のすぐ下に配置 */
     min-height: 100px;
     z-index: 10;
 }
@@ -302,7 +305,7 @@ Menu (大画面カルーセル・アップグレード)
 
 /* 
 ================================================
-モーダル関連 (新規追加)
+モーダル関連
 ================================================
 */
 .modal-overlay {
@@ -479,13 +482,13 @@ Footer (フッター) - 復元
     .main-title { font-size: 2.2rem; }
     .sub-title { font-size: 0.9rem; }
     
-    /* 大画面カルーセル用 */
-    .menu.fullscreen-menu { padding: 8vh 0; min-height: auto; }
-    .carousel-track { height: 40vh; margin: 3vh 0; }
-    .carousel-item { width: clamp(220px, 60vw, 300px); }
+    /* 大画面カルーセル用 (スマホ等でも画像を大きく表示するよう微調整) */
+    .menu.fullscreen-menu { padding: 8vh 0; min-height: 100vh; }
+    .carousel-track { height: clamp(350px, 45vh, 450px); margin: 3vh 0; }
+    .carousel-item { width: clamp(240px, 60vw, 350px); }
     .carousel-item.prev { transform: translate(calc(-50% - 40vw), -50%) scale(0.65); }
     .carousel-item.next { transform: translate(calc(-50% + 40vw), -50%) scale(0.65); }
-    .carousel-info { margin-top: 4vh; }
+    .carousel-info { margin-top: 3vh; }
 
     /* モーダル用 */
     .modal-container { width: 95%; max-height: 90vh; overflow-y: auto; }
