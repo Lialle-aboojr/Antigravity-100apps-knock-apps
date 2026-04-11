@@ -1,0 +1,622 @@
+/* 
+================================================
+全体設定・リセット
+================================================
+*/
+:root {
+    --text-color: #2c2c2c;
+    --text-color-light: #7a7a7a;
+    --bg-color: #fcfbf9; /* ほんのり暖かみのある白 */
+    --accent-color: #dfcdba;
+    --font-en: 'Cinzel', serif;
+    --font-ja: 'Noto Serif JP', serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-ja);
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    line-height: 1.8;
+    overflow-x: hidden;
+    letter-spacing: 0.05em;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* 共通コンテナ */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+.container-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 80px;
+}
+
+/* タイポグラフィ */
+.section-title {
+    margin-bottom: 40px;
+}
+.section-title .en {
+    display: block;
+    font-family: var(--font-en);
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+}
+.section-title .ja {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-color-light);
+    letter-spacing: 0.1em;
+}
+
+/* ヘッダー */
+.header {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    z-index: 50;
+}
+.header-logo .en {
+    font-family: var(--font-en);
+    font-size: 1.2rem;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+}
+
+
+/* 
+================================================
+大画面カルーセル (Hero Section)
+================================================
+*/
+.hero-carousel {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: radial-gradient(circle at center, #ffffff 0%, var(--bg-color) 70%);
+}
+
+.hero-bg-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    font-family: var(--font-en);
+    font-size: clamp(8rem, 15vw, 15rem);
+    font-weight: 700;
+    line-height: 0.8;
+    color: rgba(0,0,0,0.02);
+    white-space: nowrap;
+    z-index: 0;
+    pointer-events: none;
+    letter-spacing: 0.05em;
+}
+
+.hero-bg-text span {
+    display: block;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 10;
+}
+
+.carousel-track {
+    position: relative;
+    width: 100%;
+    height: 60vh; /* 大きく画面の半分以上を使用 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: -5vh; /* 少し上にずらす */
+}
+
+.carousel-item {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    /* 画面サイズに応じたダイナミックな大きさ（vh, vw活用） */
+    width: clamp(280px, 40vw, 550px);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    /*
+      シャッからふわっ、のイージング
+      cubic-bezier(0.1, 1, 0.2, 1) で初速が速く、後でゆっくりになる滑らかな動き
+    */
+    transition: transform 0.9s cubic-bezier(0.1, 1, 0.2, 1), opacity 0.9s ease;
+    opacity: 0;
+    z-index: 1;
+    cursor: pointer;
+    filter: drop-shadow(0 30px 40px rgba(0,0,0,0.15));
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* カルーセルの状態クラス */
+.carousel-item.active {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+    z-index: 3;
+}
+
+.carousel-item.active:hover {
+    transform: translate(-50%, -52%) scale(1.12); /* ホバーで少し浮く＆拡大 */
+    filter: drop-shadow(0 40px 50px rgba(0,0,0,0.2));
+}
+
+.carousel-item.prev {
+    transform: translate(calc(-50% - 35vw), -50%) scale(0.6);
+    opacity: 0.3;
+    z-index: 2;
+}
+
+.carousel-item.next {
+    transform: translate(calc(-50% + 35vw), -50%) scale(0.6);
+    opacity: 0.3;
+    z-index: 2;
+}
+
+.carousel-item.hidden-left {
+    transform: translate(calc(-50% - 60vw), -50%) scale(0.4);
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.carousel-item.hidden-right {
+    transform: translate(calc(-50% + 60vw), -50%) scale(0.4);
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.carousel-item.prev:hover,
+.carousel-item.next:hover {
+    opacity: 0.6;
+}
+
+/* 下部のテキスト情報 */
+.carousel-info {
+    position: absolute;
+    bottom: 8vh;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    z-index: 10;
+}
+
+.carousel-name {
+    font-family: var(--font-en);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    margin-bottom: 4px;
+    letter-spacing: 0.1em;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.carousel-desc {
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    color: var(--text-color-light);
+    margin-bottom: 16px;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.click-hint {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: var(--text-color-light);
+    opacity: 0.7;
+    animation: pulse 2s infinite;
+}
+
+.click-hint .en {
+    font-family: var(--font-en);
+    letter-spacing: 0.1em;
+}
+
+.click-hint .ja {
+    font-size: 0.65rem;
+}
+
+@keyframes pulse {
+    0% { transform: translateY(0); opacity: 0.7; }
+    50% { transform: translateY(-3px); opacity: 1; }
+    100% { transform: translateY(0); opacity: 0.7; }
+}
+
+.fade-out {
+    opacity: 0 !important;
+    transform: translateY(15px);
+}
+
+/* 
+================================================
+リッチなモーダルウィンドウ
+================================================
+*/
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(252, 251, 249, 0.85); /* 半透明の白背景 */
+    backdrop-filter: blur(12px); /* 背景をぼかすグラスモーフィズム */
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-container {
+    position: relative;
+    width: 90%;
+    max-width: 1000px;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.08);
+    overflow: hidden;
+    /* モーダル自体がふわっとズームインする */
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.6s cubic-bezier(0.1, 1, 0.2, 1);
+}
+
+.modal-overlay.active .modal-container {
+    transform: scale(1) translateY(0);
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    z-index: 10;
+    color: var(--text-color-light);
+    transition: color 0.3s ease;
+}
+
+.modal-close-btn:hover {
+    color: var(--text-color);
+}
+
+.modal-close-btn .cross-icon {
+    position: relative;
+    width: 24px;
+    height: 24px;
+}
+.modal-close-btn .cross-icon::before,
+.modal-close-btn .cross-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 1.5px;
+    background-color: currentColor;
+}
+.modal-close-btn .cross-icon::before { transform: translate(-50%, -50%) rotate(45deg); }
+.modal-close-btn .cross-icon::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+.modal-close-btn .en {
+    font-family: var(--font-en);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+}
+.modal-close-btn .ja {
+    font-size: 0.6rem;
+}
+
+.modal-content {
+    display: flex;
+    flex-wrap: wrap;
+    min-height: 500px;
+}
+
+.modal-image-wrapper {
+    flex: 1 1 400px;
+    background: radial-gradient(circle at center, #fdfaf6 0%, #f0e6da 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px;
+}
+
+.modal-image-wrapper img {
+    width: 100%;
+    max-width: 400px;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.15));
+    /* インナーナビで切り替える際のフワッとしたトランジション用 */
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* インナーナビなどで切り替え時のアニメーションクラス */
+.modal-transitioning img {
+    opacity: 0;
+    transform: scale(0.95);
+}
+.modal-transitioning .modal-title-en,
+.modal-transitioning .modal-title-ja,
+.modal-transitioning .modal-description {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.modal-text-wrapper {
+    flex: 1 1 400px;
+    padding: 80px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.modal-title-en {
+    font-family: var(--font-en);
+    font-size: 2.2rem;
+    font-weight: 400;
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.modal-title-ja {
+    font-size: 1rem;
+    color: var(--text-color-light);
+    margin-bottom: 24px;
+    font-weight: 400;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.modal-description {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #4a4a4a;
+    margin-bottom: 40px;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* インナーナビゲーション */
+.modal-thumbnails {
+    margin-top: auto;
+    border-top: 1px solid #eaeaea;
+    padding-top: 24px;
+}
+
+.thumbnails-title {
+    font-size: 0.75rem;
+    color: var(--text-color-light);
+    margin-bottom: 12px;
+}
+.thumbnails-title .en { font-family: var(--font-en); letter-spacing: 0.05em; }
+
+.thumbnail-list {
+    display: flex;
+    gap: 12px;
+}
+
+.thumb-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background: #fdfaf6;
+    cursor: pointer;
+    padding: 4px;
+    transition: all 0.3s ease;
+}
+
+.thumb-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.thumb-btn:hover {
+    background: #f0e6da;
+    transform: translateY(-2px);
+}
+
+.thumb-btn.is-active-thumb {
+    border-color: var(--accent-color);
+    background: #fff;
+    cursor: default;
+    transform: none;
+}
+
+/* 
+================================================
+その他 (Concept, Shop Info, Footer)
+================================================
+*/
+/* 既存のコードをほぼそのまま流用し、美しいバランスをキープ */
+.concept {
+    padding: 160px 0;
+}
+.concept-text {
+    flex: 1;
+    max-width: 500px;
+}
+.concept-text .description {
+    margin-bottom: 30px;
+    font-size: 1.05rem;
+    color: #4a4a4a;
+}
+.concept-image-wrapper {
+    flex: 1;
+    max-width: 550px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+}
+.concept-img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+}
+
+.shop-info {
+    position: relative;
+    padding-bottom: 120px;
+}
+.shop-image-wrapper {
+    width: 100%;
+    height: 60vh;
+    min-height: 400px;
+}
+.shop-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.shop-details {
+    max-width: 600px;
+    margin: -100px auto 0;
+    background: #fff;
+    padding: 80px 40px;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+}
+.address {
+    margin-bottom: 40px;
+    font-size: 1rem;
+    color: #4a4a4a;
+}
+.address .en { font-family: var(--font-en); font-size: 0.9rem; margin-top: 8px; display: block; }
+
+.instagram-link {
+    display: inline-block;
+    padding: 16px 48px;
+    border: 1px solid var(--text-color);
+    font-family: var(--font-en);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    background-color: transparent;
+}
+.instagram-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--text-color);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.4s ease;
+    z-index: -1;
+}
+.instagram-link:hover { color: #fff; }
+.instagram-link:hover::before { transform: scaleY(1); transform-origin: top; }
+.btn-text { position: relative; z-index: 1; }
+
+.footer {
+    text-align: center;
+    padding: 40px 0;
+    border-top: 1px solid #eaeaea;
+}
+.copyright {
+    font-family: var(--font-en);
+    font-size: 0.8rem;
+    color: var(--text-color-light);
+    letter-spacing: 0.05em;
+}
+
+/* アニメーション用クラス */
+.fade-in {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 1s cubic-bezier(0.1, 1, 0.2, 1), transform 1s cubic-bezier(0.1, 1, 0.2, 1);
+    will-change: opacity, transform;
+}
+.fade-in.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 
+================================================
+レスポンシブ対応
+================================================
+*/
+@media screen and (max-width: 768px) {
+    .container { padding: 0 24px; }
+    .container-flex { flex-direction: column; gap: 40px; }
+    .concept { padding: 80px 0; }
+    .concept-text { max-width: 100%; text-align: center; }
+    .concept-image-wrapper { max-width: 100%; }
+
+    /* Hero Responsive */
+    .hero-bg-text { font-size: clamp(5rem, 18vw, 8rem); }
+    .carousel-track { height: 50vh; }
+    .carousel-item { width: clamp(200px, 60vw, 300px); }
+    .carousel-item.prev { transform: translate(calc(-50% - 45vw), -50%) scale(0.6); }
+    .carousel-item.next { transform: translate(calc(-50% + 45vw), -50%) scale(0.6); }
+
+    /* Modal Responsive */
+    .modal-container { width: 95%; max-height: 90vh; overflow-y: auto; }
+    .modal-content { flex-direction: column; }
+    .modal-image-wrapper { padding: 40px 20px; flex: 1 1 auto; }
+    .modal-image-wrapper img { max-width: 250px; }
+    .modal-text-wrapper { padding: 40px 24px; flex: 1 1 auto; }
+    .modal-title-en { font-size: 1.8rem; }
+    .modal-thumbnails { flex-wrap: wrap; }
+    
+    .shop-details { margin: -50px 24px 0; padding: 60px 24px; }
+}
