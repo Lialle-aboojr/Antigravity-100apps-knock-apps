@@ -54,12 +54,14 @@ button {
 
 /* ======== ヘッダー & 新ロゴ ======== */
 .app-header {
-  padding: 12px 32px; /* 少し余白を詰める */
+  padding: 8px 32px; /* 余白を詰めてロゴにスペースを渡す */
   background-color: var(--surface);
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: flex-start; /* ロゴを左上に配置 */
+  min-height: 80px; 
+  overflow: hidden; /* はみ出した分を隠す */
 }
 
 .brand {
@@ -67,8 +69,12 @@ button {
 }
 
 .brand-logo {
-  height: 64px; /* 横長ロゴがしっかり見える大きさ */
+  height: 70px; 
+  width: auto;
   object-fit: contain;
+  /* 画像生成特有の内部余白（白枠）をカットするため、CSSで2倍に拡大表示します */
+  transform: scale(2.0);
+  transform-origin: left center;
 }
 
 /* ======== カテゴリタブ (スクロール対応) ======== */
@@ -571,12 +577,12 @@ button {
   letter-spacing: 2px;
 }
 
-/* アイコンと数字の向きを揃える */
 .toggle-icon {
-  transform: rotate(90deg);
+  transform: rotate(90deg); /* アイコンは90度回転させて正立させる */
   display: flex;
 }
 
+/* バッジの向きと崩れを修正 */
 .toggle-badge {
   background-color: white;
   color: var(--primary);
@@ -588,7 +594,11 @@ button {
   justify-content: center;
   font-size: 14px;
   padding: 0 8px;
-  transform: rotate(90deg);
+  
+  /* 数字が逆さま・横向きになるのを防ぎ、正立させるためのリセット */
+  writing-mode: horizontal-tb;
+  transform: none;
+  font-weight: bold;
 }
 
 
