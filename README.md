@@ -108,7 +108,7 @@ Complete it. Ship it. Relax. ☕
 | 095 | 📌 PinNote | [▶ Demo](https://095-pin-note.vercel.app/) |
 | 096 | 🔠 TypographyShowcase | [▶ Demo](https://096-typography-showcase.vercel.app/) |
 | 097 | ☕️ SmartCafeKiosk | [▶ Demo](https://097-smart-cafe-kiosku.vercel.app/) |
-| 098 | 🌀 KineticChaos | [▶ Demo](https://lialle-aboojr.github.io/Antigravity-100apps-knock-apps/098_KineticChaos/index.html) |
+| 098 | 🌀 KineticChaos | [▶ Demo](https://098-kinetic-chaos.vercel.app/) |
 ---
 
 ## 📊 Progress
