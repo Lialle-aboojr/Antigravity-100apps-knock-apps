@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Coffee, Utensils, CakeSlice, Plus, Minus, X, CheckCircle2, ShoppingBag, UtensilsCrossed, ChevronLeft, Star, Cookie, ConciergeBell } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Coffee, Utensils, CakeSlice, Plus, Minus, X, CheckCircle2, ShoppingBag, UtensilsCrossed, ChevronLeft, ChevronRight, Star, Cookie, ConciergeBell } from 'lucide-react';
 import { categories, menuItems } from './data';
 
 // カテゴリIDからlucide-reactのアイコンを動的にマッピング
@@ -20,9 +20,24 @@ export default function App() {
   // 画面フル表示用の商品詳細状態
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // 注文プロセスのステップ管理
-  // 0: 閉じる, 1: カート確認画面, 2: お召し上がり方選択, 3: 完了
+  // 注文プロセスのステップ管理 (0: 閉じる, 1: カート確認画面, 2: お召し上がり方選択, 3: 完了)
   const [checkoutStep, setCheckoutStep] = useState(0);
+
+  // デスクトップ版のサイドバーカートの開閉状態
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // === UI操作関数 ===
+  // カテゴリタブの横スクロール制御
+  const tabsRef = useRef(null);
+  const scrollTabs = (direction) => {
+    if (tabsRef.current) {
+      const scrollAmount = 250; // スクロール量
+      tabsRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
 
   // === カート操作関数 ===
   const addToCart = (product) => {
@@ -35,8 +50,11 @@ export default function App() {
       }
       return [...prevCart, { ...product, quantity: 1 }];
     });
-    // 詳細画面からカートに追加した場合、一覧へ戻る
+    // カート追加後、詳細画面を閉じてサイドバーを開く(デスクトップのみ)
     setSelectedProduct(null);
+    if (window.innerWidth > 900) {
+      setIsSidebarOpen(true);
+    }
   };
 
   const updateQuantity = (productId, delta) => {
@@ -57,6 +75,7 @@ export default function App() {
     setCart([]);
     setCheckoutStep(0);
     setSelectedProduct(null);
+    setIsSidebarOpen(false); // サイドバーも閉じる
   };
 
   // 合計金額・合計数量
@@ -65,8 +84,7 @@ export default function App() {
   
   const displayedItems = menuItems.filter((item) => item.categoryId === activeCategory);
 
-  // === UI構築 ===
-  // 共通のカートリストUI（サイドバー・モーダル両方で使う部品）
+  // === 共通コンポーネント: カートリスト ===
   const CartItemList = () => (
     <>
       <div className="cart-items">
@@ -127,26 +145,37 @@ export default function App() {
       {/* メインコンテンツエリア */}
       <main className="main-content">
         <header className="app-header">
-          {/* 古いテキストベースのブランドロゴを、生成されたイラストロゴ画像に置き換え */}
+          {/* 生成された新しい横長のブランドロゴを左上に配置 */}
           <div className="brand">
             <img src="/app-logo.png" alt="Smart Cafe Logo" className="brand-logo" />
           </div>
         </header>
 
-        <div className="category-tabs">
-          {categories.map((category) => {
-            const Icon = IconMap[category.icon] || Coffee;
-            return (
-              <button
-                key={category.id}
-                className={`tab-btn ${activeCategory === category.id ? 'active' : ''}`}
-                onClick={() => setActiveCategory(category.id)}
-              >
-                <Icon size={18} />
-                {category.labelJa} <span>/ {category.labelEn}</span>
-              </button>
-            );
-          })}
+        {/* スクロール可能なカテゴリタブ */}
+        <div className="category-tabs-wrapper">
+          <button className="scroll-arrow left" onClick={() => scrollTabs('left')}>
+            <ChevronLeft size={24} />
+          </button>
+          
+          <div className="category-tabs" ref={tabsRef}>
+            {categories.map((category) => {
+              const Icon = IconMap[category.icon] || Coffee;
+              return (
+                <button
+                  key={category.id}
+                  className={`tab-btn ${activeCategory === category.id ? 'active' : ''}`}
+                  onClick={() => setActiveCategory(category.id)}
+                >
+                  <Icon size={18} />
+                  {category.labelJa} <span>/ {category.labelEn}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <button className="scroll-arrow right" onClick={() => scrollTabs('right')}>
+            <ChevronRight size={24} />
+          </button>
         </div>
 
         <div className="menu-area">
@@ -155,7 +184,7 @@ export default function App() {
               <div 
                 key={item.id} 
                 className="product-card" 
-                onClick={() => setSelectedProduct(item)} // カート直行ではなく「詳細」を開く
+                onClick={() => setSelectedProduct(item)} // 詳細を開く
               >
                 <div className="product-img-wrap">
                   <img src={item.image} alt={item.nameJa} className="product-img" loading="lazy" />
@@ -185,7 +214,7 @@ export default function App() {
           <div className="cart-badge">{totalQuantity}</div>
         </button>
 
-        {/* ===== 5. 商品詳細画面 ===== */}
+        {/* 商品詳細画面 */}
         {selectedProduct && (
           <div className="product-detail-overlay">
             <div className="detail-header">
@@ -203,11 +232,7 @@ export default function App() {
                   <p className="detail-title-en">{selectedProduct.nameEn}</p>
                   <p className="detail-price">¥{selectedProduct.price.toLocaleString()}</p>
                 </div>
-                
-                <div className="detail-desc">
-                  {selectedProduct.description}
-                </div>
-
+                <div className="detail-desc">{selectedProduct.description}</div>
                 <div className="detail-action">
                   <button className="add-to-cart-large" onClick={() => addToCart(selectedProduct)}>
                     <Plus size={24} />
@@ -220,24 +245,39 @@ export default function App() {
         )}
       </main>
 
-      {/* デスクトップ用右側サイドバーカート（モバイルではCSSで非表示） */}
-      <aside className="cart-sidebar">
+      {/* デスクトップ用右側スライドイン・サイドバーカート */}
+      <aside className={`cart-sidebar ${isSidebarOpen ? 'open' : ''}`}>
         <div className="cart-header">
           <div className="cart-header-title">
             <ShoppingBag size={24} color="var(--primary)" />
             <h2>マイオーダー / Order</h2>
           </div>
+          <button className="close-sidebar-btn" onClick={() => setIsSidebarOpen(false)}>
+            <X size={24} />
+          </button>
         </div>
         <CartItemList />
       </aside>
 
-      {/* ===== 6. マルチステップ・チェックアウトモーダル ===== */}
+      {/* デスクトップ用：カート引き出し用「付箋ボタン」 */}
+      <button 
+        className={`desktop-cart-toggle ${isSidebarOpen ? 'open' : ''}`} 
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+      >
+        <div className="toggle-inner">
+          <div className="toggle-icon">
+            {isSidebarOpen ? <X size={24} /> : <ShoppingBag size={24} />}
+          </div>
+          <span>カートの中を見る / View Cart</span>
+          {totalQuantity > 0 && <div className="toggle-badge">{totalQuantity}</div>}
+        </div>
+      </button>
+
+      {/* マルチステップ・チェックアウトモーダル */}
       {checkoutStep > 0 && (
         <div className="modal-overlay" onClick={() => checkoutStep === 1 && setCheckoutStep(0)}>
-          {/* onClick={(e) => e.stopPropagation()} で背景クリックによる閉じを防止 */}
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             
-            {/* ステップ1：注文内容確認（主にモバイル向け。PCでもモーダルとして表示） */}
             {checkoutStep === 1 && (
               <>
                 <div className="cart-header">
@@ -253,33 +293,25 @@ export default function App() {
               </>
             )}
 
-            {/* ステップ2：店内・持ち帰り選択 */}
             {checkoutStep === 2 && (
               <div className="step-centered">
                 <button 
                   className="close-modal" 
                   style={{ position: 'absolute', top: 16, right: 16 }}
                   onClick={() => setCheckoutStep(1)}
-                  aria-label="戻る"
                 >
                   <X size={24} />
                 </button>
-                
                 <h2 className="modal-title">お召し上がり方</h2>
                 <p className="modal-subtitle">Dining Preference</p>
-                
                 <div className="dining-options">
                   <button className="option-btn" onClick={() => setCheckoutStep(3)}>
-                    <div className="option-icon">
-                      <UtensilsCrossed size={36} />
-                    </div>
+                    <div className="option-icon"><UtensilsCrossed size={36} /></div>
                     <span className="option-text-ja">店内飲食</span>
                     <span className="option-text-en">Eat In</span>
                   </button>
                   <button className="option-btn" onClick={() => setCheckoutStep(3)}>
-                    <div className="option-icon">
-                      <ShoppingBag size={36} />
-                    </div>
+                    <div className="option-icon"><ShoppingBag size={36} /></div>
                     <span className="option-text-ja">お持ち帰り</span>
                     <span className="option-text-en">Take Out</span>
                   </button>
@@ -287,7 +319,6 @@ export default function App() {
               </div>
             )}
 
-            {/* ステップ3：完了画面 */}
             {checkoutStep === 3 && (
               <div className="step-centered success-message">
                 <CheckCircle2 size={64} className="success-icon" />
@@ -299,7 +330,7 @@ export default function App() {
                 </button>
               </div>
             )}
-
+            
           </div>
         </div>
       )}

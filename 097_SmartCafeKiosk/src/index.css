@@ -42,45 +42,74 @@ button {
   display: flex;
   height: 100vh;
   overflow: hidden;
+  position: relative; /* 固定要素の基準に */
 }
 
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  position: relative;
+  overflow: hidden; /* コンテンツがはみ出さないように */
 }
 
 /* ======== ヘッダー & 新ロゴ ======== */
 .app-header {
-  padding: 16px 32px;
+  padding: 12px 32px; /* 少し余白を詰める */
   background-color: var(--surface);
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  justify-content: center; /* ロゴを中央に */
+  justify-content: flex-start; /* ロゴを左上に配置 */
 }
 
 .brand {
   display: flex;
-  justify-content: center;
 }
 
 .brand-logo {
-  height: 60px; /* 適切な高さに調整 */
+  height: 64px; /* 横長ロゴがしっかり見える大きさ */
   object-fit: contain;
 }
 
-/* ======== カテゴリタブ ======== */
-.category-tabs {
+/* ======== カテゴリタブ (スクロール対応) ======== */
+.category-tabs-wrapper {
   display: flex;
-  padding: 16px 32px;
-  gap: 16px;
+  align-items: center;
   background-color: var(--surface);
   border-bottom: 1px solid var(--border);
-  overflow-x: auto;
+  position: relative;
 }
+
+.scroll-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 100%;
+  background-color: var(--surface);
+  color: var(--text-muted);
+  z-index: 2;
+  transition: all 0.2s;
+  flex-shrink: 0; /* 圧縮されないように */
+}
+
+.scroll-arrow:hover {
+  color: var(--primary);
+  background-color: var(--background);
+}
+
+.scroll-arrow.left { border-right: 1px solid var(--border); }
+.scroll-arrow.right { border-left: 1px solid var(--border); }
+
+.category-tabs {
+  display: flex;
+  padding: 16px;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  flex: 1; /* 残りのスペースを利用 */
+}
+/* スクロールバー非表示（Webkit） */
 .category-tabs::-webkit-scrollbar {
   display: none;
 }
@@ -118,7 +147,7 @@ button {
   flex: 1;
   overflow-y: auto;
   padding: 32px;
-  padding-bottom: 100px; /* モバイル用フロートボタンの余白 */
+  padding-bottom: 100px;
 }
 
 .menu-grid {
@@ -206,7 +235,7 @@ button {
   font-weight: bold;
 }
 
-/* ======== 商品詳細画面 (フルスクリーンまたは巨大モーダル) ======== */
+/* ======== 商品詳細画面 ======== */
 .product-detail-overlay {
   position: absolute;
   top: 0;
@@ -214,7 +243,7 @@ button {
   width: 100%;
   height: 100%;
   background-color: var(--background);
-  z-index: 50;
+  z-index: 50; /* サイドバー(90)よりも下だがメニューより上 */
   display: flex;
   flex-direction: column;
   animation: slideInFromRight 0.3s ease;
@@ -325,28 +354,33 @@ button {
   transition: transform 0.1s, opacity 0.2s;
 }
 
-.add-to-cart-large:hover {
-  opacity: 0.9;
-}
-
-.add-to-cart-large:active {
-  transform: scale(0.98);
-}
+.add-to-cart-large:hover { opacity: 0.9; }
+.add-to-cart-large:active { transform: scale(0.98); }
 
 @keyframes slideInFromRight {
   from { transform: translateX(100%); }
   to { transform: translateX(0); }
 }
 
-/* ======== デスクトップ用カート（右サイドバー） ======== */
+/* ======== デスクトップ用カート（右サイドバー / スライドイン） ======== */
 .cart-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
   width: 380px;
+  height: 100vh;
   background-color: var(--surface);
   border-left: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  box-shadow: -4px 0 12px rgba(0,0,0,0.03);
-  z-index: 10;
+  box-shadow: -8px 0 24px rgba(0,0,0,0.1);
+  z-index: 90; /* かなり上に表示 */
+  transform: translateX(100%); /* 初期状態は隠す */
+  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.cart-sidebar.open {
+  transform: translateX(0); /* 出現！ */
 }
 
 /* ======== カート（共通要素） ======== */
@@ -365,6 +399,21 @@ button {
   font-size: 20px;
   color: var(--primary);
   font-weight: bold;
+}
+
+/* サイドバーを閉じる専用のボタン（モバイルモーダルではXボタンとして再利用） */
+.close-sidebar-btn {
+  padding: 8px;
+  color: var(--text-muted);
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  display: flex;
+  background-color: var(--background);
+}
+
+.close-sidebar-btn:hover {
+  background-color: var(--border);
+  color: var(--text-main);
 }
 
 .cart-items {
@@ -439,9 +488,7 @@ button {
   transition: background-color 0.1s;
 }
 
-.qty-btn:active {
-  background-color: var(--border);
-}
+.qty-btn:active { background-color: var(--border); }
 
 .qty-text {
   font-weight: bold;
@@ -486,16 +533,64 @@ button {
   box-shadow: 0 4px 10px rgba(92, 64, 51, 0.3);
 }
 
-.checkout-btn:hover {
-  opacity: 0.9;
-}
-
+.checkout-btn:hover { opacity: 0.9; }
 .checkout-btn:disabled {
   background-color: var(--text-muted);
   box-shadow: none;
   cursor: not-allowed;
   opacity: 0.5;
 }
+
+/* ======== デスクトップ用：付箋（カートトグル）ボタン ======== */
+.desktop-cart-toggle {
+  position: fixed;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 80;
+  background-color: var(--primary);
+  color: white;
+  border-radius: 16px 0 0 16px; /* 左側だけ角丸 */
+  box-shadow: -4px 0 12px rgba(92, 64, 51, 0.2);
+  padding: 24px 12px;
+  transition: right 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.desktop-cart-toggle.open {
+  right: 380px; /* サイドバーの幅と同じだけ左に押し出す */
+}
+
+.toggle-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  writing-mode: vertical-rl; /* 縦書き */
+  font-weight: bold;
+  font-size: 16px;
+  letter-spacing: 2px;
+}
+
+/* アイコンと数字の向きを揃える */
+.toggle-icon {
+  transform: rotate(90deg);
+  display: flex;
+}
+
+.toggle-badge {
+  background-color: white;
+  color: var(--primary);
+  min-width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  padding: 0 8px;
+  transform: rotate(90deg);
+}
+
 
 /* ======== モバイル用フローティングカートボタン ======== */
 .mobile-cart-float {
@@ -673,15 +768,14 @@ button {
 
 /* ======== レスポンシブ対応 ======== */
 @media (max-width: 900px) {
-  /* スマホ・タブレットでは右サイドバーを完全非表示にする */
-  .cart-sidebar {
-    display: none;
+  /* スマホ・タブレットではデスクトップ用サイドバー＆トグルボタンを完全非表示 */
+  .cart-sidebar, .desktop-cart-toggle {
+    display: none !important;
   }
   
-  /* メニューグリッドの下に余裕を持たせる */
   .menu-area {
     padding: 16px;
-    padding-bottom: 90px; 
+    padding-bottom: 100px; 
   }
   
   .menu-grid {
@@ -698,15 +792,13 @@ button {
     flex-direction: column;
   }
 
-  /* カートに商品があるときだけフロートボタンを表示 */
   .mobile-cart-float.show {
     display: flex;
   }
   
-  /* カートレビューモーダルの調整 */
   .modal-content {
     height: 95vh;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    margin-top: auto; /* 下からスライドアップするドロワー風 */
+    margin-top: auto;
   }
 }
