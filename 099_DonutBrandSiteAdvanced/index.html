@@ -3,125 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BEYOND NORMAL | Gourmet Donut Shop</title>
-    <!-- フォントの読み込み: Inter / Cinzel / Noto Serif JP -->
+    <title>Gourmet Donut Shop</title>
+    <!-- フォントの読み込み: Inter と 游明朝/Noto Serif JP などで洗練された印象に -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+JP:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
-    <!-- 生成したファビコンの設定 -->
+    <!-- ファビコンの設定 (前回のファビコンを維持。失敗時のフォールバックもコメントで残す) -->
     <link rel="icon" href="favicon.png">
     <!-- 
-      ※もし画像の読み込みがうまくいかない場合は、上の<link>をコメントアウトし、
-      以下のドーナツ絵文字SVGフォールバックのコメントを外して使用してください。
       <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text x=%2250%%22 y=%2250%%22 style=%22dominant-baseline:central;text-anchor:middle;font-size:90px;%22>🍩</text></svg>">
     -->
 </head>
 <body>
 
-    <!-- ヘッダーロゴ (固定) -->
-    <header class="header">
-        <div class="header-logo">
-            <span class="en">BEYOND NORMAL</span>
+    <!-- 消失した完全なHero Areaの復元 -->
+    <section class="hero fade-in">
+        <div class="hero-image-wrapper">
+            <img src="hero.png" alt="Masterpiece Donut" class="hero-img">
         </div>
-    </header>
-
-    <!-- メイン：大画面カルーセル（Hero Section） -->
-    <section class="hero-carousel">
-        <div class="hero-bg-text">
-            <span>DONUT</span>
-            <span>ART</span>
-        </div>
-        
-        <div class="carousel-container fade-in">
-            <!-- カルーセルのトラック -->
-            <div class="carousel-track">
-                <!-- 
-                  ※画像パスは絶対に書き換えず、既存のまま使用しています。
-                  data属性でモーダル表示用の情報を持たせています。
-                -->
-                <div class="carousel-item" data-index="0" 
-                     data-name="Pistachio Glaze" 
-                     data-name-ja="ピスタチオグレーズ" 
-                     data-desc="豊かなピスタチオの香りと、上品な甘さのグレーズが調和したシグネチャー。極上の一口をお楽しみください。" 
-                     data-img="./donut1.png">
-                    <img src="./donut1.png" alt="Pistachio Glaze">
-                </div>
-                <div class="carousel-item" data-index="1" 
-                     data-name="Dark Chocolate" 
-                     data-name-ja="ダークチョコレートガナッシュ" 
-                     data-desc="カカオ70%以上のビターチョコレートを贅沢に使用。甘さを抑えた大人のための味わいです。" 
-                     data-img="./donut2.png">
-                    <img src="./donut2.png" alt="Dark Chocolate">
-                </div>
-                <div class="carousel-item" data-index="2" 
-                     data-name="Raspberry Fill" 
-                     data-name-ja="ラズベリーフィル" 
-                     data-desc="甘酸っぱいラズベリーソースがたっぷり詰まった、見た目も華やかなフルーティーな一品。" 
-                     data-img="./donut3.png">
-                    <img src="./donut3.png" alt="Raspberry Fill">
-                </div>
-                <div class="carousel-item" data-index="3" 
-                     data-name="Matcha Cream" 
-                     data-name-ja="抹茶ホワイトクリーム" 
-                     data-desc="厳選された宇治抹茶のほろ苦さと、なめらかなホワイトチョコクリームの絶妙なバランス。" 
-                     data-img="./donut4.png">
-                    <img src="./donut4.png" alt="Matcha Cream">
-                </div>
-                <div class="carousel-item" data-index="4" 
-                     data-name="Classic Honey" 
-                     data-name-ja="クラシックハニーディップ" 
-                     data-desc="はちみつの優しい甘さが口いっぱいに広がる、シンプルだからこそ素材が際立つフレーバー。" 
-                     data-img="./donut5.png">
-                    <img src="./donut5.png" alt="Classic Honey">
-                </div>
-            </div>
-            
-            <!-- 中央のドーナツに合わせて動的に切り替わるテキスト -->
-            <div class="carousel-info">
-                <h2 class="carousel-name" id="carouselName">Pistachio Glaze</h2>
-                <p class="carousel-desc" id="carouselDesc">ピスタチオグレーズ</p>
-                <div class="click-hint">
-                    <span class="en">Click for Details</span>
-                    <span class="ja">クリックで詳細を見る</span>
-                </div>
-            </div>
+        <div class="hero-text">
+            <h1 class="main-title">BEYOND NORMAL</h1>
+            <p class="sub-title">日常を超える、一口の体験。</p>
         </div>
     </section>
 
-    <!-- モーダルウィンドウ（詳細表示） -->
-    <div id="detailModal" class="modal-overlay hidden">
-        <div class="modal-container">
-            <button id="modalCloseBtn" class="modal-close-btn" aria-label="Close modal">
-                <span class="cross-icon"></span>
-                <span class="en">Close</span>
-                <span class="ja">閉じる</span>
-            </button>
-            <div class="modal-content">
-                <div class="modal-image-wrapper">
-                    <img id="modalImage" src="" alt="Donut Image">
-                </div>
-                <div class="modal-text-wrapper">
-                    <h3 class="modal-title-en" id="modalTitleEn"></h3>
-                    <h4 class="modal-title-ja" id="modalTitleJa"></h4>
-                    <p class="modal-description" id="modalDescription"></p>
-                    
-                    <!-- インナーナビゲーション（他のドーナツ） -->
-                    <div class="modal-thumbnails">
-                        <p class="thumbnails-title">
-                            <span class="en">Other Flavors</span> · <span class="ja">他のフレーバー</span>
-                        </p>
-                        <div class="thumbnail-list" id="thumbnailList">
-                            <!-- JSで自動生成 -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Concept -->
+    <!-- 消失した完全なConceptセクションの復元 -->
     <section class="concept">
         <div class="container container-flex">
             <div class="concept-text fade-in">
@@ -146,7 +54,99 @@
         </div>
     </section>
 
-    <!-- Shop Info -->
+    <!-- ★Menu (ここだけを「大画面カルーセル」にアップグレード) -->
+    <section class="menu fullscreen-menu fade-in">
+        <div class="container container-center">
+            <h2 class="section-title">
+                <span class="en">SIGNATURE MENU</span>
+                <span class="ja">おすすめメニュー</span>
+            </h2>
+        </div>
+        
+        <div class="carousel-container">
+            <div class="carousel-track">
+                <!-- Data属性を追加し、元のパス「./donut1.png」などを完全維持 -->
+                <div class="carousel-item" data-index="0"
+                     data-name="Pistachio Glaze" 
+                     data-name-ja="ピスタチオグレーズ" 
+                     data-desc="豊かなピスタチオの香りと、上品な甘さのグレーズが調和したシグネチャー。極上の一口をお楽しみください。" 
+                     data-img="./donut1.png">
+                    <img src="./donut1.png" alt="Donut 1">
+                </div>
+                <div class="carousel-item" data-index="1"
+                     data-name="Dark Chocolate" 
+                     data-name-ja="ダークチョコレートガナッシュ" 
+                     data-desc="カカオ70%以上のビターチョコレートを贅沢に使用。甘さを抑えた大人のための味わいです。" 
+                     data-img="./donut2.png">
+                    <img src="./donut2.png" alt="Donut 2">
+                </div>
+                <div class="carousel-item" data-index="2"
+                     data-name="Raspberry Fill" 
+                     data-name-ja="ラズベリーフィル" 
+                     data-desc="甘酸っぱいラズベリーソースがたっぷり詰まった、見た目も華やかなフルーティーな一品。" 
+                     data-img="./donut3.png">
+                    <img src="./donut3.png" alt="Donut 3">
+                </div>
+                <div class="carousel-item" data-index="3"
+                     data-name="Matcha Cream" 
+                     data-name-ja="抹茶ホワイトクリーム" 
+                     data-desc="厳選された宇治抹茶のほろ苦さと、なめらかなホワイトチョコクリームの絶妙なバランス。" 
+                     data-img="./donut4.png">
+                    <img src="./donut4.png" alt="Donut 4">
+                </div>
+                <div class="carousel-item" data-index="4"
+                     data-name="Classic Honey" 
+                     data-name-ja="クラシックハニーディップ" 
+                     data-desc="はちみつの優しい甘さが口いっぱいに広がる、シンプルだからこそ素材が際立つフレーバー。" 
+                     data-img="./donut5.png">
+                    <img src="./donut5.png" alt="Donut 5">
+                </div>
+            </div>
+            
+            <div class="carousel-info">
+                <h3 class="carousel-name" id="carouselName">Pistachio Glaze</h3>
+                <p class="carousel-desc" id="carouselDesc">ピスタチオグレーズ</p>
+                <!-- バイリンガルUI: 詳細表示クリック誘導 -->
+                <div class="click-hint">
+                    <span class="en">Click for Details</span>
+                    <span class="ja">クリックして詳細を見る</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 新規追加：詳細表示モーダルウィンドウ -->
+    <div id="detailModal" class="modal-overlay hidden">
+        <div class="modal-container">
+            <button id="modalCloseBtn" class="modal-close-btn" aria-label="Close modal">
+                <span class="cross-icon"></span>
+                <span class="en">Close</span>
+                <span class="ja">閉じる</span>
+            </button>
+            <div class="modal-content">
+                <div class="modal-image-wrapper">
+                    <img id="modalImage" src="" alt="Donut Image">
+                </div>
+                <div class="modal-text-wrapper">
+                    <h3 class="modal-title-en" id="modalTitleEn"></h3>
+                    <h4 class="modal-title-ja" id="modalTitleJa"></h4>
+                    <p class="modal-description" id="modalDescription"></p>
+                    
+                    <!-- インナーナビゲーション（他のドーナツ） -->
+                    <div class="modal-thumbnails">
+                        <p class="thumbnails-title">
+                            <span class="en">Other Flavors</span> / <span class="ja">他のフレーバー</span>
+                        </p>
+                        <div class="thumbnail-list" id="thumbnailList">
+                            <!-- JSで自動生成 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 消失した完全なShop Infoセクションの復元 -->
     <section class="shop-info fade-in">
         <div class="shop-image-wrapper">
             <img src="shop.png" alt="Shop Exterior" class="shop-img">
@@ -158,7 +158,7 @@
             </h2>
             <p class="address">
                 150-0000 東京都渋谷区神宮前X-X-X<br>
-                <span class="en">Open 11:00 - 19:00 (Closed on Tuesday)</span>
+                Open 11:00 - 19:00 (Closed on Tuesday)
             </p>
             <a href="#" class="instagram-link">
                 <span class="btn-text">Follow on Instagram</span>
@@ -166,7 +166,7 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- 消失した完全なFooterの復元 -->
     <footer class="footer">
         <p class="copyright">&copy; 2026 Gourmet Donut Shop. All rights reserved.</p>
     </footer>

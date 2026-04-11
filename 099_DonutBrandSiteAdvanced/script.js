@@ -1,8 +1,8 @@
 /**
  * 099 DonutBrandSite Advanced
  * 
- * Intersection Observer, Hero Carousel, Rich Modal with Inner Navigation
- * 全てをVanilla JSで実装。XSS対策として textContent を徹底。
+ * Intersection Observer, 大きなHero Carousel表示, 
+ * リッチなModal Window + Inner Navigation
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -29,14 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
     fadeElements.forEach(element => observer.observe(element));
 
     // ==========================================
-    // 2. 大画面インタラクティブ・カルーセル
+    // 2. インタラクティブ無限カルーセル（大画面・ふわっふわ仕様）
     // ==========================================
     const carouselItems = document.querySelectorAll('.carousel-item');
     const nameEl = document.getElementById('carouselName');
     const descEl = document.getElementById('carouselDesc');
     const carouselTrack = document.querySelector('.carousel-track');
 
-    // DOMからデータを抽出して配列化
+    // HTMLのdata属性からデータを抽出
     const donutData = Array.from(carouselItems).map(item => ({
         index: parseInt(item.getAttribute('data-index')),
         name: item.getAttribute('data-name'),
@@ -58,13 +58,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (pos === 0) {
                 item.classList.add('active'); // 中央
             } else if (pos === 1) {
-                item.classList.add('next');   // 右
+                item.classList.add('next');   // 右に見切れる
             } else if (pos === 2) {
-                item.classList.add('hidden-right'); 
+                item.classList.add('hidden-right'); // 右の見えない位置
             } else if (pos === 3) {
-                item.classList.add('hidden-left');  
+                item.classList.add('hidden-left');  // 左の見えない位置
             } else if (pos === 4) {
-                item.classList.add('prev');   // 左
+                item.classList.add('prev');   // 左に見切れる
             }
         });
 
@@ -73,13 +73,13 @@ document.addEventListener('DOMContentLoaded', () => {
         descEl.classList.add('fade-out');
         
         setTimeout(() => {
-            // 安全な textContent で書き換え (XSS対策)
+            // セキュリティ対策（XSS防御）：textContentを利用して値をセット
             nameEl.textContent = donutData[currentIndex].name;
             descEl.textContent = donutData[currentIndex].nameJa;
             
             nameEl.classList.remove('fade-out');
             descEl.classList.remove('fade-out');
-        }, 400); // CSSの opacity トランジション時間と合わせる
+        }, 500); // 新しいCSSのアニメーション（長め）に合わせる
     }
 
     // カルーセル画像のクリック処理
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // 中央のアイテムをクリックしたらモーダルを開く
                 openModal(index);
             } else {
-                // それ以外は中央へ移動
+                // それ以外はクリックで中央へ移動
                 currentIndex = index;
                 updateCarousel();
             }
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 初期化
     updateCarousel();
 
-    // スワイプ操作対応
+    // スマホ向けスワイプ操作対応
     let touchStartX = 0;
     let touchEndX = 0;
 
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // 3. リッチなモーダルウィンドウ処理
+    // 3. リッチなモーダルウィンドウとインナーナビ
     // ==========================================
     const modalOverlay = document.getElementById('detailModal');
     const modalCloseBtn = document.getElementById('modalCloseBtn');
@@ -132,58 +132,49 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalTitleJa = document.getElementById('modalTitleJa');
     const modalDescription = document.getElementById('modalDescription');
     const thumbnailList = document.getElementById('thumbnailList');
-    const modalContent = document.querySelector('.modal-content'); // トランジション用
+    const modalContent = document.querySelector('.modal-content');
 
-    // モーダルを開く関数
+    // モーダルを開く
     function openModal(dataIndex) {
-        // コンテンツをセット
         setModalContent(dataIndex, false);
-        // サムネイルを生成
         generateThumbnails(dataIndex);
         
-        // モーダル表示
         modalOverlay.classList.remove('hidden');
-        // 少し遅延させないと opacity のトランジションが効かないため
         setTimeout(() => {
             modalOverlay.classList.add('active');
         }, 10);
         
-        // 背景のスクロールを止める
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden'; // 背景スクロール停止
     }
 
-    // モーダルを閉じる関数
+    // モーダルを閉じる
     function closeModal() {
         modalOverlay.classList.remove('active');
         setTimeout(() => {
             modalOverlay.classList.add('hidden');
-            document.body.style.overflow = ''; // スクロール復活
-        }, 500); // 0.5s transition
+            document.body.style.overflow = '';
+        }, 500);
     }
 
-    // モーダル内のコンテンツをセットする（transition付）
+    // モーダル内コンテンツを切り替える
     function setModalContent(index, useTransition = true) {
         const data = donutData[index];
 
         if (useTransition) {
-            // ふわっと切り替えるためのクラスを追加
             modalContent.classList.add('modal-transitioning');
-            
             setTimeout(() => {
-                // 安全な textContent および setAttribute を使用（XSS対策）
+                // XSS対策としてDOMへ安全にセット
                 modalImage.setAttribute('src', data.img);
                 modalImage.setAttribute('alt', data.name);
                 modalTitleEn.textContent = data.name;
                 modalTitleJa.textContent = data.nameJa;
                 modalDescription.textContent = data.desc;
                 
-                // 少し待ってから表示クラスを外してフェードイン
                 setTimeout(() => {
                     modalContent.classList.remove('modal-transitioning');
                 }, 50);
-            }, 400); // CSSの opacity 時間(0.4s)に合わせる
+            }, 400); 
         } else {
-            // 初回表示時は直接セット
             modalImage.setAttribute('src', data.img);
             modalImage.setAttribute('alt', data.name);
             modalTitleEn.textContent = data.name;
@@ -192,9 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // モーダル内のサムネイル（インナーナビゲーション）を生成
+    // サムネイル生成
     function generateThumbnails(activeIndex) {
-        // 初期化
         thumbnailList.innerHTML = '';
         
         donutData.forEach((data, index) => {
@@ -212,18 +202,14 @@ document.addEventListener('DOMContentLoaded', () => {
             
             btn.appendChild(img);
 
-            // サムネイルクリック時の処理
             btn.addEventListener('click', () => {
                 if (btn.classList.contains('is-active-thumb')) return;
                 
-                // アクティブ状態の更新
                 document.querySelectorAll('.thumb-btn').forEach(b => b.classList.remove('is-active-thumb'));
                 btn.classList.add('is-active-thumb');
                 
-                // メインコンテンツ切り替え
                 setModalContent(index, true);
                 
-                // 裏のカルーセル自体も連動させておく
                 currentIndex = index;
                 updateCarousel();
             });
@@ -232,16 +218,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // モーダル閉じるイベント
     modalCloseBtn.addEventListener('click', closeModal);
     modalOverlay.addEventListener('click', (e) => {
-        // オーバーレイ部分（背景）をクリックした場合のみ閉じる
-        if (e.target === modalOverlay) {
-            closeModal();
-        }
+        if (e.target === modalOverlay) closeModal();
     });
 
-    // ESCキーでも閉じられるようにする（アクセシビリティ）
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
             closeModal();
