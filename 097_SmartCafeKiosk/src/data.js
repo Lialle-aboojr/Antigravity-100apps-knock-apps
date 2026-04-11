@@ -1,6 +1,7 @@
 export const categories = [
   { id: 'recommended', labelJa: 'おすすめ', labelEn: 'Recommended', icon: 'Star' },
-  { id: 'sets', labelJa: 'セット', labelEn: 'Sets', icon: 'ConciergeBell' },
+  { id: 'morning', labelJa: 'モーニング', labelEn: 'Morning', icon: 'Sunrise' },
+  { id: 'sets', labelJa: 'お得なセット', labelEn: 'Value Sets', icon: 'ConciergeBell' },
   { id: 'drinks', labelJa: 'ドリンク', labelEn: 'Drinks', icon: 'Coffee' },
   { id: 'foods', labelJa: 'フード', labelEn: 'Foods', icon: 'Sandwich' },
   { id: 'snacks', labelJa: 'スナック', labelEn: 'Snacks', icon: 'Cookie' },
@@ -26,6 +27,26 @@ export const menuItems = [
     price: 1200,
     description: '旬のフルーツをふんだんに使った贅沢なパフェ。手作りのジェラートとサクサクのパイ生地が絶妙なバランスです。',
     image: 'https://images.unsplash.com/photo-1563805042-7684c8e9e9cb?auto=format&fit=crop&q=80&w=600&h=400'
+  },
+
+  // モーニング (Morning)
+  {
+    id: 'm1',
+    categoryId: 'morning',
+    nameJa: '定番モーニング（厚切りトースト＆ゆで卵）',
+    nameEn: 'Classic Morning (Toast & Boiled Egg)',
+    price: 500,
+    description: '外はサクッと、中はふんわり焼き上げた厚切りトーストに、ゆで卵がついた定番のモーニングセットです。',
+    image: 'https://images.unsplash.com/photo-1525351484163-f52960a5cdb8?auto=format&fit=crop&q=80&w=600&h=400'
+  },
+  {
+    id: 'm2',
+    categoryId: 'morning',
+    nameJa: 'モーニングB（ミニサラダ付き）',
+    nameEn: 'Morning B (with Mini Salad)',
+    price: 650,
+    description: 'トーストとゆで卵に、シャキシャキの新鮮なミニサラダを加えたバランスの良い朝食セット。',
+    image: 'https://images.unsplash.com/photo-1495214783159-3503fd1b572d?auto=format&fit=crop&q=80&w=600&h=400'
   },
 
   // セット (Sets)

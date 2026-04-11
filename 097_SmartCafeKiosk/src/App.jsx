@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Coffee, Utensils, CakeSlice, Plus, Minus, X, CheckCircle2, ShoppingBag, UtensilsCrossed, ChevronLeft, ChevronRight, Star, Cookie, ConciergeBell } from 'lucide-react';
+import { Coffee, Utensils, CakeSlice, Plus, Minus, X, CheckCircle2, ShoppingBag, UtensilsCrossed, ChevronLeft, ChevronRight, Star, Cookie, ConciergeBell, Sunrise } from 'lucide-react';
 import { categories, menuItems } from './data';
 
 // カテゴリIDからlucide-reactのアイコンを動的にマッピング
@@ -9,7 +9,8 @@ const IconMap = {
   Cake: CakeSlice,
   Star,
   Cookie,
-  ConciergeBell
+  ConciergeBell,
+  Sunrise
 };
 
 export default function App() {

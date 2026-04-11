@@ -54,14 +54,14 @@ button {
 
 /* ======== ヘッダー & 新ロゴ ======== */
 .app-header {
-  padding: 8px 32px; /* 余白を詰めてロゴにスペースを渡す */
+  padding: 20px 32px; /* 余白をさらに持たせて高さを確保 */
   background-color: var(--surface);
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: flex-start; /* ロゴを左上に配置 */
-  min-height: 80px; 
-  overflow: hidden; /* はみ出した分を隠す */
+  min-height: 150px; /* ★ヘッダー自体の高さを広げてロゴが大きく見えるように調整 */
+  /* overflow: hidden を消して、画像が少々はみ出ても大丈夫なように */
 }
 
 .brand {
@@ -69,11 +69,11 @@ button {
 }
 
 .brand-logo {
-  height: 70px; 
+  height: 100px; /* ★ロゴの高さをさらにアップ (約80〜100px程度) */
   width: auto;
   object-fit: contain;
-  /* 画像生成特有の内部余白（白枠）をカットするため、CSSで2倍に拡大表示します */
-  transform: scale(2.0);
+  /* 画像内の余白を消して実質サイズをさらに数倍に拡大（白背景画像対策） */
+  transform: scale(3.0); /* ★さらに30%〜50%大きく表示 */
   transform-origin: left center;
 }
 
