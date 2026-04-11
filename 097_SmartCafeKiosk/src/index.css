@@ -56,12 +56,24 @@ button {
 .app-header {
   padding: 20px 32px; /* 余白をさらに持たせて高さを確保 */
   background-color: var(--surface);
-  border-bottom: 1px solid var(--border);
+  /* border-bottom: 1px solid var(--border); を疑似要素に変更して画像を上書きする */
   display: flex;
   align-items: center;
   justify-content: flex-start; /* ロゴを左上に配置 */
   min-height: 150px; /* ★ヘッダー自体の高さを広げてロゴが大きく見えるように調整 */
-  /* overflow: hidden を消して、画像が少々はみ出ても大丈夫なように */
+  position: relative; /* 疑似要素の基準点 */
+}
+
+/* ★境界ファイルをロゴの上に重ねるための疑似要素 */
+.app-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--border);
+  z-index: 10; /* ロゴより手前に表示 */
 }
 
 .brand {
