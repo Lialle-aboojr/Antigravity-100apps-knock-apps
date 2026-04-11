@@ -169,12 +169,17 @@ Menu (大画面カルーセル・アップグレード)
 .menu.fullscreen-menu {
     width: 100vw;
     height: 100vh;
-    padding: 10vh 0;
+    min-height: 850px; /* PCで十分な高さを確保し、重なりを防ぐ */
+    padding: 12vh 0; /* 上下のパディングを増やして空間を確保 */
     display: flex;
     flex-direction: column;
     justify-content: center;
     overflow: hidden;
     background: radial-gradient(circle at center, #ffffff 0%, #fcfbf9 70%);
+}
+
+.fullscreen-menu .container-center {
+    margin-bottom: 4vh; /* 「おすすめメニュー」タイトルとカルーセルの間隔を拡大 */
 }
 
 .carousel-container {
@@ -190,17 +195,20 @@ Menu (大画面カルーセル・アップグレード)
 .carousel-track {
     position: relative;
     width: 100%;
-    height: 50vh;
+    height: 45vh; /* 高さを調整して文字との被りを防止 */
+    min-height: 380px;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 4vh 0; /* 画像上下にしっかりと余白を持たせる */
 }
 
 .carousel-item {
     position: absolute;
     top: 50%;
     left: 50%;
-    width: clamp(280px, 35vw, 550px);
+    /* 画面サイズに応じつつ、高さを超えないように min() を活用して上限を設定 */
+    width: clamp(250px, min(32vw, 42vh), 480px);
     aspect-ratio: 1;
     transform: translate(-50%, -50%);
     /* 切り替え速度やイージングの調整。「ふわっふわ」な動きへ変更 */
@@ -228,23 +236,23 @@ Menu (大画面カルーセル・アップグレード)
     filter: drop-shadow(0 40px 50px rgba(0,0,0,0.2));
 }
 .carousel-item.prev {
-    transform: translate(calc(-50% - 35vw), -50%) scale(0.65);
+    transform: translate(calc(-50% - 32vw), -50%) scale(0.65);
     opacity: 0.4;
     z-index: 2;
 }
 .carousel-item.next {
-    transform: translate(calc(-50% + 35vw), -50%) scale(0.65);
+    transform: translate(calc(-50% + 32vw), -50%) scale(0.65);
     opacity: 0.4;
     z-index: 2;
 }
 .carousel-item.hidden-left {
-    transform: translate(calc(-50% - 60vw), -50%) scale(0.4);
+    transform: translate(calc(-50% - 55vw), -50%) scale(0.4);
     opacity: 0;
     z-index: 1;
     pointer-events: none;
 }
 .carousel-item.hidden-right {
-    transform: translate(calc(-50% + 60vw), -50%) scale(0.4);
+    transform: translate(calc(-50% + 55vw), -50%) scale(0.4);
     opacity: 0;
     z-index: 1;
     pointer-events: none;
@@ -257,8 +265,8 @@ Menu (大画面カルーセル・アップグレード)
 /* ドーナツ情報（テキスト） */
 .carousel-info {
     text-align: center;
-    margin-top: 4vh;
-    min-height: 90px;
+    margin-top: 6vh; /* 上部（画像）との間隔をさらに拡大し余裕を持たせる */
+    min-height: 100px;
     z-index: 10;
 }
 .carousel-name {
@@ -472,11 +480,12 @@ Footer (フッター) - 復元
     .sub-title { font-size: 0.9rem; }
     
     /* 大画面カルーセル用 */
-    .menu.fullscreen-menu { padding: 5vh 0; }
-    .carousel-track { height: 40vh; }
+    .menu.fullscreen-menu { padding: 8vh 0; min-height: auto; }
+    .carousel-track { height: 40vh; margin: 3vh 0; }
     .carousel-item { width: clamp(220px, 60vw, 300px); }
     .carousel-item.prev { transform: translate(calc(-50% - 40vw), -50%) scale(0.65); }
     .carousel-item.next { transform: translate(calc(-50% + 40vw), -50%) scale(0.65); }
+    .carousel-info { margin-top: 4vh; }
 
     /* モーダル用 */
     .modal-container { width: 95%; max-height: 90vh; overflow-y: auto; }
