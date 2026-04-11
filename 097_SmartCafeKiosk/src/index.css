@@ -54,13 +54,13 @@ button {
 
 /* ======== ヘッダー & 新ロゴ ======== */
 .app-header {
-  padding: 20px 32px; /* 余白をさらに持たせて高さを確保 */
+  padding: 16px 32px; /* ロゴサイズに合わせて適切な余白を確保 */
   background-color: var(--surface);
   /* border-bottom: 1px solid var(--border); を疑似要素に変更して画像を上書きする */
   display: flex;
   align-items: center;
   justify-content: flex-start; /* ロゴを左上に配置 */
-  min-height: 150px; /* ★ヘッダー自体の高さを広げてロゴが大きく見えるように調整 */
+  min-height: 80px; /* ★ロゴサイズ変更に伴い、高さを最適化 */
   position: relative; /* 疑似要素の基準点 */
 }
 
@@ -81,12 +81,9 @@ button {
 }
 
 .brand-logo {
-  height: 100px; /* ★ロゴの高さをさらにアップ (約80〜100px程度) */
-  width: auto;
+  height: 60px !important; /* 絶対に縦60pxで固定 */
+  width: auto !important; /* 横幅は自動調整（比率維持） */
   object-fit: contain;
-  /* 画像内の余白を消して実質サイズをさらに数倍に拡大（白背景画像対策） */
-  transform: scale(3.0); /* ★さらに30%〜50%大きく表示 */
-  transform-origin: left center;
 }
 
 /* ======== カテゴリタブ (スクロール対応) ======== */
