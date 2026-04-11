@@ -7,30 +7,33 @@ import './index.css';
  * メインアプリケーションコンポーネント
  * 画面全体のスクロール制御と、構成要素（3Dキャンバス＋ポップアップ）を統合する。
  * 
- * 初心者向け解説:
- * ここではReactの `useState` (状態を保持する機能) と `useEffect` (画面表示時などに処理を実行する機能) を使い、
- * ユーザーがどれくらいスクロールしたかの数値を取得・保存しています。
+ * 修正: 画面クリック時の絶望的なアラートトラップを追加
  */
 function App() {
-  // スクロール量（ピクセル）を保持する状態
   const [scrollAmount, setScrollAmount] = useState(0);
 
   useEffect(() => {
-    // スクロール時に呼ばれる関数
+    // 【ギミック1】スクロール時のイベント制御（カメラを回転させるための数値）
     const handleScroll = () => {
-      // 画面のスクロール量を取得して保存する
       setScrollAmount(window.scrollY);
     };
 
     // 強制的にスクロールさせるために一時的にbodyに高さを付与
     document.body.style.height = '1000vh';
     
-    // スクロールイベントを監視開始
+    // 【ギミック2】画面のどこかをクリックした瞬間に理不尽なアラートを出す罠
+    const handleClickTrap = () => {
+      alert("逃げられません / You cannot escape");
+    };
+
+    // スクロールとクリックのイベントを監視開始
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('click', handleClickTrap);
     
     // コンポーネントが破棄される時に監視機能を解除（クリーンアップ）
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('click', handleClickTrap);
       document.body.style.height = 'auto';
     };
   }, []);
@@ -39,7 +42,6 @@ function App() {
     <div className="app-container">
       {/* 背景に固定される3Dのカオスキャンバス */}
       <div className="canvas-wrapper">
-        {/* スクロール量を3Dキャンバスに渡して回転させる */}
         <ChaosCanvas scrollAmount={scrollAmount} />
       </div>
 
