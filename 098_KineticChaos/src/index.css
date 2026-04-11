@@ -35,7 +35,53 @@ body {
 }
 
 /* 
- * 最新トレンド：グラスモーフィズム（すりガラス効果）を適用した妨害ポップアップ
+ * 狂気の新機能：グラスモーフィズム・エントロピー
+ */
+.entropy-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 50; /* キャンバスより前、妨害ポップアップより後ろ */
+  pointer-events: none; /* 枠自体は操作を妨害しない */
+  overflow: hidden; /* 画面外の要素を見せなくする */
+}
+
+/* 物理演算で同期されるDOMのガラスカード */
+.entropy-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* 非常に強いグラスモーフィズム（多重に重なると限界を迎える） */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  pointer-events: auto; /* カード自体はドラッグ可能にする */
+  cursor: grab;
+  /* GPU描画を促しつつ、位置調整はJavaScript（transform）に委ねる */
+  will-change: transform;
+}
+
+.entropy-card:active {
+  cursor: grabbing; /* つかんでいる時のカーソル */
+  /* ここでクリック時の色を変える等も可能ですが、ドラッグ中の見た目を保持 */
+}
+
+
+/* 
+ * 既存機能：グラスモーフィズムな妨害ポップアップ
  */
 .obstruction-popup {
   position: fixed;
