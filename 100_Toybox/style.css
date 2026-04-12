@@ -194,6 +194,71 @@ html, body {
   box-shadow: 0 0 0 3px rgba(212, 165, 255, 0.35);
 }
 
+/* === ドロップゾーン === */
+#drop-zone {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg,
+    rgba(255, 107, 107, 0.92),
+    rgba(255, 183, 197, 0.92),
+    rgba(255, 215, 0, 0.92)
+  );
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 3px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 30px rgba(255, 107, 107, 0.35);
+  /* 初期状態: 非表示（上にスライドアウト） */
+  transform: translateY(-100%);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+              opacity 0.3s ease;
+  pointer-events: none;
+}
+
+/* ドラッグ中に表示される状態 */
+#drop-zone.visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ドロップゾーンにカーソルが近い時のハイライト */
+#drop-zone.highlight {
+  background: linear-gradient(135deg,
+    rgba(255, 60, 60, 0.95),
+    rgba(255, 150, 170, 0.95),
+    rgba(255, 200, 0, 0.95)
+  );
+  box-shadow: 0 4px 40px rgba(255, 107, 107, 0.6),
+              inset 0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+.drop-zone-icon {
+  font-size: 28px;
+  animation: rocketBounce 0.8s ease-in-out infinite;
+}
+
+.drop-zone-text {
+  font-family: 'Fredoka', 'Noto Sans JP', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes rocketBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
 /* === アイテムコンテナ === */
 #toybox-container {
   position: fixed;
@@ -230,6 +295,12 @@ html, body {
     inset 0 -2px 4px rgba(0, 0, 0, 0.1);
   z-index: 2;
   pointer-events: none; /* Matter.jsのMouseConstraintで制御 */
+}
+
+/* 整列モード中はクリック可能にする */
+.toy-item.clickable {
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 /* 形状バリエーション */
@@ -386,6 +457,20 @@ html, body {
     padding: 3px 8px;
   }
 
+  /* ドロップゾーンのモバイル対応 */
+  #drop-zone {
+    height: 60px;
+    gap: 6px;
+  }
+
+  .drop-zone-icon {
+    font-size: 22px;
+  }
+
+  .drop-zone-text {
+    font-size: 13px;
+  }
+
   #panel-inner {
     padding: 12px 16px;
     margin: 0 8px 8px;
@@ -427,5 +512,13 @@ html, body {
     max-width: 100px;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  #drop-zone {
+    height: 52px;
+  }
+
+  .drop-zone-text {
+    font-size: 11px;
   }
 }
