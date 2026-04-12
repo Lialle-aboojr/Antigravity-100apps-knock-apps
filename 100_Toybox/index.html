@@ -76,10 +76,16 @@
     </div>
   </nav>
 
-  <!-- ===== ドロップゾーン（ドラッグ中のみ表示） ===== -->
+  <!-- ===== ドロップゾーン（丸いワープホール：ドラッグ中のみ表示） ===== -->
   <div id="drop-zone">
-    <span class="drop-zone-icon">🚀</span>
-    <span class="drop-zone-text">ここにドロップして起動！ / Drop here to launch!</span>
+    <div class="drop-zone-hole">
+      <div class="drop-zone-ring drop-zone-ring--outer"></div>
+      <div class="drop-zone-ring drop-zone-ring--inner"></div>
+      <div class="drop-zone-core">
+        <span class="drop-zone-icon">🚀</span>
+      </div>
+    </div>
+    <span class="drop-zone-text">ここにドロップして起動！<br>Drop here to launch!</span>
   </div>
 
   <!-- ===== 物理演算アイテムコンテナ ===== -->

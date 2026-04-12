@@ -269,6 +269,8 @@ let headerHeight = 100;  // ヘッダー＋コントロールの高さ
 let originalCollisionFilters = [];
 // ドラッグ中のアプリインデックスを保持（ドロップゾーン判定用）
 let draggedAppIndex = -1;
+// 整列モード中にドラッグされているか（enddragで整列位置に戻す判定用）
+let isDraggingInAligned = false;
 
 // =============================================
 // 7. ユーティリティ関数
@@ -297,7 +299,7 @@ function safeSetText(element, text) {
 
 /**
  * アイテムサイズを画面に基づいて計算する
- * 【修正2】 モバイル端末ではPC版の半分程度のサイズにする
+ * 【修正3】 モバイル端末では従来の1.5倍のサイズにする
  */
 function calculateItemSize() {
   var vw = window.innerWidth;
@@ -305,10 +307,11 @@ function calculateItemSize() {
   var isMobile = vw <= 768;
 
   if (isMobile) {
-    // モバイル: 画面幅ベースで計算し、30〜40px程度に収める
-    // 画面幅の約3%を基本サイズとし、30〜42pxにクランプ
-    var mobileSize = Math.floor(vw * 0.085);
-    return Math.max(30, Math.min(42, mobileSize));
+    // モバイル: PC版の計算結果をベースに1.5倍にする
+    // まずPC版と同じ面積ベース計算を行い、それを1.5倍にしてモバイル向けに調整
+    var mobileBaseSize = Math.floor(vw * 0.085);
+    var mobileSize = Math.round(mobileBaseSize * 1.5);
+    return Math.max(45, Math.min(64, mobileSize));
   } else {
     // PC: 面積ベースの従来計算
     var area = vw * vh;
@@ -345,18 +348,23 @@ function hideDropZone() {
 }
 
 /**
- * マウス位置がドロップゾーン内にあるか判定する
+ * マウス位置がドロップゾーンのワープホール内にあるか判定する
+ * .drop-zone-hole 要素の円形範囲で当たり判定を行う
  */
 function isInDropZone(mouseX, mouseY) {
-  var dz = document.getElementById("drop-zone");
-  if (!dz) return false;
-  var rect = dz.getBoundingClientRect();
-  return (
-    mouseX >= rect.left &&
-    mouseX <= rect.right &&
-    mouseY >= rect.top &&
-    mouseY <= rect.bottom
-  );
+  var hole = document.querySelector(".drop-zone-hole");
+  if (!hole) return false;
+  var rect = hole.getBoundingClientRect();
+  // 円形の中心と半径を計算
+  var cx = rect.left + rect.width / 2;
+  var cy = rect.top + rect.height / 2;
+  var radius = rect.width / 2;
+  // マウス位置と中心の距離
+  var dx = mouseX - cx;
+  var dy = mouseY - cy;
+  var dist = Math.sqrt(dx * dx + dy * dy);
+  // 少し余裕を持たせた判定（半径の1.2倍）
+  return dist <= radius * 1.2;
 }
 
 // =============================================
@@ -372,7 +380,7 @@ function initPhysics() {
   var MouseConstraint = Matter.MouseConstraint;
   var Events = Matter.Events;
 
-  // 【修正1】 enableSleeping: true でモジモジ問題を解消
+  // enableSleeping: true でモジモジ問題を解消
   engine = Engine.create({
     enableSleeping: true
   });
@@ -413,11 +421,22 @@ function initPhysics() {
     var idx = parseInt(body.label, 10);
     if (isNaN(idx) || idx < 0 || idx >= APPS.length) return;
 
-    // 【修正1】 スリープ中のボディを起こす
+    // スリープ中のボディを起こす
     Matter.Sleeping.set(body, false);
 
     // ドラッグ中のインデックスを保持
     draggedAppIndex = idx;
+
+    // 【修正2】 整列モード中のドラッグフラグ
+    if (currentMode === "aligned") {
+      isDraggingInAligned = true;
+      // 整列中のドラッグ時、コリジョンを一時的に無効化してスムーズに動かす
+      body.collisionFilter = {
+        group: -1,
+        category: 0x0001,
+        mask: 0x0000  // ドラッグ中は何とも衝突しない
+      };
+    }
 
     // DOM要素をドラッグ状態にする（CSS拡大）
     var el = domElements[idx];
@@ -430,10 +449,11 @@ function initPhysics() {
     // 詳細パネルを表示
     showDetailPanel(APPS[idx]);
 
-    // 【修正3】 ドロップゾーンを表示
+    // ドロップゾーンを表示
     showDropZone();
   });
 
+  // --- ドラッグ終了: ドロップゾーン判定 + 整列時の帰還処理 ---
   Events.on(mouseConstraint, "enddrag", function (event) {
     var body = event.body;
     if (!body) return;
@@ -447,12 +467,45 @@ function initPhysics() {
       el.style.transition = "";
     }
 
-    // 【修正3】 ドロップゾーン内でドロップしたか判定
-    var mousePos = mouseConstraint.mouse.position;
-    if (isInDropZone(mousePos.x, mousePos.y)) {
-      // ドロップゾーン内 → アプリを新規タブで開く
+    // 【修正1】 Matter.jsのenddragイベント内でドロップゾーン判定（確実な発火）
+    var mousePos = event.mouse.position;
+    var droppedInHole = isInDropZone(mousePos.x, mousePos.y);
+
+    if (droppedInHole) {
+      // ドロップホール内 → アプリを新規タブで開く
       var url = generateLink(APPS[idx]);
       window.open(url, "_blank", "noopener,noreferrer");
+    }
+
+    // 【修正2】 整列モード中にドラッグしてホール外で離した場合 → 元の整列位置に戻す
+    if (currentMode === "aligned" && isDraggingInAligned) {
+      isDraggingInAligned = false;
+      // コリジョンフィルターを整列用に戻す
+      body.collisionFilter = {
+        group: -1,
+        category: 0x0001,
+        mask: 0x0002
+      };
+
+      if (!droppedInHole && alignTargets && alignTargets[idx]) {
+        // 元の整列位置にアニメーションで戻す
+        // 速度をリセットし、まずターゲット方向への力を加える
+        var target = alignTargets[idx];
+        Matter.Body.setVelocity(body, { x: 0, y: 0 });
+        Matter.Body.setAngularVelocity(body, 0);
+        // ターゲットに向かって「吸い寄せ」アニメーション（afterUpdateのlerpで自然に戻る）
+        // 追加で少し強い力を加えて即座に移動開始
+        var dx = target.x - body.position.x;
+        var dy = target.y - body.position.y;
+        var dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 1) {
+          var forceMag = 0.05;
+          Matter.Body.applyForce(body, body.position, {
+            x: (dx / dist) * forceMag,
+            y: (dy / dist) * forceMag
+          });
+        }
+      }
     }
 
     // ドロップゾーンを非表示
@@ -561,25 +614,17 @@ function createItems() {
     el.style.transform = "translate(-9999px, -9999px)";
     el.style.display = "none";
 
-    // 【修正4】 整列モード時のクリックイベントを設定
-    el.addEventListener("click", function () {
-      if (currentMode === "aligned") {
-        var url = generateLink(app);
-        window.open(url, "_blank", "noopener,noreferrer");
-      }
-    });
-
     container.appendChild(el);
     domElements.push(el);
 
     // --- 物理ボディの生成 ---
-    // 【修正1】 Y座標を-2000〜-100の間でランダムに散らす（画面外上空から時間差で降る）
+    // Y座標を-2000〜-100の間でランダムに散らす（画面外上空から時間差で降る）
     var x = Math.random() * (vw - itemSize) + itemSize / 2;
     var y = -100 - Math.random() * 1900; // -100〜-2000の範囲
     var radius = itemSize / 2;
 
     var body = Bodies.circle(x, y, radius, {
-      restitution: 0.8,      // 【修正1】 反発力を0.8に下げて落ち着きやすく
+      restitution: 0.8,      // 反発力を0.8に下げて落ち着きやすく
       friction: 0.2,          // 摩擦
       frictionAir: 0.01,      // 空気抵抗
       density: 0.002,         // 密度
@@ -642,6 +687,7 @@ function syncDOMWithPhysics() {
   }
 
   // 整列モード中: ボディをターゲット座標に向けてスムーズに移動
+  // 【修正2】 ドラッグ中のアイテムは整列吸い寄せから除外
   if (currentMode === "aligned" && alignTargets) {
     alignFrameCount++;
     // 補間係数: フレームが進むほど直接配置に近づく
@@ -649,6 +695,9 @@ function syncDOMWithPhysics() {
 
     for (var j = 0; j < bodies.length; j++) {
       if (!alignTargets[j]) continue;
+      // ドラッグ中のアイテムはスキップ（自由に動かせるようにする）
+      if (j === draggedAppIndex && isDraggingInAligned) continue;
+
       var b = bodies[j];
       var target = alignTargets[j];
       // ターゲットとの差分ベクトル
@@ -727,17 +776,13 @@ function alignItems() {
     // コリジョンフィルターを元に戻す
     bodies.forEach(function (body, i) {
       Matter.Body.setStatic(body, false);
-      // 【修正1】 スリープを解除して落下を再開
+      // スリープを解除して落下を再開
       Matter.Sleeping.set(body, false);
       if (originalCollisionFilters[i]) {
         body.collisionFilter = originalCollisionFilters[i];
       }
     });
 
-    // 【修正4】 整列解除時にクリッカブル状態をオフ
-    domElements.forEach(function (el) {
-      el.classList.remove("clickable");
-    });
     return;
   }
 
@@ -803,7 +848,7 @@ function alignItems() {
     Matter.Body.setVelocity(bodies[i], { x: 0, y: 0 });
     Matter.Body.setAngularVelocity(bodies[i], 0);
 
-    // 【修正1】 スリープを解除
+    // スリープを解除
     Matter.Sleeping.set(bodies[i], false);
 
     // 整列中はアイテム同士のコリジョンを無効化（壁とは衝突可能）
@@ -820,9 +865,6 @@ function alignItems() {
       Matter.Composite.add(world, bodies[i]);
     }
     domElements[i].style.display = "flex";
-
-    // 【修正4】 整列中はクリック可能にする
-    domElements[i].classList.add("clickable");
   }
 }
 
@@ -841,18 +883,13 @@ function filterByCategory(category) {
   // 重力を復活
   engine.gravity.y = 1.2;
 
-  // 【修正4】 クリッカブル状態をオフ
-  domElements.forEach(function (el) {
-    el.classList.remove("clickable");
-  });
-
   // 全アイテムをまずワールドに戻す
   APPS.forEach(function (app, i) {
     if (!Matter.Composite.allBodies(world).includes(bodies[i])) {
       Matter.Composite.add(world, bodies[i]);
       domElements[i].style.display = "flex";
     }
-    // 【修正1】 スリープを解除
+    // スリープを解除
     Matter.Sleeping.set(bodies[i], false);
   });
 
@@ -896,11 +933,6 @@ function resetAll() {
   // 重力を復活
   engine.gravity.y = 1.2;
 
-  // 【修正4】 クリッカブル状態をオフ
-  domElements.forEach(function (el) {
-    el.classList.remove("clickable");
-  });
-
   var vw = window.innerWidth;
 
   // 全アイテムを再配置
@@ -917,7 +949,7 @@ function resetAll() {
       Matter.Composite.add(world, body);
     }
 
-    // 【修正1】 Y座標を-2000〜-100の間でランダムに散らす
+    // Y座標を-2000〜-100の間でランダムに散らす
     var x = Math.random() * (vw - itemSize) + itemSize / 2;
     var y = -100 - Math.random() * 1900;
     Matter.Body.setPosition(body, { x: x, y: y });
@@ -925,7 +957,7 @@ function resetAll() {
     Matter.Body.setAngle(body, 0);
     Matter.Body.setAngularVelocity(body, 0);
     Matter.Body.setStatic(body, false);
-    // 【修正1】 スリープを解除して落下再開
+    // スリープを解除して落下再開
     Matter.Sleeping.set(body, false);
 
     // DOM要素を一旦非表示（ドロップアニメーションで順次表示する）
