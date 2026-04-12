@@ -271,6 +271,8 @@ let originalCollisionFilters = [];
 let draggedAppIndex = -1;
 // 整列モード中にドラッグされているか（enddragで整列位置に戻す判定用）
 let isDraggingInAligned = false;
+// 【修正2】 ワープホール用の固定物理ボディ
+let warpHoleBody = null;
 
 // =============================================
 // 7. ユーティリティ関数
@@ -299,7 +301,7 @@ function safeSetText(element, text) {
 
 /**
  * アイテムサイズを画面に基づいて計算する
- * 【修正3】 モバイル端末では従来の1.5倍のサイズにする
+ * モバイル端末では従来の1.5倍のサイズにする
  */
 function calculateItemSize() {
   var vw = window.innerWidth;
@@ -308,7 +310,6 @@ function calculateItemSize() {
 
   if (isMobile) {
     // モバイル: PC版の計算結果をベースに1.5倍にする
-    // まずPC版と同じ面積ベース計算を行い、それを1.5倍にしてモバイル向けに調整
     var mobileBaseSize = Math.floor(vw * 0.085);
     var mobileSize = Math.round(mobileBaseSize * 1.5);
     return Math.max(45, Math.min(64, mobileSize));
@@ -348,7 +349,7 @@ function hideDropZone() {
 }
 
 /**
- * マウス位置がドロップゾーンのワープホール内にあるか判定する
+ * 【修正4】 マウス位置がドロップゾーンのワープホール内にあるか判定する
  * .drop-zone-hole 要素の円形範囲で当たり判定を行う
  */
 function isInDropZone(mouseX, mouseY) {
@@ -363,8 +364,72 @@ function isInDropZone(mouseX, mouseY) {
   var dx = mouseX - cx;
   var dy = mouseY - cy;
   var dist = Math.sqrt(dx * dx + dy * dy);
-  // 少し余裕を持たせた判定（半径の1.2倍）
-  return dist <= radius * 1.2;
+  // 少し余裕を持たせた判定（半径の1.3倍）— サイズが大きくなったので適切な余裕
+  return dist <= radius * 1.3;
+}
+
+/**
+ * 【修正2】 ワープホールのDOM位置から、物理ボディの中心座標を計算する
+ */
+function getWarpHolePhysicsPosition() {
+  var hole = document.querySelector(".drop-zone-hole");
+  if (!hole) return null;
+  var rect = hole.getBoundingClientRect();
+  return {
+    x: rect.left + rect.width / 2,
+    y: rect.top + rect.height / 2,
+    radius: rect.width / 2
+  };
+}
+
+/**
+ * 【修正2】 ワープホールの固定物理ボディを生成・更新する
+ * アイコンがワープホールを覆い隠さないようにする
+ */
+function createOrUpdateWarpHoleBody() {
+  var pos = getWarpHolePhysicsPosition();
+  if (!pos) return;
+
+  // 既存のボディがあれば位置・サイズを更新
+  if (warpHoleBody) {
+    Matter.Body.setPosition(warpHoleBody, { x: pos.x, y: pos.y });
+    // 半径が変わった場合は再生成が必要（Matter.jsはサイズ変更不可のため）
+    var currentRadius = warpHoleBody.circleRadius;
+    if (Math.abs(currentRadius - pos.radius) > 5) {
+      Matter.Composite.remove(world, warpHoleBody);
+      warpHoleBody = null;
+    } else {
+      return; // 位置だけ更新して終了
+    }
+  }
+
+  // 新規生成: ワープホールと同じ位置・サイズの固定円形ボディ
+  warpHoleBody = Matter.Bodies.circle(pos.x, pos.y, pos.radius * 0.85, {
+    isStatic: true,
+    label: "warp-hole-barrier",
+    restitution: 0.6,
+    friction: 0.1,
+    // マウスのドラッグ対象にならないようにする
+    collisionFilter: {
+      group: 0,
+      category: 0x0004,
+      mask: 0x0001  // 通常のアイテム（category: 0x0001相当）と衝突する
+    }
+  });
+
+  Matter.Composite.add(world, warpHoleBody);
+}
+
+/**
+ * 【修正2】 ワープホールの物理ボディを除去する
+ */
+function removeWarpHoleBody() {
+  if (warpHoleBody) {
+    if (Matter.Composite.allBodies(world).includes(warpHoleBody)) {
+      Matter.Composite.remove(world, warpHoleBody);
+    }
+    warpHoleBody = null;
+  }
 }
 
 // =============================================
@@ -413,6 +478,12 @@ function initPhysics() {
   // コンストレイントをワールドに追加
   World.add(world, mouseConstraint);
 
+  // 【修正2】 ワープホール用の固定ボディを初期生成
+  // DOMレンダリング後に座標を取得するため少し遅延
+  setTimeout(function () {
+    createOrUpdateWarpHoleBody();
+  }, 100);
+
   // --- ドラッグイベント: つかむとフワッと拡大＋詳細パネル表示＋ドロップゾーン表示 ---
   Events.on(mouseConstraint, "startdrag", function (event) {
     var body = event.body;
@@ -427,7 +498,7 @@ function initPhysics() {
     // ドラッグ中のインデックスを保持
     draggedAppIndex = idx;
 
-    // 【修正2】 整列モード中のドラッグフラグ
+    // 整列モード中のドラッグフラグ
     if (currentMode === "aligned") {
       isDraggingInAligned = true;
       // 整列中のドラッグ時、コリジョンを一時的に無効化してスムーズに動かす
@@ -467,7 +538,7 @@ function initPhysics() {
       el.style.transition = "";
     }
 
-    // 【修正1】 Matter.jsのenddragイベント内でドロップゾーン判定（確実な発火）
+    // 【修正4】 Matter.jsのenddragイベント内でドロップゾーン判定（確実な発火）
     var mousePos = event.mouse.position;
     var droppedInHole = isInDropZone(mousePos.x, mousePos.y);
 
@@ -477,7 +548,7 @@ function initPhysics() {
       window.open(url, "_blank", "noopener,noreferrer");
     }
 
-    // 【修正2】 整列モード中にドラッグしてホール外で離した場合 → 元の整列位置に戻す
+    // 整列モード中にドラッグしてホール外で離した場合 → 元の整列位置に戻す
     if (currentMode === "aligned" && isDraggingInAligned) {
       isDraggingInAligned = false;
       // コリジョンフィルターを整列用に戻す
@@ -489,12 +560,10 @@ function initPhysics() {
 
       if (!droppedInHole && alignTargets && alignTargets[idx]) {
         // 元の整列位置にアニメーションで戻す
-        // 速度をリセットし、まずターゲット方向への力を加える
         var target = alignTargets[idx];
         Matter.Body.setVelocity(body, { x: 0, y: 0 });
         Matter.Body.setAngularVelocity(body, 0);
-        // ターゲットに向かって「吸い寄せ」アニメーション（afterUpdateのlerpで自然に戻る）
-        // 追加で少し強い力を加えて即座に移動開始
+        // ターゲットに向かって「吸い寄せ」力を加えて即座に移動開始
         var dx = target.x - body.position.x;
         var dy = target.y - body.position.y;
         var dist = Math.sqrt(dx * dx + dy * dy);
@@ -687,7 +756,7 @@ function syncDOMWithPhysics() {
   }
 
   // 整列モード中: ボディをターゲット座標に向けてスムーズに移動
-  // 【修正2】 ドラッグ中のアイテムは整列吸い寄せから除外
+  // ドラッグ中のアイテムは整列吸い寄せから除外
   if (currentMode === "aligned" && alignTargets) {
     alignFrameCount++;
     // 補間係数: フレームが進むほど直接配置に近づく
@@ -856,8 +925,7 @@ function alignItems() {
     bodies[i].collisionFilter = {
       group: -1,       // 負のグループ: 同グループのボディとは衝突しない
       category: 0x0001,
-      mask: 0x0002     // 壁のみと衝突（壁のcategoryを0x0002に設定していないが、
-                       // 同グループの負値で互いの衝突を無効化できる）
+      mask: 0x0002     // 壁のみと衝突
     };
 
     // ボディを見えるようにする（フィルター後の場合）
@@ -1013,13 +1081,16 @@ function setupEventListeners() {
     });
   });
 
-  // ウィンドウリサイズ時の壁更新
+  // ウィンドウリサイズ時の壁更新 + ワープホール物理ボディ追従
   var resizeTimer = null;
   window.addEventListener("resize", function () {
     if (resizeTimer) clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () {
       createWalls();
       headerHeight = measureHeaderHeight();
+      // 【修正2】 ワープホール物理ボディの位置を再計算・追従
+      removeWarpHoleBody();
+      createOrUpdateWarpHoleBody();
     }, 200);
   });
 }
