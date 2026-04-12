@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toybox - 100 Apps Knock -</title>
+  <meta name="description" content="100個のアプリが物理演算で降ってくるインタラクティブなポートフォリオサイト。ドラッグ、整列、カテゴリ絞り込みでアプリを探索しよう！">
+  <meta name="keywords" content="portfolio, web apps, interactive, physics, matter.js, toybox">
+
+  <!-- ファビコン（生成画像） -->
+  <link rel="icon" href="favicon.png">
+  <!-- フォールバック: 画像読み込み失敗時に絵文字SVGファビコンを適用 -->
+  <script>
+    (function() {
+      var img = new Image();
+      img.onerror = function() {
+        var link = document.querySelector('link[rel="icon"]');
+        if (link) {
+          link.href = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">📦</text></svg>';
+        }
+      };
+      img.src = 'favicon.png';
+    })();
+  </script>
+
+  <!-- Google Fonts: タイトル用ポップフォント + 本文用フォント -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+JP:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- スタイルシート -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== ヘッダー ===== -->
+  <header id="app-header">
+    <h1 id="app-title">
+      <span class="title-main">Toybox</span>
+      <span class="title-sub">- 100 Apps Knock -</span>
+    </h1>
+  </header>
+
+  <!-- ===== コントロールバー ===== -->
+  <nav id="controls">
+    <!-- アクションボタン -->
+    <div id="action-buttons">
+      <button id="btn-align" class="ctrl-btn ctrl-btn--action" aria-label="整列">
+        <span class="btn-icon">📐</span>
+        <span>整列 / Align</span>
+      </button>
+      <button id="btn-reset" class="ctrl-btn ctrl-btn--reset" aria-label="リセット">
+        <span class="btn-icon">🔄</span>
+        <span>リセット / Reset</span>
+      </button>
+    </div>
+
+    <!-- カテゴリフィルターボタン -->
+    <div id="category-filters">
+      <button class="ctrl-btn ctrl-btn--cat" data-category="ライフスタイル">
+        <span class="btn-icon">🌿</span>
+        <span>ライフスタイル / Lifestyle</span>
+      </button>
+      <button class="ctrl-btn ctrl-btn--cat" data-category="遊び・エンタメ">
+        <span class="btn-icon">🎮</span>
+        <span>遊び・エンタメ / Fun</span>
+      </button>
+      <button class="ctrl-btn ctrl-btn--cat" data-category="UI・デザイン">
+        <span class="btn-icon">🎨</span>
+        <span>UI・デザイン / Design</span>
+      </button>
+      <button class="ctrl-btn ctrl-btn--cat" data-category="ツール・実用">
+        <span class="btn-icon">🛠️</span>
+        <span>ツール・実用 / Tools</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== 物理演算アイテムコンテナ ===== -->
+  <div id="toybox-container"></div>
+
+  <!-- ===== 詳細パネル（ドラッグ時スライドイン） ===== -->
+  <div id="detail-panel" class="panel-hidden">
+    <div id="panel-inner">
+      <div id="panel-number"></div>
+      <div id="panel-info">
+        <h2 id="panel-name"></h2>
+        <p id="panel-category"></p>
+        <a id="panel-link" href="#" target="_blank" rel="noopener noreferrer">
+          アプリを開く / Open App →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Matter.js CDN ===== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+
+  <!-- ===== メインスクリプト ===== -->
+  <script src="script.js"></script>
+</body>
+</html>
