@@ -369,12 +369,43 @@ function isInDropZone(mouseX, mouseY) {
 }
 
 /**
- * 【修正2】 ワープホールのDOM位置から、物理ボディの中心座標を計算する
+ * 【修正1】 ワープホールのDOM位置から、物理ボディの中心座標を計算する
+ * ドロップゾーンが非表示（scale(0)）の場合でも正確な座標を取得するため、
+ * 一時的にscale(1)にして測定し、即座に元に戻す。
  */
 function getWarpHolePhysicsPosition() {
+  var dropZone = document.getElementById("drop-zone");
   var hole = document.querySelector(".drop-zone-hole");
-  if (!hole) return null;
+  if (!hole || !dropZone) return null;
+
+  // ドロップゾーンが非表示（scale(0)）の場合、一時的に表示して正確な座標を取得
+  var wasHidden = !dropZone.classList.contains("visible");
+  if (wasHidden) {
+    // トランジションを無効化し、視覚的に見えないまま測定
+    dropZone.style.transition = "none";
+    dropZone.style.opacity = "0";
+    dropZone.style.transform = "translateX(-50%) scale(1)";
+    dropZone.style.pointerEvents = "none";
+    // 強制リフロー（ブラウザに即座にスタイルを適用させる）
+    dropZone.offsetHeight;
+  }
+
   var rect = hole.getBoundingClientRect();
+
+  // 元の非表示状態に戻す
+  if (wasHidden) {
+    dropZone.style.transform = "";
+    dropZone.style.opacity = "";
+    dropZone.style.pointerEvents = "";
+    // 次のフレームでトランジションを復元（即座に戻すとちらつく可能性がある）
+    requestAnimationFrame(function () {
+      dropZone.style.transition = "";
+    });
+  }
+
+  // 測定結果が無効な場合はnullを返す
+  if (rect.width === 0 || rect.height === 0) return null;
+
   return {
     x: rect.left + rect.width / 2,
     y: rect.top + rect.height / 2,
@@ -543,9 +574,17 @@ function initPhysics() {
     var droppedInHole = isInDropZone(mousePos.x, mousePos.y);
 
     if (droppedInHole) {
+      // 【修正2-PC】 ドロップ検知直後にマウスコンストレイントを強制解放
+      // window.openでフォーカスが移りmouseupが取りこぼされる「貼り付きバグ」を防止
+      mouseConstraint.constraint.bodyB = null;
+      mouseConstraint.mouse.button = -1;
+
       // ドロップホール内 → アプリを新規タブで開く
-      var url = generateLink(APPS[idx]);
-      window.open(url, "_blank", "noopener,noreferrer");
+      // 100ms遅延させ、Matter.jsのドラッグ終了処理が完全に終わってから別タブを開く
+      var launchUrl = generateLink(APPS[idx]);
+      setTimeout(function () {
+        window.open(launchUrl, "_blank", "noopener,noreferrer");
+      }, 100);
     }
 
     // 整列モード中にドラッグしてホール外で離した場合 → 元の整列位置に戻す
