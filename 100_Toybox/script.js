@@ -349,23 +349,24 @@ function hideDropZone() {
 }
 
 /**
- * 【修正4】 マウス位置がドロップゾーンのワープホール内にあるか判定する
- * .drop-zone-hole 要素の円形範囲で当たり判定を行う
+ * 【修正1】 ドロップゾーン（ワープホール）の当たり判定
+ * getBoundingClientRectに依存せず、Matter.jsの物理空間に配置した
+ * ワープホール固定ボディの座標とドラッグ中アイテム/マウス座標の
+ * 2点間距離で判定する。座標系ズレの根本原因を解消。
  */
 function isInDropZone(mouseX, mouseY) {
-  var hole = document.querySelector(".drop-zone-hole");
-  if (!hole) return false;
-  var rect = hole.getBoundingClientRect();
-  // 円形の中心と半径を計算
-  var cx = rect.left + rect.width / 2;
-  var cy = rect.top + rect.height / 2;
-  var radius = rect.width / 2;
-  // マウス位置と中心の距離
-  var dx = mouseX - cx;
-  var dy = mouseY - cy;
+  // 物理空間のワープホールボディが存在しない場合はfalse
+  if (!warpHoleBody) return false;
+  // ワープホールの物理座標と半径
+  var holeX = warpHoleBody.position.x;
+  var holeY = warpHoleBody.position.y;
+  var holeRadius = warpHoleBody.circleRadius;
+  // マウス/アイテム座標との2点間距離を計算
+  var dx = mouseX - holeX;
+  var dy = mouseY - holeY;
   var dist = Math.sqrt(dx * dx + dy * dy);
-  // 少し余裕を持たせた判定（半径の1.3倍）— サイズが大きくなったので適切な余裕
-  return dist <= radius * 1.3;
+  // ワープホール半径 + アルファ（半径の1.5倍）以内なら当たり
+  return dist <= holeRadius * 1.5;
 }
 
 /**
@@ -518,7 +519,9 @@ function initPhysics() {
   // --- ドラッグイベント: つかむとフワッと拡大＋詳細パネル表示＋ドロップゾーン表示 ---
   Events.on(mouseConstraint, "startdrag", function (event) {
     var body = event.body;
-    if (!body || body.isStatic) return;
+    if (!body) return;
+    // ワープホールバリアはドラッグ対象外
+    if (body.label === "warp-hole-barrier") return;
     // ラベルからアプリインデックスを取得
     var idx = parseInt(body.label, 10);
     if (isNaN(idx) || idx < 0 || idx >= APPS.length) return;
@@ -569,9 +572,14 @@ function initPhysics() {
       el.style.transition = "";
     }
 
-    // 【修正4】 Matter.jsのenddragイベント内でドロップゾーン判定（確実な発火）
-    var mousePos = event.mouse.position;
-    var droppedInHole = isInDropZone(mousePos.x, mousePos.y);
+    // 【修正1】 物理座標ベースのドロップゾーン判定（座標系ズレ解消）
+    // ドラッグ終了したアイテムの物理座標で判定（マウス座標より正確）
+    var droppedInHole = isInDropZone(body.position.x, body.position.y);
+    // アイテム座標で漏れた場合のフォールバック: マウス座標でも判定
+    if (!droppedInHole) {
+      var mousePos = event.mouse.position;
+      droppedInHole = isInDropZone(mousePos.x, mousePos.y);
+    }
 
     if (droppedInHole) {
       // 【修正2-PC】 ドロップ検知直後にマウスコンストレイントを強制解放
@@ -627,10 +635,20 @@ function initPhysics() {
   // --- マウス移動中のドロップゾーンハイライト ---
   Events.on(mouseConstraint, "mousemove", function (event) {
     if (draggedAppIndex < 0) return;
-    var mousePos = mouseConstraint.mouse.position;
     var dz = document.getElementById("drop-zone");
     if (dz && dz.classList.contains("visible")) {
-      if (isInDropZone(mousePos.x, mousePos.y)) {
+      // 物理座標ベースの判定: ドラッグ中アイテムの座標を使う
+      var dragBody = bodies[draggedAppIndex];
+      var isNearHole = false;
+      if (dragBody) {
+        isNearHole = isInDropZone(dragBody.position.x, dragBody.position.y);
+      }
+      // フォールバック: マウス座標でも判定
+      if (!isNearHole) {
+        var mousePos = mouseConstraint.mouse.position;
+        isNearHole = isInDropZone(mousePos.x, mousePos.y);
+      }
+      if (isNearHole) {
         dz.classList.add("highlight");
       } else {
         dz.classList.remove("highlight");
@@ -881,9 +899,8 @@ function alignItems() {
     engine.gravity.y = 1.2;
     btnAlign.classList.remove("active");
 
-    // コリジョンフィルターを元に戻す
+    // 【修正2】 isStaticを使わないため、コリジョンフィルターの復元のみで解除
     bodies.forEach(function (body, i) {
-      Matter.Body.setStatic(body, false);
       // スリープを解除して落下を再開
       Matter.Sleeping.set(body, false);
       if (originalCollisionFilters[i]) {
@@ -1063,7 +1080,8 @@ function resetAll() {
     Matter.Body.setVelocity(body, { x: 0, y: 0 });
     Matter.Body.setAngle(body, 0);
     Matter.Body.setAngularVelocity(body, 0);
-    Matter.Body.setStatic(body, false);
+    // 【修正2】 isStaticは使わない方式のため、setStatic(false)は不要
+    // （常にisStatic: falseのまま）
     // スリープを解除して落下再開
     Matter.Sleeping.set(body, false);
 
