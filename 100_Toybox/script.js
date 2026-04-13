@@ -360,7 +360,7 @@ function isInDropZone(mouseX, mouseY) {
   // ワープホールの物理座標と半径
   var holeX = warpHoleBody.position.x;
   var holeY = warpHoleBody.position.y;
-  var holeRadius = warpHoleBody.circleRadius;
+  var holeRadius = warpHoleBody.customRadius;
   // マウス/アイテム座標との2点間距離を計算
   var dx = mouseX - holeX;
   var dy = mouseY - holeY;
@@ -426,7 +426,7 @@ function createOrUpdateWarpHoleBody() {
   if (warpHoleBody) {
     Matter.Body.setPosition(warpHoleBody, { x: pos.x, y: pos.y });
     // 半径が変わった場合は再生成が必要（Matter.jsはサイズ変更不可のため）
-    var currentRadius = warpHoleBody.circleRadius;
+    var currentRadius = warpHoleBody.customRadius;
     if (Math.abs(currentRadius - pos.radius) > 5) {
       Matter.Composite.remove(world, warpHoleBody);
       warpHoleBody = null;
@@ -436,7 +436,8 @@ function createOrUpdateWarpHoleBody() {
   }
 
   // 新規生成: ワープホールと同じ位置・サイズの固定円形ボディ
-  warpHoleBody = Matter.Bodies.circle(pos.x, pos.y, pos.radius * 0.85, {
+  var bodyRadius = pos.radius * 0.85;
+  warpHoleBody = Matter.Bodies.circle(pos.x, pos.y, bodyRadius, {
     isStatic: true,
     label: "warp-hole-barrier",
     restitution: 0.6,
@@ -448,6 +449,8 @@ function createOrUpdateWarpHoleBody() {
       mask: 0x0001  // 通常のアイテム（category: 0x0001相当）と衝突する
     }
   });
+  // 【修正1】 独自プロパティとして半径を保存（circleRadiusが信頼できないため）
+  warpHoleBody.customRadius = bodyRadius;
 
   Matter.Composite.add(world, warpHoleBody);
 }
@@ -535,12 +538,6 @@ function initPhysics() {
     // 整列モード中のドラッグフラグ
     if (currentMode === "aligned") {
       isDraggingInAligned = true;
-      // 整列中のドラッグ時、コリジョンを一時的に無効化してスムーズに動かす
-      body.collisionFilter = {
-        group: -1,
-        category: 0x0001,
-        mask: 0x0000  // ドラッグ中は何とも衝突しない
-      };
     }
 
     // DOM要素をドラッグ状態にする（CSS拡大）
@@ -598,29 +595,12 @@ function initPhysics() {
     // 整列モード中にドラッグしてホール外で離した場合 → 元の整列位置に戻す
     if (currentMode === "aligned" && isDraggingInAligned) {
       isDraggingInAligned = false;
-      // コリジョンフィルターを整列用に戻す
-      body.collisionFilter = {
-        group: -1,
-        category: 0x0001,
-        mask: 0x0002
-      };
 
       if (!droppedInHole && alignTargets && alignTargets[idx]) {
-        // 元の整列位置にアニメーションで戻す
+        // 元の整列位置に即座に戻す（afterUpdateのlerpが自動で吸い寄せる）
         var target = alignTargets[idx];
         Matter.Body.setVelocity(body, { x: 0, y: 0 });
         Matter.Body.setAngularVelocity(body, 0);
-        // ターゲットに向かって「吸い寄せ」力を加えて即座に移動開始
-        var dx = target.x - body.position.x;
-        var dy = target.y - body.position.y;
-        var dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist > 1) {
-          var forceMag = 0.05;
-          Matter.Body.applyForce(body, body.position, {
-            x: (dx / dist) * forceMag,
-            y: (dy / dist) * forceMag
-          });
-        }
       }
     }
 
@@ -821,8 +801,9 @@ function syncDOMWithPhysics() {
 
     for (var j = 0; j < bodies.length; j++) {
       if (!alignTargets[j]) continue;
-      // ドラッグ中のアイテムはスキップ（自由に動かせるようにする）
-      if (j === draggedAppIndex && isDraggingInAligned) continue;
+      // 【修正2】 ドラッグ中のアイテムは吸い寄せ処理を完全にスキップ
+      // （setPosition・setVelocity・setAngleすべてをスキップしないとドラッグできない）
+      if (j === draggedAppIndex) continue;
 
       var b = bodies[j];
       var target = alignTargets[j];
@@ -899,8 +880,10 @@ function alignItems() {
     engine.gravity.y = 1.2;
     btnAlign.classList.remove("active");
 
-    // 【修正2】 isStaticを使わないため、コリジョンフィルターの復元のみで解除
+    // 【修正3】 isSensorを解除し、元のコリジョン状態に復元
     bodies.forEach(function (body, i) {
+      // isSensorを解除して通常の衝突判定に戻す
+      body.isSensor = false;
       // スリープを解除して落下を再開
       Matter.Sleeping.set(body, false);
       if (originalCollisionFilters[i]) {
@@ -976,13 +959,10 @@ function alignItems() {
     // スリープを解除
     Matter.Sleeping.set(bodies[i], false);
 
-    // 整列中はアイテム同士のコリジョンを無効化（壁とは衝突可能）
+    // 【修正3】 整列中はisSensor: trueで衝突を無効化（collisionFilterは変更しない）
+    // isSensorにすると物理的な衝突反応がなくなるが、ドラッグは可能のまま
     originalCollisionFilters[i] = Object.assign({}, bodies[i].collisionFilter);
-    bodies[i].collisionFilter = {
-      group: -1,       // 負のグループ: 同グループのボディとは衝突しない
-      category: 0x0001,
-      mask: 0x0002     // 壁のみと衝突
-    };
+    bodies[i].isSensor = true;
 
     // ボディを見えるようにする（フィルター後の場合）
     if (!Matter.Composite.allBodies(world).includes(bodies[i])) {
@@ -1063,6 +1043,8 @@ function resetAll() {
   APPS.forEach(function (app, i) {
     var body = bodies[i];
 
+    // 【修正3】 isSensorを解除
+    body.isSensor = false;
     // コリジョンフィルターを元に戻す（整列モードで変更されている場合）
     if (originalCollisionFilters[i]) {
       body.collisionFilter = originalCollisionFilters[i];
@@ -1080,8 +1062,6 @@ function resetAll() {
     Matter.Body.setVelocity(body, { x: 0, y: 0 });
     Matter.Body.setAngle(body, 0);
     Matter.Body.setAngularVelocity(body, 0);
-    // 【修正2】 isStaticは使わない方式のため、setStatic(false)は不要
-    // （常にisStatic: falseのまま）
     // スリープを解除して落下再開
     Matter.Sleeping.set(body, false);
 
