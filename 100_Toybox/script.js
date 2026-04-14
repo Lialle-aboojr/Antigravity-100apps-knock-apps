@@ -273,6 +273,12 @@ let draggedAppIndex = -1;
 let isDraggingInAligned = false;
 // 【修正2】 ワープホール用の固定物理ボディ
 let warpHoleBody = null;
+// デバイス判定フラグ（PCかモバイルか）: リサイズ時にも更新
+let isMobile = window.innerWidth <= 768;
+// PC用: mousedownの座標を記録（クリック判定用）
+let pcMouseDownPos = null;
+// PC用: ホバー中のアイテムインデックス
+let pcHoverIndex = -1;
 
 // =============================================
 // 7. ユーティリティ関数
@@ -336,6 +342,7 @@ function measureHeaderHeight() {
  * ドロップゾーンの表示・非表示を制御する
  */
 function showDropZone() {
+  if (!isMobile) return; // PCではワープホールを表示しない
   var dz = document.getElementById("drop-zone");
   if (dz) dz.classList.add("visible");
 }
@@ -513,11 +520,13 @@ function initPhysics() {
   // コンストレイントをワールドに追加
   World.add(world, mouseConstraint);
 
-  // 【修正2】 ワープホール用の固定ボディを初期生成
-  // DOMレンダリング後に座標を取得するため少し遅延
-  setTimeout(function () {
-    createOrUpdateWarpHoleBody();
-  }, 100);
+  // モバイルのみ: ワープホール用の固定ボディを初期生成
+  // PCではワープホールを使わないため生成しない
+  if (isMobile) {
+    setTimeout(function () {
+      createOrUpdateWarpHoleBody();
+    }, 100);
+  }
 
   // --- ドラッグイベント: つかむとフワッと拡大＋詳細パネル表示＋ドロップゾーン表示 ---
   Events.on(mouseConstraint, "startdrag", function (event) {
@@ -534,6 +543,12 @@ function initPhysics() {
 
     // ドラッグ中のインデックスを保持
     draggedAppIndex = idx;
+
+    // PC: mousedown座標を記録（クリック判定用）
+    if (!isMobile) {
+      var mousePos = mouseConstraint.mouse.position;
+      pcMouseDownPos = { x: mousePos.x, y: mousePos.y };
+    }
 
     // 整列モード中のドラッグフラグ
     if (currentMode === "aligned") {
@@ -555,7 +570,7 @@ function initPhysics() {
     showDropZone();
   });
 
-  // --- ドラッグ終了: ドロップゾーン判定 + 整列時の帰還処理 ---
+  // --- ドラッグ終了: PC=クリック判定 / モバイル=ドロップゾーン判定 ---
   Events.on(mouseConstraint, "enddrag", function (event) {
     var body = event.body;
     if (!body) return;
@@ -569,69 +584,114 @@ function initPhysics() {
       el.style.transition = "";
     }
 
-    // 【修正1】 物理座標ベースのドロップゾーン判定（座標系ズレ解消）
-    // ドラッグ終了したアイテムの物理座標で判定（マウス座標より正確）
-    var droppedInHole = isInDropZone(body.position.x, body.position.y);
-    // アイテム座標で漏れた場合のフォールバック: マウス座標でも判定
-    if (!droppedInHole) {
+    if (!isMobile) {
+      // === PC: クリック判定（移動距離10px以内ならクリック → リンクを開く） ===
       var mousePos = event.mouse.position;
-      droppedInHole = isInDropZone(mousePos.x, mousePos.y);
-    }
-
-    if (droppedInHole) {
-      // 【修正2-PC】 ドロップ検知直後にマウスコンストレイントを強制解放
-      // window.openでフォーカスが移りmouseupが取りこぼされる「貼り付きバグ」を防止
-      mouseConstraint.constraint.bodyB = null;
-      mouseConstraint.mouse.button = -1;
-
-      // ドロップホール内 → アプリを新規タブで開く
-      // 100ms遅延させ、Matter.jsのドラッグ終了処理が完全に終わってから別タブを開く
-      var launchUrl = generateLink(APPS[idx]);
-      setTimeout(function () {
-        window.open(launchUrl, "_blank", "noopener,noreferrer");
-      }, 100);
-    }
-
-    // 整列モード中にドラッグしてホール外で離した場合 → 元の整列位置に戻す
-    if (currentMode === "aligned" && isDraggingInAligned) {
-      isDraggingInAligned = false;
-
-      if (!droppedInHole && alignTargets && alignTargets[idx]) {
-        // 元の整列位置に即座に戻す（afterUpdateのlerpが自動で吸い寄せる）
-        var target = alignTargets[idx];
-        Matter.Body.setVelocity(body, { x: 0, y: 0 });
-        Matter.Body.setAngularVelocity(body, 0);
+      var navigated = false;
+      if (pcMouseDownPos) {
+        var clickDx = mousePos.x - pcMouseDownPos.x;
+        var clickDy = mousePos.y - pcMouseDownPos.y;
+        var dragDist = Math.sqrt(clickDx * clickDx + clickDy * clickDy);
+        if (dragDist <= 10) {
+          // クリック判定成立: マウスコンストレイントを強制解放し、リンクを開く
+          mouseConstraint.constraint.bodyB = null;
+          mouseConstraint.mouse.button = -1;
+          var launchUrl = generateLink(APPS[idx]);
+          setTimeout(function () {
+            window.open(launchUrl, "_blank", "noopener,noreferrer");
+          }, 100);
+          navigated = true;
+        }
       }
+      pcMouseDownPos = null;
+
+      // 整列モード中にドラッグした場合の帰還処理
+      if (currentMode === "aligned" && isDraggingInAligned) {
+        isDraggingInAligned = false;
+        if (!navigated && alignTargets && alignTargets[idx]) {
+          Matter.Body.setVelocity(body, { x: 0, y: 0 });
+          Matter.Body.setAngularVelocity(body, 0);
+        }
+      }
+    } else {
+      // === モバイル: ワープホールにドロップで起動（従来ロジック維持） ===
+      var droppedInHole = isInDropZone(body.position.x, body.position.y);
+      if (!droppedInHole) {
+        var mobileMousePos = event.mouse.position;
+        droppedInHole = isInDropZone(mobileMousePos.x, mobileMousePos.y);
+      }
+
+      if (droppedInHole) {
+        // ドロップ検知直後にマウスコンストレイントを強制解放
+        mouseConstraint.constraint.bodyB = null;
+        mouseConstraint.mouse.button = -1;
+        // 100ms遅延でアプリを新規タブで開く
+        var launchUrl = generateLink(APPS[idx]);
+        setTimeout(function () {
+          window.open(launchUrl, "_blank", "noopener,noreferrer");
+        }, 100);
+      }
+
+      // 整列モード中にドラッグしてホール外で離した場合 → 元の整列位置に戻す
+      if (currentMode === "aligned" && isDraggingInAligned) {
+        isDraggingInAligned = false;
+        if (!droppedInHole && alignTargets && alignTargets[idx]) {
+          Matter.Body.setVelocity(body, { x: 0, y: 0 });
+          Matter.Body.setAngularVelocity(body, 0);
+        }
+      }
+
+      // ドロップゾーンを非表示
+      hideDropZone();
     }
 
-    // ドロップゾーンを非表示
-    hideDropZone();
     draggedAppIndex = -1;
-
     // 詳細パネルを非表示
     hideDetailPanel();
   });
 
-  // --- マウス移動中のドロップゾーンハイライト ---
+  // --- マウス移動中: PC=ホバーエフェクト / モバイル=ドロップゾーンハイライト ---
   Events.on(mouseConstraint, "mousemove", function (event) {
-    if (draggedAppIndex < 0) return;
-    var dz = document.getElementById("drop-zone");
-    if (dz && dz.classList.contains("visible")) {
-      // 物理座標ベースの判定: ドラッグ中アイテムの座標を使う
-      var dragBody = bodies[draggedAppIndex];
-      var isNearHole = false;
-      if (dragBody) {
-        isNearHole = isInDropZone(dragBody.position.x, dragBody.position.y);
+    if (!isMobile) {
+      // === PC: ホバーエフェクト（マウス下のアイテムにpc-hoverクラスを付与） ===
+      var mousePos = mouseConstraint.mouse.position;
+      var hoveredBodies = Matter.Query.point(bodies, mousePos);
+      var newHoverIndex = -1;
+      if (hoveredBodies.length > 0) {
+        var hIdx = parseInt(hoveredBodies[0].label, 10);
+        if (!isNaN(hIdx) && hIdx >= 0 && hIdx < APPS.length) {
+          newHoverIndex = hIdx;
+        }
       }
-      // フォールバック: マウス座標でも判定
-      if (!isNearHole) {
-        var mousePos = mouseConstraint.mouse.position;
-        isNearHole = isInDropZone(mousePos.x, mousePos.y);
+      // ホバー対象が変わった場合のみDOM操作（パフォーマンス最適化）
+      if (newHoverIndex !== pcHoverIndex) {
+        if (pcHoverIndex >= 0 && domElements[pcHoverIndex]) {
+          domElements[pcHoverIndex].classList.remove("pc-hover");
+        }
+        if (newHoverIndex >= 0 && domElements[newHoverIndex]) {
+          domElements[newHoverIndex].classList.add("pc-hover");
+        }
+        pcHoverIndex = newHoverIndex;
       }
-      if (isNearHole) {
-        dz.classList.add("highlight");
-      } else {
-        dz.classList.remove("highlight");
+    } else {
+      // === モバイル: ドロップゾーンハイライト（従来ロジック維持） ===
+      if (draggedAppIndex < 0) return;
+      var dz = document.getElementById("drop-zone");
+      if (dz && dz.classList.contains("visible")) {
+        var dragBody = bodies[draggedAppIndex];
+        var isNearHole = false;
+        if (dragBody) {
+          isNearHole = isInDropZone(dragBody.position.x, dragBody.position.y);
+        }
+        if (!isNearHole) {
+          var mobilePos = mouseConstraint.mouse.position;
+          isNearHole = isInDropZone(mobilePos.x, mobilePos.y);
+        }
+        if (isNearHole) {
+          dz.classList.add("highlight");
+        } else {
+          dz.classList.remove("highlight");
+        }
       }
     }
   });
@@ -1118,16 +1178,23 @@ function setupEventListeners() {
     });
   });
 
-  // ウィンドウリサイズ時の壁更新 + ワープホール物理ボディ追従
+  // ウィンドウリサイズ時の壁更新 + デバイス判定更新 + ワープホール追従
   var resizeTimer = null;
   window.addEventListener("resize", function () {
     if (resizeTimer) clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function () {
+      // デバイス判定を更新
+      isMobile = window.innerWidth <= 768;
       createWalls();
       headerHeight = measureHeaderHeight();
-      // 【修正2】 ワープホール物理ボディの位置を再計算・追従
-      removeWarpHoleBody();
-      createOrUpdateWarpHoleBody();
+      // モバイルのみ: ワープホール物理ボディの位置を再計算・追従
+      if (isMobile) {
+        removeWarpHoleBody();
+        createOrUpdateWarpHoleBody();
+      } else {
+        // PCではワープホールを除去
+        removeWarpHoleBody();
+      }
     }, 200);
   });
 }
