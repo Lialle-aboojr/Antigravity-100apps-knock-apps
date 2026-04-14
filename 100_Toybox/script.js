@@ -356,6 +356,19 @@ function hideDropZone() {
 }
 
 /**
+ * 操作ガイドのテキストをデバイスに応じて更新する
+ */
+function updateOperationGuide() {
+  var guide = document.getElementById("operation-guide");
+  if (!guide) return;
+  if (isMobile) {
+    guide.textContent = "\uD83D\uDE80 \u30C9\u30E9\u30C3\u30B0\uFF06\u30C9\u30ED\u30C3\u30D7\u3067\u8D77\u52D5\uFF01 / Drag & Drop to launch!";
+  } else {
+    guide.textContent = "\uD83D\uDC46 \u30A2\u30A4\u30B3\u30F3\u3092\u30AF\u30EA\u30C3\u30AF\u3057\u3066\u8D77\u52D5\uFF01 / Click an item to launch!";
+  }
+}
+
+/**
  * 【修正1】 ドロップゾーン（ワープホール）の当たり判定
  * getBoundingClientRectに依存せず、Matter.jsの物理空間に配置した
  * ワープホール固定ボディの座標とドラッグ中アイテム/マウス座標の
@@ -593,13 +606,21 @@ function initPhysics() {
         var clickDy = mousePos.y - pcMouseDownPos.y;
         var dragDist = Math.sqrt(clickDx * clickDx + clickDy * clickDy);
         if (dragDist <= 10) {
-          // クリック判定成立: マウスコンストレイントを強制解放し、リンクを開く
+          // クリック判定成立: 全アイテムのdraggingクラスを強制除去（巨大化バグ防止）
+          domElements.forEach(function (domEl) {
+            if (domEl) {
+              domEl.classList.remove("dragging");
+              domEl.style.transition = "";
+            }
+          });
+          // マウスコンストレイントを強制解放（物理エンジン側もリセット）
           mouseConstraint.constraint.bodyB = null;
           mouseConstraint.mouse.button = -1;
+          // 少し遅延してUIが確実に元のサイズに戻ってから別タブを開く
           var launchUrl = generateLink(APPS[idx]);
           setTimeout(function () {
             window.open(launchUrl, "_blank", "noopener,noreferrer");
-          }, 100);
+          }, 80);
           navigated = true;
         }
       }
@@ -1195,6 +1216,8 @@ function setupEventListeners() {
         // PCではワープホールを除去
         removeWarpHoleBody();
       }
+      // 操作ガイドを更新
+      updateOperationGuide();
     }, 200);
   });
 }
@@ -1219,6 +1242,16 @@ function adjustLayout() {
 function init() {
   // レイアウト調整
   adjustLayout();
+
+  // 操作ガイドの初期表示（デバイスに応じたテキスト）
+  updateOperationGuide();
+  // ガイドの位置をコントロールバーの直下に設定
+  var guideEl = document.getElementById("operation-guide");
+  var controlsEl = document.getElementById("controls");
+  if (guideEl && controlsEl) {
+    var ctrlBottom = controlsEl.getBoundingClientRect().bottom;
+    guideEl.style.top = ctrlBottom + "px";
+  }
 
   // 物理エンジン初期化
   initPhysics();
